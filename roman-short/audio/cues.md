@@ -1,10 +1,12 @@
 # Sound cues - The Empire Built With Shovels
 
 Duration 93.836 s, 48 kHz stereo 24-bit.
-Integrated: mix -15.1 LUFS, true peak -1.1 dBTP; voice -15.0, music -32.4, sfx -32.7 LUFS.
+Integrated: mix -15.0 LUFS, true peak -1.3 dBTP; voice -15.5, music -22.6, sfx -33.1 LUFS.
+Music vs voice during speech: -10.7 LU (energy), median 1 s blocks -11.9 LU; music in gaps (no speech): -18.3 LUFS. Ducking 7 dB (stingers 3.5 dB).
+Melody/harmony: theme in F, 8-bar phrase F Bb Gm F | F Gm6 C7 F; shorter sections use a cut-down phrase that still ends on C7 -> F.
 
 Music: original comic Roman march (F major, 120 bpm): snare roll -> stab on 'shovel' | march (fife + tuba oom-pah) | Rhine tension in D minor,
-rest on 'There are no boats', hammer build, stab on 'days' | silence for the deadpan, sad tuba after 'torn down' | bouncy pluck + glock delivery |
+rest on 'There are no boats', hammer build, stab on 'days' | silence for the deadpan, tiptoe pizzicato as Caesar walks back, sad tuba after 'torn down' | bouncy pluck + glock delivery |
 warm horns -> tutti at the peak, glock shimmer on 'golden' | Goth ostinato -> stinger on 'gate'.
 
 | t (s) | cue | level |
@@ -93,11 +95,11 @@ warm horns -> tutti at the peak, glock shimmer on 'golden' | Goth ostinato -> st
 |  49.37 | tribes impressed | -17 LU |
 |  49.52 | tribes impressed | -17 LU |
 |  49.67 | applause | -20 LU |
-|  50.01 | steps on deck | -22 LU |
-|  50.63 | steps on deck | -22 LU |
-|  51.25 | steps on deck | -22 LU |
-|  51.87 | steps on deck | -22 LU |
-|  52.49 | steps on deck | -22 LU |
+|  50.47 | steps on deck | -22 LU |
+|  50.97 | steps on deck | -22 LU |
+|  51.47 | steps on deck | -22 LU |
+|  51.97 | steps on deck | -22 LU |
+|  52.47 | steps on deck | -22 LU |
 |  52.75 | cut whoosh | -20 LU |
 |  53.30 | timber tears | -12 LU |
 |  53.35 | deck section splash | -15 LU |
