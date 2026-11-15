@@ -30,7 +30,7 @@ export const lam = (key: string, make: () => THREE.MeshLambertMaterialParameters
 };
 const lamOf = new Map<string, THREE.MeshLambertMaterial>();
 // the nature kit ships a teal palette; our valley wants storybook greens and browns
-const GREENS = ["#62ae4c", "#56a447", "#72b853"];
+const GREENS = ["#5f9a4e", "#55904a", "#6aa358"];
 const RECOLOR: Record<string, string> = { grass: "#6aab4f", leafsDark: "#4a9142", woodBark: "#8a5a3c", woodInner: "#e8cfa4", wood: "#a8724a",
   woodDark: "#7a4f33", dirt: "#8a6a4a", stone: "#b7b4ad" };
 /** Kenney GLB materials -> Lambert, so the whole world shares one lighting model */
@@ -264,7 +264,7 @@ const VEG: Record<string, VegKind> = {
   tree_oak: "round", tree_default: "round", tree_detailed: "round", tree_fat: "fat", "tree-high-round": "tall", tree: "tall",
   tree_cone: "cone", plant_bushLarge: "bush", plant_bushDetailed: "bush", plant_bush: "bush", hedge: "hedge",
 };
-const LEAF = ["#5aa83c", "#4c9a37", "#69b545", "#55a243", "#3f8f3c"];
+const LEAF = ["#5c9a4a", "#518f45", "#67a454", "#589650", "#477f44"];
 /** canopy paint (equal px per metre on a unit sphere: 256 around x 128 pole to pole): light crown, darker belly,
  *  soft leaf-clump dabs (kept low contrast: the two-tone sun term does the main modelling) */
 const leafTex = (i: number) => ctex("leafHD" + i, 256, 128, (g, r) => {

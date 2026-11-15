@@ -105,12 +105,12 @@ const temple = (b: Batch, x: number, y: number, z: number, w: number, d: number,
 };
 /** market stall facing -z (counter in front, striped awning) */
 export const stallGeo = (b: Batch, x: number, z: number, key: string, a: string, c: string) => {
-  const wood = lam("stallWood", () => ({ color: "#9a6a42" })), aw = lam("awn" + key, () => ({ map: awningTex("awn" + key, a, c), side: THREE.DoubleSide }));
+  const wood = lam("stallWood", () => ({ color: "#a8703c" })), aw = lam("awn" + key, () => ({ map: awningTex("awn" + key, a, c), side: THREE.DoubleSide }));
   b.add(boxGeo(V(x - 1.6, 0, z - 1.0), V(x + 1.6, 1.0, z - 0.6)), wood);
-  b.add(boxGeo(V(x - 1.7, 1.0, z - 1.1), V(x + 1.7, 1.08, z - 0.5)), lam("stallTop", () => ({ color: "#c9a46a" })));
+  b.add(boxGeo(V(x - 1.7, 1.0, z - 1.1), V(x + 1.7, 1.08, z - 0.5)), lam("stallTop", () => ({ color: "#d9a85a" })));
   for (const sx of [-1.55, 1.55]) for (const sz of [-1.0, 1.0]) b.add(boxGeo(V(x + sx - 0.06, 0, z + sz - 0.06), V(x + sx + 0.06, 2.6, z + sz + 0.06)), wood);
   b.add(quad(V(x - 1.8, 2.25, z - 1.5), V(x + 1.8, 2.25, z - 1.5), V(x + 1.8, 2.8, z + 1.1), V(x - 1.8, 2.8, z + 1.1), 1, 1), aw);
-  b.add(boxGeo(V(x - 1.6, 0, z + 0.95), V(x + 1.6, 2.6, z + 1.05)), lam("stallBack", () => ({ map: plasterTex("stallBack", "#d9b98a") })));
+  b.add(boxGeo(V(x - 1.6, 0, z + 0.95), V(x + 1.6, 2.6, z + 1.05)), lam("stallBack", () => ({ map: plasterTex("stallBack", "#ecc27a") })));
   // amphorae + loaves on the counter
   for (let i = 0; i < 3; i++) b.add(new THREE.SphereGeometry(0.16, 10, 8), lam("loaf", () => ({ color: "#d99a52" })), M4(x - 1.0 + i * 0.35, 1.18, z - 0.8, 0, [1, 0.6, 1]));
   for (let i = 0; i < 2; i++) b.add(new THREE.CylinderGeometry(0.14, 0.2, 0.7, 10), lam("amph", () => ({ color: "#c46e46" })), M4(x + 0.9 + i * 0.4, 1.43, z - 0.75));
@@ -125,7 +125,7 @@ const cypress = (b: Batch, x: number, z: number, h: number) => {
   b.add(new THREE.CylinderGeometry(0.12, 0.18, h * 0.15, 6), lam("barkHD", () => ({ color: "#8f5d3b" })), M4(x, h * 0.075, z));
   b.add(new THREE.SphereGeometry(1, 12, 10), lam("cypress", () => ({ color: "#3f7a3a" })), M4(x, h * 0.55, z, 0, [h * 0.12, h * 0.45, h * 0.12]));
 };
-const hillM = [0, 1, 2].map((i) => lam("hill" + i, () => ({ color: ["#7fb35a", "#74aa52", "#8abd62"][i] })));
+const hillM = [0, 1, 2].map((i) => lam("hill" + i, () => ({ color: ["#5a8452", "#557e4e", "#608a58"][i] })));
 const hillGeo = new THREE.SphereGeometry(1, 36, 16, 0, Math.PI * 2, 0, Math.PI / 2);
 const hill = (b: Batch, x: number, z: number, rx: number, h: number, rz: number, i: number) => b.add(hillGeo, hillM[i % 3], M4(x, 0, z, 0, [rx, h, rz]));
 
@@ -149,7 +149,7 @@ const R = rng;
 export const buildRomanWorld = (root: THREE.Object3D, rays: Ray[]) => {
   setSight(rays);
   const b = new Batch(), r = R(7);
-  const grassM = lam("grassRoman", () => ({ map: grassHD(), color: "#d2d8b4" }));
+  const grassM = lam("grassRoman", () => ({ map: grassHD(), color: "#c8ccc8" }));
   // ---- ground: everything except the Rhine strip ----
   const [rx0, rx1, rz0, rz1] = [RHINE[0] - 2400, RHINE[0] + 800, RHINE[2] - RIVER_W - 2, RHINE[2] + RIVER_W + 2];
   const BIG = 7000;
@@ -203,8 +203,22 @@ export const buildRomanWorld = (root: THREE.Object3D, rays: Ray[]) => {
     b.add(boxGeo(V(sx * 8 - 4, 0, GATE_Z - 4), V(sx * 8 + 4, 13, GATE_Z + 4), 4), W);
     for (let k = 0; k < 4; k++) for (let j = 0; j < 4; j++) if (k === 0 || k === 3 || j === 0 || j === 3) b.add(boxGeo(V(sx * 8 - 4 + k * 2.2, 13, GATE_Z - 4 + j * 2.2), V(sx * 8 - 4 + k * 2.2 + 1.2, 14.1, GATE_Z - 4 + j * 2.2 + 1.2)), W);
   }
-  b.add(boxGeo(V(-4.2, 6.5, GATE_Z - 2.2), V(4.2, 10.5, GATE_Z + 2.2), 4), W); // arch top
-  for (let k = 0; k < 9; k++) { const a = Math.PI * (k / 8); b.add(boxGeo(V(-4 * Math.cos(a) - 0.45, 4.2 + 2.2 * Math.sin(a), GATE_Z - 2.3), V(-4 * Math.cos(a) + 0.45, 4.2 + 2.2 * Math.sin(a) + 2.3, GATE_Z - 2.15)), W); }
+  { // arch: one extruded block, a true round-headed opening (the old stepped boxes read as a broken lintel)
+    const sh = new THREE.Shape();
+    sh.moveTo(-4.2, 4.2); sh.lineTo(-4.0, 4.2);
+    sh.absellipse(0, 4.2, 4.0, 3.0, Math.PI, 0, true, 0);
+    sh.lineTo(4.2, 4.2); sh.lineTo(4.2, 10.5); sh.lineTo(-4.2, 10.5); sh.closePath();
+    const ag = new THREE.ExtrudeGeometry(sh, { depth: 4.4, bevelEnabled: false, curveSegments: 20 }).translate(0, 0, GATE_Z - 2.2);
+    const uv = ag.attributes.uv as THREE.BufferAttribute;
+    for (let i = 0; i < uv.count; i++) uv.setXY(i, uv.getX(i) / 4, uv.getY(i) / 4);
+    b.add(ag, W);
+    // keystone + voussoir band in light trim on the outer face
+    for (let k = 0; k <= 10; k++) {
+      const a = Math.PI * (k / 10), x = -4.35 * Math.cos(a), y = 4.2 + 3.3 * Math.sin(a);
+      b.add(new THREE.BoxGeometry(k === 5 ? 0.75 : 0.5, k === 5 ? 0.95 : 0.6, 0.2), lam("archTrim", () => ({ color: "#efe3c8" })),
+        new THREE.Matrix4().compose(V(x, y, GATE_Z - 2.3), new THREE.Quaternion().setFromAxisAngle(V(0, 0, 1), a - Math.PI / 2), V(1, 1, 1)));
+    }
+  }
   // street from the forum to the gate + the roads out
   b.add(strip([0, -22], [0, GATE_Z], 6, 0.04, 4), lam("paving", () => ({ map: pavingTex() })));
   road(b, 0, GATE_Z, 0, 4200);
@@ -246,6 +260,30 @@ export const buildRomanWorld = (root: THREE.Object3D, rays: Ray[]) => {
     const x = RHINE[0] + (r() - 0.5) * 900, z = RHINE[2] - RIVER_W - 30 - r() * 150;
     if (Math.abs(x - RHINE[0]) < 40) continue;
     prop(b, {}, trees[i % trees.length], x, 0, z, 8 + r() * 6, r() * 6);
+  }
+
+  // patchwork of fields and meadows for the aerials (flat quads lifted 0.2 m so they don't z-fight at 1-2 km; kept
+  // clear of every set, road and the Rhine so nothing stands on them)
+  const fieldMs = [
+    lam("wheat", () => ({ map: flatTex("wheat", "#bfae62", ["#b09f56", "#ccbc72"], 1400, 3) })),
+    lam("meadowDark", () => ({ map: flatTex("meadowDark", "#5a8458", ["#507a4e", "#669062"], 900, 5) })),
+    lam("meadowOlive", () => ({ map: flatTex("meadowOlive", "#8f9e62", ["#829356", "#9fae70"], 900, 5) })),
+    lam("plough", () => ({ map: flatTex("plough", "#9c8662", ["#8c7756", "#ab9672"], 900, 5) })),
+  ];
+  const nearRoad = (x: number, z: number, pad: number) => ROADS.some((d) => {
+    const sx = Math.sin(d), sz = -Math.cos(d);
+    return x * sx + z * sz > 0 && Math.abs(x * sz - z * sx) < pad;
+  });
+  const placed: [number, number, number, number][] = [];
+  for (let i = 0; i < 220; i++) {
+    const cx = (r() - 0.5) * 3600, cz = (r() - 0.5) * 3600, hw = 25 + r() * 45, hd = 20 + r() * 40, pad = Math.hypot(hw, hd) + 12;
+    if (placed.some(([px, pz, pw, pd]) => Math.abs(px - cx) < pw + hw + 8 && Math.abs(pz - cz) < pd + hd + 8)) continue;
+    if (Math.abs(cx) < 200 + hw + 20 && cz > GATE_Z - 30 - hd && cz < 200 + hd) continue;          // Rome
+    if (nearRoad(cx, cz, pad) || Math.abs(cx) < pad || Math.abs(cx - RD2_X) < pad || Math.abs(cx - MULE_X) < pad) continue;
+    if (Math.abs(cz - RHINE[2]) < RIVER_W + 40 + hd || Math.abs(cx - CAMP[0]) < 70 + hw && Math.abs(cz - CAMP[2]) < 70 + hd) continue;
+    if (Math.hypot(cx - VILLAGE[0], cz - VILLAGE[2]) < 90 + pad || Math.hypot(cx - RIDGE[0], cz - RIDGE[2]) < 60 + pad || Math.hypot(cx - HOOK[0], cz - HOOK[2]) < 30 + pad) continue;
+    placed.push([cx, cz, hw, hd]);
+    b.add(ground(cx - hw, cx + hw, cz - hd, cz + hd, 0.2, 6), fieldMs[i % 4]);
   }
 
   // ---- marching-camp field: track to the camp ----
@@ -396,14 +434,17 @@ export class RhineBridge {
       const z = RhineBridge.z(k), up = smooth(st.built - k), fall = st.torn > 0 ? RhineBridge.fallK(Math.min(k, BENTS - 2), st.torn) : 0;
       const top = DECK_Y - 0.15, h = (top - bottom) * up, sink = 3.5 * smooth(fall);
       [-3.0, -1.2, 1.2, 3.0].forEach((x, i) => setM(this.piles, k * 4 + i, RHINE[0] + x, bottom - sink, z + (i % 2 ? 0.25 : -0.25), 1, h, 1, 0, fall * 0.6));
-      setM(this.caps, k, RHINE[0], bottom + h - 0.1 - sink, z, 7, 0.3 * up, 0.5, 0, fall * 0.4);
+      const capOn = up < 1e-3 ? 1e-4 : 1;
+      setM(this.caps, k, RHINE[0], bottom + h - 0.1 - sink, z, 7 * capOn, 0.3 * up, 0.5 * capOn, 0, fall * 0.4);
     }
     for (let k = 0; k < BENTS - 1; k++) {
       const z0 = RhineBridge.z(k), z1 = RhineBridge.z(k + 1), on = smooth((st.built - k - 1) * 1.5);
       const fall = RhineBridge.fallK(k, st.torn), f2 = smooth(fall), drop = (DECK_Y - WATER_Y + 1.6) * f2, tilt = 0.5 * Math.sin(f2 * Math.PI) * (k % 2 ? 1 : -1);
       const zc = (z0 + z1) / 2, len = (z1 - z0) * on;
-      setM(this.deck, k, RHINE[0], DECK_Y - drop, z0 + len / 2 + 0.01, 7, 0.25, len, tilt * 0.3, tilt);
-      for (const [i, x] of [[0, -3.3], [1, 3.3]] as const) setM(this.rails, k * 2 + i, RHINE[0] + x, DECK_Y + 0.6 - drop, z0 + len / 2, 0.15, 0.12, len, tilt * 0.3, tilt);
+      // an unbuilt section must vanish completely (a zero-length box still drew a 7 m x 0.25 m plank floating at deck height)
+      const gone = on < 1e-3 ? 1e-4 : 1;
+      setM(this.deck, k, RHINE[0], DECK_Y - drop, z0 + len / 2 + 0.01, 7 * gone, 0.25 * gone, len, tilt * 0.3, tilt);
+      for (const [i, x] of [[0, -3.3], [1, 3.3]] as const) setM(this.rails, k * 2 + i, RHINE[0] + x, DECK_Y + 0.6 - drop, z0 + len / 2, 0.15 * gone, 0.12 * gone, len, tilt * 0.3, tilt);
       void zc;
     }
     this.piles.instanceMatrix.needsUpdate = true; this.caps.instanceMatrix.needsUpdate = true; this.deck.instanceMatrix.needsUpdate = true; this.rails.instanceMatrix.needsUpdate = true;
