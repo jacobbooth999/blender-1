@@ -944,7 +944,11 @@ export const bodySide = (p: Pen, o: Outfit, opts: SideOpts) => {
   else if (sp === "spear") { near = [S, [S[0] + 0.12 * HH, S[1] + 0.42 * HH], [S[0] + 0.42 * HH, S[1] + 0.3 * HH]]; far = mode === "march" ? swingArm(rad(30) * nearFwd) : null; }
   else { near = swingArm(rad(-30) * nearFwd); far = mode === "march" ? swingArm(rad(30) * nearFwd) : null; }
   if (Array.isArray(sp) && sp[0] === "furca") drawFurca(p, [tcx + 0.8 * T.a, chin + 0.04 * HH], [tcx - 1.25 * T.a - 40 * u, chin - 0.22 * HH], u * 1.35, sp[1]);
-  if (o.shield) { const sx = tcx - 0.1 * T.a; p.poly(rrect(sx - 0.2 * W, chin + 0.02 * HH, sx + 0.12 * W, torsoBot + 0.45 * HH, 8 * u), "#a8302a", 3.5 * u); }
+  if (o.shield) { // scutum on the far arm, its curved face seen edge-on behind the back
+    const sh: P2[] = rrect(tcx - 0.5 * W, chin + 0.0 * HH, tcx - 0.18 * W, torsoBot + 0.5 * HH, 10 * u);
+    p.gradFill(sh, "#c0362f", "#7e2420", light, 0.4); p.poly(sh, null, 3.5 * u);
+    p.stroke([[tcx - 0.44 * W, chin + 0.08 * HH], [tcx - 0.44 * W, torsoBot + 0.42 * HH]], 3 * u, "#e8c45a");
+  }
   if (far) { p.stroke(curve(far[0], far[1], far[2]), 5.2 * u, farArm); p.dot(far[2][0], far[2][1], 5.5 * u); }
   if (o.skirt && !o.dress) {
     const y0 = torsoBot - 0.3 * HH, y1 = torsoBot + 0.42 * HH, sk: P2[] = [[tcx - 0.9 * T.a, y0], [tcx + 0.9 * T.a, y0], [tcx + 1.1 * T.a, y1], [tcx - 1.05 * T.a, y1]];
