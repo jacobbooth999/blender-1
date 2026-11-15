@@ -471,7 +471,7 @@ const hatOn = (p: Pen, o: Outfit, hp: P2[], H: Blob, cx: number, hc: number, lig
     const x0 = Math.min(...bowl.map((q) => q[0])), x1 = Math.max(...bowl.map((q) => q[0]));
     p.band(R([[x0 + 3 * u, cut - 2 * u], [x1 - 3 * u, cut - 2 * u]]), bronze, 0.05 * HH, 1.4 * u);
     const plate = (pts: P2[]) => { p.shadedFill(R(pts), iron, mul(iron, SH_FELT), light, H.a * 0.4, 0.3); p.poly(R(pts), null, ow * 0.7); };
-    if (side) plate([[cx - 0.14 * W, cut], [cx + 0.04 * W, cut], [cx + 0.02 * W, hc + 0.28 * HH], [cx - 0.1 * W, hc + 0.32 * HH]]);
+    if (side) plate([[cx - 0.2 * W, cut], [cx - 0.06 * W, cut], [cx - 0.08 * W, hc + 0.22 * HH], [cx - 0.17 * W, hc + 0.25 * HH]]);
     else for (const sg of [-1, 1]) {
       plate([[cx + sg * 0.35 * W, cut], [cx + sg * 0.53 * W, cut], [cx + sg * 0.5 * W, hc + 0.3 * HH], [cx + sg * 0.38 * W, hc + 0.35 * HH]]);
       p.poly(R([[cx + sg * 0.5 * W, cut + 0.02 * HH], [cx + sg * 0.64 * W, cut + 0.12 * HH], [cx + sg * 0.5 * W, cut + 0.1 * HH]]), iron, ow * 0.7);

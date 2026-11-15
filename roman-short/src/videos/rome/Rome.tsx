@@ -23,8 +23,13 @@ import { TOTAL, FLASH_AT, SHOTS, layersAt, dofAt } from "./story";
 export const ROME_FRAMES = TOTAL;
 
 /** A/B switches for test stills only (Remotion inputProps `{ post: { ink: false, ... } }`); everything is on by default. */
-type PostToggles = { ink: boolean; lens: boolean; pre: boolean; bloom: boolean; grade: boolean; grain: boolean };
-const toggles = (): PostToggles => ({ ink: true, lens: true, pre: true, bloom: true, grade: true, grain: false, ...((getInputProps() as { post?: Partial<PostToggles> }).post ?? {}) });
+type PostToggles = { ink: boolean; lens: boolean; pre: boolean; bloom: boolean; grade: boolean; grain: boolean; fast: boolean };
+/** fast = preview mode: no MSAA, no lens blur, small shadow map, low-res character canvases */
+const toggles = (): PostToggles => {
+  const p = { ink: true, lens: true, pre: true, bloom: true, grade: true, grain: false, fast: false, ...((getInputProps() as { post?: Partial<PostToggles> }).post ?? {}) };
+  if (p.fast) { p.lens = false; p.pre = false; (globalThis as { ROME_FAST?: boolean }).ROME_FAST = true; }
+  return p;
+};
 
 /** Bloom for emissive sources only (depth.md 6.4). Its MIP chain always starts at 540x960 (half of 1080x1920),
  *  whatever the output size, so the glow keeps the same size relative to the frame (e-fold ~30 px at 1080p,
@@ -62,7 +67,7 @@ const Inner: React.FC<{ id: number; kit: Kit }> = ({ id, kit }) => {
   }), [camera, scene]);
   useEffect(() => () => fx.ink.dispose(), [fx]);
   const post = useMemo(() => (
-    <EffectComposer multisampling={4}>
+    <EffectComposer multisampling={on.fast ? 0 : 4}>
       {on.ink ? <primitive object={fx.ink} dispose={null} /> : null}
       {on.lens && on.pre ? <primitive object={fx.lens.pre} dispose={null} /> : null}
       {on.lens ? <primitive object={fx.lens.main} dispose={null} /> : null}
@@ -73,6 +78,7 @@ const Inner: React.FC<{ id: number; kit: Kit }> = ({ id, kit }) => {
     </EffectComposer>
   ), [fx, on]);
   const cam = camera as THREE.PerspectiveCamera;
+  if (on.fast) scene.traverse((o) => { const l = o as THREE.DirectionalLight; if (l.isDirectionalLight && l.shadow.mapSize.x !== 1024) { l.shadow.mapSize.set(1024, 1024); l.shadow.map?.dispose(); l.shadow.map = null as unknown as THREE.WebGLRenderTarget; } });
   target.copy(world.update(id, f, cam, scene));
   noInkFallback(world.root);
   // thin-lens focus: distance along the view axis to the shot's focus point (default: the camera's look target)
