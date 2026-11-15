@@ -497,16 +497,16 @@ export const roofHD = (col: string, slate = false) => ctex("roofHD" + col, 1024,
  *  Ours had the right hue (#6dad37) but only fine uniform noise (autocorrelation 6 px). */
 export const grassHD = () => ctex("grassHD", 1024, 1024, (g, r) => {
   const S = 1024;
-  g.fillStyle = "#6fa24c"; g.fillRect(0, 0, S, S);
+  g.fillStyle = "#6e9e64"; g.fillRect(0, 0, S, S); // blue kept well above 0: the Neutral toe crushes it to lime
   for (let i = 0; i < 16; i++) {
     const x = U(r, 0, S), y = U(r, 0, S), rad = U(r, 120, 320), light = r() > 0.5;
-    wrap2(S, S, x, y, rad * 1.4, (xx, yy) => blotch(g, xx, yy, rad, 1.4, light ? "130,176,88" : "86,134,58", 0.35));
+    wrap2(S, S, x, y, rad * 1.4, (xx, yy) => blotch(g, xx, yy, rad, 1.4, light ? "130,174,108" : "86,132,78", 0.35));
   }
   g.lineWidth = 2; g.lineCap = "round"; g.lineJoin = "round";
   for (let i = 0; i < 1400; i++) { // tufts ~90 per m2
     const x = U(r, 0, S), y = U(r, 0, S), h = U(r, 7, 16), lean = U(r, -3, 3), light = r() < 0.4;
     wrap2(S, S, x, y, 20, (xx, yy) => {
-      g.strokeStyle = light ? "rgba(154,196,108,0.35)" : "rgba(74,120,48,0.45)";
+      g.strokeStyle = light ? "rgba(152,194,124,0.35)" : "rgba(72,118,66,0.45)";
       g.beginPath(); g.moveTo(xx - 3 + lean, yy - h); g.lineTo(xx, yy); g.lineTo(xx + 3 + lean, yy - h * 0.8); g.stroke();
     });
   }

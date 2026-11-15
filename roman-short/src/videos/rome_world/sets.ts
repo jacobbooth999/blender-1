@@ -125,7 +125,7 @@ const cypress = (b: Batch, x: number, z: number, h: number) => {
   b.add(new THREE.CylinderGeometry(0.12, 0.18, h * 0.15, 6), lam("barkHD", () => ({ color: "#8f5d3b" })), M4(x, h * 0.075, z));
   b.add(new THREE.SphereGeometry(1, 12, 10), lam("cypress", () => ({ color: "#3f7a3a" })), M4(x, h * 0.55, z, 0, [h * 0.12, h * 0.45, h * 0.12]));
 };
-const hillM = [0, 1, 2].map((i) => lam("hill" + i, () => ({ color: ["#5a8240", "#547a3c", "#608a46"][i] })));
+const hillM = [0, 1, 2].map((i) => lam("hill" + i, () => ({ color: ["#5a8452", "#557e4e", "#608a58"][i] })));
 const hillGeo = new THREE.SphereGeometry(1, 36, 16, 0, Math.PI * 2, 0, Math.PI / 2);
 const hill = (b: Batch, x: number, z: number, rx: number, h: number, rz: number, i: number) => b.add(hillGeo, hillM[i % 3], M4(x, 0, z, 0, [rx, h, rz]));
 
@@ -149,7 +149,7 @@ const R = rng;
 export const buildRomanWorld = (root: THREE.Object3D, rays: Ray[]) => {
   setSight(rays);
   const b = new Batch(), r = R(7);
-  const grassM = lam("grassRoman", () => ({ map: grassHD(), color: "#c0c6bc" }));
+  const grassM = lam("grassRoman", () => ({ map: grassHD(), color: "#c8ccc8" }));
   // ---- ground: everything except the Rhine strip ----
   const [rx0, rx1, rz0, rz1] = [RHINE[0] - 2400, RHINE[0] + 800, RHINE[2] - RIVER_W - 2, RHINE[2] + RIVER_W + 2];
   const BIG = 7000;
@@ -215,7 +215,7 @@ export const buildRomanWorld = (root: THREE.Object3D, rays: Ray[]) => {
     // keystone + voussoir band in light trim on the outer face
     for (let k = 0; k <= 10; k++) {
       const a = Math.PI * (k / 10), x = -4.35 * Math.cos(a), y = 4.2 + 3.3 * Math.sin(a);
-      b.add(new THREE.BoxGeometry(k === 5 ? 0.9 : 0.6, k === 5 ? 1.1 : 0.75, 0.25), lam("archTrim", () => ({ color: "#efe3c8" })),
+      b.add(new THREE.BoxGeometry(k === 5 ? 0.75 : 0.5, k === 5 ? 0.95 : 0.6, 0.2), lam("archTrim", () => ({ color: "#efe3c8" })),
         new THREE.Matrix4().compose(V(x, y, GATE_Z - 2.3), new THREE.Quaternion().setFromAxisAngle(V(0, 0, 1), a - Math.PI / 2), V(1, 1, 1)));
     }
   }
@@ -266,8 +266,8 @@ export const buildRomanWorld = (root: THREE.Object3D, rays: Ray[]) => {
   // clear of every set, road and the Rhine so nothing stands on them)
   const fieldMs = [
     lam("wheat", () => ({ map: flatTex("wheat", "#bfae62", ["#b09f56", "#ccbc72"], 1400, 3) })),
-    lam("meadowDark", () => ({ map: flatTex("meadowDark", "#5d8a45", ["#527d3c", "#6a9850"], 900, 5) })),
-    lam("meadowOlive", () => ({ map: flatTex("meadowOlive", "#93a456", ["#86974c", "#a3b264"], 900, 5) })),
+    lam("meadowDark", () => ({ map: flatTex("meadowDark", "#5a8458", ["#507a4e", "#669062"], 900, 5) })),
+    lam("meadowOlive", () => ({ map: flatTex("meadowOlive", "#8f9e62", ["#829356", "#9fae70"], 900, 5) })),
     lam("plough", () => ({ map: flatTex("plough", "#9c8662", ["#8c7756", "#ab9672"], 900, 5) })),
   ];
   const nearRoad = (x: number, z: number, pad: number) => ROADS.some((d) => {
