@@ -396,14 +396,17 @@ export class RhineBridge {
       const z = RhineBridge.z(k), up = smooth(st.built - k), fall = st.torn > 0 ? RhineBridge.fallK(Math.min(k, BENTS - 2), st.torn) : 0;
       const top = DECK_Y - 0.15, h = (top - bottom) * up, sink = 3.5 * smooth(fall);
       [-3.0, -1.2, 1.2, 3.0].forEach((x, i) => setM(this.piles, k * 4 + i, RHINE[0] + x, bottom - sink, z + (i % 2 ? 0.25 : -0.25), 1, h, 1, 0, fall * 0.6));
-      setM(this.caps, k, RHINE[0], bottom + h - 0.1 - sink, z, 7, 0.3 * up, 0.5, 0, fall * 0.4);
+      const capOn = up < 1e-3 ? 1e-4 : 1;
+      setM(this.caps, k, RHINE[0], bottom + h - 0.1 - sink, z, 7 * capOn, 0.3 * up, 0.5 * capOn, 0, fall * 0.4);
     }
     for (let k = 0; k < BENTS - 1; k++) {
       const z0 = RhineBridge.z(k), z1 = RhineBridge.z(k + 1), on = smooth((st.built - k - 1) * 1.5);
       const fall = RhineBridge.fallK(k, st.torn), f2 = smooth(fall), drop = (DECK_Y - WATER_Y + 1.6) * f2, tilt = 0.5 * Math.sin(f2 * Math.PI) * (k % 2 ? 1 : -1);
       const zc = (z0 + z1) / 2, len = (z1 - z0) * on;
-      setM(this.deck, k, RHINE[0], DECK_Y - drop, z0 + len / 2 + 0.01, 7, 0.25, len, tilt * 0.3, tilt);
-      for (const [i, x] of [[0, -3.3], [1, 3.3]] as const) setM(this.rails, k * 2 + i, RHINE[0] + x, DECK_Y + 0.6 - drop, z0 + len / 2, 0.15, 0.12, len, tilt * 0.3, tilt);
+      // an unbuilt section must vanish completely (a zero-length box still drew a 7 m x 0.25 m plank floating at deck height)
+      const gone = on < 1e-3 ? 1e-4 : 1;
+      setM(this.deck, k, RHINE[0], DECK_Y - drop, z0 + len / 2 + 0.01, 7 * gone, 0.25 * gone, len, tilt * 0.3, tilt);
+      for (const [i, x] of [[0, -3.3], [1, 3.3]] as const) setM(this.rails, k * 2 + i, RHINE[0] + x, DECK_Y + 0.6 - drop, z0 + len / 2, 0.15 * gone, 0.12 * gone, len, tilt * 0.3, tilt);
       void zc;
     }
     this.piles.instanceMatrix.needsUpdate = true; this.caps.instanceMatrix.needsUpdate = true; this.deck.instanceMatrix.needsUpdate = true; this.rails.instanceMatrix.needsUpdate = true;
