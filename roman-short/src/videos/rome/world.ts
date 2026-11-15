@@ -2,7 +2,7 @@
 // sky + camera-relative sun frozen per shot, fog (= horizon colour, far plane per shot for the aerials), the Rhine,
 // the static sets (sets.ts), the camp / road layers / bridge / branch stall states, and the cast cards (cast.ts).
 import * as THREE from "three";
-import { V, Ray, Kit } from "./build";
+import { V, Ray, Kit, CHUNKS } from "./build";
 import { ctex, waterNear, waterFar, cloudHD } from "./paint";
 import { LIGHTS, LOOK, LightPreset } from "./lights";
 import { TONE, CHAR, LFB, untone } from "./shade";
@@ -174,6 +174,9 @@ export class World {
     const far = s.fogFar ?? L.fogFar;
     untone(L.fog, this.fog.color); this.fog.near = L.fogNear * (far / L.fogFar); this.fog.far = far;
     scene.fog = this.fog; scene.background = null;
+    // distance culling: tiles wholly beyond the fog are invisible anyway (also skips them in the shadow and ink passes)
+    const lim = far * 1.02;
+    for (const m of CHUNKS) { const bs = m.geometry.boundingSphere!; m.visible = bs.center.distanceTo(cam.position) - bs.radius < lim; }
     const showSun = s.light === "golden";
     this.sunDisc.visible = this.sunHalo.visible = showSun;
     if (showSun) {

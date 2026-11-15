@@ -85,6 +85,8 @@ export const boxGeo = (min: THREE.Vector3, max: THREE.Vector3, tile = 0, bottom 
 };
 
 /** collects pieces by material and merges them into one static mesh per material */
+/** tiled static meshes (see Batch.build), hidden by world.ts when beyond the fog */
+export const CHUNKS: THREE.Mesh[] = [];
 export class Batch {
   private g = new Map<THREE.Material, THREE.BufferGeometry[]>();
   add(geo: THREE.BufferGeometry, mat: THREE.Material, m?: THREE.Matrix4) {
@@ -105,11 +107,24 @@ export class Batch {
       this.add(mesh.geometry, toLambert(Array.isArray(mesh.material) ? mesh.material[0] : mesh.material), new THREE.Matrix4().multiplyMatrices(m, mesh.matrixWorld));
     });
   }
+  /** merged per material AND per 120 m map tile, so three.js frustum culling and the world's fog-distance culling
+   *  (CHUNKS) skip far scenery; pieces bigger than a tile (ground, long roads, walls) share one "big" group */
   build(parent: THREE.Object3D, cast = true) {
+    const CELL = 120, box = new THREE.Box3(), c = new THREE.Vector3(), sz = new THREE.Vector3();
     for (const [mat, list] of this.g) {
-      const mesh = new THREE.Mesh(mergeGeometries(list, false), mat);
-      mesh.castShadow = cast; mesh.receiveShadow = true; mesh.matrixAutoUpdate = false;
-      parent.add(mesh);
+      const cells = new Map<string, THREE.BufferGeometry[]>();
+      for (const geo of list) {
+        box.setFromBufferAttribute(geo.attributes.position as THREE.BufferAttribute); box.getCenter(c); box.getSize(sz);
+        const key = Math.max(sz.x, sz.z) > CELL ? "big" : `${Math.floor(c.x / CELL)},${Math.floor(c.z / CELL)}`;
+        const l = cells.get(key); if (l) l.push(geo); else cells.set(key, [geo]);
+      }
+      for (const [key, geos] of cells) {
+        const mesh = new THREE.Mesh(mergeGeometries(geos, false), mat);
+        mesh.castShadow = cast; mesh.receiveShadow = true; mesh.matrixAutoUpdate = false;
+        mesh.geometry.computeBoundingSphere();
+        if (key !== "big") CHUNKS.push(mesh);
+        parent.add(mesh);
+      }
     }
     this.g.clear();
   }
