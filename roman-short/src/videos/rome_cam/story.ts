@@ -225,7 +225,7 @@ const CAMS: Record<string, Key[]> = {
     { f: SHOTS[13].a, s: (f) => dolly(add(R, [62, 13, -26]), add(R, [0, 0, 0]), pushK(f, SHOTS[13].a, 0.0016), { fov: 46 }) },
     { f: wf(18) - 4, cut: true, s: (f) => dolly(add(R, [1.8, DECK_Y + 1.75, -20.5]), add(R, [0, DECK_Y + 1.3, -11]), pushK(f, wf(18) - 4, 0.003, 0.006, 24), { fov: 40, roll: 0.04 }) },
   ],
-  impressed: [{ f: SHOTS[14].a, s: (f) => dolly(add(R, [0.5, 1.85, 33.5]), add(R, [0.5, 1.45, 47.6]), pushK(f, SHOTS[14].a, 0.0012, 0.003, 24), { fov: 46 }) }],
+  impressed: [{ f: SHOTS[14].a, s: (f) => dolly(add(R, [0.5, 1.8, 35]), add(R, [0.5, 1.55, 47.6]), pushK(f, SHOTS[14].a, 0.0012, 0.003, 24), { fov: 40 }) }],
   torn: [
     { f: SHOTS[15].a, s: (f) => { const z = caesarBackZ(T(f)), d = Math.hypot(z + 45, 1.6); return { pos: add(R, [1.8, 1.9, -45]), look: add(R, [0.1, 1.45, z]), fov: (360 / Math.PI) * Math.atan(Math.max(0.12, Math.min(0.36, 3.0 / d)) * pushK(f, SHOTS[15].a, 0.0015)) }; } },
     { f: wf(20, "torn") - 8, cut: true, s: (f) => dolly(add(R, [-7.2, 2.6, -51.5]), add(R, [-1.9, 1.6, -8]), pushK(f, wf(20, "torn") - 8, 0.002), { fov: 42 }) },
@@ -248,7 +248,7 @@ const CAMS: Record<string, Key[]> = {
     { f: SHOTS[22].a, s: (f) => dolly(add(VG, [4.5, 1.4, -13]), add(VG, [4.4, 1.2, -8.5]), pushK(f, SHOTS[22].a, 0.0025), { fov: 40 }) },
     { f: wf(29, "built") - 4, cut: true, s: (f) => dolly([RD2_X + 7, 2.6, RD2_END + 10], [RD2_X + 1.0, 1.0, RD2_END + 1], pushK(f, wf(29, "built") - 4, 0.0022), { fov: 42 }) },
   ],
-  citizens: [{ f: SHOTS[23].a, s: (f) => dolly(add(ROME, [1.5, 2.6, -14]), add(ROME, [-0.5, 1.6, 0]), pushK(f, SHOTS[23].a, 0.0022, 0.005, 30), { fov: 48 }) }],
+  citizens: [{ f: SHOTS[23].a, s: (f) => dolly(add(ROME, [1.5, 1.95, -13]), add(ROME, [-0.5, 1.5, 0]), pushK(f, SHOTS[23].a, 0.0022, 0.005, 30), { fov: 48 }) }],
   peak: [
     { f: SHOTS[24].a, s: (f) => zoom([-520, 640, -900], [0, 0, 0], 50, pushK(f, SHOTS[24].a, 0.001)) },
   ],

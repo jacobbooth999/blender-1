@@ -20,6 +20,8 @@ export type Outfit = {
   build?: Build;
   /** Roman extras: bare-leg colour, segmented armour bands, big curved shield, beard colour, helmet crest colour */
   legs?: string; lorica?: boolean; shield?: boolean; beard?: string; crest?: string; skirt?: string;
+  /** Germanic checked tunic: stripe colour */
+  plaid?: string;
 };
 type P2 = [number, number];
 
@@ -80,11 +82,11 @@ export const citizen = (v = 0): Outfit => {
   return v % 3 === 1 ? { ...o, dress: mix(tun[(v + 2) % 6], "#ffffff", 0.2), sash: undefined } : o;
 };
 export const tribesman = (v = 0, extra: Partial<Outfit> = {}): Outfit => {
-  const tun = ["#5d7a3a", "#8a5a34", "#4f6e6a", "#7a6a3a", "#6a4a5a"], hair = ["#c9a04a", "#8a5a2a", "#d8b870", "#6a4020", "#b06a30"];
+  const tun = ["#5d7a3a", "#9a3f34", "#4f6e6a", "#7a6a3a", "#6a4a5a"], hair = ["#c9a04a", "#8a5a2a", "#d8b870", "#6a4020", "#b06a30"];
   const sk = SKINS[(v + 1) % 3];
-  return { jacket: tun[v % 5], pants: "#6b5a44", boots: "#5a3b2a", hat: "longhair", hair: hair[v % 5], beard: v % 4 === 3 ? undefined : hair[v % 5], skin: sk, sash: "#3a2a20", ...extra };
+  return { jacket: tun[v % 5], pants: "#6b5a44", boots: "#5a3b2a", hat: "longhair", hair: hair[v % 5], beard: v % 4 === 3 ? undefined : hair[v % 5], skin: sk, sash: "#3a2a20", plaid: mix(tun[v % 5], "#f0e0b0", 0.3), ...extra };
 };
-export const goth = (v = 0): Outfit => ({ ...tribesman(v), hat: "spangen", jacket: ["#4a5a6a", "#5a4a3a", "#6a3a3a", "#3a5a4a"][v % 4], shield: false });
+export const goth = (v = 0): Outfit => ({ ...tribesman(v), plaid: undefined, hat: "spangen", jacket: ["#4a5a6a", "#5a4a3a", "#6a3a3a", "#3a5a4a"][v % 4], shield: false });
 export const SHOPKEEPER: Outfit = { jacket: "#e0b25a", pants: "#e0b25a", skirt: "#e0b25a", legs: LEGS_SKIN(SKINS[1]), boots: "#7a4f33", hat: "hair", hair: "#3a2a20", moustache: "#3a2a20",
   skin: SKINS[1], sash: "#f3ecdc", build: "stout" };
 export const villageKid = (roman: boolean): Outfit => roman
@@ -486,7 +488,7 @@ const hatOn = (p: Pen, o: Outfit, hp: P2[], H: Blob, cx: number, hc: number, lig
   } else if (o.hat === "longhair" || o.hat === "spangen") {
     const col = o.hair ?? "#8a5a2a";
     const lock = (pts: P2[]) => { p.shadedFill(R(pts), col, mul(col, SH_FELT), light, H.a * 0.5, 0.3); p.poly(R(pts), null, ow * 0.8); };
-    if (side) lock([[cx - 0.15 * W, crown + 0.3 * HH], [cx - 0.58 * W, hc + 0.62 * HH], [cx - 0.28 * W, hc + 0.66 * HH], [cx - 0.02 * W, hc + 0.1 * HH]]);
+    if (side) lock([[cx - 0.2 * W, crown + 0.3 * HH], [cx - 0.52 * W, hc + 0.1 * HH], [cx - 0.48 * W, hc + 0.6 * HH], [cx - 0.24 * W, hc + 0.56 * HH], [cx - 0.08 * W, hc + 0.1 * HH]]);
     else for (const sg of [-1, 1]) lock([[cx + sg * 0.4 * W, crown + 0.3 * HH], [cx + sg * 0.57 * W, hc + 0.12 * HH], [cx + sg * 0.55 * W, hc + 0.62 * HH], [cx + sg * 0.39 * W, hc + 0.5 * HH]]);
     hatOn(p, { ...o, hat: "hair" }, hp, H, cx, hc, light, seed, facing, side);
     if (o.hat === "spangen") {
@@ -585,7 +587,7 @@ export const bodyFront = (p: Pen, o: Outfit, opts: FrontOpts) => {
   const chin = torsoBot - Bd.torso * HH, hc = chin - H.b, crown = hc - H.b, hipY = torsoBot - 0.12 * HH;
   const thick = thickAngle(light), ow = 5 * u;
   const legCol = o.legs ?? mix(o.pants, INK, 0.55), armCol = o.dress && o.legs ? o.legs : mix(o.jacket, INK, 0.5), footCol = o.boots;
-  const legW = (o.legs ? 8.4 : 7.6) * u, footW = 9.5 * u;
+  const legW = 8.6 * u, footW = 9.5 * u;
   // ---- legs + feet (not rotated) ----
   p.rot = null;
   if (mode === "sit") {
@@ -732,6 +734,10 @@ export const bodyFront = (p: Pen, o: Outfit, opts: FrontOpts) => {
       if (o.lorica) for (let i = 0; i < 5; i++) {
         const y0 = chin - 0.12 * HH + i * 0.15 * HH, c = i % 2 ? "#a9aeb6" : "#c3c7cd";
         p.poly([[tcx - 1.4 * T.a, y0], [tcx + 1.4 * T.a, y0], [tcx + 1.4 * T.a, y0 + 0.15 * HH], [tcx - 1.4 * T.a, y0 + 0.15 * HH]], c, 1.4 * u);
+      }
+      if (o.plaid) for (let i = -2; i <= 2; i++) {
+        p.stroke([[tcx + (i + 0.5) * 0.6 * T.a, chin - 0.3 * HH], [tcx + (i + 0.5) * 0.6 * T.a, torsoBot + 0.1 * HH]], 3 * u, o.plaid);
+        p.stroke([[tcx - 1.4 * T.a, chin + (i + 2.6) * 0.26 * HH], [tcx + 1.4 * T.a, chin + (i + 2.6) * 0.26 * HH]], 3 * u, o.plaid);
       }
       if (o.sash) p.band([[tcx - 1.3 * T.a, torsoBot - 0.32 * HH], [tcx + 1.3 * T.a, torsoBot - 0.32 * HH]], o.sash, 0.13 * HH, 1.8 * u);
       if (!o.lorica && o.buttons) for (let i = 0; i < 4; i++) {
@@ -900,7 +906,7 @@ export const bodySide = (p: Pen, o: Outfit, opts: SideOpts) => {
   for (const L of legs) {
     const knee = mode === "swing" ? ([300 + l1 * 0.98 + (L.near ? 0 : -6 * u), hipY + 6 * u] as P2) : ik(hip, L.ank, l1, l2);
     const hp0: P2 = [300 + (L.near ? 0 : -5 * u), hipY];
-    p.stroke([hp0, knee, L.ank], (o.legs ? 8.4 : 7.6) * u, L.near ? nearCol : farCol);
+    p.stroke([hp0, knee, L.ank], 8.6 * u, L.near ? nearCol : farCol);
     const c = Math.cos(L.pitch), s = Math.sin(L.pitch);
     footStroke(p, [L.ank[0] - 3 * u * c, L.ank[1] - 3 * u * s], [L.ank[0] + 13 * u * c, L.ank[1] + 13 * u * s + 0.5 * u],
       9 * u, L.near ? footCol : footCol === INK ? INK : shade(footCol, 0.82));
@@ -949,6 +955,10 @@ export const bodySide = (p: Pen, o: Outfit, opts: SideOpts) => {
   p.gradFill(tp, o.jacket, mul(o.jacket, SH_CLOTH), light);
   p.clip(tp, () => {
     if (o.belt) p.band([[tcx - 0.65 * T.a, chin - 0.05 * HH], [tcx + 0.75 * T.a, torsoBot - 0.1 * HH]], o.belt!, 5.5 * u, 1.8 * u);
+    if (o.plaid) for (let i = -2; i <= 2; i++) {
+      p.stroke([[tcx + (i + 0.5) * 0.6 * T.a, chin - 0.3 * HH], [tcx + (i + 0.5) * 0.6 * T.a, torsoBot + 0.1 * HH]], 3 * u, o.plaid);
+      p.stroke([[tcx - 1.4 * T.a, chin + (i + 2.6) * 0.26 * HH], [tcx + 1.4 * T.a, chin + (i + 2.6) * 0.26 * HH]], 3 * u, o.plaid);
+    }
     if (o.sash) p.band([[tcx - 1.3 * T.a, torsoBot - 0.32 * HH], [tcx + 1.3 * T.a, torsoBot - 0.32 * HH]], o.sash, 0.13 * HH, 1.8 * u);
     if (o.lorica) for (let i = 0; i < 5; i++) {
       const y0 = chin - 0.12 * HH + i * 0.15 * HH, c = i % 2 ? "#a9aeb6" : "#c3c7cd";
@@ -1006,7 +1016,7 @@ export const bodySide = (p: Pen, o: Outfit, opts: SideOpts) => {
   p.shadedFill(hp, skin, mul(skin, SH_SKIN), light, H.a);
   p.inkRing(hp, ow, thick);
   hatOn(p, o, hp, H, hx, hc, light, seed, 1, true);
-  if (o.beard) p.poly([[hx + 0.08 * W, hc + 0.12 * HH], [hx + 0.46 * W, hc + 0.3 * HH], [hx + 0.32 * W, hc + 0.6 * HH], [hx - 0.06 * W, hc + 0.46 * HH]], o.beard, 3 * u);
+  if (o.beard) p.poly([[hx - 0.02 * W, hc + 0.18 * HH], [hx + 0.16 * W, hc + 0.27 * HH], [hx + 0.44 * W, hc + 0.26 * HH], [hx + 0.38 * W, hc + 0.5 * HH], [hx + 0.14 * W, hc + 0.58 * HH], [hx - 0.08 * W, hc + 0.4 * HH]], o.beard, 3 * u);
   const brim = !!o.hat && o.hat !== "hair" && o.hat !== "bonnet" && o.hat !== "cap";
   faceSide(p, hx, hc, W, expr, lid, brim, skin, o.moustache, o.build === "stout");
   p.rot = null;
