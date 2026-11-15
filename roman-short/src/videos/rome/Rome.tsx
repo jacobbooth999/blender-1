@@ -52,7 +52,7 @@ const useKit = () => {
 };
 
 const Inner: React.FC<{ id: number; kit: Kit }> = ({ id, kit }) => {
-  const f = useCurrentFrame();
+  const f = useCurrentFrame() * STEP;
   const { camera, scene } = useThree();
   const world = useMemo(() => new World(kit), [kit]);
   const target = useMemo(() => new THREE.Vector3(), []);
@@ -108,8 +108,11 @@ const ShotView: React.FC<{ id: number; kit: Kit; alpha: number }> = ({ id, kit, 
   </AbsoluteFill>
 );
 
-export const RomeShort: React.FC = () => {
-  const f = useCurrentFrame();
+/** preview: render every STEP-th frame of the 30 fps timeline (composition RomePreview runs at 30 / STEP fps) */
+let STEP = 1;
+export const RomeShort: React.FC<{ step?: number }> = ({ step = 1 }) => {
+  STEP = step;
+  const f = useCurrentFrame() * STEP;
   const kit = useKit();
   if (!kit) return null;
   const flash = f >= FLASH_AT && f < FLASH_AT + 4 ? [1, 0.75, 0.45, 0.2][f - FLASH_AT] : 0;

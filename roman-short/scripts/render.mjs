@@ -8,7 +8,7 @@ const chromiumOptions = { gl: process.env.GL || "swangle" };
 const serveUrl = await bundle({ entryPoint: path.resolve("src/index.ts"), publicDir: path.resolve("public") });
 const post = {}; if (process.env.DPR) post.dpr = Number(process.env.DPR); if (process.env.FAST) post.fast = true;
 const inputProps = { post };
-const composition = await selectComposition({ serveUrl, id: "RomeShort", browserExecutable, chromiumOptions, inputProps });
+const composition = await selectComposition({ serveUrl, id: process.env.COMP || "RomeShort", browserExecutable, chromiumOptions, inputProps });
 const frameRange = range ? range.split("-").map(Number) : null;
 const t0 = Date.now();
 let last = 0;
