@@ -162,8 +162,8 @@ export const GRADE_DAY2: GradeParams = {
 };
 export const GRADE_GOLDEN2: GradeParams = {
   ky: [0, 0.09, 0.245, 0.54, 0.8, 0.93, 1],
-  sat: [1.0, 1.12, 1.15],
-  tintS: [0.02, 0.002], tintM: [0, 0], tintH: [-0.012, 0.006],
+  sat: [0.95, 1.08, 1.12],
+  tintS: [0.008, 0.006], tintM: [0, 0], tintH: [-0.012, 0.006],
   vig: [0.2, 0.4],
 };
 export const GRADES: Record<"day" | "golden", GradeParams> = { day: GRADE_DAY2, golden: GRADE_GOLDEN2 };

@@ -29,10 +29,14 @@ F = I.m2f
 # ============================================================ music
 Q = 0.5; BAR = 4 * Q
 T0 = ws(1, "shovel")  # the march starts on the shovel stab
-mus = {k: np.zeros((2, N)) for k in ["melody", "brass", "bass", "drums", "perc", "hits"]}  # "hits" = stingers, ducked only half
+mus = {k: np.zeros((2, N)) for k in ["melody", "brass", "bass", "drums", "perc"]}
+# stingers go to their own buffers "hit:<name>": each is levelled against the voice on its own and ducked only half
+HIT_LU = {"shovel": -6.0, "days": -5.0, "sad": -7.0, "peak": -6.0, "gate": -4.0}  # momentary max vs the voice's typical momentary
+SG = 1.0  # per-section gain (balances light and heavy orchestrations against the voice)
 def put(stem, x, t, p=0.0, g=1.0):
     if t < 0 or t >= DUR: return
-    place(mus[stem], pan(x, p) if np.ndim(x) == 1 else x, t, g)
+    if stem not in mus: mus[stem] = np.zeros((2, N))
+    place(mus[stem], pan(x, p) if np.ndim(x) == 1 else x, t, g * (1.0 if stem.startswith("hit:") else SG))
 
 # theme: (bar, beat, quarters, midi) - our own tune
 THEME = [(0, 0, 1, 77), (0, 1, 1, 81), (0, 2, 1, 84), (0, 3, 1, 81),
@@ -88,20 +92,21 @@ def brushes(t0, bars, vel=0.35):
     for b in range(bars):
         for beat in (1, 3): put("drums", I.brush(vel, rr(), dur=0.3), t0 + b * BAR + beat * Q, 0.1)
 
-def stab(t, chord="F", vel=0.9, cym=True, tim=True):
-    root, fifth, triad = CH[chord]
-    for m in triad + [m + 12 for m in triad]: put("hits", I.brass(F(m), 0.5, vel * 0.5, rr(), kind="stab"), t, 0.0)
-    put("hits", I.brass(F(root), 0.6, vel, rr(), kind="tuba"), t)
-    if cym: put("hits", I.cymbal(vel * 0.7, rr(), dur=2.2), t, 0.3)
-    if tim: put("hits", I.timpani(F(root), vel, rr(), dur=1.6), t, -0.2)
+def stab(t, chord="F", vel=0.9, cym=True, tim=True, name="stab"):
+    root, fifth, triad = CH[chord]; h = "hit:" + name
+    for m in triad + [m + 12 for m in triad]: put(h, I.brass(F(m), 0.5, vel * 0.5, rr(), kind="stab"), t, 0.0)
+    put(h, I.brass(F(root), 0.6, vel, rr(), kind="tuba"), t)
+    if cym: put(h, I.cymbal(vel * 0.7, rr(), dur=2.2), t, 0.3)
+    if tim: put(h, I.timpani(F(root), vel, rr(), dur=1.6), t, -0.2)
 
 def bars_between(t0, t1): return max(0, int((t1 - t0) // BAR))
 def grid(t): return T0 + np.ceil((t - T0) / BAR - 1e-6) * BAR
 
 # hook: snare roll into the stab on "shovel"
+SG = 1.4
 for (t, v) in I.snare_roll(0.4, T0 - 0.02, 0.1, 0.55, rr(), rate=22): put("drums", I.snare(v, rr(), dur=0.2, buzz=True), t, 0.1)
 put("perc", I.timpani(F(36), 0.5, rr(), dur=3.0), 0.4)
-stab(T0, "F", 1.0)
+stab(T0, "F", 1.0, name="shovel")
 # A: march (Rome .. army)
 tA1 = ws(15) - 0.3
 t = T0 + BAR
@@ -110,12 +115,14 @@ k = 0
 while k < nA:
     n = min(8, nA - k)
     tb = t + k * BAR
+    SG = 1.0 if k < 8 else 0.8  # second chorus is busier (snare + horns): keep it level with the first
     oompah(tb, chords_of(phrase_bars(n)), vel=0.55 if k < 8 else 0.62)
     snare_bars(tb, n, 0.35 if k < 8 else 0.42, busy=k >= 8)
     theme(tb, n, "fife", 0.55 if k < 8 else 0.6)
     if k >= 8: theme(tb, n, "horn", 0.35)
     k += 8
 # B: the Rhine - tension in D minor, rest on "There are no boats", hammer build, stab on "days"
+SG = 1.2
 tB = ws(15) - 0.3; tNB = ws(16) - 0.1; tBu = ws(17); tDays = ws(18, "days")
 for i in range(bars_between(tB, tNB) + 1):
     tb = tB + i * BAR
@@ -131,20 +138,21 @@ for j in range(nb):
     put("drums", I.snare(v, rr(), dur=0.2), tt, 0.1)
     put("bass", I.brass(F([38, 41, 43, 45][j % 4]), Q * 0.45, 0.35 + 0.3 * j / nb, rr(), kind="tuba"), tt)
     if j % 2 == 0: put("perc", I.timpani(F(38), 0.3 + 0.4 * j / nb, rr(), dur=0.7), tt)
-stab(tDays, "F", 1.0)
+stab(tDays, "F", 1.0, name="days")
 # deadpan: silence on "Luckily", then a sad tuba fall after "torn down"
-tSad = ws(20, "torn") + 0.6
-for i, m in enumerate([46, 45, 44, 43]): put("hits", I.brass(F(m), 0.45 if i < 3 else 1.2, 0.7, rr(), kind="tuba", fall=(-1.0 if i == 3 else 0), rel=0.2), tSad + i * 0.5)
+tSad = se(20) + 0.02  # right after "torn down": wah, wah, wah, wahhh (Bb A Ab G) in the pause, tail under the next line
+for i, m in enumerate([46, 45, 44, 43]): put("hit:sad", I.brass(F(m), 0.26 if i < 3 else 1.0, 0.7, rr(), kind="tuba", fall=(-1.0 if i == 3 else 0), rel=0.2), tSad + i * 0.32)
 # Caesar walks back across the bridge: sneaky staccato pizzicato tiptoe in D minor (stops before "torn")
 tTip = ws(20, "caesar") - 0.1; tTorn = ws(20, "torn")
 for j, m in enumerate([50, 53, 57, 53, 50, 53, 57, 60, 58, 57, 55, 52]):
     tt = tTip + j * Q
     if tt > tTorn - 0.35: break
-    put("melody", I.pluck(F(m), 0.38, rr(), dur=0.3, bright=0.4), tt, -0.15)
-    if j % 2 == 0: put("bass", I.pluck(F(m - 12), 0.4, rr(), dur=0.35, bright=0.2), tt, 0.1)
+    put("melody", I.pluck(F(m), 0.38, rr(), dur=0.3, bright=0.4), tt, -0.15, 2.5)
+    if j % 2 == 0: put("bass", I.pluck(F(m - 12), 0.4, rr(), dur=0.35, bright=0.2), tt, 0.1, 2.5)
 # C: delivery - bouncy pluck + glock, brushes
-tC = grid(ws(21) + 0.4); tC1 = ws(27) - 0.4
-nC = bars_between(tC, tC1)
+tC = grid(ws(21) + 0.4); tD = grid(ws(27) - 0.2)
+nC = int(round((tD - tC) / BAR))  # runs straight into section D (same bar grid)
+SG = 1.4
 for k in range(0, nC, 8):
     n = min(8, nC - k); tb = tC + k * BAR
     for i, c in enumerate(chords_of(phrase_bars(n))):
@@ -153,17 +161,20 @@ for k in range(0, nC, 8):
     brushes(tb, n)
     theme(tb, n, "glock", 0.42)
 # D: Romanisation -> peak: theme returns warm, tutti at the peak, shimmer on the golden milestone
-tD = grid(ws(27) - 0.2); tPeak = ws(31) - 0.2; tE = ws(33) - 0.3
+SG = 1.0
+tPeak = ws(31, "peak"); tE = ws(33) - 0.3  # "At its PEAK" -> stab + tutti
 nD = bars_between(tD, tPeak)
 for k in range(0, nD, 8):
     n = min(8, nD - k); tb = tD + k * BAR
     oompah(tb, chords_of(phrase_bars(n)), 0.45, pah=False, kind="soft"); theme(tb, n, "horn", 0.4); brushes(tb, n, 0.25)
-stab(tPeak, "F", 0.9)
+stab(tPeak, "F", 0.9, name="peak")
 nP = bars_between(tPeak, tE)
+SG = 0.8  # tutti
 oompah(tPeak, chords_of(phrase_bars(nP)), 0.65); snare_bars(tPeak, nP, 0.45, busy=True); theme(tPeak, nP, "fife", 0.62); theme(tPeak, nP, "horn", 0.45)
 tg = ws(32, "golden")
 for i, m in enumerate([77, 81, 84, 89, 93, 96]): put("perc", I.glock(F(m), 0.45, rr(), dur=1.6), tg + i * 0.09, 0.3)
 put("perc", I.triangle(0.4, rr(), dur=2.0), tg + 0.3, 0.4)
+SG = 1.3
 # E: the gate - theme softly, then the Goths: minor ostinato, final stinger on "gate"
 tGo = ws(34, "right") - 0.1; tGate = ws(34, "gate")
 nE = bars_between(tE, tGo)
@@ -173,14 +184,15 @@ for j in range(int((tGate - tGo) / (Q / 2))):
     put("bass", I.brass(F([38, 38, 45, 44][j % 4]), Q * 0.4, 0.45 + 0.25 * j / 20, rr(), kind="tuba"), tt)
     if j % 4 == 0: put("perc", I.timpani(F(38), 0.5, rr(), dur=1.0), tt)
 tail = DUR - tGate - 0.05
-for m in [38, 50, 53, 56]: put("hits", I.brass(F(m), min(1.6, tail - 0.3), 0.8, rr(), kind="horn" if m > 40 else "tuba", rel=0.3), tGate, 0.0)
-put("hits", fades(I.timpani(F(38), 1.0, rr(), dur=tail), 0.001, 0.4), tGate); put("hits", fades(I.cymbal(0.7, rr(), dur=tail), 0.0005, 0.6), tGate, 0.2)
+for m in [38, 50, 53, 56]: put("hit:gate", I.brass(F(m), min(1.6, tail - 0.3), 0.8, rr(), kind="horn" if m > 40 else "tuba", rel=0.3), tGate, 0.0)
+put("hit:gate", fades(I.timpani(F(38), 1.0, rr(), dur=tail), 0.001, 0.4), tGate); put("hit:gate", fades(I.cymbal(0.7, rr(), dur=tail), 0.0005, 0.6), tGate, 0.2)
 
-hits = mus.pop("hits")
+hit_names = [k for k in mus if k.startswith("hit:")]
+hit_bufs = {k: mus.pop(k) for k in hit_names}
 music = sum(mus.values())
 ir = make_ir(1.4, 7)
 music = 0.85 * music + 0.25 * convolve_st(music, ir)[:, :N]
-hits = 0.85 * hits + 0.25 * convolve_st(hits, ir)[:, :N]
+hit_bufs = {k: 0.85 * h + 0.25 * convolve_st(h, ir)[:, :N] for k, h in hit_bufs.items()}
 
 # ============================================================ SFX
 events = []  # (t, x, naive LU relative to the voice, pan, desc)
@@ -223,7 +235,7 @@ def S(si, w="", n=1): return ws(si, w, n)
 # hook
 ev(0.25, shing(rr()), -6, 0.2, "gladius shing")
 tS = S(1, "shovel")
-ev(tS + 0.05, thunk(rr()), -2, 0, "shovel bites")
+ev(tS + 0.05, thunk(rr()), -5, 0, "shovel bites")
 for k in range(4): ev(tS + 0.6 + k / 1.3, scrape(rr()), -10, -0.1, "dig scrape")
 bed(0, ws(2) - 0.1, G.breeze(ws(2), rr(), 0.6), -26, "field breeze")
 # Rome / ridge
@@ -245,7 +257,7 @@ ev(S(9, "pile") - 0.05, thunk(rr()), -9, 0, "earth thump")
 for k in range(6): ev(S(9, "build") + k * 0.28, G.hammer_hit(rr(), 0.6), -14, -0.5 + 0.2 * k, "stakes hammered")
 bed(S(10) - 0.3, S(11), mixa(G.crickets(2.5, rr()), crackle(2.5, rr()) * 0.5), -22, "camp night: crickets + fire")
 # road + layers
-for k in range(int((S(12, "layer") - S(11)) * 1.6)): ev(S(11) + k / 1.6, G.hammer_hit(rr(), 0.4), -16, 0.2, "paving taps")
+for k in range(int((S(12, "layer") - S(11)) * 1.6)): ev(S(11) + k / 1.6, G.hammer_hit(rr(), 0.4), -10, 0.2, "paving taps")
 ev(S(12, "stone") - 0.03, G.rattle(0.6, rr(), density=60, heavy=True), -6, 0, "stone dump")
 ev(S(12, "gravel") - 0.03, G.rattle(0.7, rr(), density=180), -8, 0, "gravel pour")
 ev(S(12, "sand") - 0.03, hiss(rr(), 0.6), -12, 0, "sand hiss")
@@ -268,7 +280,7 @@ for k in range(3): ev(S(19, "impressed") - 0.05 + k * 0.15, G.whoa(rr()), -11, -
 ev(S(19, "impressed") + 0.4, G.applause(1.4, rr(), people=12), -14, 0, "applause")
 tStep = S(20, "caesar") - 0.1 - 2 * Q  # footsteps in time with the tiptoe pizzicato
 while tStep < S(20, "torn") - 0.35:
-    if tStep >= S(20): ev(tStep, G.stroll_step(rr(), 0.6), -16, 0, "steps on deck")
+    if tStep >= S(20): ev(tStep, G.stroll_step(rr(), 0.6), -13, 0, "steps on deck")
     tStep += Q
 tT = S(20, "torn")
 ev(tT + 0.05, G.timber_tear(rr(), 0.9), -6, 0, "timber tears"); ev(tT + 0.3, G.wood_crack(rr()), -7, 0.2, "crack")
@@ -302,7 +314,7 @@ bed(S(33) - 0.3, DUR, mixa(G.bird_chirps(9, rr(), 0.4), G.breeze(9, rr(), 0.5)),
 k = 0
 tG0 = S(34, "right")
 while tG0 + k * 0.5 < S(34, "gate") + 0.2: ev(tG0 + k * 0.5, G.column_stomp(rr(), 0.4 + 0.5 * k / 12)[0], -12 + 4 * min(1, k / 10), 0, "Goth march"); k += 1
-ev(S(34, "gate") + 0.1, G.whoa(rr()), -6, 0.2, "guard gasps")
+ev(se(34) + 0.12, G.whoa(rr()), -6, 0.2, "guard gasps")  # after the word, so "gate" stays clear
 # cut whooshes
 for t in [S(2) - 0.15, S(7, "mules") - 0.3, S(9, "pile") - 0.15, S(13) - 0.15, S(15, "scare") - 0.15, S(20, "torn") - 0.3, S(25) - 0.15, S(31) - 0.15, S(34, "right") - 0.15]:
     ev(t - 0.2, G.whoosh(0.6, rr(), peak=0.35), -14, 0.0, "cut whoosh")
@@ -313,19 +325,20 @@ voice = st(voice)[:, :N]; voice = np.pad(voice, ((0, 0), (0, N - voice.shape[1])
 V_INT = integrated(voice)
 V_MOM = np.percentile([momentary_max(voice[:, i:i + ns(0.4)]) for i in range(0, N - ns(0.4), ns(0.4)) if np.abs(voice[:, i:i + ns(0.4)]).max() > 0.01], 50)
 SFX_DB, MUSIC_DB = -6.0, 3.0
+SFX_REF = 4.0  # event reference re-based (+4 dB) so accents still read over the louder, properly levelled music; then -6 dB standard
 sfx = np.zeros((2, N)); cues = []
 for (t, x, lu, p, desc) in sorted(events, key=lambda e: e[0]):
     y = pan(x, p) if np.ndim(x) == 1 else st(x)
     m = momentary_max(y) if y.shape[1] >= ns(0.4) else momentary_max(np.pad(y, ((0, 0), (0, ns(0.4) - y.shape[1]))))
-    g = 10 ** ((V_MOM + lu + SFX_DB - m) / 20)
-    place(sfx, fades(y, 0.002, 0.02) if y.ndim == 1 else y, t, g); cues.append(f"| {t:6.2f} | {desc} | {lu + SFX_DB:+.0f} LU |")
+    g = 10 ** ((V_MOM + SFX_REF + lu + SFX_DB - m) / 20)
+    place(sfx, fades(y, 0.002, 0.02) if y.ndim == 1 else y, t, g); cues.append(f"| {t:6.2f} | {desc} | {lu + SFX_REF + SFX_DB:+.0f} LU |")
 for (t0, x, lu, desc) in beds:
     y = pan(x, 0) if np.ndim(x) == 1 else st(x)
     m = integrated(y)
     if not np.isfinite(m): continue
-    g = 10 ** ((V_INT + lu - m) / 20)
+    g = 10 ** ((V_INT + 2.0 + lu - m) / 20)
     y = y * g; n = y.shape[1]; e = np.minimum(1, np.minimum(np.arange(n) / ns(0.3), (n - np.arange(n)) / ns(0.3)))
-    place(sfx, y * e, t0); cues.append(f"| {t0:6.2f} | bed: {desc} | {lu:+.0f} LU |")
+    place(sfx, y * e, t0); cues.append(f"| {t0:6.2f} | bed: {desc} | {lu + 2:+.0f} LU |")
 sfx = 0.9 * sfx + 0.15 * convolve_st(sfx, make_ir(0.9, 3))[:, :N]
 # ---- music: ducked under speech (mask from the word times, gaps < 0.4 s bridged so it does not pump between words),
 # 60 ms look-ahead attack, ~350 ms release. Reference level: -15 LU under the voice during speech; +3 dB standard -> -12 LU.
@@ -345,8 +358,13 @@ duck = np.interp(np.arange(N), np.arange(0, N, 8)[: len(env_d)], env_d)
 duck = uniform_filter1d(duck, ns(0.03))
 DUCK_DB = 7.0
 music *= 10 ** (-DUCK_DB * duck / 20)
-hits *= 10 ** (-0.5 * DUCK_DB * duck / 20)
-music = music + hits
+hits = np.zeros((2, N)); hit_cues = []
+for k, h in hit_bufs.items():
+    h = h * 10 ** (-0.5 * DUCK_DB * duck / 20)
+    nz = np.flatnonzero(np.abs(h).max(0) > 1e-6); a0 = nz[0]
+    m = momentary_max(h[:, a0:a0 + ns(1.5)])
+    h *= 10 ** ((V_MOM + HIT_LU[k[4:]] - m) / 20); hits += h
+    hit_cues.append(f"| {a0 / SR:6.2f} | stinger: {k[4:]} | {HIT_LU[k[4:]]:+.0f} LU |")
 def masked_lu(x, mask):
     z = (kfilt(x) ** 2).sum(0)
     return -0.691 + 10 * np.log10(z[mask].mean() + 1e-30)
@@ -362,6 +380,7 @@ spk = np.zeros(N, bool)
 for w in W: spk[ns(w["start"]):ns(w["end"])] = True
 V_SP = masked_lu(voice, spk)
 music *= 10 ** ((V_SP - 15 + MUSIC_DB - median_st(music, spk)) / 20)
+music = music + hits
 
 # ---- master: normalise to -15 LUFS, true-peak limiter (4x oversampled detection, 5 ms look-ahead, 80 ms release), iterate
 def limiter_gain(x, ceil_db=-1.3, la=0.005, rel=0.08):
@@ -394,6 +413,8 @@ for it in range(4):
     if abs(li + 15.0) < 0.05 and tp <= -1.0: break
     gain *= 10 ** ((-15.0 - li) / 20)
 assert np.isfinite(mix).all() and np.abs(mix).max() < 1.0
+_gr = np.flatnonzero(gl[ns(0.01):-ns(0.6)] < 10 ** (-1.5 / 20)) + ns(0.01)
+if _gr.size: print("limiter > 1.5 dB GR at (s):", sorted(set(np.round(_gr / SR, 1))), flush=True)
 voice_g, music_g, sfx_g = voice * gain * gl, music * gain * gl, sfx * gain * gl  # stems sum exactly to the mix
 write_wav(os.path.join(HERE, "mix.wav"), mix); write_wav(os.path.join(HERE, "stem_voice.wav"), voice_g)
 write_wav(os.path.join(HERE, "stem_music.wav"), music_g); write_wav(os.path.join(HERE, "stem_sfx.wav"), sfx_g)
@@ -403,6 +424,6 @@ rep = [f"# Sound cues - The Empire Built With Shovels", "", f"Duration {DUR:.3f}
        "Melody/harmony: theme in F, 8-bar phrase F Bb Gm F | F Gm6 C7 F; shorter sections use a cut-down phrase that still ends on C7 -> F.",
        "", "Music: original comic Roman march (F major, 120 bpm): snare roll -> stab on 'shovel' | march (fife + tuba oom-pah) | Rhine tension in D minor,",
        "rest on 'There are no boats', hammer build, stab on 'days' | silence for the deadpan, tiptoe pizzicato as Caesar walks back, sad tuba after 'torn down' | bouncy pluck + glock delivery |",
-       "warm horns -> tutti at the peak, glock shimmer on 'golden' | Goth ostinato -> stinger on 'gate'.", "", "| t (s) | cue | level |", "|---|---|---|"] + cues
+       "warm horns -> tutti at the peak, glock shimmer on 'golden' | Goth ostinato -> stinger on 'gate'.", "", "| t (s) | cue | level |", "|---|---|---|"] + sorted(cues + hit_cues, key=lambda c: float(c.split("|")[1]))
 open(os.path.join(HERE, "cues.md"), "w").write("\n".join(rep))
 print("\n".join(rep[:5]))

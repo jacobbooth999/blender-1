@@ -125,7 +125,7 @@ const cypress = (b: Batch, x: number, z: number, h: number) => {
   b.add(new THREE.CylinderGeometry(0.12, 0.18, h * 0.15, 6), lam("barkHD", () => ({ color: "#8f5d3b" })), M4(x, h * 0.075, z));
   b.add(new THREE.SphereGeometry(1, 12, 10), lam("cypress", () => ({ color: "#3f7a3a" })), M4(x, h * 0.55, z, 0, [h * 0.12, h * 0.45, h * 0.12]));
 };
-const hillM = [0, 1, 2].map((i) => lam("hill" + i, () => ({ color: ["#7fb35a", "#74aa52", "#8abd62"][i] })));
+const hillM = [0, 1, 2].map((i) => lam("hill" + i, () => ({ color: ["#6a9a4a", "#628f45", "#72a152"][i] })));
 const hillGeo = new THREE.SphereGeometry(1, 36, 16, 0, Math.PI * 2, 0, Math.PI / 2);
 const hill = (b: Batch, x: number, z: number, rx: number, h: number, rz: number, i: number) => b.add(hillGeo, hillM[i % 3], M4(x, 0, z, 0, [rx, h, rz]));
 
@@ -149,7 +149,7 @@ const R = rng;
 export const buildRomanWorld = (root: THREE.Object3D, rays: Ray[]) => {
   setSight(rays);
   const b = new Batch(), r = R(7);
-  const grassM = lam("grassRoman", () => ({ map: grassHD(), color: "#d2d8b4" }));
+  const grassM = lam("grassRoman", () => ({ map: grassHD(), color: "#ccd0b8" }));
   // ---- ground: everything except the Rhine strip ----
   const [rx0, rx1, rz0, rz1] = [RHINE[0] - 2400, RHINE[0] + 800, RHINE[2] - RIVER_W - 2, RHINE[2] + RIVER_W + 2];
   const BIG = 7000;

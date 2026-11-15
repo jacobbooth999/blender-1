@@ -497,16 +497,16 @@ export const roofHD = (col: string, slate = false) => ctex("roofHD" + col, 1024,
  *  Ours had the right hue (#6dad37) but only fine uniform noise (autocorrelation 6 px). */
 export const grassHD = () => ctex("grassHD", 1024, 1024, (g, r) => {
   const S = 1024;
-  g.fillStyle = "#73b23d"; g.fillRect(0, 0, S, S);
+  g.fillStyle = "#74ad48"; g.fillRect(0, 0, S, S);
   for (let i = 0; i < 16; i++) {
     const x = U(r, 0, S), y = U(r, 0, S), rad = U(r, 120, 320), light = r() > 0.5;
-    wrap2(S, S, x, y, rad * 1.4, (xx, yy) => blotch(g, xx, yy, rad, 1.4, light ? "140,198,80" : "92,154,48", 0.35));
+    wrap2(S, S, x, y, rad * 1.4, (xx, yy) => blotch(g, xx, yy, rad, 1.4, light ? "136,188,84" : "90,146,54", 0.35));
   }
   g.lineWidth = 2; g.lineCap = "round"; g.lineJoin = "round";
   for (let i = 0; i < 1400; i++) { // tufts ~90 per m2
     const x = U(r, 0, S), y = U(r, 0, S), h = U(r, 7, 16), lean = U(r, -3, 3), light = r() < 0.4;
     wrap2(S, S, x, y, 20, (xx, yy) => {
-      g.strokeStyle = light ? "rgba(165,218,98,0.35)" : "rgba(78,138,38,0.45)";
+      g.strokeStyle = light ? "rgba(160,206,104,0.35)" : "rgba(76,128,44,0.45)";
       g.beginPath(); g.moveTo(xx - 3 + lean, yy - h); g.lineTo(xx, yy); g.lineTo(xx + 3 + lean, yy - h * 0.8); g.stroke();
     });
   }

@@ -317,7 +317,7 @@ S.mule = (t, cam, out) => {
   const expr = ex(t, "smile", [[tA, "smile_closed"], [tK, "nervous"], [tM, "smile_closed"]]);
   put(out, cam, t, { i: 61, o, x: MULE_X, z, mode: "march", phase: ph(t, cad), dir: [0, 1], expr, prop: lvl ? ["furca", lvl] : null, tilt: heavy ? 4 * Math.sin(t * 4) : 0, lift: 35 });
   for (const tt of [tA, tF, tP, tSh]) pop(out, t, tt - 0.05, MULE_X + 0.3, 1.9, z + 0.1, 0.9);
-  if (heavy && !side) { const u = (t * 1.3) % 1; fxAt(out, "sweat", 120, 160, fxSweat, MULE_X - 0.42, 2.0 - 0.3 * u, z + 0.05, 0.12, 0.16); }
+  if (heavy && !side) { const u = (t * 1.3) % 1; fxAt(out, "sweat", 120, 160, fxSweat, MULE_X - 0.3, 1.98 - 0.22 * u, z + 0.12, 0.08, 0.11); }
   if (side) {
     // the mule walks beside him (far side) and gives the camera a look
     const mp = ph(t, cad, 0.25);
@@ -405,7 +405,7 @@ S.army = (t, cam, out) => {
 };
 
 S.caesar = (t, cam, out) => {
-  put(out, cam, t, { i: 300, o: CAESAR, x: RHINE[0] - 3, z: RHINE[2] - 42, expr: ex(t, "stern", [[ws(15, "cross"), "smile"]]), look: 0 });
+  put(out, cam, t, { i: 300, o: CAESAR, x: RHINE[0] - 3, z: RHINE[2] - 42, expr: ex(t, "stern", [[ws(15, "cross"), "smile"]]), look: 0, prop: "arms" });
   put(out, cam, t, { i: 301, o: legionary(1), x: RHINE[0] - 6.2, z: RHINE[2] - 39.6, prop: "banner", expr: "neutral" });
   put(out, cam, t, { i: 302, o: legionary(3), x: RHINE[0] + 0.4, z: RHINE[2] - 39.2, prop: "spear", expr: "stern" });
   tribesOnFarBank(t, cam, out, "laugh");
@@ -471,7 +471,7 @@ S.torn = (t, cam, out) => {
 S.stall = (t, cam, out) => {
   const tP = ws(22, "pizza"), has = t >= tP - LEAD;
   put(out, cam, t, { i: 500, o: SHOPKEEPER, x: STALL[0], z: STALL[2] + 0.1, expr: has ? "grin" : "smile", prop: has ? "pizza" : "arms" });
-  if (has) { steam(out, t, STALL[0], 1.95, STALL[2] - 0.15, 0.55); pop(out, t, tP - 0.05, STALL[0], 1.6, STALL[2] - 0.3, 1.0); }
+  if (has) { steam(out, t, STALL[0], 1.32, STALL[2] - 0.15, 0.55); pop(out, t, tP - 0.05, STALL[0], 1.1, STALL[2] - 0.3, 1.0); }
   put(out, cam, t, { i: 501, o: CIT[0], x: STALL[0] - 2.4, z: STALL[2] - 2.2, expr: "smile", look: 1 });
   put(out, cam, t, { i: 502, o: CIT[3], x: STALL[0] + 2.6, z: STALL[2] - 2.8, expr: has ? "shock" : "neutral", look: -1 });
 };
@@ -479,7 +479,7 @@ S.branch = (t, cam, out) => {
   const k = branchUp(t), tB = ws(23, "branch");
   pop(out, t, tB - 0.15, BRANCH[0], 1.4, BRANCH[2], 4.2);
   if (k > 0.5) put(out, cam, t, { i: 510, o: { ...SHOPKEEPER, jacket: "#5a8fc2", pants: "#5a8fc2" }, x: BRANCH[0], z: BRANCH[2] + 0.1, expr: "grin", prop: "pizza" });
-  if (k > 0.5) steam(out, t, BRANCH[0], 1.95, BRANCH[2] - 0.15, 0.55);
+  if (k > 0.5) steam(out, t, BRANCH[0], 1.32, BRANCH[2] - 0.15, 0.55);
   for (let j = 0; j < 6; j++) {
     const x = BRANCH[0] - 4 + j * 1.6, z = BRANCH[2] - 3.5 - (j % 2) * 1.2;
     put(out, cam, t, { i: 511 + j, o: TRIBE[j % 5], x, z, expr: t >= tB - LEAD ? (j % 2 ? "shock" : "grin") : "neutral", prop: t >= tB + 0.4 && j % 3 === 0 ? "cheer" : null });
@@ -488,7 +488,7 @@ S.branch = (t, cam, out) => {
 S.runner = (t, cam, out) => {
   const z = runnerZ(t);
   put(out, cam, t, { i: 520, o: legionary(1), x: 0, z, mode: "march", phase: ph(t, 1.9), dir: [0, -1], expr: "grin", prop: "pizza", run: true, lift: 90, stride: 1.7, tilt: 6 });
-  steam(out, t, 0.15, 1.95, z + 0.4, 0.6);
+  steam(out, t, 0.15, 1.35, z + 0.4, 0.55);
   puff(out, t, Math.floor(t / 0.35) * 0.35, 0.5, 0, 0.25, z + 0.8, 0.8);
   fxAt(out, `speed${q((t * 2.5) % 1, 16)}`, 400, 200, (p) => fxSpeed(p, q((t * 2.5) % 1, 16)), -0.9, 1.3, z + 0.9, 1.4, 0.7, { soft: true });
   // travellers stepping aside
