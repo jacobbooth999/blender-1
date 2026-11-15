@@ -125,7 +125,7 @@ const cypress = (b: Batch, x: number, z: number, h: number) => {
   b.add(new THREE.CylinderGeometry(0.12, 0.18, h * 0.15, 6), lam("barkHD", () => ({ color: "#8f5d3b" })), M4(x, h * 0.075, z));
   b.add(new THREE.SphereGeometry(1, 12, 10), lam("cypress", () => ({ color: "#3f7a3a" })), M4(x, h * 0.55, z, 0, [h * 0.12, h * 0.45, h * 0.12]));
 };
-const hillM = [0, 1, 2].map((i) => lam("hill" + i, () => ({ color: ["#6a9a4a", "#628f45", "#72a152"][i] })));
+const hillM = [0, 1, 2].map((i) => lam("hill" + i, () => ({ color: ["#64904a", "#5c8744", "#6c9852"][i] })));
 const hillGeo = new THREE.SphereGeometry(1, 36, 16, 0, Math.PI * 2, 0, Math.PI / 2);
 const hill = (b: Batch, x: number, z: number, rx: number, h: number, rz: number, i: number) => b.add(hillGeo, hillM[i % 3], M4(x, 0, z, 0, [rx, h, rz]));
 
@@ -149,7 +149,7 @@ const R = rng;
 export const buildRomanWorld = (root: THREE.Object3D, rays: Ray[]) => {
   setSight(rays);
   const b = new Batch(), r = R(7);
-  const grassM = lam("grassRoman", () => ({ map: grassHD(), color: "#ccd0b8" }));
+  const grassM = lam("grassRoman", () => ({ map: grassHD(), color: "#cfd0bc" }));
   // ---- ground: everything except the Rhine strip ----
   const [rx0, rx1, rz0, rz1] = [RHINE[0] - 2400, RHINE[0] + 800, RHINE[2] - RIVER_W - 2, RHINE[2] + RIVER_W + 2];
   const BIG = 7000;
@@ -246,6 +246,27 @@ export const buildRomanWorld = (root: THREE.Object3D, rays: Ray[]) => {
     const x = RHINE[0] + (r() - 0.5) * 900, z = RHINE[2] - RIVER_W - 30 - r() * 150;
     if (Math.abs(x - RHINE[0]) < 40) continue;
     prop(b, {}, trees[i % trees.length], x, 0, z, 8 + r() * 6, r() * 6);
+  }
+
+  // patchwork of fields and meadows for the aerials (flat quads lifted 0.2 m so they don't z-fight at 1-2 km; kept
+  // clear of every set, road and the Rhine so nothing stands on them)
+  const fieldMs = [
+    lam("field", () => ({ map: flatTex("field", "#d8b85a", ["#c9a64a", "#e8cc72"], 1400, 3) })),
+    lam("meadowDark", () => ({ map: flatTex("meadowDark", "#5d8a45", ["#527d3c", "#6a9850"], 900, 5) })),
+    lam("meadowOlive", () => ({ map: flatTex("meadowOlive", "#93a456", ["#86974c", "#a3b264"], 900, 5) })),
+    lam("plough", () => ({ map: flatTex("plough", "#a88a62", ["#977a54", "#b89a70"], 900, 5) })),
+  ];
+  const nearRoad = (x: number, z: number, pad: number) => ROADS.some((d) => {
+    const sx = Math.sin(d), sz = -Math.cos(d);
+    return x * sx + z * sz > 0 && Math.abs(x * sz - z * sx) < pad;
+  });
+  for (let i = 0; i < 220; i++) {
+    const cx = (r() - 0.5) * 3600, cz = (r() - 0.5) * 3600, hw = 25 + r() * 45, hd = 20 + r() * 40, pad = Math.hypot(hw, hd) + 12;
+    if (Math.abs(cx) < 200 + hw + 20 && cz > GATE_Z - 30 - hd && cz < 200 + hd) continue;          // Rome
+    if (nearRoad(cx, cz, pad) || Math.abs(cx) < pad || Math.abs(cx - RD2_X) < pad || Math.abs(cx - MULE_X) < pad) continue;
+    if (Math.abs(cz - RHINE[2]) < RIVER_W + 40 + hd || Math.abs(cx - CAMP[0]) < 70 + hw && Math.abs(cz - CAMP[2]) < 70 + hd) continue;
+    if (Math.hypot(cx - VILLAGE[0], cz - VILLAGE[2]) < 90 + pad || Math.hypot(cx - RIDGE[0], cz - RIDGE[2]) < 60 + pad || Math.hypot(cx - HOOK[0], cz - HOOK[2]) < 30 + pad) continue;
+    b.add(ground(cx - hw, cx + hw, cz - hd, cz + hd, 0.2, 6), fieldMs[i % 4]);
   }
 
   // ---- marching-camp field: track to the camp ----

@@ -231,8 +231,8 @@ const CAMS: Record<string, Key[]> = {
     { f: wf(20, "torn") - 8, cut: true, s: (f) => dolly(add(R, [-7.2, 2.6, -51.5]), add(R, [-1.9, 1.6, -8]), pushK(f, wf(20, "torn") - 8, 0.002), { fov: 42 }) },
   ],
   stall: [
-    { f: SHOTS[16].a, s: (f) => dolly(add(STALL, [5.0, 1.85, -7.4]), add(STALL, [1.0, 1.45, -1.2]), pushK(f, SHOTS[16].a, 0.002), { fov: 40 }) },
-    { f: wf(22, "pizza") - 10, dur: 22, s: (f) => zoom(add(STALL, [5.0, 1.85, -7.4]), add(STALL, [1.1, 1.47, -1.3]), 31, pushK(f, wf(22, "pizza") - 10, 0.0025), { roll: 0.04 }) },
+    { f: SHOTS[16].a, s: (f) => dolly(add(STALL, [5.0, 1.85, -7.4]), add(STALL, [0.9, 1.5, -1.0]), pushK(f, SHOTS[16].a, 0.002), { fov: 33 }) },
+    { f: wf(22, "pizza") - 10, dur: 22, s: (f) => zoom(add(STALL, [5.0, 1.85, -7.4]), add(STALL, [0.9, 1.5, -1.0]), 25, pushK(f, wf(22, "pizza") - 10, 0.0025), { roll: 0.04 }) },
   ],
   branch: [{ f: SHOTS[17].a, s: (f) => dolly(add(BRANCH, [7, 3.4, -13]), add(BRANCH, [0, 1.3, 0]), pushK(f, SHOTS[17].a, 0.0022), { fov: 42 }) }],
   runner: [{ f: SHOTS[18].a, s: (f) => { const z = runnerZ(T(f)); return { pos: [4.2, 1.2, z - 4.6], look: [0, 1.15, z], fov: 42, roll: -0.03 }; } }],
