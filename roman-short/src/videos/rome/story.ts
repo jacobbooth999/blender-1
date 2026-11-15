@@ -196,7 +196,7 @@ const CAMS: Record<string, Key[]> = {
     { f: wf(7, "mules") - 8, cut: true, s: (f) => { const z = muleZ(T(f)); return dolly([MULE_X + 1.4, 1.5, z + 7.4], [MULE_X - 0.75, 1.05, z + 0.15], pushK(f, wf(7, "mules") - 8, 0.0025), { fov: 40 }); } },
   ],
   camp: [
-    { f: SHOTS[4].a, s: (f) => dolly(add(C, [-30, 9, -62]), add(C, [0, 1, -10]), pushK(f, SHOTS[4].a, 0.0018), { fov: 44 }) },
+    { f: SHOTS[4].a, s: (f) => dolly(add(C, [-13, 4.5, -66]), add(C, [4.5, 1.2, -46]), pushK(f, SHOTS[4].a, 0.0018), { fov: 44 }) }, // aim at the arriving column (the camp is not dug yet)
     { f: wf(9, "dig") - 4, cut: true, s: (f) => dolly(add(C, [3.5, 1.35, -38.5]), add(C, [0, 0.7, -32]), pushK(f, wf(9, "dig") - 4, 0.0025), { fov: 40 }) },
     { f: wf(9, "pile") - 4, cut: true, s: (f) => dolly(add(C, [-38, 26, -66]), add(C, [0, 0, -4]), pushK(f, wf(9, "pile") - 4, 0.0015), { fov: 44 }) },
     { f: wf(9, "fortified") - 14, dur: 34, s: (f) => dolly(add(C, [-52, 40, -78]), add(C, [0, 0, 0]), pushK(f, wf(9, "fortified") - 14, 0.0012), { fov: 44, roll: 0.03 }) },
