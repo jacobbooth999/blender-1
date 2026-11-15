@@ -65,7 +65,7 @@ const Inner: React.FC<{ id: number; kit: Kit }> = ({ id, kit }) => {
     grade: new GradeEffect(GRADES.day, GRADE_STRENGTH.day),
     grain: new GrainEffect({ amount: 0.025, cellPx: 1.5 }), // film grain, OFF by default (inputProps post.grain): the reference measures no grain and it quadruples the file size
   }), [camera, scene]);
-  useEffect(() => () => fx.ink.dispose(), [fx]);
+  useEffect(() => () => InkPass.prototype.dispose.call(fx.ink), [fx]); // R3F dispose={null} overwrites the instance method
   const post = useMemo(() => (
     <EffectComposer multisampling={on.fast ? 0 : 4}>
       {on.ink ? <primitive object={fx.ink} dispose={null} /> : null}

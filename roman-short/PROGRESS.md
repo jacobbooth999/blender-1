@@ -17,7 +17,12 @@ Branch: `claude/3d-animation-videos-skill-lmxz82`. Skill: `.claude/skills/3d-ani
   - scenery -> `src/videos/rome_world/sets.ts`, `world.ts`, `build.ts`, `paint.ts`, `lights.ts`, `shade.ts`, `grade.ts`
   Test stills: `ENTRY=src/sandboxes/<n>/index.tsx flock /tmp/render.lock node scripts/stills.mjs RomeShort out/<n>/x_ <frames> 0.5`
 
-## Next steps
+## Render (current)
+- `setsid nohup scripts/queue_all.sh &` renders the preview, then the final, in resumable 200-frame chunks (`scripts/chunked.sh`,
+  finished chunks in out/*/chunks are skipped on restart), then muxes `out/preview/preview.mp4` and `out/final/rome_short_1080x1920.mp4`.
+- Fixed crash at shot swaps: R3F `dispose={null}` overwrote InkPass.dispose (Rome.tsx).
+
+## Next steps (older)
 1. Merge sandboxes: `python3 scripts/merge.py cam,char,world` (backs up main to backup/), then `npx tsc --noEmit` (TS2322 null-element errors in Rome.tsx are harmless).
 2. Add a fast preview mode (smaller character canvases in cast.ts `tier()`, shadow map 1024, no MSAA/lens) — software WebGL is slow.
 3. Low-res preview: `DPR=0.3334 node scripts/render.mjs out/preview/video.mp4 0.3334 "" 2`, then mux:
