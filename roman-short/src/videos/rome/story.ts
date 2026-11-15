@@ -187,11 +187,11 @@ const CAMS: Record<string, Key[]> = {
     { f: wf(3, "seven") - 12, dur: 30, s: (f) => zoom([40, 30, -95], [0, 7, 15], 44, pushK(f, wf(3, "seven") - 12, 0.0018)) },
   ],
   ridge: [
-    { f: SHOTS[2].a, s: (f) => dolly(ridgeCam(9.5, 1.9), ridgePt(0, 1.5), pushK(f, SHOTS[2].a, 0.0025), { fov: 40 }) },
-    { f: wf(3, "burn") - 10, dur: 22, s: (f) => dolly(ridgeCam(6.2, 1.7), ridgePt(0, 1.45), pushK(f, wf(3, "burn") - 10, 0.002, 0.006, 26), { fov: 38, roll: 0.04 }) },
+    { f: SHOTS[2].a, s: (f) => dolly(ridgeCam(9.0, 1.55), ridgePt(0, 1.75), pushK(f, SHOTS[2].a, 0.0025), { fov: 40 }) },
+    { f: wf(3, "burn") - 10, dur: 22, s: (f) => dolly(ridgeCam(6.0, 1.5), ridgePt(0, 1.6), pushK(f, wf(3, "burn") - 10, 0.002, 0.006, 26), { fov: 38, roll: 0.04 }) },
   ],
   mule: [
-    { f: SHOTS[3].a, s: (f) => { const z = muleZ(T(f)); return dolly([MULE_X + 2.4, 1.7, z + 5.2], [MULE_X, 1.25, z], pushK(f, SHOTS[3].a, 0.0015), { fov: 40 }); } },
+    { f: SHOTS[3].a, s: (f) => { const z = muleZ(T(f)); return dolly([MULE_X + 1.7, 1.75, z + 4.0], [MULE_X, 1.4, z], pushK(f, SHOTS[3].a, 0.0015), { fov: 40 }); } },
     { f: wf(6) - 6, dur: 24, s: (f) => { const z = muleZ(T(f)); return dolly([MULE_X + 1.1, 1.55, z + 3.3], [MULE_X, 1.4, z], pushK(f, wf(6) - 6, 0.0025, 0.005, 26), { fov: 38, roll: -0.04 }); } },
     { f: wf(7, "mules") - 8, cut: true, s: (f) => { const z = muleZ(T(f)); return dolly([MULE_X + 7.2, 1.5, z + 0.2], [MULE_X - 0.3, 1.05, z + 0.2], pushK(f, wf(7, "mules") - 8, 0.0025), { fov: 40 }); } },
   ],

@@ -77,7 +77,7 @@ export class World {
           gl_FragColor = vec4(c, 1.0); }`,
       side: THREE.BackSide, depthWrite: false, fog: false,
     });
-    this.sky = new THREE.Mesh(new THREE.SphereGeometry(9000, 48, 24), this.skyMat);
+    this.sky = new THREE.Mesh(new THREE.SphereGeometry(1, 48, 24), this.skyMat);
     this.sky.renderOrder = -1; this.sky.frustumCulled = false; this.sky.layers.set(NOINK);
     R.add(this.sky);
     this.sunDisc = new THREE.Sprite(new THREE.SpriteMaterial({ map: discTex(), color: new THREE.Color(6.0, 4.4, 2.4), fog: false, depthWrite: false }));
@@ -170,7 +170,7 @@ export class World {
     K.sky.c.forEach((h, i) => untone(h, su["c" + i].value));
     const e = K.sky.e.map((deg) => THREE.MathUtils.degToRad(deg));
     su.e.value.set(e[1], e[2], e[3], e[4]);
-    this.sky.position.copy(cam.position);
+    this.sky.position.copy(cam.position); this.sky.scale.setScalar(cam.far * 0.9);
     const far = s.fogFar ?? L.fogFar;
     untone(L.fog, this.fog.color); this.fog.near = L.fogNear * (far / L.fogFar); this.fog.far = far;
     scene.fog = this.fog; scene.background = null;

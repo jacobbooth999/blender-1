@@ -300,7 +300,7 @@ S.rome = (t, cam, out) => {
 S.ridge = (t, cam, out) => {
   const tB = ws(3, "burn");
   for (let k = 0; k < 6; k++) {
-    const side = -3.2 + k * 1.3 + (hh(k) - 0.5) * 0.4, back = (k % 2) * 1.1, p = ridgePt(side, 0), torch = k % 2 === 0;
+    const side = -1.9 + k * 0.75 + (hh(k) - 0.5) * 0.2, back = (k % 2) * 1.1, p = ridgePt(side, 0), torch = k % 2 === 0;
     const x = p[0] - (k % 2) * 0.4, z = p[2] + back * 0.6;
     const expr = ex(t, k % 3 ? "stern" : "grin", [[tB, k % 2 ? "laugh" : "grin"]]);
     put(out, cam, t, { i: 50 + k, o: TRIBE[k % 5], x, z, y: p[1] - 0.05, expr, prop: torch ? "torch" : "spear", wave: undefined });

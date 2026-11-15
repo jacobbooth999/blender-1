@@ -2,3 +2,5 @@ node_modules/
 out/
 *.log
 audio/_cache/
+audio/*.wav
+audio/score.log

@@ -19,7 +19,7 @@ export type Outfit = {
   sash?: string; sword?: boolean; moustache?: string; skin?: string; head?: number; cap?: string; hair?: string; dress?: string;
   build?: Build;
   /** Roman extras: bare-leg colour, segmented armour bands, big curved shield, beard colour, helmet crest colour */
-  legs?: string; lorica?: boolean; shield?: boolean; beard?: string; crest?: string;
+  legs?: string; lorica?: boolean; shield?: boolean; beard?: string; crest?: string; skirt?: string;
 };
 type P2 = [number, number];
 
@@ -70,13 +70,13 @@ const LEGS_SKIN = (sk: string) => mix(sk, "#7a4b3a", 0.35);
 export const legionary = (v = 0, extra: Partial<Outfit> = {}): Outfit => {
   const sk = SKINS[v % 4];
   return { jacket: "#b8322f", pants: "#b8322f", legs: LEGS_SKIN(sk), boots: "#6b4428", hat: "galea", lorica: true, sash: "#6b4428", skin: sk,
-    crest: "#d8352f", moustache: v % 4 === 1 ? "#4a3426" : undefined, ...extra };
+    crest: "#d8352f", skirt: "#b8322f", moustache: v % 4 === 1 ? "#4a3426" : undefined, ...extra };
 };
 export const CAESAR: Outfit = { jacket: "#f3ecdc", pants: "#f3ecdc", dress: "#f3ecdc", legs: LEGS_SKIN(SKIN), boots: "#7a4f33", hat: "laurel", hair: "#5b5048",
   sash: "#6a2c7a", build: "stout", skin: "#f5d6b8" };
 export const citizen = (v = 0): Outfit => {
   const tun = ["#d9a441", "#5a8fc2", "#7a9a4a", "#c25a5a", "#9a7ab8", "#e0cfa8"], hair = ["#4a3020", "#2a201a", "#7a5030", "#b08850"];
-  const sk = SKINS[v % 4], o: Outfit = { jacket: tun[v % 6], pants: tun[v % 6], legs: LEGS_SKIN(sk), boots: "#7a4f33", hat: "hair", hair: hair[v % 4], skin: sk, sash: "#8a6a4a" };
+  const sk = SKINS[v % 4], o: Outfit = { jacket: tun[v % 6], pants: tun[v % 6], legs: LEGS_SKIN(sk), boots: "#7a4f33", hat: "hair", hair: hair[v % 4], skin: sk, sash: "#8a6a4a", skirt: tun[v % 6] };
   return v % 3 === 1 ? { ...o, dress: mix(tun[(v + 2) % 6], "#ffffff", 0.2), sash: undefined } : o;
 };
 export const tribesman = (v = 0, extra: Partial<Outfit> = {}): Outfit => {
@@ -85,10 +85,10 @@ export const tribesman = (v = 0, extra: Partial<Outfit> = {}): Outfit => {
   return { jacket: tun[v % 5], pants: "#6b5a44", boots: "#5a3b2a", hat: "longhair", hair: hair[v % 5], beard: v % 4 === 3 ? undefined : hair[v % 5], skin: sk, sash: "#3a2a20", ...extra };
 };
 export const goth = (v = 0): Outfit => ({ ...tribesman(v), hat: "spangen", jacket: ["#4a5a6a", "#5a4a3a", "#6a3a3a", "#3a5a4a"][v % 4], shield: false });
-export const SHOPKEEPER: Outfit = { jacket: "#e0b25a", pants: "#e0b25a", legs: LEGS_SKIN(SKINS[1]), boots: "#7a4f33", hat: "hair", hair: "#3a2a20", moustache: "#3a2a20",
+export const SHOPKEEPER: Outfit = { jacket: "#e0b25a", pants: "#e0b25a", skirt: "#e0b25a", legs: LEGS_SKIN(SKINS[1]), boots: "#7a4f33", hat: "hair", hair: "#3a2a20", moustache: "#3a2a20",
   skin: SKINS[1], sash: "#f3ecdc", build: "stout" };
 export const villageKid = (roman: boolean): Outfit => roman
-  ? { jacket: "#c25a5a", pants: "#c25a5a", legs: LEGS_SKIN(SKINS[2]), boots: "#7a4f33", hat: "hair", hair: "#c9a04a", skin: SKINS[2], build: "kid", sash: "#8a6a4a" }
+  ? { jacket: "#c25a5a", pants: "#c25a5a", legs: LEGS_SKIN(SKINS[2]), boots: "#7a4f33", hat: "hair", hair: "#c9a04a", skin: SKINS[2], build: "kid", sash: "#8a6a4a", skirt: "#c25a5a" }
   : { jacket: "#7a6a3a", pants: "#6b5a44", boots: "#5a3b2a", hat: "longhair", hair: "#c9a04a", skin: SKINS[2], build: "kid" };
 
 export const townsfolk = (v = 0): Outfit => {
@@ -688,7 +688,7 @@ export const bodyFront = (p: Pen, o: Outfit, opts: FrontOpts) => {
     p.band([lerp2(R0, R1, 0.6), R1], "#8d949c", 2.4 * u, 1.2 * u, "round");
   }
   if (rifle && longP) drawLong(p, longP, L0, L1, u);
-  if (Array.isArray(prop) && prop[0] === "furca") drawFurca(p, [tcx + 0.7 * T.a, chin + 0.12 * HH], [tcx + 0.95 * T.a + 12 * u, crown - 0.3 * HH], u, prop[1]);
+  if (Array.isArray(prop) && prop[0] === "furca") drawFurca(p, [tcx + 0.7 * T.a, chin + 0.12 * HH], [tcx + 1.05 * T.a + 22 * u, crown - 0.55 * HH], u * 1.6, prop[1]);
   if (o.sword && mode !== "sit") {
     const s0: P2 = [tcx - 0.75 * T.a, torsoBot - 0.2 * HH];
     p.band([s0, [s0[0] - Math.sin(rad(25)) * 0.8 * HH, s0[1] + Math.cos(rad(25)) * 0.8 * HH]], "#c9ccd2", 3 * u, 1.2 * u, "round");
@@ -705,6 +705,12 @@ export const bodyFront = (p: Pen, o: Outfit, opts: FrontOpts) => {
     p.gradFill(sp, o.jacket, mul(o.jacket, SH_CLOTH), light);
     p.inkRing(sp, ow * 0.9, thick);
   } else {
+    if (o.skirt && mode !== "sit") {
+      const y0 = torsoBot - 0.3 * HH, y1 = torsoBot + 0.34 * HH, sk: P2[] = [[tcx - 0.85 * T.a, y0], [tcx + 0.85 * T.a, y0], [tcx + 1.0 * T.a, y1], [tcx - 1.0 * T.a, y1]];
+      p.gradFill(sk, o.skirt, mul(o.skirt, SH_CLOTH), light);
+      if (o.lorica) for (let i = -3; i <= 3; i++) p.band([[tcx + i * 0.27 * T.a, y0 + 0.12 * HH], [tcx + i * 0.31 * T.a, y1 - 2 * u]], "#7a4f33", 4 * u, 1.2 * u);
+      p.poly(sk, null, 4 * u);
+    }
     p.gradFill(tp, o.jacket, mul(o.jacket, SH_CLOTH), light);
     p.clip(tp, () => {
       if (o.belt) {
@@ -919,6 +925,12 @@ export const bodySide = (p: Pen, o: Outfit, opts: SideOpts) => {
   if (Array.isArray(sp) && sp[0] === "furca") drawFurca(p, [tcx + 0.8 * T.a, chin + 0.04 * HH], [tcx - 1.25 * T.a - 30 * u, crown - 0.32 * HH], u, sp[1]);
   if (o.shield) { const sx = tcx - 0.1 * T.a; p.poly(rrect(sx - 0.2 * W, chin + 0.02 * HH, sx + 0.12 * W, torsoBot + 0.45 * HH, 8 * u), "#a8302a", 3.5 * u); }
   if (far) { p.stroke(curve(far[0], far[1], far[2]), 5.2 * u, farArm); p.dot(far[2][0], far[2][1], 5.5 * u); }
+  if (o.skirt && !o.dress) {
+    const y0 = torsoBot - 0.3 * HH, y1 = torsoBot + 0.34 * HH, sk: P2[] = [[tcx - 0.9 * T.a, y0], [tcx + 0.9 * T.a, y0], [tcx + 1.1 * T.a, y1], [tcx - 1.05 * T.a, y1]];
+    p.gradFill(sk, o.skirt, mul(o.skirt, SH_CLOTH), light);
+    if (o.lorica) for (let i = -2; i <= 2; i++) p.band([[tcx + i * 0.32 * T.a, y0 + 0.12 * HH], [tcx + i * 0.38 * T.a, y1 - 2 * u]], "#7a4f33", 4 * u, 1.2 * u);
+    p.poly(sk, null, 4 * u);
+  }
   p.gradFill(tp, o.jacket, mul(o.jacket, SH_CLOTH), light);
   p.clip(tp, () => {
     if (o.belt) p.band([[tcx - 0.65 * T.a, chin - 0.05 * HH], [tcx + 0.75 * T.a, torsoBot - 0.1 * HH]], o.belt!, 5.5 * u, 1.8 * u);
