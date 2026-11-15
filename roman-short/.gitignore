@@ -4,3 +4,4 @@ out/
 audio/_cache/
 audio/*.wav
 audio/score.log
+backup/

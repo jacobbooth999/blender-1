@@ -1,11 +1,11 @@
-// usage: node scripts/stills.mjs <compId> <outPrefix> <frame,frame,...> [scale]
+// usage: [ENTRY=src/sandboxes/<n>/index.tsx] flock /tmp/render.lock node scripts/stills.mjs <compId> <outPrefix> <frame,frame,...> [scale]
 import { bundle } from "@remotion/bundler";
 import { renderStill, selectComposition } from "@remotion/renderer";
 import path from "node:path";
 const [id, prefix, frames, scale = "0.5"] = process.argv.slice(2);
 const browserExecutable = "/opt/pw-browsers/chromium_headless_shell-1243/chrome-headless-shell-linux64/chrome-headless-shell";
 const chromiumOptions = { gl: process.env.GL || "swangle" };
-const serveUrl = await bundle({ entryPoint: path.resolve("src/index.ts"), publicDir: path.resolve("public") });
+const serveUrl = await bundle({ entryPoint: path.resolve(process.env.ENTRY || "src/index.ts"), publicDir: path.resolve("public") });
 const composition = await selectComposition({ serveUrl, id, browserExecutable, chromiumOptions });
 const onBrowserLog = (l) => { if (l.type === "error" || l.type === "warning") console.log(`[${l.type}]`, l.text.slice(0, 300)); };
 for (const f of frames.split(",").map(Number)) {
