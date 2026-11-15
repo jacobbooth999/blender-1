@@ -239,6 +239,7 @@ export class Strand {
 /** a sight line of the film: from the lens toward the shot's subject, `len` along d (d has unit forward component) */
 export type Ray = { o: THREE.Vector3; d: THREE.Vector3; len: number; core: boolean };
 let sight: Ray[] = [];
+export const setSight = (r: Ray[]) => { sight = r; };
 /** does any sight line pass through this box? (centre lines only for small props, so they can still frame a shot) */
 const inTheWay = (x0: number, x1: number, y0: number, y1: number, z0: number, z1: number, coreOnly = false) => {
   for (const { o, d, len, core } of sight) {
@@ -476,19 +477,21 @@ type Style = { wall: string; shutter: string; roof: string; timber?: boolean; br
 // lavender: the two-tone shade multiplies by a blue-violet, so a near-neutral albedo turns lilac on every shaded face)
 // round 3: saturation -35 % on every wall (neutral warm grey / beige; the salmon became a warm greige)
 // round 4: the pale greiges still read lavender-grey in shade -> a muted brick / cream / ochre / terracotta spread
-const STYLES: Style[] = [
-  { wall: "#ecdab2", shutter: "#3f6fb5", roof: "#d27a62" },              // cream
-  { wall: "#d8a95f", shutter: "#2f6a43", roof: "#b8644f" },              // ochre
-  { wall: "#c47a5c", shutter: "#2f5f6a", roof: "#8f97a8" },              // muted brick-red plaster
-  { wall: "#efdcb8", shutter: "#2f5f6a", roof: "#c9775a", timber: true }, // cream timber frame
-  { wall: "#ddbd78", shutter: "#5a3b2a", roof: "#d27a62" },              // straw ochre
-  { wall: "#cc9a6c", shutter: "#3f6fb5", roof: "#8e7aa0" },              // terracotta sand
-  { wall: "#e2c49a", shutter: "#8c3b4a", roof: "#c9775a" },              // warm sandstone
-  { wall: "#e3d2b8", shutter: "#2f6a43", roof: "#8f97a8", brick: true },
+const STYLES: Style[] = [ // Roman: limewashed / ochre / terracotta plaster, all terracotta tile roofs, wooden shutters
+  { wall: "#ecdab2", shutter: "#7a5a3a", roof: "#c9704f" },
+  { wall: "#d8a95f", shutter: "#5a3b2a", roof: "#b8644f" },
+  { wall: "#c47a5c", shutter: "#6a4a30", roof: "#c9704f" },
+  { wall: "#efdcb8", shutter: "#3f6a5a", roof: "#d27a62" },
+  { wall: "#ddbd78", shutter: "#5a3b2a", roof: "#c4664a" },
+  { wall: "#cc9a6c", shutter: "#7a5a3a", roof: "#d27a62" },
+  { wall: "#e2c49a", shutter: "#8c3b4a", roof: "#c9704f" },
+  { wall: "#f0e4cc", shutter: "#5a3b2a", roof: "#b8644f" },
 ];
 const roofMat = (col: string) => lam("roof" + col, () => ({ map: roofHD(col, col === "#8f97a8"), side: THREE.DoubleSide }));
 
 /** gabled house: front facade (local +z) at width w, depth d, wall height h, ridge along local x (left out if it blocks a shot) */
+/** Roman houses: no chimneys, low tiled roofs */
+export const CHIMNEYS = false;
 export const house = (b: Batch, x: number, z: number, yaw: number, w: number, d: number, h: number, si: number, y = D0) => {
   const across = Math.abs(Math.sin(yaw)) > 0.5, hx = (across ? d : w) / 2 + 0.6, hz = (across ? w : d) / 2 + 0.6;
   if (inTheWay(x - hx, x + hx, y, y + h + d * 0.42 + 1.2, z - hz, z + hz)) return;
@@ -497,7 +500,7 @@ export const house = (b: Batch, x: number, z: number, yaw: number, w: number, d:
   const front = lam(`hf${si}_${w}_${h}`, () => ({ map: facadeHD(`hf${si}_${w}_${h}`, w, h, { ...st, door: true }) }));
   const side = lam(`hs${si}_${h}`, () => ({ map: facadeHD(`hs${si}_${h}`, 8, h, st) }));
   const wall = lam("wall" + st.wall, () => ({ color: st.brick ? "#c8643f" : st.wall }));
-  const hw = w / 2, hd = d / 2, rh = d * 0.42, o = 0.35;
+  const hw = w / 2, hd = d / 2, rh = d * 0.26, o = 0.35;
   b.add(quad(V(-hw, 0, hd), V(hw, 0, hd), V(hw, h, hd), V(-hw, h, hd)), front, m);
   b.add(quad(V(hw, 0, -hd), V(-hw, 0, -hd), V(-hw, h, -hd), V(hw, h, -hd)), side, m);
   b.add(quad(V(-hw, 0, -hd), V(-hw, 0, hd), V(-hw, h, hd), V(-hw, h, -hd)), side, m);
@@ -508,7 +511,7 @@ export const house = (b: Batch, x: number, z: number, yaw: number, w: number, d:
   b.add(quad(V(-hw - o, h - 0.25, hd + o), V(hw + o, h - 0.25, hd + o), V(hw + o, h + rh, 0), V(-hw - o, h + rh, 0), ru, rv), rm, m);
   b.add(quad(V(hw + o, h - 0.25, -hd - o), V(-hw - o, h - 0.25, -hd - o), V(-hw - o, h + rh, 0), V(hw + o, h + rh, 0), ru, rv), rm, m);
   const cx = hw * 0.45 * (si % 2 ? 1 : -1);
-  b.add(boxGeo(V(cx - 0.4, h + rh * 0.3, -hd * 0.35 - 0.4), V(cx + 0.4, h + rh + 1.1, -hd * 0.35 + 0.4), 2), lam("chim", () => ({ map: rep(brick(), 1, 1) })), m);
+  if (CHIMNEYS) b.add(boxGeo(V(cx - 0.4, h + rh * 0.3, -hd * 0.35 - 0.4), V(cx + 0.4, h + rh + 1.1, -hd * 0.35 + 0.4), 2), lam("chim", () => ({ map: rep(brick(), 1, 1) })), m);
   houseDetail(b, m, w, d, h, rh, cx);
 };
 
@@ -549,6 +552,7 @@ const houseDetail = (b: Batch, m: THREE.Matrix4, w: number, d: number, h: number
   wins(8, false, (u) => [-hw, -hd + u * d], [-1, 0]);         // left side (-x): side texture is always the 8 m layout
   wins(8, false, (u) => [hw, hd - u * d], [1, 0]);            // right side (+x)
   // chimney cap + pot
+  if (!CHIMNEYS) return;
   const cz = -hd * 0.35, top = h + rh + 1.1;
   ub(b, capM(), m, chx - 0.52, chx + 0.52, top, top + 0.16, cz - 0.52, cz + 0.52);
   b.add(new THREE.CylinderGeometry(0.13, 0.16, 0.42, 10).translate(0, 0.21, 0), lam("chimPot", () => ({ color: "#b8684a" })), m.clone().multiply(new THREE.Matrix4().makeTranslation(chx, top + 0.16, cz)));

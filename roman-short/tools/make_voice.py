@@ -46,7 +46,7 @@ for pi, para in enumerate(PARAS):
             y, sr2 = synth(w, tmp); solo.append(max(0.08, len(trim(y, sr2)) / sr2))
         k = dur / sum(solo); acc = t
         for w, d in zip(toks, solo):
-            words.append({"word": w, "start": round(acc, 3), "end": round(acc + d * k, 3)}); acc += d * k
+            words.append({"word": w, "start": round(acc, 3), "end": round(acc + d * k, 3), "s": len(sents)}); acc += d * k
         sents.append({"text": s, "start": round(t, 3), "end": round(t + dur, 3), "para": pi})
         audio.append(x); t += dur
         g = GAP_P if si == len(para) - 1 else GAP_S
