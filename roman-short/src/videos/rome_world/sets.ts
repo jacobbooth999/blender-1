@@ -125,7 +125,7 @@ const cypress = (b: Batch, x: number, z: number, h: number) => {
   b.add(new THREE.CylinderGeometry(0.12, 0.18, h * 0.15, 6), lam("barkHD", () => ({ color: "#8f5d3b" })), M4(x, h * 0.075, z));
   b.add(new THREE.SphereGeometry(1, 12, 10), lam("cypress", () => ({ color: "#3f7a3a" })), M4(x, h * 0.55, z, 0, [h * 0.12, h * 0.45, h * 0.12]));
 };
-const hillM = [0, 1, 2].map((i) => lam("hill" + i, () => ({ color: ["#64904a", "#5c8744", "#6c9852"][i] })));
+const hillM = [0, 1, 2].map((i) => lam("hill" + i, () => ({ color: ["#5a8240", "#547a3c", "#608a46"][i] })));
 const hillGeo = new THREE.SphereGeometry(1, 36, 16, 0, Math.PI * 2, 0, Math.PI / 2);
 const hill = (b: Batch, x: number, z: number, rx: number, h: number, rz: number, i: number) => b.add(hillGeo, hillM[i % 3], M4(x, 0, z, 0, [rx, h, rz]));
 
@@ -149,7 +149,7 @@ const R = rng;
 export const buildRomanWorld = (root: THREE.Object3D, rays: Ray[]) => {
   setSight(rays);
   const b = new Batch(), r = R(7);
-  const grassM = lam("grassRoman", () => ({ map: grassHD(), color: "#cfd0bc" }));
+  const grassM = lam("grassRoman", () => ({ map: grassHD(), color: "#c0c6bc" }));
   // ---- ground: everything except the Rhine strip ----
   const [rx0, rx1, rz0, rz1] = [RHINE[0] - 2400, RHINE[0] + 800, RHINE[2] - RIVER_W - 2, RHINE[2] + RIVER_W + 2];
   const BIG = 7000;
@@ -203,8 +203,22 @@ export const buildRomanWorld = (root: THREE.Object3D, rays: Ray[]) => {
     b.add(boxGeo(V(sx * 8 - 4, 0, GATE_Z - 4), V(sx * 8 + 4, 13, GATE_Z + 4), 4), W);
     for (let k = 0; k < 4; k++) for (let j = 0; j < 4; j++) if (k === 0 || k === 3 || j === 0 || j === 3) b.add(boxGeo(V(sx * 8 - 4 + k * 2.2, 13, GATE_Z - 4 + j * 2.2), V(sx * 8 - 4 + k * 2.2 + 1.2, 14.1, GATE_Z - 4 + j * 2.2 + 1.2)), W);
   }
-  b.add(boxGeo(V(-4.2, 6.5, GATE_Z - 2.2), V(4.2, 10.5, GATE_Z + 2.2), 4), W); // arch top
-  for (let k = 0; k < 9; k++) { const a = Math.PI * (k / 8); b.add(boxGeo(V(-4 * Math.cos(a) - 0.45, 4.2 + 2.2 * Math.sin(a), GATE_Z - 2.3), V(-4 * Math.cos(a) + 0.45, 4.2 + 2.2 * Math.sin(a) + 2.3, GATE_Z - 2.15)), W); }
+  { // arch: one extruded block, a true round-headed opening (the old stepped boxes read as a broken lintel)
+    const sh = new THREE.Shape();
+    sh.moveTo(-4.2, 4.2); sh.lineTo(-4.0, 4.2);
+    sh.absellipse(0, 4.2, 4.0, 3.0, Math.PI, 0, true, 0);
+    sh.lineTo(4.2, 4.2); sh.lineTo(4.2, 10.5); sh.lineTo(-4.2, 10.5); sh.closePath();
+    const ag = new THREE.ExtrudeGeometry(sh, { depth: 4.4, bevelEnabled: false, curveSegments: 20 }).translate(0, 0, GATE_Z - 2.2);
+    const uv = ag.attributes.uv as THREE.BufferAttribute;
+    for (let i = 0; i < uv.count; i++) uv.setXY(i, uv.getX(i) / 4, uv.getY(i) / 4);
+    b.add(ag, W);
+    // keystone + voussoir band in light trim on the outer face
+    for (let k = 0; k <= 10; k++) {
+      const a = Math.PI * (k / 10), x = -4.35 * Math.cos(a), y = 4.2 + 3.3 * Math.sin(a);
+      b.add(new THREE.BoxGeometry(k === 5 ? 0.9 : 0.6, k === 5 ? 1.1 : 0.75, 0.25), lam("archTrim", () => ({ color: "#efe3c8" })),
+        new THREE.Matrix4().compose(V(x, y, GATE_Z - 2.3), new THREE.Quaternion().setFromAxisAngle(V(0, 0, 1), a - Math.PI / 2), V(1, 1, 1)));
+    }
+  }
   // street from the forum to the gate + the roads out
   b.add(strip([0, -22], [0, GATE_Z], 6, 0.04, 4), lam("paving", () => ({ map: pavingTex() })));
   road(b, 0, GATE_Z, 0, 4200);
@@ -251,21 +265,24 @@ export const buildRomanWorld = (root: THREE.Object3D, rays: Ray[]) => {
   // patchwork of fields and meadows for the aerials (flat quads lifted 0.2 m so they don't z-fight at 1-2 km; kept
   // clear of every set, road and the Rhine so nothing stands on them)
   const fieldMs = [
-    lam("field", () => ({ map: flatTex("field", "#d8b85a", ["#c9a64a", "#e8cc72"], 1400, 3) })),
+    lam("wheat", () => ({ map: flatTex("wheat", "#bfae62", ["#b09f56", "#ccbc72"], 1400, 3) })),
     lam("meadowDark", () => ({ map: flatTex("meadowDark", "#5d8a45", ["#527d3c", "#6a9850"], 900, 5) })),
     lam("meadowOlive", () => ({ map: flatTex("meadowOlive", "#93a456", ["#86974c", "#a3b264"], 900, 5) })),
-    lam("plough", () => ({ map: flatTex("plough", "#a88a62", ["#977a54", "#b89a70"], 900, 5) })),
+    lam("plough", () => ({ map: flatTex("plough", "#9c8662", ["#8c7756", "#ab9672"], 900, 5) })),
   ];
   const nearRoad = (x: number, z: number, pad: number) => ROADS.some((d) => {
     const sx = Math.sin(d), sz = -Math.cos(d);
     return x * sx + z * sz > 0 && Math.abs(x * sz - z * sx) < pad;
   });
+  const placed: [number, number, number, number][] = [];
   for (let i = 0; i < 220; i++) {
     const cx = (r() - 0.5) * 3600, cz = (r() - 0.5) * 3600, hw = 25 + r() * 45, hd = 20 + r() * 40, pad = Math.hypot(hw, hd) + 12;
+    if (placed.some(([px, pz, pw, pd]) => Math.abs(px - cx) < pw + hw + 8 && Math.abs(pz - cz) < pd + hd + 8)) continue;
     if (Math.abs(cx) < 200 + hw + 20 && cz > GATE_Z - 30 - hd && cz < 200 + hd) continue;          // Rome
     if (nearRoad(cx, cz, pad) || Math.abs(cx) < pad || Math.abs(cx - RD2_X) < pad || Math.abs(cx - MULE_X) < pad) continue;
     if (Math.abs(cz - RHINE[2]) < RIVER_W + 40 + hd || Math.abs(cx - CAMP[0]) < 70 + hw && Math.abs(cz - CAMP[2]) < 70 + hd) continue;
     if (Math.hypot(cx - VILLAGE[0], cz - VILLAGE[2]) < 90 + pad || Math.hypot(cx - RIDGE[0], cz - RIDGE[2]) < 60 + pad || Math.hypot(cx - HOOK[0], cz - HOOK[2]) < 30 + pad) continue;
+    placed.push([cx, cz, hw, hd]);
     b.add(ground(cx - hw, cx + hw, cz - hd, cz + hd, 0.2, 6), fieldMs[i % 4]);
   }
 

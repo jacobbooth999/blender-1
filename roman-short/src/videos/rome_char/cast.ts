@@ -263,9 +263,15 @@ const flame = (out: Stage, t: number, i: number, x: number, y: number, z: number
 };
 /** a looping dig stroke 0..1 with a dirt toss at the top */
 const digK = (t: number, i: number, hz = 1.1) => { const u = ((t * hz + hh(i, 2)) % 1 + 1) % 1; return q(u < 0.55 ? smooth(u / 0.55) : 1 - smooth((u - 0.55) / 0.45), 12); };
-const dirtToss = (out: Stage, t: number, i: number, x: number, z: number, hz = 1.1) => {
+/** the dig blade sits on the card's left: offset along the camera's screen-left, a touch toward the lens */
+const bladeAt = (cam: CamInfo, x: number, z: number, d = 0.45): [number, number] => {
+  const tx = cam.pos.x - x, tz = cam.pos.z - z, l = Math.hypot(tx, tz) || 1;
+  return [x - cam.right.x * d + (tx / l) * 0.15, z - cam.right.z * d + (tz / l) * 0.15];
+};
+const dirtToss = (out: Stage, t: number, i: number, x: number, z: number, hz = 1.1, cam?: CamInfo) => {
   const u = ((t * hz + hh(i, 2)) % 1 + 1) % 1, v = (u - 0.45) / 0.45;
-  if (v >= 0 && v < 1) fxAt(out, `dirt${q(v, 16)}`, 400, 400, (p) => fxDirt(p, q(v, 16)), x - 0.5, 0.55, z, 1.0, 1.0);
+  const [bx, bz] = cam ? bladeAt(cam, x, z, 0.5) : [x - 0.5, z];
+  if (v >= 0 && v < 1) fxAt(out, `dirt${q(v, 16)}`, 400, 400, (p) => fxDirt(p, q(v, 16)), bx, 0.55, bz, 1.0, 1.0);
 };
 const hamK = (t: number, i: number, hz = 1.6) => { const u = ((t * hz + hh(i, 4)) % 1 + 1) % 1; return q(u < 0.7 ? 1 - smooth(u / 0.7) : smooth((u - 0.7) / 0.3), 12); };
 const LEG = [0, 1, 2, 3].map((v) => legionary(v));
@@ -282,7 +288,11 @@ S.hook = (t, cam, out) => {
   const tS = ws(1, "shovel"), digging = t >= tS - LEAD;
   const expr = ex(t, "stern", [[ws(0, "secret"), "smile"], [ws(0, "sword"), "grin"], [tS, "grin"]]);
   put(out, cam, t, { i: 1, o: digging ? LEG[0] : LEGS[0], x: HOOK[0], z: HOOK[2], expr, prop: digging ? ["dig", digK(t, 1, 1.3)] : "gladius", tilt: digging ? 8 : 0 });
-  if (digging) { dirtToss(out, t, 1, HOOK[0], HOOK[2] - 0.1, 1.3); burst(out, t, tS, HOOK[0] - 0.5, 0.3, HOOK[2] - 0.2, 1.0); }
+  if (digging) {
+    dirtToss(out, t, 1, HOOK[0], HOOK[2] - 0.1, 1.3, cam);
+    const [bx, bz] = bladeAt(cam, HOOK[0], HOOK[2], 0.5);
+    if (t < tS + 0.2) burst(out, t, tS, bx, 0.25, bz, 0.9);
+  }
   // comrades already digging in the background
   [[-3.5, 7], [3.2, 9.5], [-6.5, 14], [6, 16]].forEach(([dx, dz], k) => {
     put(out, cam, t, { i: 10 + k, o: LEG[(k + 1) % 4], x: HOOK[0] + dx, z: HOOK[2] + dz, expr: "neutral", prop: ["dig", digK(t, 10 + k)], tilt: 8 });
@@ -320,10 +330,12 @@ S.mule = (t, cam, out) => {
   if (heavy && !side) { const u = (t * 1.3) % 1; fxAt(out, "sweat", 120, 160, fxSweat, MULE_X - 0.3, 1.98 - 0.22 * u, z + 0.12, 0.08, 0.11); }
   if (side) {
     // the mule walks beside him (far side) and gives the camera a look
-    const mp = ph(t, cad, 0.25);
-    out.places.push({ key: `mule|${mp}|${lidAt(t, 62) ? 1 : 0}`, x: MULE_X - 1.5, y: 0, z: z + 0.3, scale: 1 / MULE_K, mirror: false,
-      yaw: Math.atan2(cam.pos.x - (MULE_X - 1.5), cam.pos.z - (z + 0.3)), draw: (p) => muleSide(p, mp, true, lidAt(t, 62)), size: [480, 800, 0.8] });
-    blob(out, MULE_X - 1.5, 0, z + 0.3, 1.6);
+    // placed on screen-left of him and a little deeper, so his pack never hides the mule's offended face
+    const mp = ph(t, cad, 0.25), tx = cam.pos.x - MULE_X, tz = cam.pos.z - z, tl = Math.hypot(tx, tz) || 1;
+    const mx = MULE_X - cam.right.x * 1.25 - (tx / tl) * 0.9, mz = z - cam.right.z * 1.25 - (tz / tl) * 0.9;
+    out.places.push({ key: `mule|${mp}|${lidAt(t, 62) ? 1 : 0}`, x: mx, y: 0, z: mz, scale: 1 / MULE_K, mirror: false,
+      yaw: Math.atan2(cam.pos.x - mx, cam.pos.z - mz), draw: (p) => muleSide(p, mp, true, lidAt(t, 62)), size: [480, 800, 0.8] });
+    blob(out, mx, 0, mz, 1.6);
   }
 };
 
@@ -331,7 +343,7 @@ const campDiggers = (t: number, cam: CamInfo, out: Stage, n: number, spread: num
   for (let k = 0; k < n; k++) {
     const x = CAMP[0] - spread + (k * 2 * spread) / Math.max(1, n - 1), z = CAMP[2] - CAMP_H - 3.4 + (hh(k, 7) - 0.5) * 0.6;
     put(out, cam, t, { i: 70 + k, o: LEG[k % 4], x, z, expr: k % 3 ? "neutral" : "smile_closed", prop: ["dig", digK(t, 70 + k)], tilt: 8 });
-    if (cam.pos.distanceTo(tmp.set(x, 1, z)) < 14) dirtToss(out, t, 70 + k, x, z);
+    if (cam.pos.distanceTo(tmp.set(x, 1, z)) < 14) dirtToss(out, t, 70 + k, x, z, 1.1, cam);
   }
 };
 S.camp = (t, cam, out) => {
@@ -432,7 +444,7 @@ S.build = (t, cam, out) => {
       const x = RHINE[0] - 2.4 + (k % 3) * 2.4, z = zf - 1 - Math.floor(k / 3) * 2.2;
       if (z < RHINE[2] - RIVER_W) continue;
       put(out, cam, t, { i: 360 + k, o: LEG[k % 4], x, z, y: DECK_Y + 0.12, prop: ["hammer", hamK(t, 360 + k, 2)], tilt: 4, expr: "neutral" });
-      if (k < 3 && hamK(t, 360 + k, 2) < 0.15) burst(out, t, t - 0.01, x + 0.5, DECK_Y + 0.4, z, 0.5);
+      if (k < 3 && hamK(t, 360 + k, 2) < 0.15) burst(out, t, t - 0.01, x + cam.right.x * 0.5, DECK_Y + 0.4, z + cam.right.z * 0.5, 0.5);
     }
     for (let k = 0; k < 6; k++) put(out, cam, t, { i: 370 + k, o: LEG[(k + 2) % 4], x: RHINE[0] - 7 + k * 2.6, z: RHINE[2] - RIVER_W - 5 - (k % 2) * 2, prop: k % 2 ? "sack" : ["dig", digK(t, 370 + k)], tilt: k % 2 ? 0 : 8 });
     tribesOnFarBank(t, cam, out, "shock");

@@ -24,7 +24,7 @@ export const LIGHTS: Record<"day" | "golden", LightPreset> = {
   },
   golden: {
     az: 6, el: 7,
-    lit: [1.5, 0.74, 0.3], shade: [0.27, 0.22, 0.31], lift: [0.05, 0.045, 0.09], lambert: 0.35, sideK: 0.82, term: 0.07,
+    lit: [1.45, 0.78, 0.36], shade: [0.27, 0.22, 0.31], lift: [0.05, 0.045, 0.09], lambert: 0.35, sideK: 0.82, term: 0.07,
     charTint: [1.0, 0.78, 0.56], charShade: 0.88, charGrad: 0.1, bodyGrad: 0.25, sideTint: [0.85, 0.80, 0.95],
     blob: [0.75, 0.74, 0.9], actorShadow: true,
     top: "#6a4f8c", hor: "#ffd08a", skyCurve: [0.05, 0.6, 1.0], fog: "#efb489", fogNear: 50, fogFar: 380, sunDisc: "#ffcf9e",
@@ -54,7 +54,7 @@ export const LOOK: Record<"day" | "golden", WorldLook> = {
   golden: {
     // sunset, not dusk: #ffd08a horizon, peach/orange through ~10 deg, warm rose at 20, muted warm mauve only near the top
     // (the golden grade adds ~+11/255 blue to shadows/mids, so these lean warm)
-    sky: { c: ["#ffc47c", "#f7ae78", "#e8967c", "#c4848e", "#8a6f8a"], e: [0, 4, 10, 20, 40] },
+    sky: { c: ["#ffc47c", "#f9b27a", "#eea07c", "#d68e86", "#a87f94"], e: [0, 4, 10, 20, 40] },
     water: { near: "#1e3a6e", mid: "#355f96", far: "#d4a48e", crest: "#d9a088", trough: "#16294f", glint: "#ffe2b0", shade: [0.42, 0.46, 0.72] },
     cloud: { lit: "#ffd2a8", mid: "#f2a08f", shade: "#a98fc4" },
     bounce: [0.04, 0.02, 0.0],

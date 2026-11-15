@@ -585,7 +585,7 @@ export const bodyFront = (p: Pen, o: Outfit, opts: FrontOpts) => {
   const chin = torsoBot - Bd.torso * HH, hc = chin - H.b, crown = hc - H.b, hipY = torsoBot - 0.12 * HH;
   const thick = thickAngle(light), ow = 5 * u;
   const legCol = o.legs ?? mix(o.pants, INK, 0.55), armCol = o.dress && o.legs ? o.legs : mix(o.jacket, INK, 0.5), footCol = o.boots;
-  const legW = 7.2 * u, footW = 9 * u;
+  const legW = (o.legs ? 8.4 : 7.6) * u, footW = 9.5 * u;
   // ---- legs + feet (not rotated) ----
   p.rot = null;
   if (mode === "sit") {
@@ -900,7 +900,7 @@ export const bodySide = (p: Pen, o: Outfit, opts: SideOpts) => {
   for (const L of legs) {
     const knee = mode === "swing" ? ([300 + l1 * 0.98 + (L.near ? 0 : -6 * u), hipY + 6 * u] as P2) : ik(hip, L.ank, l1, l2);
     const hp0: P2 = [300 + (L.near ? 0 : -5 * u), hipY];
-    p.stroke([hp0, knee, L.ank], 7.2 * u, L.near ? nearCol : farCol);
+    p.stroke([hp0, knee, L.ank], (o.legs ? 8.4 : 7.6) * u, L.near ? nearCol : farCol);
     const c = Math.cos(L.pitch), s = Math.sin(L.pitch);
     footStroke(p, [L.ank[0] - 3 * u * c, L.ank[1] - 3 * u * s], [L.ank[0] + 13 * u * c, L.ank[1] + 13 * u * s + 0.5 * u],
       9 * u, L.near ? footCol : footCol === INK ? INK : shade(footCol, 0.82));
