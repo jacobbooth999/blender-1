@@ -23,7 +23,7 @@ Branch: `claude/3d-animation-videos-skill-lmxz82`. Skill: `.claude/skills/3d-ani
 - Fixed crash at shot swaps: R3F `dispose={null}` overwrote InkPass.dispose (Rome.tsx).
 
 ## Paused (user: "leave the project for now")
-- Preview done and sent (out/preview/preview.mp4, not in git). Final 1080x1920 paused with frames 0-399 done in out/final/chunks
+- Preview done and sent (out/preview/preview.mp4, not in git). Final 1080x1920 paused with frames 0-299 done in out/final/chunks
   (local only, lost if the container is reset). Resume: `setsid nohup scripts/queue_final_only.sh &` (~40 s/frame on 4 CPUs, ~28 h left).
 - Camp shot opening camera re-aimed after the preview.
 
