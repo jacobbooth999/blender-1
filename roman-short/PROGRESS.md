@@ -22,6 +22,11 @@ Branch: `claude/3d-animation-videos-skill-lmxz82`. Skill: `.claude/skills/3d-ani
   finished chunks in out/*/chunks are skipped on restart), then muxes `out/preview/preview.mp4` and `out/final/rome_short_1080x1920.mp4`.
 - Fixed crash at shot swaps: R3F `dispose={null}` overwrote InkPass.dispose (Rome.tsx).
 
+## Paused (user: "leave the project for now")
+- Preview done and sent (out/preview/preview.mp4, not in git). Final 1080x1920 paused with frames 0-399 done in out/final/chunks
+  (local only, lost if the container is reset). Resume: `setsid nohup scripts/queue_final_only.sh &` (~40 s/frame on 4 CPUs, ~28 h left).
+- Camp shot opening camera re-aimed after the preview.
+
 ## Next steps (older)
 1. Merge sandboxes: `python3 scripts/merge.py cam,char,world` (backs up main to backup/), then `npx tsc --noEmit` (TS2322 null-element errors in Rome.tsx are harmless).
 2. Add a fast preview mode (smaller character canvases in cast.ts `tier()`, shadow map 1024, no MSAA/lens) — software WebGL is slow.
