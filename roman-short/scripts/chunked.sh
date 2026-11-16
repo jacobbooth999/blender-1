@@ -4,8 +4,9 @@
 cd /home/user/blender-1/roman-short
 OUT=$1; SCALE=$2; TOTAL=$3; CH=$4; CONC=$5
 mkdir -p $OUT/chunks; : > $OUT/list.txt
-for ((a=0; a<TOTAL; a+=CH)); do
-  b=$((a+CH-1)); ((b>=TOTAL)) && b=$((TOTAL-1))
+for ((a=0; a<TOTAL; a+=STEPN)); do
+  STEPN=$CH; [ -n "$FIRST" ] && ((a==0)) && STEPN=$FIRST  # FIRST: size of an already-rendered first chunk
+  b=$((a+STEPN-1)); ((b>=TOTAL)) && b=$((TOTAL-1))
   f=$(printf "$OUT/chunks/c%05d.mp4" $a)
   echo "file 'chunks/$(basename $f)'" >> $OUT/list.txt
   for try in 1 2 3; do
