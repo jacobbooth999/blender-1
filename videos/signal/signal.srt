@@ -1,0 +1,35 @@
+1
+00:00:01,200 --> 00:00:05,510
+You tap send. But where does your message actually go?
+
+2
+00:00:06,000 --> 00:00:11,200
+Your phone turns it into radio waves, and beams them to the nearest cell tower.
+
+3
+00:00:11,400 --> 00:00:17,100
+The tower sends it underground, as flashes of light inside a glass fiber.
+
+4
+00:00:17,400 --> 00:00:22,600
+At your carrier's core network, a computer looks up where your friend's phone was last seen.
+
+5
+00:00:22,800 --> 00:00:27,380
+If their phone is off, the text waits here until it wakes up.
+
+6
+00:00:27,600 --> 00:00:33,190
+Then it's sent to the towers nearby, which call out to their phone by radio.
+
+7
+00:00:34,800 --> 00:00:38,800
+A phone call takes the same road. But a call can't wait.
+
+8
+00:00:39,000 --> 00:00:45,680
+Your voice is cut into tiny packets, 50 every second, flowing both ways at once.
+
+9
+00:00:49,200 --> 00:00:55,000
+Radio, light, and one quick lookup, for millions of people, every second of the day.
