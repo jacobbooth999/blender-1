@@ -249,12 +249,15 @@ def main():
     H = cfg["resolution"][1]
     overlay.captions(edit, words["words"], fps, fonts, H, ep.get("caption_replace"))
     stk = bub = cnt = 0
-    for shot in shots:
-        for s in shot.get("stickers", []):
-            overlay.sticker(edit, dict(s, t=T(s["t"])), fps, fonts, H, stk)
+    for i, shot in enumerate(shots):
+        shot_end = starts[i + 1] if i + 1 < len(shots) else total
+        for s in shot.get("stickers", []):      # stickers and bubbles never run past their own cut
+            t = T(s["t"])
+            overlay.sticker(edit, dict(s, t=t, dur=min(s.get("dur", 1.2), shot_end - t)), fps, fonts, H, stk)
             stk += 1
         for b in shot.get("bubbles", []):
-            overlay.bubble(edit, dict(b, t=T(b["t"])), fps, fonts, H, bub)
+            t = T(b["t"])
+            overlay.bubble(edit, dict(b, t=t, dur=min(b.get("dur", 1.0), shot_end - t)), fps, fonts, H, bub)
             bub += 1
         for c in shot.get("counters", []):
             c = dict(c, steps=[dict(s, t=T(s["t"])) for s in c["steps"]], until=T(c["until"]))
