@@ -1,0 +1,9 @@
+{
+  "_doc": "Original recurring cast. Each character owns one top colour so they read at thumbnail size. Keys: top, bottom, skin, shoes, hair (none|short|long|bun|beanie|cap|flatcap), hair_color, hat_color, brow_color, moustache, build (regular|big), height, head_scale, sleeves (long|short).",
+  "characters": {
+    "gaz":  {"role": "running gag: always wants the wrong thing", "top": "#F07A2B", "bottom": "#2D3A5C", "skin": "#F1C9A5", "hair": "short", "hair_color": "#C1592B", "brow_color": "#A84A22"},
+    "shaz": {"role": "the organiser", "top": "#E8579D", "bottom": "#1F1F1F", "skin": "#E9B98F", "hair": "long", "hair_color": "#E3C16F", "brow_color": "#8C6A3A"},
+    "mo":   {"role": "deadpan, knows the rules", "top": "#3FA65A", "bottom": "#4A4A4A", "skin": "#8D5A3B", "hair": "short", "hair_color": "#111111"},
+    "tiny": {"role": "the big lad", "top": "#3A7BD5", "bottom": "#6B5B3E", "skin": "#E9B98F", "build": "big", "height": 1.04, "hair": "flatcap", "hat_color": "#4C4C4C", "moustache": true, "hair_color": "#3B2A20"}
+  }
+}
