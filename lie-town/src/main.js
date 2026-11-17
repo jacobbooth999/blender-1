@@ -175,6 +175,12 @@ const FX = {
 const out = document.getElementById('out'); out.width = W; out.height = H;
 const g2 = out.getContext('2d');
 let WORDS = [];
+// time warp: new narration time -> old shot-timeline time, anchored at matching phrase starts/ends
+let WARP = [[0, 0]];
+function warp(tn) {
+  for (let i = 1; i < WARP.length; i++) if (tn <= WARP[i][0]) { const [a0, b0] = WARP[i - 1], [a1, b1] = WARP[i]; return b0 + (b1 - b0) * (tn - a0) / Math.max(1e-6, a1 - a0); }
+  const [a, b] = WARP[WARP.length - 1]; return b + (tn - a);
+}
 const OV = {
   W, H, PX,
   easeBack(k) { const c = 1.9; return 1 + (c + 1) * Math.pow(k - 1, 3) + c * Math.pow(k - 1, 2); },
@@ -261,7 +267,7 @@ function resetWorld(f) {
 }
 
 window.renderFrame = function (f) {
-  const T = f / FPS;
+  const TN = f / FPS, T = warp(TN);
   let si = SHOTS.findIndex((s) => T >= s.a && T < s.b); if (si < 0) si = SHOTS.length - 1;
   const S = SHOTS[si], t = T - S.a, dur = S.b - S.a;
   resetWorld(f); FX.reset(); OV.flash = 0;
@@ -310,14 +316,23 @@ window.renderFrame = function (f) {
   renderer.setRenderTarget(null); renderer.render(postScene, postCam);
   g2.drawImage(renderer.domElement, 0, 0);
   if (S.ov) S.ov(g2, t, OV, T);
-  if (!S.nocap) drawCaption(T);
+  if (!S.nocap) drawCaption(TN);
   return si;
 };
 
 window.ready = (async () => {
   await document.fonts.load('800 80px Montserrat'); await document.fonts.load('900 80px Montserrat'); await document.fonts.load('700 30px Montserrat');
   await document.fonts.load('600 30px Montserrat');
-  WORDS = (await (await fetch(WORDS_URL)).json()).words;
-  window.SHOT_COUNT = SHOTS.length; window.DURATION = SHOTS[SHOTS.length - 1].b;
+  const NW = await (await fetch(WORDS_URL)).json(), OW = await (await fetch(WORDS_URL.replace('words.json', 'words_v1.json'))).json();
+  WORDS = NW.words;
+  const anchors = [[0, 0]]; const byP = {};
+  NW.words.forEach((w, i) => { (byP[w.p] ||= []).push(i); });
+  for (const p of Object.keys(byP).map(Number).sort((a, b) => a - b)) {
+    const ids = byP[p], i0 = ids[0], i1 = ids[ids.length - 1];
+    anchors.push([NW.words[i0].start, OW.words[i0].start], [NW.words[i1].end, OW.words[i1].end]);
+  }
+  anchors.push([NW.duration, OW.duration]);
+  WARP = anchors.filter((a, i) => i === 0 || a[0] > anchors[i - 1][0] + 1e-4);
+  window.SHOT_COUNT = SHOTS.length; window.DURATION = NW.duration;
   return true;
 })();

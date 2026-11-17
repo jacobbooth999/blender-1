@@ -8,6 +8,18 @@ HERE = os.path.dirname(os.path.abspath(__file__)); ROOT = os.path.dirname(HERE)
 SR = 48000
 words = json.load(open(os.path.join(ROOT, 'voice/words.json')))
 DUR = words['duration']; N = int(DUR * SR)
+# the score/SFX event table below is written in the v1 narration timeline; W() maps those times onto the new voice
+old = json.load(open(os.path.join(ROOT, 'voice/words_v1.json')))
+ODUR = old['duration']
+_by = {}
+for i, w in enumerate(words['words']): _by.setdefault(w['p'], []).append(i)
+_A = [(0., 0.)]
+for p in sorted(_by):
+    i0, i1 = _by[p][0], _by[p][-1]
+    _A += [(old['words'][i0]['start'], words['words'][i0]['start']), (old['words'][i1]['end'], words['words'][i1]['end'])]
+_A.append((ODUR, DUR)); _A = sorted(set(_A))
+_ox = np.array([a for a, b in _A]); _nx = np.array([b for a, b in _A])
+def W(t): return float(np.interp(t, _ox, _nx))
 rng = np.random.default_rng(7)
 t_all = np.arange(N) / SR
 
@@ -19,8 +31,8 @@ def env(n, a=.005, d=.3, s=0., r=.05, sus=None):
     if R and n > R: e[-R:] *= np.linspace(1, 0, R)
     return e
 def note(f): return 440 * 2 ** ((f - 69) / 12)
-def add(buf, x, at, gain=1.):
-    i = int(at * SR); j = min(len(buf), i + len(x))
+def add(buf, x, at, gain=1., warp=True):
+    i = int((W(at) if warp else at) * SR); j = min(len(buf), i + len(x))
     if i < 0 or i >= len(buf): return
     buf[i:j] += x[:j - i] * gain
 def lp(x, a):  # one-pole low-pass, a in (0,1)
@@ -135,12 +147,12 @@ bpm2 = 92; b2 = 60 / bpm2
 prog2 = [(48, [60, 64, 67]), (53, [60, 65, 69]), (45, [57, 60, 64]), (55, [59, 62, 67])]  # C F Am G
 mel = [76, 74, 72, 74, 76, 76, 79, 77, 76, 74, 72, 71, 72]
 t = 64.2; bar = 0; mi = 0
-while t < DUR - .2:
+while t < ODUR - .2:
     root, ch = prog2[bar % 4]
     addm(pad(note(ch[0]), 4 * b2 + .5, .35) + .8 * pad(note(ch[1]), 4 * b2 + .5, .35) + .6 * pad(note(ch[2]), 4 * b2 + .5, .35), t, .09)
     for b in range(4):
         tb = t + b * b2
-        if tb > DUR - .2: break
+        if tb > ODUR - .2: break
         addm(bass(note(root - 12), b2 * .9), tb, .32)
         addm(kick(.8), tb, .3 if b in (0, 2) else .14)
         if b in (1, 3): addm(snare(), tb, .09)
@@ -178,7 +190,7 @@ def thunder(at, g=1.):
     x = lpf(rng.standard_normal(n), 180) * (np.exp(-tt * 1.4) + .5 * np.exp(-(tt - .3) ** 2 * 20))
     adds(x / np.abs(x).max(), at, .55 * g)
 def noise_bed(a, b, lo, hi, g, fade=.4):
-    n = int((b - a) * SR); x = bpf(rng.standard_normal(n), lo, hi)
+    n = int((W(b) - W(a)) * SR); x = bpf(rng.standard_normal(n), lo, hi)
     e = np.ones(n); fn = int(fade * SR); e[:fn] = np.linspace(0, 1, fn); e[-fn:] = np.linspace(1, 0, fn)
     x = x / (np.abs(x).max() + 1e-9) * e
     adds(x, a, g, pan=0)
@@ -196,7 +208,7 @@ def splash_steps(a, b, step=.19):
     while tb < b:
         n = int(.09 * SR); adds(bpf(rng.standard_normal(n), 600, 4000) * np.exp(-np.arange(n) / SR * 35), tb, .12); tb += step
 def scribble(a, b):
-    n = int((b - a) * SR); tt = np.arange(n) / SR
+    n = int((W(b) - W(a)) * SR); tt = np.arange(n) / SR
     x = bpf(rng.standard_normal(n), 2000, 7000) * (.5 + .5 * np.sin(2 * np.pi * 7 * tt)) ** 2
     adds(x / np.abs(x).max(), a, .05)
 def beep(at, f=1000, d=.12):
@@ -204,9 +216,9 @@ def beep(at, f=1000, d=.12):
 def stamp(at):
     adds(kick(1.4), at, .5); n = int(.15 * SR); adds(lpf(rng.standard_normal(n), 2500) * np.exp(-np.arange(n) / SR * 30), at, .25)
 def cheer(a, b, g=.2):
-    n = int((b - a) * SR); tt = np.arange(n) / SR
+    n = int((W(b) - W(a)) * SR); tt = np.arange(n) / SR
     x = bpf(rng.standard_normal(n), 500, 3500) * (1 + .4 * np.sin(2 * np.pi * 3.3 * tt + rng.random(n) * .3))
-    e = np.minimum(1, tt / .3) * np.minimum(1, (b - a - tt) / .6)
+    e = np.minimum(1, tt / .3) * np.minimum(1, (n / SR - tt) / .6)
     adds(x / np.abs(x).max() * e, a, g)
     for i in range(10):  # whistles / woos
         s0 = a + rng.random() * (b - a - .6); nn = int(.5 * SR); t2 = np.arange(nn) / SR
@@ -263,7 +275,7 @@ def movavg(x, k):
 a = np.abs(voice); sm = movavg(movavg(a, int(.05 * SR)), int(.25 * SR))
 duck = 1 - .55 * np.clip(sm / (np.percentile(sm[sm > 1e-4], 70) + 1e-9), 0, 1)
 def norm(x, peak): return x / (np.abs(x).max() + 1e-9) * peak
-sec = np.interp(t_all, [0, 23.3, 24.0, 58.9, 59.5, 63.8, 64.6, DUR], [1, 1, 2.3, 2.3, 2.6, 2.6, 1, 1])
+sec = np.interp(t_all, [W(x) for x in [0, 23.3, 24.0, 58.9, 59.5, 63.8, 64.6]] + [DUR], [1, 1, 2.3, 2.3, 2.6, 2.6, 1, 1])
 music = music * sec[:, None]
 music = norm(music, .5) * duck[:, None]
 sfx = norm(sfx, .6)
