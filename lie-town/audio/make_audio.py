@@ -257,10 +257,14 @@ v, vsr = sf.read(os.path.join(ROOT, 'voice/voice.wav'))
 if v.ndim > 1: v = v.mean(1)
 idx = np.linspace(0, len(v) - 1, N); voice = np.interp(idx, np.arange(len(v)), v)
 # duck music under speech (envelope follower on voice)
-a = np.abs(voice); k = int(.05 * SR); sm = np.convolve(a, np.ones(k) / k, mode='same')
-sm = np.convolve(sm, np.ones(int(.25 * SR)) / int(.25 * SR), mode='same')
+def movavg(x, k):
+    c = np.concatenate([[0], np.cumsum(x)]); y = (c[k:] - c[:-k]) / k
+    return np.concatenate([np.full(k // 2, y[0]), y, np.full(len(x) - len(y) - k // 2, y[-1])])
+a = np.abs(voice); sm = movavg(movavg(a, int(.05 * SR)), int(.25 * SR))
 duck = 1 - .55 * np.clip(sm / (np.percentile(sm[sm > 1e-4], 70) + 1e-9), 0, 1)
 def norm(x, peak): return x / (np.abs(x).max() + 1e-9) * peak
+sec = np.interp(t_all, [0, 23.3, 24.0, 58.9, 59.5, 63.8, 64.6, DUR], [1, 1, 2.3, 2.3, 2.6, 2.6, 1, 1])
+music = music * sec[:, None]
 music = norm(music, .5) * duck[:, None]
 sfx = norm(sfx, .6)
 mix = music * 1.0 + sfx * .7 + voice[:, None] * 1.0 / (np.abs(voice).max() + 1e-9) * .75
