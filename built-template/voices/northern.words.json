@@ -1,0 +1,443 @@
+{
+ "duration": 18.629,
+ "words": [
+  {
+   "word": "If",
+   "start": 0.1,
+   "end": 0.26,
+   "s": 0
+  },
+  {
+   "word": "you",
+   "start": 0.26,
+   "end": 0.424,
+   "s": 0
+  },
+  {
+   "word": "fry",
+   "start": 0.424,
+   "end": 0.589,
+   "s": 0
+  },
+  {
+   "word": "a",
+   "start": 0.589,
+   "end": 0.744,
+   "s": 0
+  },
+  {
+   "word": "fish",
+   "start": 0.744,
+   "end": 0.914,
+   "s": 0
+  },
+  {
+   "word": "in",
+   "start": 0.914,
+   "end": 1.073,
+   "s": 0
+  },
+  {
+   "word": "a",
+   "start": 1.073,
+   "end": 1.229,
+   "s": 0
+  },
+  {
+   "word": "garden",
+   "start": 1.229,
+   "end": 1.501,
+   "s": 0
+  },
+  {
+   "word": "shed,",
+   "start": 1.501,
+   "end": 1.671,
+   "s": 0
+  },
+  {
+   "word": "you've",
+   "start": 1.671,
+   "end": 1.939,
+   "s": 0
+  },
+  {
+   "word": "got",
+   "start": 1.939,
+   "end": 2.103,
+   "s": 0
+  },
+  {
+   "word": "a",
+   "start": 2.103,
+   "end": 2.259,
+   "s": 0
+  },
+  {
+   "word": "chippy.",
+   "start": 2.259,
+   "end": 2.531,
+   "s": 0
+  },
+  {
+   "word": "But",
+   "start": 2.691,
+   "end": 2.876,
+   "s": 1
+  },
+  {
+   "word": "the",
+   "start": 2.876,
+   "end": 3.061,
+   "s": 1
+  },
+  {
+   "word": "queue",
+   "start": 3.061,
+   "end": 3.257,
+   "s": 1
+  },
+  {
+   "word": "goes",
+   "start": 3.257,
+   "end": 3.447,
+   "s": 1
+  },
+  {
+   "word": "right",
+   "start": 3.447,
+   "end": 3.642,
+   "s": 1
+  },
+  {
+   "word": "round",
+   "start": 3.642,
+   "end": 3.838,
+   "s": 1
+  },
+  {
+   "word": "the",
+   "start": 3.838,
+   "end": 4.023,
+   "s": 1
+  },
+  {
+   "word": "block.",
+   "start": 4.023,
+   "end": 4.218,
+   "s": 1
+  },
+  {
+   "word": "So",
+   "start": 4.378,
+   "end": 4.579,
+   "s": 2
+  },
+  {
+   "word": "you",
+   "start": 4.579,
+   "end": 4.787,
+   "s": 2
+  },
+  {
+   "word": "buy",
+   "start": 4.787,
+   "end": 4.994,
+   "s": 2
+  },
+  {
+   "word": "a",
+   "start": 4.994,
+   "end": 5.189,
+   "s": 2
+  },
+  {
+   "word": "second",
+   "start": 5.189,
+   "end": 5.533,
+   "s": 2
+  },
+  {
+   "word": "fryer.",
+   "start": 5.533,
+   "end": 5.752,
+   "s": 2
+  },
+  {
+   "word": "This",
+   "start": 5.912,
+   "end": 6.086,
+   "s": 3
+  },
+  {
+   "word": "is",
+   "start": 6.086,
+   "end": 6.25,
+   "s": 3
+  },
+  {
+   "word": "the",
+   "start": 6.25,
+   "end": 6.419,
+   "s": 3
+  },
+  {
+   "word": "range.",
+   "start": 6.419,
+   "end": 6.694,
+   "s": 3
+  },
+  {
+   "word": "But",
+   "start": 6.854,
+   "end": 7.055,
+   "s": 4
+  },
+  {
+   "word": "Gaz",
+   "start": 7.055,
+   "end": 7.256,
+   "s": 4
+  },
+  {
+   "word": "wants",
+   "start": 7.256,
+   "end": 7.469,
+   "s": 4
+  },
+  {
+   "word": "curry",
+   "start": 7.469,
+   "end": 7.796,
+   "s": 4
+  },
+  {
+   "word": "sauce",
+   "start": 7.796,
+   "end": 8.124,
+   "s": 4
+  },
+  {
+   "word": "on",
+   "start": 8.124,
+   "end": 8.319,
+   "s": 4
+  },
+  {
+   "word": "everything.",
+   "start": 8.319,
+   "end": 8.905,
+   "s": 4
+  },
+  {
+   "word": "So",
+   "start": 9.065,
+   "end": 9.235,
+   "s": 5
+  },
+  {
+   "word": "the",
+   "start": 9.235,
+   "end": 9.41,
+   "s": 5
+  },
+  {
+   "word": "menu",
+   "start": 9.41,
+   "end": 9.69,
+   "s": 5
+  },
+  {
+   "word": "grows",
+   "start": 9.69,
+   "end": 9.875,
+   "s": 5
+  },
+  {
+   "word": "a",
+   "start": 9.875,
+   "end": 10.04,
+   "s": 5
+  },
+  {
+   "word": "whole",
+   "start": 10.04,
+   "end": 10.325,
+   "s": 5
+  },
+  {
+   "word": "new",
+   "start": 10.325,
+   "end": 10.5,
+   "s": 5
+  },
+  {
+   "word": "column.",
+   "start": 10.5,
+   "end": 10.79,
+   "s": 5
+  },
+  {
+   "word": "And",
+   "start": 10.95,
+   "end": 11.141,
+   "s": 6
+  },
+  {
+   "word": "if",
+   "start": 11.141,
+   "end": 11.326,
+   "s": 6
+  },
+  {
+   "word": "you're",
+   "start": 11.326,
+   "end": 11.636,
+   "s": 6
+  },
+  {
+   "word": "not",
+   "start": 11.636,
+   "end": 11.826,
+   "s": 6
+  },
+  {
+   "word": "following,",
+   "start": 11.826,
+   "end": 12.267,
+   "s": 6
+  },
+  {
+   "word": "that's",
+   "start": 12.267,
+   "end": 12.468,
+   "s": 6
+  },
+  {
+   "word": "extra",
+   "start": 12.468,
+   "end": 12.778,
+   "s": 6
+  },
+  {
+   "word": "vinegar.",
+   "start": 12.778,
+   "end": 13.208,
+   "s": 6
+  },
+  {
+   "word": "Add",
+   "start": 13.368,
+   "end": 13.563,
+   "s": 7
+  },
+  {
+   "word": "a",
+   "start": 13.563,
+   "end": 13.747,
+   "s": 7
+  },
+  {
+   "word": "pickled",
+   "start": 13.747,
+   "end": 14.077,
+   "s": 7
+  },
+  {
+   "word": "egg,",
+   "start": 14.077,
+   "end": 14.272,
+   "s": 7
+  },
+  {
+   "word": "a",
+   "start": 14.272,
+   "end": 14.456,
+   "s": 7
+  },
+  {
+   "word": "wooden",
+   "start": 14.456,
+   "end": 14.78,
+   "s": 7
+  },
+  {
+   "word": "fork",
+   "start": 14.78,
+   "end": 14.981,
+   "s": 7
+  },
+  {
+   "word": "and",
+   "start": 14.981,
+   "end": 15.176,
+   "s": 7
+  },
+  {
+   "word": "a",
+   "start": 15.176,
+   "end": 15.36,
+   "s": 7
+  },
+  {
+   "word": "seagull,",
+   "start": 15.36,
+   "end": 15.689,
+   "s": 7
+  },
+  {
+   "word": "so",
+   "start": 15.689,
+   "end": 15.879,
+   "s": 7
+  },
+  {
+   "word": "nobody",
+   "start": 15.879,
+   "end": 16.314,
+   "s": 7
+  },
+  {
+   "word": "eats",
+   "start": 16.314,
+   "end": 16.515,
+   "s": 7
+  },
+  {
+   "word": "in",
+   "start": 16.515,
+   "end": 16.705,
+   "s": 7
+  },
+  {
+   "word": "peace.",
+   "start": 16.705,
+   "end": 17.023,
+   "s": 7
+  },
+  {
+   "word": "Sorted.",
+   "start": 17.183,
+   "end": 17.67,
+   "s": 8
+  },
+  {
+   "word": "That's",
+   "start": 17.83,
+   "end": 18.015,
+   "s": 9
+  },
+  {
+   "word": "a",
+   "start": 18.015,
+   "end": 18.18,
+   "s": 9
+  },
+  {
+   "word": "chippy.",
+   "start": 18.18,
+   "end": 18.469,
+   "s": 9
+  }
+ ]
+}

@@ -112,6 +112,30 @@ Overlay positions are normalised `[x, y]` with **y measured from the bottom**. C
 - **Ending**: end on the opening composition so the video loops. The demo's last shot glides back to the hook framing.
 - **Audio**: voice only, mixed to about −14 LUFS. Captions carry the energy, not music.
 
+## Synthetic British voices
+`tools/make_voice.py` makes a voiceover plus a matching `words.json` from an episode's script using
+free local text-to-speech. Kokoro voices are Apache-2.0. Piper and VCTK voices carry their own
+licences (see each model's MODEL_CARD); check them before commercial use.
+```bash
+pip install sherpa-onnx piper-tts num2words soundfile numpy
+# download models from github.com/k2-fsa/sherpa-onnx/releases/tag/tts-models into models/tts/
+python tools/make_voice.py --voice george --episode episodes/my_episode.json --out voices/george
+```
+Then point the episode at it: `"voice": "../voices/george.mp3", "words": "../voices/george.words.json"`
+(see `episodes/demo_chippy_george.json`).
+
+| Voice | Engine | Character |
+|---|---|---|
+| george, lewis, daniel, fable | Kokoro | British male: livelier, more natural |
+| emma, alice, lily, isabella | Kokoro | British female |
+| alan, northern, cori | Piper | flatter, deadpan reads (southern male, northern male, female) |
+| london, brum, yorkshire, geordie | Piper VCTK | regional male speakers (flat delivery) |
+
+Each voice's speed is preset to the format's pace of about 3.9 words/s. Use `--speed` to change it.
+- Numbers, money and times are spelled out for the voice ("£8.50" is said as "eight pounds fifty"); captions keep the written form.
+- Kokoro skips words missing from its British dictionary, so the tool adds RP pronunciations for them automatically (needs `piper-tts`).
+- `voices/00_audition_reel.mp3` has every voice reading the demo hook.
+
 ## Swapping in a real voice
 1. Record the script and make `voice.wav`.
 2. Get word timings into `words.json`. The `roman-short/tools/make_voice.py` flow, or any forced aligner, produces this schema.
