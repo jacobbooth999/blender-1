@@ -1,0 +1,257 @@
+[
+ {
+  "id": "L1",
+  "chunks": [
+   "I just became mayor",
+   "of the worst town",
+   "on the internet."
+  ],
+  "emph": {
+   "mayor": "yellow",
+   "worst": "red",
+   "internet.": "caps"
+  }
+ },
+ {
+  "id": "L2",
+  "chunks": [
+   "And you",
+   "decide",
+   "what happens to it."
+  ],
+  "emph": {
+   "you": "yellow",
+   "decide": "caps"
+  }
+ },
+ {
+  "id": "L3",
+  "chunks": [
+   "This is Dustbury.",
+   "Population:",
+   "three."
+  ],
+  "emph": {
+   "Dustbury.": "yellow",
+   "three.": "red"
+  }
+ },
+ {
+  "id": "L4",
+  "chunks": [
+   "The fountain",
+   "hasn't worked in years.",
+   "Now it's just a puddle",
+   "with ambitions."
+  ],
+  "emph": {
+   "fountain": "yellow",
+   "puddle": "caps",
+   "ambitions.": "serif"
+  }
+ },
+ {
+  "id": "L5",
+  "chunks": [
+   "The streetlights?",
+   "Every single one",
+   "is dead."
+  ],
+  "emph": {
+   "streetlights?": "yellow",
+   "dead.": "red"
+  }
+ },
+ {
+  "id": "L6",
+  "chunks": [
+   "And the town hall...",
+   "Honestly,",
+   "I work in a tent."
+  ],
+  "emph": {
+   "hall...": "yellow",
+   "tent.": "caps"
+  }
+ },
+ {
+  "id": "L7",
+  "chunks": [
+   "But Dustbury",
+   "still has people.",
+   "Three of them."
+  ],
+  "emph": {
+   "people.": "yellow",
+   "Three": "caps"
+  }
+ },
+ {
+  "id": "L8",
+  "chunks": [
+   "Old Rose",
+   "has lived here",
+   "for eighty years."
+  ],
+  "emph": {
+   "Rose": "yellow",
+   "eighty": "caps"
+  }
+ },
+ {
+  "id": "L9",
+  "chunks": [
+   "Gary sleeps",
+   "at the bus stop.",
+   "The bus stopped coming",
+   "years ago."
+  ],
+  "emph": {
+   "Gary": "yellow",
+   "stopped": "red"
+  }
+ },
+ {
+  "id": "L10",
+  "chunks": [
+   "And Dot.",
+   "Nobody knows",
+   "where Dot came from."
+  ],
+  "emph": {
+   "Dot.": "yellow",
+   "Nobody": "caps",
+   "from.": "serif"
+  }
+ },
+ {
+  "id": "L11",
+  "chunks": [
+   "Oh, and that building",
+   "on the hill?",
+   "Nobody goes in there."
+  ],
+  "emph": {
+   "building": "yellow",
+   "hill?": "caps",
+   "Nobody": "red"
+  }
+ },
+ {
+  "id": "L12",
+  "chunks": [
+   "We'll get to that."
+  ],
+  "emph": {
+   "that.": "serif"
+  }
+ },
+ {
+  "id": "L13",
+  "chunks": [
+   "Here's the problem.",
+   "Rose says",
+   "if nothing changes,",
+   "she's leaving."
+  ],
+  "emph": {
+   "problem.": "caps",
+   "leaving.": "red"
+  }
+ },
+ {
+  "id": "L14",
+  "chunks": [
+   "And if Dustbury",
+   "hits zero,",
+   "it's gone.",
+   "Forever."
+  ],
+  "emph": {
+   "zero,": "red",
+   "gone.": "caps",
+   "Forever.": "serif"
+  }
+ },
+ {
+  "id": "L15",
+  "chunks": [
+   "We have",
+   "one hundred coins.",
+   "Enough to fix",
+   "one thing."
+  ],
+  "emph": {
+   "hundred": "yellow",
+   "one": "caps"
+  }
+ },
+ {
+  "id": "L16",
+  "chunks": [
+   "Option A:",
+   "fix the fountain.",
+   "Clean water,",
+   "and maybe,",
+   "a new neighbor."
+  ],
+  "emph": {
+   "A:": "yellow",
+   "fountain.": "caps",
+   "neighbor.": "serif"
+  }
+ },
+ {
+  "id": "L17",
+  "chunks": [
+   "Option B:",
+   "fix the streetlights,",
+   "so Gary",
+   "isn't sleeping",
+   "in the dark."
+  ],
+  "emph": {
+   "B:": "yellow",
+   "streetlights,": "caps",
+   "dark.": "red"
+  }
+ },
+ {
+  "id": "L18",
+  "chunks": [
+   "Comment A or B,",
+   "and tell me why.",
+   "The best reason",
+   "gets a shout-out",
+   "next episode."
+  ],
+  "emph": {
+   "A": "yellow",
+   "B,": "yellow",
+   "why.": "caps",
+   "shout-out": "yellow"
+  }
+ },
+ {
+  "id": "L19",
+  "chunks": [
+   "Follow,",
+   "to see what you built.",
+   "Or what you broke."
+  ],
+  "emph": {
+   "Follow,": "caps",
+   "built.": "yellow",
+   "broke.": "red"
+  }
+ },
+ {
+  "id": "L20",
+  "chunks": [
+   "Welcome to Dustbury."
+  ],
+  "emph": {
+   "Dustbury.": "yellow"
+  }
+ }
+]
