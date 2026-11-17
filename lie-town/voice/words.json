@@ -1,0 +1,1519 @@
+{
+ "duration": 74.961,
+ "words": [
+  {
+   "word": "In",
+   "start": 0.12,
+   "end": 0.45,
+   "p": 0
+  },
+  {
+   "word": "this",
+   "start": 0.45,
+   "end": 0.684,
+   "p": 0
+  },
+  {
+   "word": "town",
+   "start": 0.684,
+   "end": 0.995,
+   "p": 0
+  },
+  {
+   "word": "every",
+   "start": 1.075,
+   "end": 1.579,
+   "p": 1
+  },
+  {
+   "word": "time",
+   "start": 1.579,
+   "end": 1.794,
+   "p": 1
+  },
+  {
+   "word": "you",
+   "start": 1.794,
+   "end": 2.025,
+   "p": 1
+  },
+  {
+   "word": "lie",
+   "start": 2.025,
+   "end": 2.183,
+   "p": 1
+  },
+  {
+   "word": "you",
+   "start": 2.243,
+   "end": 2.463,
+   "p": 2
+  },
+  {
+   "word": "earn",
+   "start": 2.463,
+   "end": 2.699,
+   "p": 2
+  },
+  {
+   "word": "money",
+   "start": 2.699,
+   "end": 3.109,
+   "p": 2
+  },
+  {
+   "word": "Tell",
+   "start": 3.409,
+   "end": 3.669,
+   "p": 3
+  },
+  {
+   "word": "your",
+   "start": 3.669,
+   "end": 3.789,
+   "p": 3
+  },
+  {
+   "word": "teacher",
+   "start": 3.789,
+   "end": 4.198,
+   "p": 3
+  },
+  {
+   "word": "the",
+   "start": 4.198,
+   "end": 4.381,
+   "p": 3
+  },
+  {
+   "word": "dog",
+   "start": 4.381,
+   "end": 4.639,
+   "p": 3
+  },
+  {
+   "word": "ate",
+   "start": 4.639,
+   "end": 4.869,
+   "p": 3
+  },
+  {
+   "word": "your",
+   "start": 4.869,
+   "end": 5.074,
+   "p": 3
+  },
+  {
+   "word": "homework",
+   "start": 5.074,
+   "end": 5.604,
+   "p": 3
+  },
+  {
+   "word": "Five",
+   "start": 5.724,
+   "end": 6.044,
+   "p": 4
+  },
+  {
+   "word": "dollars",
+   "start": 6.044,
+   "end": 6.653,
+   "p": 4
+  },
+  {
+   "word": "Tell",
+   "start": 6.933,
+   "end": 7.153,
+   "p": 5
+  },
+  {
+   "word": "your",
+   "start": 7.153,
+   "end": 7.372,
+   "p": 5
+  },
+  {
+   "word": "wife",
+   "start": 7.372,
+   "end": 7.591,
+   "p": 5
+  },
+  {
+   "word": "you",
+   "start": 7.591,
+   "end": 7.713,
+   "p": 5
+  },
+  {
+   "word": "love",
+   "start": 7.713,
+   "end": 8.01,
+   "p": 5
+  },
+  {
+   "word": "her",
+   "start": 8.01,
+   "end": 8.213,
+   "p": 5
+  },
+  {
+   "word": "cooking",
+   "start": 8.213,
+   "end": 8.627,
+   "p": 5
+  },
+  {
+   "word": "Fifty",
+   "start": 8.747,
+   "end": 9.343,
+   "p": 6
+  },
+  {
+   "word": "The",
+   "start": 9.643,
+   "end": 9.878,
+   "p": 7
+  },
+  {
+   "word": "mayor",
+   "start": 9.878,
+   "end": 10.161,
+   "p": 7
+  },
+  {
+   "word": "lies",
+   "start": 10.161,
+   "end": 10.42,
+   "p": 7
+  },
+  {
+   "word": "so",
+   "start": 10.42,
+   "end": 10.631,
+   "p": 7
+  },
+  {
+   "word": "much",
+   "start": 10.631,
+   "end": 10.883,
+   "p": 7
+  },
+  {
+   "word": "he",
+   "start": 10.883,
+   "end": 11.103,
+   "p": 7
+  },
+  {
+   "word": "lives",
+   "start": 11.103,
+   "end": 11.545,
+   "p": 7
+  },
+  {
+   "word": "in",
+   "start": 11.545,
+   "end": 11.756,
+   "p": 7
+  },
+  {
+   "word": "a",
+   "start": 11.756,
+   "end": 11.953,
+   "p": 7
+  },
+  {
+   "word": "golden",
+   "start": 11.953,
+   "end": 12.412,
+   "p": 7
+  },
+  {
+   "word": "mansion",
+   "start": 12.412,
+   "end": 12.906,
+   "p": 7
+  },
+  {
+   "word": "But",
+   "start": 13.306,
+   "end": 13.546,
+   "p": 8
+  },
+  {
+   "word": "Sam",
+   "start": 13.546,
+   "end": 13.826,
+   "p": 8
+  },
+  {
+   "word": "has",
+   "start": 13.826,
+   "end": 14.028,
+   "p": 8
+  },
+  {
+   "word": "never",
+   "start": 14.028,
+   "end": 14.446,
+   "p": 8
+  },
+  {
+   "word": "told",
+   "start": 14.446,
+   "end": 14.75,
+   "p": 8
+  },
+  {
+   "word": "a",
+   "start": 14.75,
+   "end": 14.941,
+   "p": 8
+  },
+  {
+   "word": "single",
+   "start": 14.941,
+   "end": 15.256,
+   "p": 8
+  },
+  {
+   "word": "lie",
+   "start": 15.256,
+   "end": 15.497,
+   "p": 8
+  },
+  {
+   "word": "Not",
+   "start": 15.647,
+   "end": 16.012,
+   "p": 9
+  },
+  {
+   "word": "once",
+   "start": 16.012,
+   "end": 16.416,
+   "p": 9
+  },
+  {
+   "word": "So",
+   "start": 16.716,
+   "end": 16.913,
+   "p": 10
+  },
+  {
+   "word": "Sam",
+   "start": 16.913,
+   "end": 17.134,
+   "p": 10
+  },
+  {
+   "word": "lives",
+   "start": 17.134,
+   "end": 17.551,
+   "p": 10
+  },
+  {
+   "word": "in",
+   "start": 17.551,
+   "end": 17.706,
+   "p": 10
+  },
+  {
+   "word": "a",
+   "start": 17.706,
+   "end": 17.926,
+   "p": 10
+  },
+  {
+   "word": "cardboard",
+   "start": 17.926,
+   "end": 18.433,
+   "p": 10
+  },
+  {
+   "word": "box",
+   "start": 18.433,
+   "end": 18.666,
+   "p": 10
+  },
+  {
+   "word": "behind",
+   "start": 18.666,
+   "end": 19.046,
+   "p": 10
+  },
+  {
+   "word": "the",
+   "start": 19.046,
+   "end": 19.314,
+   "p": 10
+  },
+  {
+   "word": "bakery",
+   "start": 19.314,
+   "end": 19.906,
+   "p": 10
+  },
+  {
+   "word": "He",
+   "start": 20.156,
+   "end": 20.376,
+   "p": 11
+  },
+  {
+   "word": "eats",
+   "start": 20.376,
+   "end": 20.596,
+   "p": 11
+  },
+  {
+   "word": "bread",
+   "start": 20.596,
+   "end": 20.856,
+   "p": 11
+  },
+  {
+   "word": "crusts",
+   "start": 20.856,
+   "end": 21.149,
+   "p": 11
+  },
+  {
+   "word": "for",
+   "start": 21.149,
+   "end": 21.296,
+   "p": 11
+  },
+  {
+   "word": "dinner",
+   "start": 21.296,
+   "end": 21.806,
+   "p": 11
+  },
+  {
+   "word": "and",
+   "start": 21.806,
+   "end": 22.016,
+   "p": 11
+  },
+  {
+   "word": "everyone",
+   "start": 22.016,
+   "end": 22.664,
+   "p": 11
+  },
+  {
+   "word": "laughs",
+   "start": 22.664,
+   "end": 22.951,
+   "p": 11
+  },
+  {
+   "word": "at",
+   "start": 22.951,
+   "end": 23.156,
+   "p": 11
+  },
+  {
+   "word": "him",
+   "start": 23.156,
+   "end": 23.368,
+   "p": 11
+  },
+  {
+   "word": "Then",
+   "start": 23.818,
+   "end": 24.067,
+   "p": 12
+  },
+  {
+   "word": "one",
+   "start": 24.067,
+   "end": 24.448,
+   "p": 12
+  },
+  {
+   "word": "night",
+   "start": 24.448,
+   "end": 24.718,
+   "p": 12
+  },
+  {
+   "word": "Sam",
+   "start": 24.718,
+   "end": 24.945,
+   "p": 12
+  },
+  {
+   "word": "saw",
+   "start": 24.945,
+   "end": 25.171,
+   "p": 12
+  },
+  {
+   "word": "a",
+   "start": 25.171,
+   "end": 25.35,
+   "p": 12
+  },
+  {
+   "word": "giant",
+   "start": 25.35,
+   "end": 25.678,
+   "p": 12
+  },
+  {
+   "word": "crack",
+   "start": 25.678,
+   "end": 25.838,
+   "p": 12
+  },
+  {
+   "word": "in",
+   "start": 25.838,
+   "end": 26.088,
+   "p": 12
+  },
+  {
+   "word": "the",
+   "start": 26.088,
+   "end": 26.328,
+   "p": 12
+  },
+  {
+   "word": "dam",
+   "start": 26.328,
+   "end": 26.547,
+   "p": 12
+  },
+  {
+   "word": "above",
+   "start": 26.547,
+   "end": 27.008,
+   "p": 12
+  },
+  {
+   "word": "the",
+   "start": 27.008,
+   "end": 27.2,
+   "p": 12
+  },
+  {
+   "word": "town",
+   "start": 27.2,
+   "end": 27.449,
+   "p": 12
+  },
+  {
+   "word": "He",
+   "start": 27.699,
+   "end": 27.885,
+   "p": 13
+  },
+  {
+   "word": "ran",
+   "start": 27.885,
+   "end": 28.139,
+   "p": 13
+  },
+  {
+   "word": "straight",
+   "start": 28.139,
+   "end": 28.409,
+   "p": 13
+  },
+  {
+   "word": "to",
+   "start": 28.409,
+   "end": 28.593,
+   "p": 13
+  },
+  {
+   "word": "the",
+   "start": 28.593,
+   "end": 28.889,
+   "p": 13
+  },
+  {
+   "word": "mayor",
+   "start": 28.889,
+   "end": 29.051,
+   "p": 13
+  },
+  {
+   "word": "But",
+   "start": 29.301,
+   "end": 29.591,
+   "p": 14
+  },
+  {
+   "word": "fixing",
+   "start": 29.591,
+   "end": 29.891,
+   "p": 14
+  },
+  {
+   "word": "it",
+   "start": 29.891,
+   "end": 30.121,
+   "p": 14
+  },
+  {
+   "word": "would",
+   "start": 30.121,
+   "end": 30.391,
+   "p": 14
+  },
+  {
+   "word": "cost",
+   "start": 30.391,
+   "end": 30.612,
+   "p": 14
+  },
+  {
+   "word": "the",
+   "start": 30.612,
+   "end": 30.823,
+   "p": 14
+  },
+  {
+   "word": "mayor",
+   "start": 30.823,
+   "end": 31.078,
+   "p": 14
+  },
+  {
+   "word": "his",
+   "start": 31.078,
+   "end": 31.351,
+   "p": 14
+  },
+  {
+   "word": "gold",
+   "start": 31.351,
+   "end": 31.523,
+   "p": 14
+  },
+  {
+   "word": "So",
+   "start": 31.773,
+   "end": 31.959,
+   "p": 15
+  },
+  {
+   "word": "he",
+   "start": 31.959,
+   "end": 32.113,
+   "p": 15
+  },
+  {
+   "word": "smiled",
+   "start": 32.113,
+   "end": 32.563,
+   "p": 15
+  },
+  {
+   "word": "and",
+   "start": 32.563,
+   "end": 32.763,
+   "p": 15
+  },
+  {
+   "word": "wrote",
+   "start": 32.763,
+   "end": 33.073,
+   "p": 15
+  },
+  {
+   "word": "Sam",
+   "start": 33.073,
+   "end": 33.224,
+   "p": 15
+  },
+  {
+   "word": "a",
+   "start": 33.224,
+   "end": 33.443,
+   "p": 15
+  },
+  {
+   "word": "cheque",
+   "start": 33.443,
+   "end": 33.693,
+   "p": 15
+  },
+  {
+   "word": "for",
+   "start": 33.693,
+   "end": 33.843,
+   "p": 15
+  },
+  {
+   "word": "one",
+   "start": 33.843,
+   "end": 34.218,
+   "p": 15
+  },
+  {
+   "word": "million",
+   "start": 34.218,
+   "end": 34.655,
+   "p": 15
+  },
+  {
+   "word": "dollars",
+   "start": 34.655,
+   "end": 35.091,
+   "p": 15
+  },
+  {
+   "word": "Tell",
+   "start": 35.391,
+   "end": 35.671,
+   "p": 16
+  },
+  {
+   "word": "everyone",
+   "start": 35.671,
+   "end": 36.491,
+   "p": 16
+  },
+  {
+   "word": "the",
+   "start": 36.491,
+   "end": 36.761,
+   "p": 16
+  },
+  {
+   "word": "dam",
+   "start": 36.761,
+   "end": 37.035,
+   "p": 16
+  },
+  {
+   "word": "is",
+   "start": 37.035,
+   "end": 37.281,
+   "p": 16
+  },
+  {
+   "word": "safe",
+   "start": 37.281,
+   "end": 37.583,
+   "p": 16
+  },
+  {
+   "word": "One",
+   "start": 37.733,
+   "end": 38.085,
+   "p": 17
+  },
+  {
+   "word": "lie",
+   "start": 38.085,
+   "end": 38.323,
+   "p": 17
+  },
+  {
+   "word": "and",
+   "start": 38.323,
+   "end": 38.503,
+   "p": 17
+  },
+  {
+   "word": "you'll",
+   "start": 38.503,
+   "end": 38.774,
+   "p": 17
+  },
+  {
+   "word": "never",
+   "start": 38.774,
+   "end": 39.203,
+   "p": 17
+  },
+  {
+   "word": "be",
+   "start": 39.203,
+   "end": 39.303,
+   "p": 17
+  },
+  {
+   "word": "poor",
+   "start": 39.303,
+   "end": 39.585,
+   "p": 17
+  },
+  {
+   "word": "again",
+   "start": 39.585,
+   "end": 39.98,
+   "p": 17
+  },
+  {
+   "word": "Sam",
+   "start": 40.38,
+   "end": 40.562,
+   "p": 18
+  },
+  {
+   "word": "looked",
+   "start": 40.562,
+   "end": 40.9,
+   "p": 18
+  },
+  {
+   "word": "at",
+   "start": 40.9,
+   "end": 41.1,
+   "p": 18
+  },
+  {
+   "word": "the",
+   "start": 41.1,
+   "end": 41.35,
+   "p": 18
+  },
+  {
+   "word": "cheque",
+   "start": 41.35,
+   "end": 41.511,
+   "p": 18
+  },
+  {
+   "word": "Then",
+   "start": 41.711,
+   "end": 41.989,
+   "p": 19
+  },
+  {
+   "word": "at",
+   "start": 41.989,
+   "end": 42.211,
+   "p": 19
+  },
+  {
+   "word": "his",
+   "start": 42.211,
+   "end": 42.468,
+   "p": 19
+  },
+  {
+   "word": "cardboard",
+   "start": 42.468,
+   "end": 43.051,
+   "p": 19
+  },
+  {
+   "word": "box",
+   "start": 43.051,
+   "end": 43.303,
+   "p": 19
+  },
+  {
+   "word": "The",
+   "start": 43.803,
+   "end": 44.003,
+   "p": 20
+  },
+  {
+   "word": "next",
+   "start": 44.003,
+   "end": 44.275,
+   "p": 20
+  },
+  {
+   "word": "morning",
+   "start": 44.275,
+   "end": 44.743,
+   "p": 20
+  },
+  {
+   "word": "the",
+   "start": 44.743,
+   "end": 44.972,
+   "p": 20
+  },
+  {
+   "word": "whole",
+   "start": 44.972,
+   "end": 45.243,
+   "p": 20
+  },
+  {
+   "word": "town",
+   "start": 45.243,
+   "end": 45.49,
+   "p": 20
+  },
+  {
+   "word": "was",
+   "start": 45.49,
+   "end": 45.715,
+   "p": 20
+  },
+  {
+   "word": "watching",
+   "start": 45.715,
+   "end": 46.21,
+   "p": 20
+  },
+  {
+   "word": "Sam",
+   "start": 46.46,
+   "end": 46.628,
+   "p": 21
+  },
+  {
+   "word": "looked",
+   "start": 46.628,
+   "end": 46.96,
+   "p": 21
+  },
+  {
+   "word": "into",
+   "start": 46.96,
+   "end": 47.27,
+   "p": 21
+  },
+  {
+   "word": "the",
+   "start": 47.27,
+   "end": 47.434,
+   "p": 21
+  },
+  {
+   "word": "camera",
+   "start": 47.434,
+   "end": 47.887,
+   "p": 21
+  },
+  {
+   "word": "and",
+   "start": 47.887,
+   "end": 48.13,
+   "p": 21
+  },
+  {
+   "word": "said",
+   "start": 48.13,
+   "end": 48.24,
+   "p": 21
+  },
+  {
+   "word": "The",
+   "start": 48.44,
+   "end": 48.641,
+   "p": 22
+  },
+  {
+   "word": "dam",
+   "start": 48.641,
+   "end": 48.88,
+   "p": 22
+  },
+  {
+   "word": "is",
+   "start": 48.88,
+   "end": 48.95,
+   "p": 22
+  },
+  {
+   "word": "breaking",
+   "start": 48.95,
+   "end": 49.44,
+   "p": 22
+  },
+  {
+   "word": "Run",
+   "start": 49.44,
+   "end": 49.67,
+   "p": 22
+  },
+  {
+   "word": "to",
+   "start": 49.67,
+   "end": 49.845,
+   "p": 22
+  },
+  {
+   "word": "the",
+   "start": 49.845,
+   "end": 50.046,
+   "p": 22
+  },
+  {
+   "word": "hill",
+   "start": 50.046,
+   "end": 50.35,
+   "p": 22
+  },
+  {
+   "word": "Now",
+   "start": 50.35,
+   "end": 50.468,
+   "p": 22
+  },
+  {
+   "word": "Nobody",
+   "start": 50.918,
+   "end": 51.508,
+   "p": 23
+  },
+  {
+   "word": "in",
+   "start": 51.508,
+   "end": 51.661,
+   "p": 23
+  },
+  {
+   "word": "town",
+   "start": 51.661,
+   "end": 51.928,
+   "p": 23
+  },
+  {
+   "word": "believed",
+   "start": 51.928,
+   "end": 52.49,
+   "p": 23
+  },
+  {
+   "word": "each",
+   "start": 52.49,
+   "end": 52.718,
+   "p": 23
+  },
+  {
+   "word": "other",
+   "start": 52.718,
+   "end": 53.111,
+   "p": 23
+  },
+  {
+   "word": "anymore",
+   "start": 53.111,
+   "end": 53.69,
+   "p": 23
+  },
+  {
+   "word": "But",
+   "start": 53.89,
+   "end": 54.03,
+   "p": 24
+  },
+  {
+   "word": "everyone",
+   "start": 54.03,
+   "end": 54.611,
+   "p": 24
+  },
+  {
+   "word": "knew",
+   "start": 54.611,
+   "end": 54.816,
+   "p": 24
+  },
+  {
+   "word": "one",
+   "start": 54.816,
+   "end": 55.129,
+   "p": 24
+  },
+  {
+   "word": "thing",
+   "start": 55.129,
+   "end": 55.352,
+   "p": 24
+  },
+  {
+   "word": "Sam",
+   "start": 55.502,
+   "end": 55.774,
+   "p": 25
+  },
+  {
+   "word": "never",
+   "start": 55.774,
+   "end": 56.312,
+   "p": 25
+  },
+  {
+   "word": "lies",
+   "start": 56.312,
+   "end": 56.592,
+   "p": 25
+  },
+  {
+   "word": "So",
+   "start": 56.892,
+   "end": 57.142,
+   "p": 26
+  },
+  {
+   "word": "they",
+   "start": 57.142,
+   "end": 57.45,
+   "p": 26
+  },
+  {
+   "word": "ran",
+   "start": 57.45,
+   "end": 57.73,
+   "p": 26
+  },
+  {
+   "word": "Minutes",
+   "start": 58.08,
+   "end": 58.74,
+   "p": 27
+  },
+  {
+   "word": "later",
+   "start": 58.74,
+   "end": 59.073,
+   "p": 27
+  },
+  {
+   "word": "the",
+   "start": 59.073,
+   "end": 59.285,
+   "p": 27
+  },
+  {
+   "word": "dam",
+   "start": 59.285,
+   "end": 59.5,
+   "p": 27
+  },
+  {
+   "word": "burst",
+   "start": 59.5,
+   "end": 59.753,
+   "p": 27
+  },
+  {
+   "word": "The",
+   "start": 60.103,
+   "end": 60.223,
+   "p": 28
+  },
+  {
+   "word": "golden",
+   "start": 60.223,
+   "end": 60.692,
+   "p": 28
+  },
+  {
+   "word": "mansion",
+   "start": 60.692,
+   "end": 61.105,
+   "p": 28
+  },
+  {
+   "word": "washed",
+   "start": 61.105,
+   "end": 61.423,
+   "p": 28
+  },
+  {
+   "word": "away",
+   "start": 61.423,
+   "end": 61.849,
+   "p": 28
+  },
+  {
+   "word": "But",
+   "start": 61.999,
+   "end": 62.129,
+   "p": 29
+  },
+  {
+   "word": "every",
+   "start": 62.129,
+   "end": 62.749,
+   "p": 29
+  },
+  {
+   "word": "single",
+   "start": 62.749,
+   "end": 62.963,
+   "p": 29
+  },
+  {
+   "word": "person",
+   "start": 62.963,
+   "end": 63.409,
+   "p": 29
+  },
+  {
+   "word": "was",
+   "start": 63.409,
+   "end": 63.569,
+   "p": 29
+  },
+  {
+   "word": "safe",
+   "start": 63.569,
+   "end": 63.771,
+   "p": 29
+  },
+  {
+   "word": "The",
+   "start": 64.221,
+   "end": 64.496,
+   "p": 30
+  },
+  {
+   "word": "town",
+   "start": 64.496,
+   "end": 64.799,
+   "p": 30
+  },
+  {
+   "word": "built",
+   "start": 64.799,
+   "end": 65.131,
+   "p": 30
+  },
+  {
+   "word": "Sam",
+   "start": 65.131,
+   "end": 65.406,
+   "p": 30
+  },
+  {
+   "word": "a",
+   "start": 65.406,
+   "end": 65.624,
+   "p": 30
+  },
+  {
+   "word": "real",
+   "start": 65.624,
+   "end": 66.011,
+   "p": 30
+  },
+  {
+   "word": "house",
+   "start": 66.011,
+   "end": 66.261,
+   "p": 30
+  },
+  {
+   "word": "with",
+   "start": 66.261,
+   "end": 66.531,
+   "p": 30
+  },
+  {
+   "word": "a",
+   "start": 66.531,
+   "end": 66.781,
+   "p": 30
+  },
+  {
+   "word": "statue",
+   "start": 66.781,
+   "end": 67.141,
+   "p": 30
+  },
+  {
+   "word": "out",
+   "start": 67.141,
+   "end": 67.411,
+   "p": 30
+  },
+  {
+   "word": "front",
+   "start": 67.411,
+   "end": 67.747,
+   "p": 30
+  },
+  {
+   "word": "He's",
+   "start": 68.047,
+   "end": 68.247,
+   "p": 31
+  },
+  {
+   "word": "still",
+   "start": 68.247,
+   "end": 68.547,
+   "p": 31
+  },
+  {
+   "word": "the",
+   "start": 68.547,
+   "end": 68.766,
+   "p": 31
+  },
+  {
+   "word": "poorest",
+   "start": 68.766,
+   "end": 69.222,
+   "p": 31
+  },
+  {
+   "word": "man",
+   "start": 69.222,
+   "end": 69.427,
+   "p": 31
+  },
+  {
+   "word": "in",
+   "start": 69.427,
+   "end": 69.717,
+   "p": 31
+  },
+  {
+   "word": "town",
+   "start": 69.717,
+   "end": 69.873,
+   "p": 31
+  },
+  {
+   "word": "But",
+   "start": 70.073,
+   "end": 70.26,
+   "p": 32
+  },
+  {
+   "word": "he's",
+   "start": 70.26,
+   "end": 70.513,
+   "p": 32
+  },
+  {
+   "word": "the",
+   "start": 70.513,
+   "end": 70.652,
+   "p": 32
+  },
+  {
+   "word": "only",
+   "start": 70.652,
+   "end": 70.986,
+   "p": 32
+  },
+  {
+   "word": "one",
+   "start": 70.986,
+   "end": 71.223,
+   "p": 32
+  },
+  {
+   "word": "everybody",
+   "start": 71.223,
+   "end": 72.083,
+   "p": 32
+  },
+  {
+   "word": "trusts",
+   "start": 72.083,
+   "end": 72.361,
+   "p": 32
+  }
+ ],
+ "phrases": [
+  {
+   "text": "In this town,",
+   "start": 0.12,
+   "end": 0.995,
+   "voice": "am_michael"
+  },
+  {
+   "text": "every time you lie,",
+   "start": 1.075,
+   "end": 2.183,
+   "voice": "am_michael"
+  },
+  {
+   "text": "you earn money.",
+   "start": 2.243,
+   "end": 3.109,
+   "voice": "am_michael"
+  },
+  {
+   "text": "Tell your teacher the dog ate your homework?",
+   "start": 3.409,
+   "end": 5.604,
+   "voice": "am_michael"
+  },
+  {
+   "text": "Five dollars.",
+   "start": 5.724,
+   "end": 6.653,
+   "voice": "am_michael"
+  },
+  {
+   "text": "Tell your wife you love her cooking?",
+   "start": 6.933,
+   "end": 8.627,
+   "voice": "am_michael"
+  },
+  {
+   "text": "Fifty.",
+   "start": 8.747,
+   "end": 9.343,
+   "voice": "am_michael"
+  },
+  {
+   "text": "The mayor lies so much, he lives in a golden mansion.",
+   "start": 9.643,
+   "end": 12.906,
+   "voice": "am_michael"
+  },
+  {
+   "text": "But Sam has never told a single lie.",
+   "start": 13.306,
+   "end": 15.497,
+   "voice": "am_michael"
+  },
+  {
+   "text": "Not once.",
+   "start": 15.647,
+   "end": 16.416,
+   "voice": "am_michael"
+  },
+  {
+   "text": "So Sam lives in a cardboard box behind the bakery.",
+   "start": 16.716,
+   "end": 19.906,
+   "voice": "am_michael"
+  },
+  {
+   "text": "He eats bread crusts for dinner, and everyone laughs at him.",
+   "start": 20.156,
+   "end": 23.368,
+   "voice": "am_michael"
+  },
+  {
+   "text": "Then one night, Sam saw a giant crack in the dam above the town.",
+   "start": 23.818,
+   "end": 27.449,
+   "voice": "am_michael"
+  },
+  {
+   "text": "He ran straight to the mayor.",
+   "start": 27.699,
+   "end": 29.051,
+   "voice": "am_michael"
+  },
+  {
+   "text": "But fixing it would cost the mayor his gold.",
+   "start": 29.301,
+   "end": 31.523,
+   "voice": "am_michael"
+  },
+  {
+   "text": "So he smiled, and wrote Sam a cheque for one million dollars.",
+   "start": 31.773,
+   "end": 35.091,
+   "voice": "am_michael"
+  },
+  {
+   "text": "Tell everyone the dam is safe.",
+   "start": 35.391,
+   "end": 37.583,
+   "voice": "bm_george"
+  },
+  {
+   "text": "One lie, and you'll never be poor again.",
+   "start": 37.733,
+   "end": 39.98,
+   "voice": "bm_george"
+  },
+  {
+   "text": "Sam looked at the cheque.",
+   "start": 40.38,
+   "end": 41.511,
+   "voice": "am_michael"
+  },
+  {
+   "text": "Then at his cardboard box.",
+   "start": 41.711,
+   "end": 43.303,
+   "voice": "am_michael"
+  },
+  {
+   "text": "The next morning, the whole town was watching.",
+   "start": 43.803,
+   "end": 46.21,
+   "voice": "am_michael"
+  },
+  {
+   "text": "Sam looked into the camera, and said,",
+   "start": 46.46,
+   "end": 48.24,
+   "voice": "am_michael"
+  },
+  {
+   "text": "The dam is breaking. Run to the hill. Now.",
+   "start": 48.441,
+   "end": 50.468,
+   "voice": "am_adam"
+  },
+  {
+   "text": "Nobody in town believed each other anymore.",
+   "start": 50.918,
+   "end": 53.69,
+   "voice": "am_michael"
+  },
+  {
+   "text": "But everyone knew one thing.",
+   "start": 53.89,
+   "end": 55.352,
+   "voice": "am_michael"
+  },
+  {
+   "text": "Sam never lies.",
+   "start": 55.502,
+   "end": 56.592,
+   "voice": "am_michael"
+  },
+  {
+   "text": "So they ran.",
+   "start": 56.892,
+   "end": 57.73,
+   "voice": "am_michael"
+  },
+  {
+   "text": "Minutes later, the dam burst.",
+   "start": 58.08,
+   "end": 59.753,
+   "voice": "am_michael"
+  },
+  {
+   "text": "The golden mansion washed away.",
+   "start": 60.103,
+   "end": 61.849,
+   "voice": "am_michael"
+  },
+  {
+   "text": "But every single person was safe.",
+   "start": 61.999,
+   "end": 63.771,
+   "voice": "am_michael"
+  },
+  {
+   "text": "The town built Sam a real house, with a statue out front.",
+   "start": 64.221,
+   "end": 67.747,
+   "voice": "am_michael"
+  },
+  {
+   "text": "He's still the poorest man in town.",
+   "start": 68.047,
+   "end": 69.873,
+   "voice": "am_michael"
+  },
+  {
+   "text": "But he's the only one everybody trusts.",
+   "start": 70.073,
+   "end": 72.361,
+   "voice": "am_michael"
+  }
+ ]
+}
