@@ -87,7 +87,7 @@ All three were 576×1024 vertical at 30 fps. For our renders, use 1080×1920 at 
 - **Leave the bottom-right corner clear for the platform watermark.**
 
 ## 7. Audio
-- **Narration:** the user's own reference recording, used untouched (see `CLAUDE.md`).
+- **Narrator voice:** the user's "Adam" voice (`voices/adam/`, see `CLAUDE.md`).
 - **Narration runs non-stop** from the first frame to the last, in an intimate storytelling tone.
 - **Music:** quiet, emotional piano or soft beats, ducked under the voice.
 - **Small sound effects on the key beats** (cash, a heartbeat, rain, a stamp hit).

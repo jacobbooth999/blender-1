@@ -1,8 +1,7 @@
 # Project preferences
 
 ## Voiceover
-The user's own reference recording is the voiceover. Use the audio they supply exactly as it is: don't clone it, re-voice it or synthesize a narrator.
-- Build the video around that recording. Take word timings from the audio itself with sherpa-onnx parakeet-tdt-0.6b-v2 (GitHub releases, `asr-models/`), and write the script from what is actually said.
-- Mux the original audio track untouched. It already carries its own music, so don't add a score over it.
-- Current reference: the "heart meter" TikTok narration, used in `heart-town/` (`heart-town/audio/reference.m4a`, local only, not in git).
-- If the user asks for narration but gives no recording, ask them for one instead of generating a voice.
+Whenever the user asks for a voiceover or narration, use the **Adam** voice they supplied, unless they say otherwise. The sample is `voices/adam/voice-adam.m4a`, and `voices/adam/transcript.txt` holds what it says.
+- The sample is only 4.3 s, so narration is a zero-shot clone of it. Follow the pipeline in `voices/adam/README.md`: full-precision ZipVoice, 32 steps, an espeak English lexicon, one sentence at a time, and an ASR check of every line.
+- Plain voice: no effects. Normalize loudness only.
+- Previous voices are no longer the default: Casual YouTuber (Kokoro) and the heart-meter TikTok narrator.
