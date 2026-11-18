@@ -335,7 +335,8 @@ function valAt(spec, t) {
 }
 
 function cameraAt(c, t, dur) {
-  const k = c.ease === 'lin' ? t / dur : .35 * (t / dur) + .65 * smooth(t / dur);
+  // 'zoom': fast ease-out (quartic) that arrives after c.zt seconds and then holds
+  const k = c.ease === 'lin' ? t / dur : c.ease === 'zoom' ? 1 - Math.pow(1 - Math.min(1, t / (c.zt || .7)), 4) : .35 * (t / dur) + .65 * smooth(t / dur);
   let tgt = c.tgt2 ? lerp3(c.tgt, c.tgt2, k) : c.tgt;
   if (c.pos) {
     const p = c.pos2 ? lerp3(c.pos, c.pos2, k) : c.pos;

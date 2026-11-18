@@ -50,7 +50,7 @@ const shot = (a, o) => S.push({ a, ...o });
 // ===== 1. the rule =====
 // "In this town, you fight animals for food."
 shot(0, { set: 'town', light: 'golden', dof: 0, shadow: 50, fx: all(crowd(1), screen('FIGHT FOR', 'YOUR FOOD')),
-  cam: { pos: [AX + 34, 16, 30], pos2: [AX + 26, 12, 24], tgt: [AX, 2, 0], fov: 46 },
+  cam: { pos: [AX + 70, 95, 65], pos2: [AX + 26, 12, 24], tgt: [AX, 2, 0], fov: 46, ease: 'zoom', zt: .75 },  // starts far out, quick zoom in
   cast: [{ c: 'f1', p: FP, ry: 90, pose: 'punch' }, { an: 'goat', p: AP, ry: -90, mode: 'attack' }] });
 shot(at(0, 4), { set: 'town', light: 'golden', dof: 8, shadow: 20, fx: crowd(1), hus: [.15, .45],
   cam: side(299.8, 2.8, 11, { push: .12 }),
