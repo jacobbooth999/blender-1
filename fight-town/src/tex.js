@@ -44,8 +44,78 @@ function grinMouth(g, w = 80, h = 70, y = 300, teeth = true) {
   g.fillStyle = INK; g.beginPath(); g.moveTo(256 - w, y); g.quadraticCurveTo(256, y + h * 2, 256 + w, y); g.closePath(); g.fill();
   if (teeth) { g.fillStyle = '#fff'; g.beginPath(); g.moveTo(256 - w + 14, y + 6); g.quadraticCurveTo(256, y + 26, 256 + w - 14, y + 6); g.lineTo(256 + w - 22, y + 4); g.closePath(); g.fill(); }
 }
+// ---------- template faces t1..t24 (copied from the user's face sheet, numbered the same) ----------
+// eye styles: A oval + arc brow, B flat relaxed, C angry spiky, D lidded half-dome, E thin arch + dot, F big eye + side brow, G side-glance
+// mouths: smile, frown (small open), grin (D shape), teethGrin, frownLip, flat, o (pink), clench (teeth bar)
+const TPL = {
+  1: ['A', 'smile'], 2: ['A', 'frown'], 3: ['A', 'grin'], 4: ['A', 'flat'], 5: ['B', 'smile'], 6: ['A', 'o'],
+  7: ['C', 'clench'], 8: ['C', 'flat'], 9: ['C', 'frown'], 10: ['C', 'grin'], 11: ['D', 'flat'], 12: ['D', 'smile'],
+  13: ['D', 'grin'], 14: ['E', 'flat'], 15: ['E', 'o'], 16: ['E', 'frown'], 17: ['E', 'grin'], 18: ['F', 'grin'],
+  19: ['F', 'flat'], 20: ['F', 'frownLip'], 21: ['F', 'teethGrin'], 22: ['G', 'frownLip'], 23: ['G', 'flat'], 24: ['G', 'teethGrin'],
+};
+export const TEMPLATE_FACES = Object.keys(TPL).map((n) => 't' + n);
+function tplEyes(g, kind, blink) {
+  g.strokeStyle = INK; g.fillStyle = INK; g.lineCap = 'round'; g.lineJoin = 'round';
+  for (const [x, sd] of [[190, -1], [322, 1]]) {          // sd: -1 left eye, +1 right eye (outer side)
+    if (blink && kind !== 'B') { g.lineWidth = 10; g.beginPath(); g.moveTo(x - 24, 236); g.quadraticCurveTo(x, 248, x + 24, 236); g.stroke(); continue; }
+    switch (kind) {
+      case 'A':
+        g.beginPath(); g.ellipse(x, 236, 17, 25, 0, 0, 7); g.fill();
+        g.fillStyle = '#fff'; g.beginPath(); g.ellipse(x - 5, 225, 5, 7, 0, 0, 7); g.fill(); g.fillStyle = INK;
+        g.lineWidth = 8; g.beginPath(); g.arc(x + 3, 238, 36, -2.5, -.35); g.stroke(); break;
+      case 'B':
+        g.lineWidth = 9; g.beginPath(); g.moveTo(x - 36, 226); g.lineTo(x + 36, 226); g.stroke();
+        g.beginPath(); g.ellipse(x, 229, 15, 9, 0, 0, 7); g.fill();
+        g.lineWidth = 6; g.beginPath(); g.moveTo(x + sd * 36, 226); g.lineTo(x + sd * 46, 216); g.stroke(); break;
+      case 'C': {
+        const o = x + sd * 42, i = x - sd * 30;
+        g.beginPath(); g.moveTo(o, 210); g.lineTo(i, 224); g.lineTo(i - sd * 2, 240); g.quadraticCurveTo(x, 262, x + sd * 32, 232); g.closePath(); g.fill();
+        g.fillStyle = '#fff'; g.beginPath(); g.ellipse(x - 2, 234, 4, 5, 0, 0, 7); g.fill(); g.fillStyle = INK;
+        g.lineWidth = 8; for (const [dx, dy] of [[14, -14], [18, 0]]) { g.beginPath(); g.moveTo(o - sd * 4, 216); g.lineTo(o + sd * dx, 216 + dy); g.stroke(); }
+        g.beginPath(); g.moveTo(i + sd * 4, 230); g.lineTo(i - sd * 12, 238); g.stroke(); break; }
+      case 'D':
+        g.lineWidth = 9; g.beginPath(); g.moveTo(x - 30, 222); g.lineTo(x + 30, 222); g.stroke();
+        g.beginPath(); g.arc(x, 222, 21, 0, Math.PI); g.fill();
+        g.lineWidth = 6; g.beginPath(); g.moveTo(x + sd * 30, 222); g.lineTo(x + sd * 40, 214); g.stroke(); break;
+      case 'E':
+        g.lineWidth = 8; g.beginPath(); g.arc(x, 240, 30, Math.PI * 1.08, Math.PI * 1.92); g.stroke();
+        g.beginPath(); g.arc(x + sd * 2, 240, 6.5, 0, 7); g.fill(); break;
+      case 'F':
+        g.beginPath(); g.ellipse(x, 238, 20, 28, 0, 0, 7); g.fill();
+        g.fillStyle = '#fff'; g.beginPath(); g.ellipse(x - 6, 226, 6, 8, 0, 0, 7); g.fill(); g.fillStyle = INK;
+        g.lineWidth = 8; g.beginPath(); g.arc(x - sd * 2, 236, 40, sd > 0 ? -2.0 : -2.3, sd > 0 ? -.75 : -1.05); g.stroke(); break;
+      case 'G':      // eye whites with pupils glancing to the side
+        g.fillStyle = '#fff'; g.lineWidth = 7; g.beginPath(); g.ellipse(x, 238, 22, 28, 0, 0, 7); g.fill(); g.stroke();
+        g.fillStyle = INK; g.beginPath(); g.ellipse(x - 8, 240, 15, 23, 0, 0, 7); g.fill();
+        g.lineWidth = 8; g.beginPath(); g.arc(x + 4, 236, 40, -2.1, -.9); g.stroke(); break;
+    }
+  }
+}
+function tplMouth(g, kind) {
+  g.strokeStyle = INK; g.lineWidth = 8; g.lineCap = 'round'; g.lineJoin = 'round';
+  const frown = () => { g.beginPath(); g.moveTo(224, 342); g.quadraticCurveTo(250, 306, 280, 342); g.closePath(); g.fillStyle = '#fff'; g.fill(); g.stroke(); };
+  const grin = () => { g.beginPath(); g.moveTo(214, 318); g.lineTo(284, 312); g.quadraticCurveTo(272, 364, 236, 356); g.quadraticCurveTo(216, 348, 214, 318); g.closePath(); g.fillStyle = '#fff'; g.fill(); g.stroke(); };
+  switch (kind) {
+    case 'smile': g.beginPath(); g.moveTo(206, 322); g.quadraticCurveTo(252, 354, 300, 318); g.stroke(); break;
+    case 'flat': g.beginPath(); g.moveTo(212, 334); g.quadraticCurveTo(250, 330, 290, 336); g.stroke(); break;
+    case 'frown': frown(); break;
+    case 'frownLip': frown(); g.beginPath(); g.moveTo(198, 324); g.quadraticCurveTo(230, 314, 262, 322); g.stroke(); break;
+    case 'grin': grin(); break;
+    case 'teethGrin': grin(); g.lineWidth = 6; g.beginPath(); g.moveTo(222, 328); g.lineTo(278, 324); g.stroke(); break;
+    case 'o': g.beginPath(); g.ellipse(244, 338, 15, 12, 0, 0, 7); g.fillStyle = '#e8506a'; g.fill(); g.stroke();
+      g.fillStyle = '#fff'; g.beginPath(); g.ellipse(240, 333, 6, 3.5, 0, 0, 7); g.fill(); break;
+    case 'clench': g.beginPath(); g.roundRect(212, 318, 88, 34, 12); g.fillStyle = '#fff'; g.fill(); g.stroke();
+      g.lineWidth = 6; g.beginPath(); g.moveTo(216, 335); g.lineTo(296, 335); g.stroke();
+      for (const x of [234, 256, 278]) { g.beginPath(); g.moveTo(x, 320); g.lineTo(x, 350); g.stroke(); } break;
+  }
+}
+export function templateFaceTex(n, blink = false) {
+  return canvasTex(`tface:${n}:${blink}`, 512, 512, (g) => { const [e, m] = TPL[n]; g.translate(256, 292); g.scale(1.6, 1.6); g.translate(-256, -270); tplEyes(g, e, blink); tplMouth(g, m); });
+}
+
 export const FACES = ['sick', 'angry', 'tongue', 'neutral', 'smile', 'grin', 'shock', 'sad', 'cry', 'smug', 'worried', 'determined', 'laugh', 'happycry', 'greedy', 'talk'];
 export function faceTex(name, blink = false) {
+  if (/^t\d+$/.test(name)) return templateFaceTex(+name.slice(1), blink);
   return canvasTex(`face:${name}:${blink}`, 512, 512, (g) => {
     g.strokeStyle = INK; g.fillStyle = INK;
     switch (name) {
