@@ -10,7 +10,9 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "@fontsource/caveat": "^5.1.0",
     "@fontsource/montserrat": "^5.1.0",
+    "@fontsource/permanent-marker": "^5.1.0",
     "three": "^0.169.0"
   }
 }
