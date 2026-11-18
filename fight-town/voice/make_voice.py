@@ -12,14 +12,14 @@ SAMPLE = os.path.join(ROOT, "voices/adam/voice-adam.m4a"); PROMPT_TEXT = open(os
 
 LINES = [  # (text, pause after)
     ("In this town, you fight animals for food.", .2), ("Scarier animal, better meal.", .3),
-    ("Chicken? HUS! HUS! HUS!. Sandwich.", .2), ("Goat? Burger.", .15), ("Crocodile? Steak.", .15),
-    ("Bear? HUS! HUS! HUS!. A feast.", .4),
+    ("Chicken? HUS! HUS! HUS! Sandwich.", .2), ("Goat? Burger.", .15), ("Crocodile? Steak.", .15),
+    ("Bear? HUS! HUS! HUS! A feast.", .4),
     ("Me? They gave me a worm.", .2), ("Everyone laughed.", .25),
     ("And the worm almost won. It dodged. It slapped me. I cried.", .25),
     ("I won. Barely. My prize? One tiny piece of bread.", .4),
     ("Only Grandma believed in me.", .2), ("The time will come eventually.", .3),
     ("I promised her I'd fight the strongest animal.", .35),
-    ("So I trained. Punched trees. HUS! HUS! HUS!. The tree won.", .25),
+    ("So I started training. Punched trees. HUS! HUS! HUS! The tree won.", .25),
     ("I ran mountains. Lifted boulders. Fought bigger animals.", .25),
     ("Grandma kept saying, the time will come eventually.", .4),
     ("Then came the final challenge: a gorilla as big as a building.", .3),

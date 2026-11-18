@@ -4,3 +4,4 @@ audio/*.wav
 voice/*.wav
 !voice/voice.wav
 voice/takes/
+voice/*.log

@@ -51,9 +51,10 @@ function screenTex(a, b, col = '#ffcc2e') {
   const c = document.createElement('canvas'); c.width = 1024; c.height = 576; const g = c.getContext('2d');
   const gr = g.createLinearGradient(0, 0, 0, 576); gr.addColorStop(0, '#1a1f3a'); gr.addColorStop(1, '#3a1030'); g.fillStyle = gr; g.fillRect(0, 0, 1024, 576);
   g.textAlign = 'center'; g.textBaseline = 'middle';
-  g.font = '900 110px Montserrat'; g.fillStyle = '#ffffff'; g.fillText(a, 512, 170);
+  const fit = (txt, max) => { let fs = max; g.font = `900 ${fs}px Montserrat`; while (g.measureText(txt).width > 920 && fs > 30) { fs -= 4; g.font = `900 ${fs}px Montserrat`; } };
+  fit(a, 110); g.fillStyle = '#ffffff'; g.fillText(a, 512, 170);
   g.font = '900 70px Montserrat'; g.fillStyle = '#ff4d6d'; g.fillText('WIN:', 512, 300);
-  g.font = '900 110px Montserrat'; g.fillStyle = col; g.fillText(b, 512, 420);
+  fit(b, 110); g.fillStyle = col; g.fillText(b, 512, 420);
   g.strokeStyle = '#ffcc2e'; g.lineWidth = 16; g.strokeRect(10, 10, 1004, 556);
   const t = new THREE.CanvasTexture(c); t.colorSpace = THREE.SRGBColorSpace; scrCache[key] = t; return t;
 }

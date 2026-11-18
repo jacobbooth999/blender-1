@@ -374,6 +374,7 @@ function resetWorld(f) {
   for (const f of Object.values(Wd.foods)) { f.visible = false; f.scale.setScalar(1); f.rotation.set(0, 0, 0); }
   Wd.crater.visible = false; for (const d of Wd.debris) d.visible = false; Wd.boulder.visible = false; for (const p of Wd.pads) p.visible = false;
   for (const b of [Wd.maxBox, ...Wd.boxes]) b.g.visible = false;
+  Wd.plate.visible = false;
 }
 
 // props held by characters: letters, envelopes, match, ring box, fish
