@@ -1,0 +1,4 @@
+node_modules
+out/
+audio/*.m4a
+audio/*.wav

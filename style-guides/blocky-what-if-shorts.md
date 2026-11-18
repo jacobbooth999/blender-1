@@ -87,7 +87,7 @@ All three were 576×1024 vertical at 30 fps. For our renders, use 1080×1920 at 
 - **Leave the bottom-right corner clear for the platform watermark.**
 
 ## 7. Audio
-- **Default narrator voice:** the "Reference voice", a ZipVoice clone of the narrator in the user's reference TikTok (see `CLAUDE.md` and `letter-town/voice/make_voice_clone.py`).
+- **Narration:** the user's own reference recording, used untouched (see `CLAUDE.md`).
 - **Narration runs non-stop** from the first frame to the last, in an intimate storytelling tone.
 - **Music:** quiet, emotional piano or soft beats, ducked under the voice.
 - **Small sound effects on the key beats** (cash, a heartbeat, rain, a stamp hit).
