@@ -1,0 +1,1685 @@
+{
+ "duration": 72.836,
+ "words": [
+  {
+   "word": "In",
+   "start": 0.12,
+   "end": 0.264,
+   "p": 0
+  },
+  {
+   "word": "this",
+   "start": 0.264,
+   "end": 0.43,
+   "p": 0
+  },
+  {
+   "word": "town",
+   "start": 0.43,
+   "end": 0.619,
+   "p": 0
+  },
+  {
+   "word": "every",
+   "start": 0.619,
+   "end": 1.034,
+   "p": 0
+  },
+  {
+   "word": "morning",
+   "start": 1.034,
+   "end": 1.373,
+   "p": 0
+  },
+  {
+   "word": "everyone",
+   "start": 1.423,
+   "end": 1.923,
+   "p": 1
+  },
+  {
+   "word": "gets",
+   "start": 1.923,
+   "end": 2.063,
+   "p": 1
+  },
+  {
+   "word": "a",
+   "start": 2.063,
+   "end": 2.243,
+   "p": 1
+  },
+  {
+   "word": "letter",
+   "start": 2.243,
+   "end": 2.513,
+   "p": 1
+  },
+  {
+   "word": "from",
+   "start": 2.513,
+   "end": 2.773,
+   "p": 1
+  },
+  {
+   "word": "their",
+   "start": 2.773,
+   "end": 2.963,
+   "p": 1
+  },
+  {
+   "word": "future",
+   "start": 2.963,
+   "end": 3.333,
+   "p": 1
+  },
+  {
+   "word": "self",
+   "start": 3.333,
+   "end": 3.511,
+   "p": 1
+  },
+  {
+   "word": "Buy",
+   "start": 3.811,
+   "end": 4.05,
+   "p": 2
+  },
+  {
+   "word": "gold",
+   "start": 4.05,
+   "end": 4.271,
+   "p": 2
+  },
+  {
+   "word": "today",
+   "start": 4.271,
+   "end": 4.767,
+   "p": 2
+  },
+  {
+   "word": "Don't",
+   "start": 4.947,
+   "end": 5.227,
+   "p": 3
+  },
+  {
+   "word": "eat",
+   "start": 5.227,
+   "end": 5.357,
+   "p": 3
+  },
+  {
+   "word": "the",
+   "start": 5.357,
+   "end": 5.549,
+   "p": 3
+  },
+  {
+   "word": "fish",
+   "start": 5.549,
+   "end": 5.747,
+   "p": 3
+  },
+  {
+   "word": "on",
+   "start": 5.747,
+   "end": 5.924,
+   "p": 3
+  },
+  {
+   "word": "Tuesday",
+   "start": 5.924,
+   "end": 6.319,
+   "p": 3
+  },
+  {
+   "word": "Do",
+   "start": 6.499,
+   "end": 6.657,
+   "p": 4
+  },
+  {
+   "word": "not",
+   "start": 6.657,
+   "end": 6.833,
+   "p": 4
+  },
+  {
+   "word": "marry",
+   "start": 6.833,
+   "end": 7.168,
+   "p": 4
+  },
+  {
+   "word": "Kevin",
+   "start": 7.168,
+   "end": 7.502,
+   "p": 4
+  },
+  {
+   "word": "Nobody",
+   "start": 7.802,
+   "end": 8.223,
+   "p": 5
+  },
+  {
+   "word": "here",
+   "start": 8.223,
+   "end": 8.402,
+   "p": 5
+  },
+  {
+   "word": "ever",
+   "start": 8.402,
+   "end": 8.752,
+   "p": 5
+  },
+  {
+   "word": "makes",
+   "start": 8.752,
+   "end": 9.062,
+   "p": 5
+  },
+  {
+   "word": "a",
+   "start": 9.062,
+   "end": 9.092,
+   "p": 5
+  },
+  {
+   "word": "mistake",
+   "start": 9.092,
+   "end": 9.429,
+   "p": 5
+  },
+  {
+   "word": "Except",
+   "start": 9.729,
+   "end": 10.269,
+   "p": 6
+  },
+  {
+   "word": "Max",
+   "start": 10.269,
+   "end": 10.474,
+   "p": 6
+  },
+  {
+   "word": "Max",
+   "start": 10.774,
+   "end": 10.954,
+   "p": 7
+  },
+  {
+   "word": "has",
+   "start": 10.954,
+   "end": 11.044,
+   "p": 7
+  },
+  {
+   "word": "never",
+   "start": 11.044,
+   "end": 11.484,
+   "p": 7
+  },
+  {
+   "word": "gotten",
+   "start": 11.484,
+   "end": 11.818,
+   "p": 7
+  },
+  {
+   "word": "a",
+   "start": 11.818,
+   "end": 11.958,
+   "p": 7
+  },
+  {
+   "word": "single",
+   "start": 11.958,
+   "end": 12.19,
+   "p": 7
+  },
+  {
+   "word": "letter",
+   "start": 12.19,
+   "end": 12.545,
+   "p": 7
+  },
+  {
+   "word": "Every",
+   "start": 12.665,
+   "end": 13.121,
+   "p": 8
+  },
+  {
+   "word": "morning",
+   "start": 13.121,
+   "end": 13.405,
+   "p": 8
+  },
+  {
+   "word": "his",
+   "start": 13.405,
+   "end": 13.668,
+   "p": 8
+  },
+  {
+   "word": "mailbox",
+   "start": 13.668,
+   "end": 14.045,
+   "p": 8
+  },
+  {
+   "word": "is",
+   "start": 14.045,
+   "end": 14.255,
+   "p": 8
+  },
+  {
+   "word": "empty",
+   "start": 14.255,
+   "end": 14.532,
+   "p": 8
+  },
+  {
+   "word": "He",
+   "start": 14.782,
+   "end": 14.949,
+   "p": 9
+  },
+  {
+   "word": "buys",
+   "start": 14.949,
+   "end": 15.152,
+   "p": 9
+  },
+  {
+   "word": "the",
+   "start": 15.152,
+   "end": 15.34,
+   "p": 9
+  },
+  {
+   "word": "wrong",
+   "start": 15.34,
+   "end": 15.592,
+   "p": 9
+  },
+  {
+   "word": "stocks",
+   "start": 15.592,
+   "end": 15.822,
+   "p": 9
+  },
+  {
+   "word": "he",
+   "start": 15.822,
+   "end": 15.972,
+   "p": 9
+  },
+  {
+   "word": "eats",
+   "start": 15.972,
+   "end": 16.192,
+   "p": 9
+  },
+  {
+   "word": "the",
+   "start": 16.192,
+   "end": 16.402,
+   "p": 9
+  },
+  {
+   "word": "bad",
+   "start": 16.402,
+   "end": 16.612,
+   "p": 9
+  },
+  {
+   "word": "fish",
+   "start": 16.612,
+   "end": 16.702,
+   "p": 9
+  },
+  {
+   "word": "and",
+   "start": 16.702,
+   "end": 16.962,
+   "p": 9
+  },
+  {
+   "word": "everyone",
+   "start": 16.962,
+   "end": 17.492,
+   "p": 9
+  },
+  {
+   "word": "thinks",
+   "start": 17.492,
+   "end": 17.712,
+   "p": 9
+  },
+  {
+   "word": "he's",
+   "start": 17.712,
+   "end": 17.932,
+   "p": 9
+  },
+  {
+   "word": "cursed",
+   "start": 17.932,
+   "end": 18.307,
+   "p": 9
+  },
+  {
+   "word": "Then",
+   "start": 18.707,
+   "end": 18.901,
+   "p": 10
+  },
+  {
+   "word": "one",
+   "start": 18.901,
+   "end": 19.199,
+   "p": 10
+  },
+  {
+   "word": "morning",
+   "start": 19.199,
+   "end": 19.569,
+   "p": 10
+  },
+  {
+   "word": "his",
+   "start": 19.569,
+   "end": 19.746,
+   "p": 10
+  },
+  {
+   "word": "mailbox",
+   "start": 19.746,
+   "end": 20.147,
+   "p": 10
+  },
+  {
+   "word": "exploded",
+   "start": 20.147,
+   "end": 20.627,
+   "p": 10
+  },
+  {
+   "word": "Hundreds",
+   "start": 20.927,
+   "end": 21.349,
+   "p": 11
+  },
+  {
+   "word": "of",
+   "start": 21.349,
+   "end": 21.52,
+   "p": 11
+  },
+  {
+   "word": "letters",
+   "start": 21.52,
+   "end": 21.957,
+   "p": 11
+  },
+  {
+   "word": "All",
+   "start": 21.957,
+   "end": 22.127,
+   "p": 11
+  },
+  {
+   "word": "from",
+   "start": 22.127,
+   "end": 22.317,
+   "p": 11
+  },
+  {
+   "word": "future",
+   "start": 22.317,
+   "end": 22.707,
+   "p": 11
+  },
+  {
+   "word": "Max",
+   "start": 22.707,
+   "end": 22.899,
+   "p": 11
+  },
+  {
+   "word": "And",
+   "start": 23.099,
+   "end": 23.263,
+   "p": 12
+  },
+  {
+   "word": "every",
+   "start": 23.263,
+   "end": 23.687,
+   "p": 12
+  },
+  {
+   "word": "single",
+   "start": 23.687,
+   "end": 23.902,
+   "p": 12
+  },
+  {
+   "word": "one",
+   "start": 23.902,
+   "end": 24.099,
+   "p": 12
+  },
+  {
+   "word": "said",
+   "start": 24.099,
+   "end": 24.339,
+   "p": 12
+  },
+  {
+   "word": "the",
+   "start": 24.339,
+   "end": 24.559,
+   "p": 12
+  },
+  {
+   "word": "same",
+   "start": 24.559,
+   "end": 24.759,
+   "p": 12
+  },
+  {
+   "word": "thing",
+   "start": 24.759,
+   "end": 24.903,
+   "p": 12
+  },
+  {
+   "word": "Do",
+   "start": 25.253,
+   "end": 25.398,
+   "p": 13
+  },
+  {
+   "word": "not",
+   "start": 25.398,
+   "end": 25.603,
+   "p": 13
+  },
+  {
+   "word": "let",
+   "start": 25.603,
+   "end": 25.663,
+   "p": 13
+  },
+  {
+   "word": "the",
+   "start": 25.663,
+   "end": 25.884,
+   "p": 13
+  },
+  {
+   "word": "mayor",
+   "start": 25.884,
+   "end": 26.063,
+   "p": 13
+  },
+  {
+   "word": "do",
+   "start": 26.063,
+   "end": 26.224,
+   "p": 13
+  },
+  {
+   "word": "what",
+   "start": 26.224,
+   "end": 26.402,
+   "p": 13
+  },
+  {
+   "word": "he's",
+   "start": 26.402,
+   "end": 26.581,
+   "p": 13
+  },
+  {
+   "word": "about",
+   "start": 26.581,
+   "end": 26.863,
+   "p": 13
+  },
+  {
+   "word": "to",
+   "start": 26.863,
+   "end": 27.023,
+   "p": 13
+  },
+  {
+   "word": "do",
+   "start": 27.023,
+   "end": 27.177,
+   "p": 13
+  },
+  {
+   "word": "So",
+   "start": 27.627,
+   "end": 27.798,
+   "p": 14
+  },
+  {
+   "word": "that",
+   "start": 27.798,
+   "end": 28.009,
+   "p": 14
+  },
+  {
+   "word": "night",
+   "start": 28.009,
+   "end": 28.167,
+   "p": 14
+  },
+  {
+   "word": "Max",
+   "start": 28.167,
+   "end": 28.427,
+   "p": 14
+  },
+  {
+   "word": "sneaked",
+   "start": 28.427,
+   "end": 28.827,
+   "p": 14
+  },
+  {
+   "word": "into",
+   "start": 28.827,
+   "end": 29.173,
+   "p": 14
+  },
+  {
+   "word": "the",
+   "start": 29.173,
+   "end": 29.364,
+   "p": 14
+  },
+  {
+   "word": "mayor's",
+   "start": 29.364,
+   "end": 29.633,
+   "p": 14
+  },
+  {
+   "word": "mansion",
+   "start": 29.633,
+   "end": 30.035,
+   "p": 14
+  },
+  {
+   "word": "He",
+   "start": 30.235,
+   "end": 30.335,
+   "p": 15
+  },
+  {
+   "word": "crawled",
+   "start": 30.335,
+   "end": 30.779,
+   "p": 15
+  },
+  {
+   "word": "past",
+   "start": 30.779,
+   "end": 30.915,
+   "p": 15
+  },
+  {
+   "word": "the",
+   "start": 30.915,
+   "end": 31.16,
+   "p": 15
+  },
+  {
+   "word": "guards",
+   "start": 31.16,
+   "end": 31.365,
+   "p": 15
+  },
+  {
+   "word": "hid",
+   "start": 31.365,
+   "end": 31.525,
+   "p": 15
+  },
+  {
+   "word": "behind",
+   "start": 31.525,
+   "end": 31.942,
+   "p": 15
+  },
+  {
+   "word": "the",
+   "start": 31.942,
+   "end": 32.115,
+   "p": 15
+  },
+  {
+   "word": "curtains",
+   "start": 32.115,
+   "end": 32.524,
+   "p": 15
+  },
+  {
+   "word": "and",
+   "start": 32.524,
+   "end": 32.705,
+   "p": 15
+  },
+  {
+   "word": "watched",
+   "start": 32.705,
+   "end": 33.075,
+   "p": 15
+  },
+  {
+   "word": "the",
+   "start": 33.075,
+   "end": 33.205,
+   "p": 15
+  },
+  {
+   "word": "mayor",
+   "start": 33.205,
+   "end": 33.487,
+   "p": 15
+  },
+  {
+   "word": "open",
+   "start": 33.487,
+   "end": 33.765,
+   "p": 15
+  },
+  {
+   "word": "his",
+   "start": 33.765,
+   "end": 33.994,
+   "p": 15
+  },
+  {
+   "word": "own",
+   "start": 33.994,
+   "end": 34.175,
+   "p": 15
+  },
+  {
+   "word": "letter",
+   "start": 34.175,
+   "end": 34.538,
+   "p": 15
+  },
+  {
+   "word": "It",
+   "start": 34.938,
+   "end": 35.108,
+   "p": 16
+  },
+  {
+   "word": "said",
+   "start": 35.108,
+   "end": 35.318,
+   "p": 16
+  },
+  {
+   "word": "burn",
+   "start": 35.318,
+   "end": 35.608,
+   "p": 16
+  },
+  {
+   "word": "the",
+   "start": 35.608,
+   "end": 35.628,
+   "p": 16
+  },
+  {
+   "word": "town",
+   "start": 35.628,
+   "end": 35.925,
+   "p": 16
+  },
+  {
+   "word": "to",
+   "start": 35.925,
+   "end": 36.088,
+   "p": 16
+  },
+  {
+   "word": "the",
+   "start": 36.088,
+   "end": 36.368,
+   "p": 16
+  },
+  {
+   "word": "ground",
+   "start": 36.368,
+   "end": 36.533,
+   "p": 16
+  },
+  {
+   "word": "And",
+   "start": 36.933,
+   "end": 37.113,
+   "p": 17
+  },
+  {
+   "word": "the",
+   "start": 37.113,
+   "end": 37.383,
+   "p": 17
+  },
+  {
+   "word": "mayor",
+   "start": 37.383,
+   "end": 37.51,
+   "p": 17
+  },
+  {
+   "word": "always",
+   "start": 37.51,
+   "end": 37.823,
+   "p": 17
+  },
+  {
+   "word": "does",
+   "start": 37.823,
+   "end": 38.069,
+   "p": 17
+  },
+  {
+   "word": "what",
+   "start": 38.069,
+   "end": 38.293,
+   "p": 17
+  },
+  {
+   "word": "his",
+   "start": 38.293,
+   "end": 38.448,
+   "p": 17
+  },
+  {
+   "word": "letter",
+   "start": 38.448,
+   "end": 38.813,
+   "p": 17
+  },
+  {
+   "word": "says",
+   "start": 38.813,
+   "end": 39.007,
+   "p": 17
+  },
+  {
+   "word": "Max",
+   "start": 39.357,
+   "end": 39.527,
+   "p": 18
+  },
+  {
+   "word": "ran",
+   "start": 39.527,
+   "end": 39.75,
+   "p": 18
+  },
+  {
+   "word": "to",
+   "start": 39.75,
+   "end": 39.927,
+   "p": 18
+  },
+  {
+   "word": "warn",
+   "start": 39.927,
+   "end": 40.187,
+   "p": 18
+  },
+  {
+   "word": "everyone",
+   "start": 40.187,
+   "end": 40.713,
+   "p": 18
+  },
+  {
+   "word": "But",
+   "start": 40.863,
+   "end": 41.03,
+   "p": 19
+  },
+  {
+   "word": "who",
+   "start": 41.03,
+   "end": 41.197,
+   "p": 19
+  },
+  {
+   "word": "believes",
+   "start": 41.197,
+   "end": 41.613,
+   "p": 19
+  },
+  {
+   "word": "the",
+   "start": 41.613,
+   "end": 41.853,
+   "p": 19
+  },
+  {
+   "word": "cursed",
+   "start": 41.853,
+   "end": 42.263,
+   "p": 19
+  },
+  {
+   "word": "kid",
+   "start": 42.263,
+   "end": 42.313,
+   "p": 19
+  },
+  {
+   "word": "with",
+   "start": 42.313,
+   "end": 42.532,
+   "p": 19
+  },
+  {
+   "word": "no",
+   "start": 42.532,
+   "end": 42.681,
+   "p": 19
+  },
+  {
+   "word": "letters",
+   "start": 42.681,
+   "end": 43.032,
+   "p": 19
+  },
+  {
+   "word": "The",
+   "start": 43.332,
+   "end": 43.402,
+   "p": 20
+  },
+  {
+   "word": "guards",
+   "start": 43.402,
+   "end": 43.722,
+   "p": 20
+  },
+  {
+   "word": "caught",
+   "start": 43.722,
+   "end": 43.822,
+   "p": 20
+  },
+  {
+   "word": "him",
+   "start": 43.822,
+   "end": 44.069,
+   "p": 20
+  },
+  {
+   "word": "and",
+   "start": 44.069,
+   "end": 44.202,
+   "p": 20
+  },
+  {
+   "word": "locked",
+   "start": 44.202,
+   "end": 44.562,
+   "p": 20
+  },
+  {
+   "word": "him",
+   "start": 44.562,
+   "end": 44.692,
+   "p": 20
+  },
+  {
+   "word": "in",
+   "start": 44.692,
+   "end": 44.851,
+   "p": 20
+  },
+  {
+   "word": "the",
+   "start": 44.851,
+   "end": 44.982,
+   "p": 20
+  },
+  {
+   "word": "basement",
+   "start": 44.982,
+   "end": 45.472,
+   "p": 20
+  },
+  {
+   "word": "No",
+   "start": 45.822,
+   "end": 45.975,
+   "p": 21
+  },
+  {
+   "word": "letter",
+   "start": 45.975,
+   "end": 46.302,
+   "p": 21
+  },
+  {
+   "word": "could",
+   "start": 46.302,
+   "end": 46.452,
+   "p": 21
+  },
+  {
+   "word": "tell",
+   "start": 46.452,
+   "end": 46.707,
+   "p": 21
+  },
+  {
+   "word": "him",
+   "start": 46.707,
+   "end": 46.912,
+   "p": 21
+  },
+  {
+   "word": "what",
+   "start": 46.912,
+   "end": 47.065,
+   "p": 21
+  },
+  {
+   "word": "to",
+   "start": 47.065,
+   "end": 47.217,
+   "p": 21
+  },
+  {
+   "word": "do",
+   "start": 47.217,
+   "end": 47.362,
+   "p": 21
+  },
+  {
+   "word": "now",
+   "start": 47.362,
+   "end": 47.539,
+   "p": 21
+  },
+  {
+   "word": "So",
+   "start": 47.789,
+   "end": 47.929,
+   "p": 22
+  },
+  {
+   "word": "for",
+   "start": 47.929,
+   "end": 48.119,
+   "p": 22
+  },
+  {
+   "word": "the",
+   "start": 48.119,
+   "end": 48.272,
+   "p": 22
+  },
+  {
+   "word": "first",
+   "start": 48.272,
+   "end": 48.429,
+   "p": 22
+  },
+  {
+   "word": "time",
+   "start": 48.429,
+   "end": 48.658,
+   "p": 22
+  },
+  {
+   "word": "someone",
+   "start": 48.658,
+   "end": 49.009,
+   "p": 22
+  },
+  {
+   "word": "in",
+   "start": 49.009,
+   "end": 49.229,
+   "p": 22
+  },
+  {
+   "word": "this",
+   "start": 49.229,
+   "end": 49.259,
+   "p": 22
+  },
+  {
+   "word": "town",
+   "start": 49.259,
+   "end": 49.526,
+   "p": 22
+  },
+  {
+   "word": "had",
+   "start": 49.526,
+   "end": 49.759,
+   "p": 22
+  },
+  {
+   "word": "to",
+   "start": 49.759,
+   "end": 49.849,
+   "p": 22
+  },
+  {
+   "word": "figure",
+   "start": 49.849,
+   "end": 50.176,
+   "p": 22
+  },
+  {
+   "word": "it",
+   "start": 50.176,
+   "end": 50.325,
+   "p": 22
+  },
+  {
+   "word": "out",
+   "start": 50.325,
+   "end": 50.492,
+   "p": 22
+  },
+  {
+   "word": "alone",
+   "start": 50.492,
+   "end": 50.808,
+   "p": 22
+  },
+  {
+   "word": "He",
+   "start": 51.108,
+   "end": 51.258,
+   "p": 23
+  },
+  {
+   "word": "stacked",
+   "start": 51.258,
+   "end": 51.625,
+   "p": 23
+  },
+  {
+   "word": "the",
+   "start": 51.625,
+   "end": 51.808,
+   "p": 23
+  },
+  {
+   "word": "boxes",
+   "start": 51.808,
+   "end": 52.123,
+   "p": 23
+  },
+  {
+   "word": "squeezed",
+   "start": 52.123,
+   "end": 52.528,
+   "p": 23
+  },
+  {
+   "word": "through",
+   "start": 52.528,
+   "end": 52.798,
+   "p": 23
+  },
+  {
+   "word": "the",
+   "start": 52.798,
+   "end": 52.919,
+   "p": 23
+  },
+  {
+   "word": "tiny",
+   "start": 52.919,
+   "end": 53.227,
+   "p": 23
+  },
+  {
+   "word": "window",
+   "start": 53.227,
+   "end": 53.572,
+   "p": 23
+  },
+  {
+   "word": "and",
+   "start": 53.572,
+   "end": 53.748,
+   "p": 23
+  },
+  {
+   "word": "sprinted",
+   "start": 53.748,
+   "end": 54.108,
+   "p": 23
+  },
+  {
+   "word": "to",
+   "start": 54.108,
+   "end": 54.318,
+   "p": 23
+  },
+  {
+   "word": "the",
+   "start": 54.318,
+   "end": 54.368,
+   "p": 23
+  },
+  {
+   "word": "square",
+   "start": 54.368,
+   "end": 54.676,
+   "p": 23
+  },
+  {
+   "word": "The",
+   "start": 54.926,
+   "end": 55.113,
+   "p": 24
+  },
+  {
+   "word": "mayor",
+   "start": 55.113,
+   "end": 55.339,
+   "p": 24
+  },
+  {
+   "word": "was",
+   "start": 55.339,
+   "end": 55.496,
+   "p": 24
+  },
+  {
+   "word": "striking",
+   "start": 55.496,
+   "end": 55.936,
+   "p": 24
+  },
+  {
+   "word": "the",
+   "start": 55.936,
+   "end": 56.126,
+   "p": 24
+  },
+  {
+   "word": "first",
+   "start": 56.126,
+   "end": 56.366,
+   "p": 24
+  },
+  {
+   "word": "match",
+   "start": 56.366,
+   "end": 56.579,
+   "p": 24
+  },
+  {
+   "word": "Max",
+   "start": 56.879,
+   "end": 57.224,
+   "p": 25
+  },
+  {
+   "word": "dove",
+   "start": 57.224,
+   "end": 57.605,
+   "p": 25
+  },
+  {
+   "word": "The",
+   "start": 57.955,
+   "end": 58.185,
+   "p": 26
+  },
+  {
+   "word": "match",
+   "start": 58.185,
+   "end": 58.352,
+   "p": 26
+  },
+  {
+   "word": "landed",
+   "start": 58.352,
+   "end": 58.712,
+   "p": 26
+  },
+  {
+   "word": "in",
+   "start": 58.712,
+   "end": 58.865,
+   "p": 26
+  },
+  {
+   "word": "a",
+   "start": 58.865,
+   "end": 59.025,
+   "p": 26
+  },
+  {
+   "word": "puddle",
+   "start": 59.025,
+   "end": 59.252,
+   "p": 26
+  },
+  {
+   "word": "And",
+   "start": 59.552,
+   "end": 59.709,
+   "p": 27
+  },
+  {
+   "word": "the",
+   "start": 59.709,
+   "end": 59.866,
+   "p": 27
+  },
+  {
+   "word": "mayor's",
+   "start": 59.866,
+   "end": 60.062,
+   "p": 27
+  },
+  {
+   "word": "letter",
+   "start": 60.062,
+   "end": 60.402,
+   "p": 27
+  },
+  {
+   "word": "fell",
+   "start": 60.402,
+   "end": 60.575,
+   "p": 27
+  },
+  {
+   "word": "out",
+   "start": 60.575,
+   "end": 60.742,
+   "p": 27
+  },
+  {
+   "word": "of",
+   "start": 60.742,
+   "end": 60.882,
+   "p": 27
+  },
+  {
+   "word": "his",
+   "start": 60.882,
+   "end": 60.992,
+   "p": 27
+  },
+  {
+   "word": "pocket",
+   "start": 60.992,
+   "end": 61.344,
+   "p": 27
+  },
+  {
+   "word": "The",
+   "start": 61.544,
+   "end": 61.784,
+   "p": 28
+  },
+  {
+   "word": "whole",
+   "start": 61.784,
+   "end": 62.001,
+   "p": 28
+  },
+  {
+   "word": "town",
+   "start": 62.001,
+   "end": 62.23,
+   "p": 28
+  },
+  {
+   "word": "read",
+   "start": 62.23,
+   "end": 62.454,
+   "p": 28
+  },
+  {
+   "word": "it",
+   "start": 62.454,
+   "end": 62.644,
+   "p": 28
+  },
+  {
+   "word": "The",
+   "start": 62.994,
+   "end": 63.182,
+   "p": 29
+  },
+  {
+   "word": "mayor",
+   "start": 63.182,
+   "end": 63.494,
+   "p": 29
+  },
+  {
+   "word": "got",
+   "start": 63.494,
+   "end": 63.644,
+   "p": 29
+  },
+  {
+   "word": "the",
+   "start": 63.644,
+   "end": 63.864,
+   "p": 29
+  },
+  {
+   "word": "basement",
+   "start": 63.864,
+   "end": 64.384,
+   "p": 29
+  },
+  {
+   "word": "Max",
+   "start": 64.384,
+   "end": 64.514,
+   "p": 29
+  },
+  {
+   "word": "got",
+   "start": 64.514,
+   "end": 64.724,
+   "p": 29
+  },
+  {
+   "word": "a",
+   "start": 64.724,
+   "end": 64.794,
+   "p": 29
+  },
+  {
+   "word": "parade",
+   "start": 64.794,
+   "end": 65.231,
+   "p": 29
+  },
+  {
+   "word": "And",
+   "start": 65.631,
+   "end": 65.81,
+   "p": 30
+  },
+  {
+   "word": "the",
+   "start": 65.81,
+   "end": 66.001,
+   "p": 30
+  },
+  {
+   "word": "next",
+   "start": 66.001,
+   "end": 66.186,
+   "p": 30
+  },
+  {
+   "word": "morning",
+   "start": 66.186,
+   "end": 66.631,
+   "p": 30
+  },
+  {
+   "word": "there",
+   "start": 66.631,
+   "end": 66.701,
+   "p": 30
+  },
+  {
+   "word": "was",
+   "start": 66.701,
+   "end": 66.958,
+   "p": 30
+  },
+  {
+   "word": "finally",
+   "start": 66.958,
+   "end": 67.458,
+   "p": 30
+  },
+  {
+   "word": "one",
+   "start": 67.458,
+   "end": 67.681,
+   "p": 30
+  },
+  {
+   "word": "letter",
+   "start": 67.681,
+   "end": 68.118,
+   "p": 30
+  },
+  {
+   "word": "in",
+   "start": 68.118,
+   "end": 68.231,
+   "p": 30
+  },
+  {
+   "word": "Max's",
+   "start": 68.231,
+   "end": 68.491,
+   "p": 30
+  },
+  {
+   "word": "mailbox",
+   "start": 68.491,
+   "end": 68.871,
+   "p": 30
+  },
+  {
+   "word": "It",
+   "start": 69.271,
+   "end": 69.482,
+   "p": 31
+  },
+  {
+   "word": "said",
+   "start": 69.482,
+   "end": 69.741,
+   "p": 31
+  },
+  {
+   "word": "told",
+   "start": 69.741,
+   "end": 70.001,
+   "p": 31
+  },
+  {
+   "word": "you",
+   "start": 70.001,
+   "end": 70.236,
+   "p": 31
+  }
+ ],
+ "phrases": [
+  {
+   "text": "In this town, every morning,",
+   "start": 0.12,
+   "end": 1.373
+  },
+  {
+   "text": "everyone gets a letter from their future self.",
+   "start": 1.423,
+   "end": 3.511
+  },
+  {
+   "text": "Buy gold today.",
+   "start": 3.811,
+   "end": 4.767
+  },
+  {
+   "text": "Don't eat the fish on Tuesday.",
+   "start": 4.947,
+   "end": 6.319
+  },
+  {
+   "text": "Do not marry Kevin.",
+   "start": 6.499,
+   "end": 7.502
+  },
+  {
+   "text": "Nobody here ever makes a mistake.",
+   "start": 7.802,
+   "end": 9.429
+  },
+  {
+   "text": "Except Max.",
+   "start": 9.729,
+   "end": 10.474
+  },
+  {
+   "text": "Max has never gotten a single letter.",
+   "start": 10.774,
+   "end": 12.545
+  },
+  {
+   "text": "Every morning, his mailbox is empty.",
+   "start": 12.665,
+   "end": 14.532
+  },
+  {
+   "text": "He buys the wrong stocks, he eats the bad fish, and everyone thinks he's cursed.",
+   "start": 14.782,
+   "end": 18.307
+  },
+  {
+   "text": "Then one morning, his mailbox exploded.",
+   "start": 18.707,
+   "end": 20.627
+  },
+  {
+   "text": "Hundreds of letters. All from future Max.",
+   "start": 20.927,
+   "end": 22.899
+  },
+  {
+   "text": "And every single one said the same thing.",
+   "start": 23.099,
+   "end": 24.903
+  },
+  {
+   "text": "Do not let the mayor do what he's about to do.",
+   "start": 25.253,
+   "end": 27.177
+  },
+  {
+   "text": "So that night, Max sneaked into the mayor's mansion.",
+   "start": 27.627,
+   "end": 30.035
+  },
+  {
+   "text": "He crawled past the guards, hid behind the curtains, and watched the mayor open his own letter.",
+   "start": 30.235,
+   "end": 34.538
+  },
+  {
+   "text": "It said: burn the town to the ground.",
+   "start": 34.938,
+   "end": 36.533
+  },
+  {
+   "text": "And the mayor always does what his letter says.",
+   "start": 36.933,
+   "end": 39.007
+  },
+  {
+   "text": "Max ran to warn everyone.",
+   "start": 39.357,
+   "end": 40.713
+  },
+  {
+   "text": "But who believes the cursed kid with no letters?",
+   "start": 40.863,
+   "end": 43.032
+  },
+  {
+   "text": "The guards caught him, and locked him in the basement.",
+   "start": 43.332,
+   "end": 45.472
+  },
+  {
+   "text": "No letter could tell him what to do now.",
+   "start": 45.822,
+   "end": 47.539
+  },
+  {
+   "text": "So for the first time, someone in this town had to figure it out alone.",
+   "start": 47.789,
+   "end": 50.808
+  },
+  {
+   "text": "He stacked the boxes, squeezed through the tiny window, and sprinted to the square.",
+   "start": 51.108,
+   "end": 54.676
+  },
+  {
+   "text": "The mayor was striking the first match.",
+   "start": 54.926,
+   "end": 56.579
+  },
+  {
+   "text": "Max dove.",
+   "start": 56.879,
+   "end": 57.605
+  },
+  {
+   "text": "The match landed in a puddle.",
+   "start": 57.955,
+   "end": 59.252
+  },
+  {
+   "text": "And the mayor's letter fell out of his pocket.",
+   "start": 59.552,
+   "end": 61.344
+  },
+  {
+   "text": "The whole town read it.",
+   "start": 61.544,
+   "end": 62.644
+  },
+  {
+   "text": "The mayor got the basement. Max got a parade.",
+   "start": 62.994,
+   "end": 65.231
+  },
+  {
+   "text": "And the next morning, there was finally one letter in Max's mailbox.",
+   "start": 65.631,
+   "end": 68.871
+  },
+  {
+   "text": "It said: told you.",
+   "start": 69.271,
+   "end": 70.236
+  }
+ ]
+}
