@@ -309,14 +309,14 @@ const OV = {
   },
 };
 function drawCaption(T) {
-  let cur = null;
+  let cur = null, curEnd = 0;
   for (let i = 0; i < WORDS.length; i++) {
     const w = WORDS[i], next = WORDS[i + 1];
     const end = next ? Math.min(next.start, w.end + .35) : w.end + .35;
-    if (T >= w.start - .02 && T < end) { cur = w; break; }
+    if (T >= w.start - .02 && T < end) { cur = w; curEnd = end; break; }
   }
   if (!cur) return;
-  if (cur.hus) { OV.hus(g2, T, cur.start - .02, 0, end, 'cap'); return; }
+  if (cur.hus) { OV.hus(g2, T, cur.start - .02, 0, curEnd, 'cap'); return; }
   const txt = cur.word.toLowerCase().replace(/[^a-z0-9'$,]/g, '').replace(/,$/, '');
   const k = (T - cur.start + .02) / .1;
   const s = k >= 1 ? 1 : .6 + .4 * OV.easeBack(Math.max(0, k));
