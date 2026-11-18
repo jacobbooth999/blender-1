@@ -1,7 +1,8 @@
-// Blocky Roblox-style characters: cube torso, box limbs (pivot at shoulder/hip), cylinder head with a face decal,
+// Blocky Roblox-style characters (Dummy body: bevelled parts, hand/foot slabs, rounded head) with a face decal,
 // chunky hair/hats, and a money badge on a cord. Height ~5.3 units (feet at y=0).
 import * as THREE from 'three';
 import { faceTex, badgeTex } from './tex.js';
+import { RoundedBoxGeometry } from '../node_modules/three/examples/jsm/geometries/RoundedBoxGeometry.js';
 
 const box = (w, h, d) => new THREE.BoxGeometry(w, h, d);
 const mats = new Map();
@@ -14,45 +15,79 @@ function mesh(geo, m, parent, x = 0, y = 0, z = 0) {
   const o = new THREE.Mesh(geo, m); o.position.set(x, y, z); o.castShadow = true; o.receiveShadow = true; parent.add(o); return o;
 }
 
+// Body built to match the Roblox blocky "Dummy": bevelled parts with seams, two-piece torso, arm + hand slab,
+// leg + foot slab, rounded head with no neck. Torso is 2 wide, top of torso at y = 4, feet at y = 0.
+const BEV = .07;
+const rbox = (w, h, d, r = BEV) => new RoundedBoxGeometry(w, h, d, 3, r);
+const splitMats = new Map();
+// one material that is colour A above local y = split and colour B below it (sleeves, shoes) without a geometry seam
+function splitMat(top, bot, split) {
+  const k = top + bot + split;
+  if (splitMats.has(k)) return splitMats.get(k);
+  const m = new THREE.MeshStandardMaterial({ color: '#ffffff', roughness: .5, metalness: 0 });
+  const cA = new THREE.Color(top), cB = new THREE.Color(bot);
+  m.onBeforeCompile = (sh) => {
+    sh.uniforms.cA = { value: cA }; sh.uniforms.cB = { value: cB }; sh.uniforms.splitY = { value: split };
+    sh.vertexShader = 'varying float vLy;\n' + sh.vertexShader.replace('#include <begin_vertex>', '#include <begin_vertex>\nvLy = position.y;');
+    sh.fragmentShader = 'uniform vec3 cA; uniform vec3 cB; uniform float splitY; varying float vLy;\n' +
+      sh.fragmentShader.replace('vec4 diffuseColor = vec4( diffuse, opacity );', 'vec4 diffuseColor = vec4( vLy > splitY ? cA : cB, opacity );');
+  };
+  m.customProgramCacheKey = () => 'split' + k;
+  splitMats.set(k, m); return m;
+}
+// classic head: lathe profile, strongly rounded top, softer bottom, slight taper
+function headGeo() {
+  const P = [[0, 0], [.34, 0], [.46, .03], [.53, .1], [.56, .22], [.585, .55], [.585, .78], [.567, .93], [.52, 1.04], [.43, 1.12], [.28, 1.17], [0, 1.188]];
+  const pts = []; for (let i = 0; i < P.length - 1; i++) for (let k = 0; k < 4; k++) { const a = P[i], b = P[i + 1], t = k / 4; pts.push(new THREE.Vector2(a[0] + (b[0] - a[0]) * t, a[1] + (b[1] - a[1]) * t)); }
+  pts.push(new THREE.Vector2(...P[P.length - 1]));
+  const g = new THREE.LatheGeometry(pts, 48); g.computeVertexNormals(); return g;
+}
+const HEAD_GEO = headGeo();
+
 export function makeChar(o) {
   const skin = o.skin || '#f2c9a0', shirt = o.shirt || '#4caf50', pants = o.pants || '#2f5fa8';
   const root = new THREE.Group(); root.name = o.name || 'char';
   const body = new THREE.Group(); root.add(body);             // bob / lean
-  const torso = mesh(box(2, 2, 1), mat(shirt), body, 0, 3, 0);
-  if (o.plaid) torso.material = mat(shirt, .7);
-  // lower torso band in pants colour (belt line)
-  mesh(box(2.01, .25, 1.01), mat(pants), body, 0, 2.12, 0);
+  // torso: upper 2 x 1.55 x 1 (top at y 4), seam, lower band 2 x .43 x 1 (bottom at y 2)
+  const torso = mesh(rbox(2, 1.55, 1), mat(shirt, o.plaid ? .7 : .5), body, 0, 3.225, 0);
+  mesh(rbox(1.98, .43, .98), mat(pants, .5), body, 0, 2.215, 0);
   if (o.tie) { mesh(box(.32, 1.3, .06), mat(o.tie, .4), body, 0, 3.25, .52); mesh(box(.9, .5, .05), mat('#f4f4f4'), body, 0, 3.78, .51); }
-  if (o.jacketOpen) { mesh(box(.5, 1.95, .04), mat('#f4f4f4'), body, 0, 3.0, .505); mesh(box(.32, 1.3, .06), mat(o.jacketOpen, .4), body, 0, 3.25, .53); }
-  if (o.patch) mesh(box(.55, .5, .04), mat(o.patch, .8), body, -.55, 2.6, .51);
+  if (o.jacketOpen) { mesh(box(.5, 1.5, .04), mat('#f4f4f4'), body, 0, 3.22, .505); mesh(box(.32, 1.2, .06), mat(o.jacketOpen, .4), body, 0, 3.3, .53); }
+  if (o.patch) mesh(box(.55, .5, .04), mat(o.patch, .8), body, -.55, 2.8, .51);
   if (o.stripe) mesh(box(2.02, .3, 1.02), mat(o.stripe), body, 0, 3.2, 0);
-  if (o.zip) mesh(box(.08, 1.8, .04), mat('#eee'), body, 0, 3.0, .51);
+  if (o.zip) mesh(box(.08, 1.5, .04), mat('#eee'), body, 0, 3.2, .51);
   if (o.chain) { const ch = mesh(new THREE.TorusGeometry(.55, .06, 6, 20, Math.PI), mat('#ffcc33', .25, { metalness: .9 }), body, 0, 3.5, .53); ch.rotation.z = Math.PI; }
-  if (o.apron) mesh(box(1.6, 1.6, .05), mat(o.apron), body, 0, 2.6, .52);
+  if (o.apron) mesh(box(1.6, 1.4, .05), mat(o.apron), body, 0, 2.75, .52);
 
-  const limb = (x, y, colTop, colBot, topFrac) => {
-    const piv = new THREE.Group(); piv.position.set(x, y, 0); body.add(piv);
-    const tl = 2 * topFrac;
-    mesh(box(.98, tl, .98), mat(colTop), piv, 0, -tl / 2 + .05, 0);
-    if (topFrac < 1) mesh(box(.96, 2 - tl, .96), mat(colBot), piv, 0, -tl - (2 - tl) / 2 + .05, 0);
+  // arms: pivot at the shoulder; arm 1 x 1.72 x 1 (top flush with torso top) + hand slab .94 x .25 x 1.04
+  const sleeve = o.longSleeve ? 1 : o.sleeve ?? .4;
+  const arm = (side) => {
+    const piv = new THREE.Group(); piv.position.set(side * 1.52, 3.95, 0); body.add(piv);
+    const L = 1.72, cy = .05 - L / 2;
+    const m = sleeve >= 1 ? mat(shirt) : splitMat(shirt, skin, L / 2 - L * sleeve);
+    mesh(rbox(1, L, 1), m, piv, 0, cy, 0);
+    mesh(rbox(.94, .25, 1.04, .06), mat(skin, .5), piv, -side * .03, .05 - L - .03 - .125, .01);
     return piv;
   };
-  const sleeve = o.longSleeve ? 1 : o.sleeve ?? .4;
-  const armL = limb(-1.5, 3.95, shirt, skin, sleeve), armR = limb(1.5, 3.95, shirt, skin, sleeve);
-  const legL = limb(-.5, 2.05, pants, o.shoes || pants, o.shoes ? .82 : 1), legR = limb(.5, 2.05, pants, o.shoes || pants, o.shoes ? .82 : 1);
+  const armL = arm(-1), armR = arm(1);
+  // legs: pivot at the hip; leg .98 x 1.75 x 1 + foot slab .98 x .22 x 1.06 (bottom at y 0)
+  const leg = (side) => {
+    const piv = new THREE.Group(); piv.position.set(side * .51, 2.0, 0); body.add(piv);
+    const L = 1.75;
+    mesh(rbox(.98, L, 1), mat(pants, .5), piv, 0, -L / 2 - .005, 0);
+    mesh(rbox(.98, .22, 1.06, .06), mat(o.shoes || pants, .5), piv, 0, -2.0 + .11, .02);
+    return piv;
+  };
+  const legL = leg(-1), legR = leg(1);
 
+  // head: sits straight on the torso, no neck
   const head = new THREE.Group(); head.position.set(0, 4.0, 0); body.add(head);
-  const hm = mat(skin, .5);
-  const skull = mesh(new THREE.CylinderGeometry(.62, .62, 1.18, 28), hm, head, 0, .66, 0);
-  // rounded top/bottom caps
-  const cap = new THREE.SphereGeometry(.62, 28, 8, 0, Math.PI * 2, 0, Math.PI / 2);
-  const c1 = mesh(cap, hm, head, 0, 1.25, 0); c1.scale.y = .28;
-  const c2 = mesh(cap, hm, head, 0, .07, 0); c2.scale.y = -.28;
-  mesh(box(.55, .2, .55), hm, head, 0, 0, 0); // neck
-  const faceM = new THREE.MeshStandardMaterial({ map: faceTex('neutral'), transparent: true, roughness: .5, depthWrite: false, polygonOffset: true, polygonOffsetFactor: -2 });
-  const face = new THREE.Mesh(new THREE.CylinderGeometry(.626, .626, 1.18, 28, 1, true, -Math.PI * .36, Math.PI * .72), faceM);
-  face.position.y = .66; face.renderOrder = 2; head.add(face);
-  // face UVs: cylinder open segment maps u 0..1 across arc -> good
+  const hm = mat(skin, .3);
+  mesh(HEAD_GEO, hm, head, 0, -.07, 0);
+  const faceM = new THREE.MeshStandardMaterial({ map: faceTex('neutral'), transparent: true, roughness: .42, depthWrite: false, polygonOffset: true, polygonOffsetFactor: -2 });
+  const face = new THREE.Mesh(new THREE.CylinderGeometry(.586, .586, 1.0, 32, 1, true, -Math.PI * .36, Math.PI * .72), faceM);
+  face.position.y = .6; face.renderOrder = 2; head.add(face);
+  if (o.noFace) face.visible = false;
   hair(head, o);
 
   // badge
