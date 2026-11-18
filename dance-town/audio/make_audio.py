@@ -147,7 +147,7 @@ def musicbox(a, b, notes, step=.36, g=.35, oct=24):
     t = a; i = 0
     while t < b - .1:
         n = notes[i % len(notes)]
-        if n: addm(pluck(note(n + oct), .9, .25) + .3 * pluck(note(n + oct + 12), .6, .2), t, g, pan=(.25 if i % 2 else -.25))
+        if n: addm(pluck(note(n + oct), .9, .25) + .3 * pluck(note(n + oct + 12), .9, .2), t, g, pan=(.25 if i % 2 else -.25))
         t += step; i += 1
 def drone(a, b, notes=(33, 40), g=.3, bright=.6):
     for nn in notes: addm(pad(note(nn), b - a + .4, bright), a, g / len(notes))

@@ -1,1 +1,1344 @@
-{"duration": 99.24, "words": [{"word": "In", "start": 0.15, "end": 0.45, "p": 0}, {"word": "this", "start": 0.48, "end": 0.78, "p": 0}, {"word": "town", "start": 0.81, "end": 1.11, "p": 0}, {"word": "everyone", "start": 1.14, "end": 1.44, "p": 0}, {"word": "has", "start": 1.47, "end": 1.77, "p": 0}, {"word": "to", "start": 1.8, "end": 2.1, "p": 0}, {"word": "keep", "start": 2.13, "end": 2.43, "p": 0}, {"word": "dancing", "start": 2.46, "end": 2.76, "p": 0}, {"word": "And", "start": 2.94, "end": 3.24, "p": 1}, {"word": "if", "start": 3.27, "end": 3.57, "p": 1}, {"word": "you", "start": 3.6, "end": 3.9, "p": 1}, {"word": "stop", "start": 3.93, "end": 4.23, "p": 1}, {"word": "something", "start": 4.26, "end": 4.56, "p": 1}, {"word": "terrible", "start": 4.59, "end": 4.89, "p": 1}, {"word": "happens", "start": 4.92, "end": 5.22, "p": 1}, {"word": "Why", "start": 5.7, "end": 6.0, "p": 2}, {"word": "is", "start": 6.03, "end": 6.33, "p": 2}, {"word": "everyone", "start": 6.36, "end": 6.66, "p": 2}, {"word": "dancing", "start": 6.69, "end": 6.99, "p": 2}, {"word": "Never", "start": 7.32, "end": 7.62, "p": 3}, {"word": "Stop", "start": 7.65, "end": 7.95, "p": 3}, {"word": "Moving", "start": 7.98, "end": 8.28, "p": 3}, {"word": "Nobody", "start": 8.81, "end": 9.11, "p": 4}, {"word": "knew", "start": 9.14, "end": 9.44, "p": 4}, {"word": "why", "start": 9.47, "end": 9.77, "p": 4}, {"word": "they", "start": 9.8, "end": 10.1, "p": 4}, {"word": "had", "start": 10.13, "end": 10.43, "p": 4}, {"word": "to", "start": 10.46, "end": 10.76, "p": 4}, {"word": "dance", "start": 10.79, "end": 11.09, "p": 4}, {"word": "They", "start": 11.27, "end": 11.57, "p": 5}, {"word": "just", "start": 11.6, "end": 11.9, "p": 5}, {"word": "knew", "start": 11.93, "end": 12.23, "p": 5}, {"word": "what", "start": 12.26, "end": 12.56, "p": 5}, {"word": "happened", "start": 12.59, "end": 12.89, "p": 5}, {"word": "to", "start": 12.92, "end": 13.22, "p": 5}, {"word": "people", "start": 13.25, "end": 13.55, "p": 5}, {"word": "who", "start": 13.58, "end": 13.88, "p": 5}, {"word": "stopped", "start": 13.91, "end": 14.21, "p": 5}, {"word": "What", "start": 19.84, "end": 20.14, "p": 6}, {"word": "was", "start": 20.17, "end": 20.47, "p": 6}, {"word": "that", "start": 20.5, "end": 20.8, "p": 6}, {"word": "The", "start": 21.18, "end": 21.48, "p": 7}, {"word": "town", "start": 21.51, "end": 21.81, "p": 7}, {"word": "needs", "start": 21.84, "end": 22.14, "p": 7}, {"word": "us", "start": 22.17, "end": 22.47, "p": 7}, {"word": "moving", "start": 22.5, "end": 22.8, "p": 7}, {"word": "That", "start": 23.43, "end": 23.73, "p": 8}, {"word": "night", "start": 23.76, "end": 24.06, "p": 8}, {"word": "he", "start": 24.09, "end": 24.39, "p": 8}, {"word": "decided", "start": 24.42, "end": 24.72, "p": 8}, {"word": "to", "start": 24.75, "end": 25.05, "p": 8}, {"word": "investigate", "start": 25.08, "end": 25.38, "p": 8}, {"word": "He", "start": 25.76, "end": 26.06, "p": 9}, {"word": "found", "start": 26.09, "end": 26.39, "p": 9}, {"word": "the", "start": 26.42, "end": 26.72, "p": 9}, {"word": "town's", "start": 26.75, "end": 27.05, "p": 9}, {"word": "old", "start": 27.08, "end": 27.38, "p": 9}, {"word": "security", "start": 27.41, "end": 27.71, "p": 9}, {"word": "footage", "start": 27.74, "end": 28.04, "p": 9}, {"word": "Fifty", "start": 28.32, "end": 28.62, "p": 10}, {"word": "years", "start": 28.65, "end": 28.95, "p": 10}, {"word": "ago", "start": 28.98, "end": 29.28, "p": 10}, {"word": "Everyone", "start": 29.31, "end": 29.61, "p": 10}, {"word": "dancing", "start": 29.64, "end": 29.94, "p": 10}, {"word": "A", "start": 30.22, "end": 30.52, "p": 11}, {"word": "hundred", "start": 30.55, "end": 30.85, "p": 11}, {"word": "years", "start": 30.88, "end": 31.18, "p": 11}, {"word": "ago", "start": 31.21, "end": 31.51, "p": 11}, {"word": "Everyone", "start": 31.54, "end": 31.84, "p": 11}, {"word": "dancing", "start": 31.87, "end": 32.17, "p": 11}, {"word": "Two", "start": 32.45, "end": 32.75, "p": 12}, {"word": "hundred", "start": 32.78, "end": 33.08, "p": 12}, {"word": "years", "start": 33.11, "end": 33.41, "p": 12}, {"word": "ago", "start": 33.44, "end": 33.74, "p": 12}, {"word": "Everyone", "start": 33.77, "end": 34.07, "p": 12}, {"word": "dancing", "start": 34.1, "end": 34.4, "p": 12}, {"word": "Then", "start": 34.83, "end": 35.13, "p": 13}, {"word": "he", "start": 35.16, "end": 35.46, "p": 13}, {"word": "found", "start": 35.49, "end": 35.79, "p": 13}, {"word": "an", "start": 35.82, "end": 36.12, "p": 13}, {"word": "old", "start": 36.15, "end": 36.45, "p": 13}, {"word": "newspaper", "start": 36.48, "end": 36.78, "p": 13}, {"word": "The", "start": 37.06, "end": 37.36, "p": 14}, {"word": "dancing", "start": 37.39, "end": 37.69, "p": 14}, {"word": "has", "start": 37.72, "end": 38.02, "p": 14}, {"word": "kept", "start": 38.05, "end": 38.35, "p": 14}, {"word": "the", "start": 38.38, "end": 38.68, "p": 14}, {"word": "thing", "start": 38.71, "end": 39.01, "p": 14}, {"word": "asleep", "start": 39.04, "end": 39.34, "p": 14}, {"word": "for", "start": 39.37, "end": 39.67, "p": 14}, {"word": "two", "start": 39.7, "end": 40.0, "p": 14}, {"word": "hundred", "start": 40.03, "end": 40.33, "p": 14}, {"word": "years", "start": 40.36, "end": 40.66, "p": 14}, {"word": "Suddenly", "start": 41.29, "end": 41.59, "p": 15}, {"word": "the", "start": 41.62, "end": 41.92, "p": 15}, {"word": "computer", "start": 41.95, "end": 42.25, "p": 15}, {"word": "turned", "start": 42.28, "end": 42.58, "p": 15}, {"word": "on", "start": 42.61, "end": 42.91, "p": 15}, {"word": "by", "start": 42.94, "end": 43.24, "p": 15}, {"word": "itself", "start": 43.27, "end": 43.57, "p": 15}, {"word": "Do", "start": 44.0, "end": 44.3, "p": 16}, {"word": "not", "start": 44.33, "end": 44.63, "p": 16}, {"word": "stop", "start": 44.66, "end": 44.96, "p": 16}, {"word": "But", "start": 45.69, "end": 45.99, "p": 17}, {"word": "he", "start": 46.02, "end": 46.32, "p": 17}, {"word": "made", "start": 46.35, "end": 46.65, "p": 17}, {"word": "one", "start": 46.68, "end": 46.98, "p": 17}, {"word": "decision", "start": 47.01, "end": 47.31, "p": 17}, {"word": "that", "start": 47.34, "end": 47.64, "p": 17}, {"word": "would", "start": 47.67, "end": 47.97, "p": 17}, {"word": "change", "start": 48.0, "end": 48.3, "p": 17}, {"word": "everything", "start": 48.33, "end": 48.63, "p": 17}, {"word": "He", "start": 49.06, "end": 49.36, "p": 18}, {"word": "walked", "start": 49.39, "end": 49.69, "p": 18}, {"word": "into", "start": 49.72, "end": 50.02, "p": 18}, {"word": "the", "start": 50.05, "end": 50.35, "p": 18}, {"word": "town", "start": 50.38, "end": 50.68, "p": 18}, {"word": "square", "start": 50.71, "end": 51.01, "p": 18}, {"word": "and", "start": 51.04, "end": 51.34, "p": 18}, {"word": "slowly", "start": 51.37, "end": 51.67, "p": 18}, {"word": "stopped", "start": 51.7, "end": 52.0, "p": 18}, {"word": "moving", "start": 52.03, "end": 52.33, "p": 18}, {"word": "Please", "start": 52.71, "end": 53.01, "p": 19}, {"word": "Not", "start": 53.04, "end": 53.34, "p": 19}, {"word": "you", "start": 53.37, "end": 53.67, "p": 19}, {"word": "Then", "start": 56.9, "end": 57.2, "p": 20}, {"word": "the", "start": 57.23, "end": 57.53, "p": 20}, {"word": "ground", "start": 57.56, "end": 57.86, "p": 20}, {"word": "began", "start": 57.89, "end": 58.19, "p": 20}, {"word": "to", "start": 58.22, "end": 58.52, "p": 20}, {"word": "shake", "start": 58.55, "end": 58.85, "p": 20}, {"word": "The", "start": 59.08, "end": 59.38, "p": 21}, {"word": "sky", "start": 59.41, "end": 59.71, "p": 21}, {"word": "turned", "start": 59.74, "end": 60.04, "p": 21}, {"word": "black", "start": 60.07, "end": 60.37, "p": 21}, {"word": "And", "start": 60.65, "end": 60.95, "p": 22}, {"word": "every", "start": 60.98, "end": 61.28, "p": 22}, {"word": "single", "start": 61.31, "end": 61.61, "p": 22}, {"word": "person", "start": 61.64, "end": 61.94, "p": 22}, {"word": "turned", "start": 61.97, "end": 62.27, "p": 22}, {"word": "to", "start": 62.3, "end": 62.6, "p": 22}, {"word": "look", "start": 62.63, "end": 62.93, "p": 22}, {"word": "at", "start": 62.96, "end": 63.26, "p": 22}, {"word": "him", "start": 63.29, "end": 63.59, "p": 22}, {"word": "Something", "start": 64.07, "end": 64.37, "p": 23}, {"word": "enormous", "start": 64.4, "end": 64.7, "p": 23}, {"word": "rose", "start": 64.73, "end": 65.03, "p": 23}, {"word": "from", "start": 65.06, "end": 65.36, "p": 23}, {"word": "beneath", "start": 65.39, "end": 65.69, "p": 23}, {"word": "the", "start": 65.72, "end": 66.02, "p": 23}, {"word": "town", "start": 66.05, "end": 66.35, "p": 23}, {"word": "But", "start": 66.73, "end": 67.03, "p": 24}, {"word": "it", "start": 67.06, "end": 67.36, "p": 24}, {"word": "didn't", "start": 67.39, "end": 67.69, "p": 24}, {"word": "attack", "start": 67.72, "end": 68.02, "p": 24}, {"word": "him", "start": 68.05, "end": 68.35, "p": 24}, {"word": "Finally", "start": 68.83, "end": 69.13, "p": 25}, {"word": "Someone", "start": 69.16, "end": 69.46, "p": 25}, {"word": "has", "start": 69.49, "end": 69.79, "p": 25}, {"word": "stopped", "start": 69.82, "end": 70.12, "p": 25}, {"word": "feeding", "start": 70.15, "end": 70.45, "p": 25}, {"word": "me", "start": 70.48, "end": 70.78, "p": 25}, {"word": "He", "start": 71.41, "end": 71.71, "p": 26}, {"word": "thought", "start": 71.74, "end": 72.04, "p": 26}, {"word": "stopping", "start": 72.07, "end": 72.37, "p": 26}, {"word": "the", "start": 72.4, "end": 72.7, "p": 26}, {"word": "dancing", "start": 72.73, "end": 73.03, "p": 26}, {"word": "would", "start": 73.06, "end": 73.36, "p": 26}, {"word": "save", "start": 73.39, "end": 73.69, "p": 26}, {"word": "everyone", "start": 73.72, "end": 74.02, "p": 26}, {"word": "But", "start": 74.2, "end": 74.5, "p": 27}, {"word": "he", "start": 74.53, "end": 74.83, "p": 27}, {"word": "had", "start": 74.86, "end": 75.16, "p": 27}, {"word": "just", "start": 75.19, "end": 75.49, "p": 27}, {"word": "released", "start": 75.52, "end": 75.82, "p": 27}, {"word": "the", "start": 75.85, "end": 76.15, "p": 27}, {"word": "thing", "start": 76.18, "end": 76.48, "p": 27}, {"word": "they'd", "start": 76.51, "end": 76.81, "p": 27}, {"word": "been", "start": 76.84, "end": 77.14, "p": 27}, {"word": "keeping", "start": 77.17, "end": 77.47, "p": 27}, {"word": "alive", "start": 77.5, "end": 77.8, "p": 27}, {"word": "People", "start": 78.18, "end": 78.48, "p": 28}, {"word": "started", "start": 78.51, "end": 78.81, "p": 28}, {"word": "collapsing", "start": 78.84, "end": 79.14, "p": 28}, {"word": "Then", "start": 79.42, "end": 79.72, "p": 29}, {"word": "his", "start": 79.75, "end": 80.05, "p": 29}, {"word": "hands", "start": 80.08, "end": 80.38, "p": 29}, {"word": "began", "start": 80.41, "end": 80.71, "p": 29}, {"word": "to", "start": 80.74, "end": 81.04, "p": 29}, {"word": "glow", "start": 81.07, "end": 81.37, "p": 29}, {"word": "You're", "start": 81.75, "end": 82.05, "p": 30}, {"word": "the", "start": 82.08, "end": 82.38, "p": 30}, {"word": "only", "start": 82.41, "end": 82.71, "p": 30}, {"word": "one", "start": 82.74, "end": 83.04, "p": 30}, {"word": "who", "start": 83.07, "end": 83.37, "p": 30}, {"word": "can", "start": 83.4, "end": 83.7, "p": 30}, {"word": "replace", "start": 83.73, "end": 84.03, "p": 30}, {"word": "me", "start": 84.06, "end": 84.36, "p": 30}, {"word": "Then", "start": 84.89, "end": 85.19, "p": 31}, {"word": "Grandma", "start": 85.22, "end": 85.52, "p": 31}, {"word": "grabbed", "start": 85.55, "end": 85.85, "p": 31}, {"word": "his", "start": 85.88, "end": 86.18, "p": 31}, {"word": "arm", "start": 86.21, "end": 86.51, "p": 31}, {"word": "I've", "start": 86.79, "end": 87.09, "p": 32}, {"word": "been", "start": 87.12, "end": 87.42, "p": 32}, {"word": "waiting", "start": 87.45, "end": 87.75, "p": 32}, {"word": "two", "start": 87.78, "end": 88.08, "p": 32}, {"word": "hundred", "start": 88.11, "end": 88.41, "p": 32}, {"word": "years", "start": 88.44, "end": 88.74, "p": 32}, {"word": "for", "start": 88.77, "end": 89.07, "p": 32}, {"word": "this", "start": 89.1, "end": 89.4, "p": 32}, {"word": "moment", "start": 89.43, "end": 89.73, "p": 32}, {"word": "You're", "start": 90.36, "end": 90.66, "p": 33}, {"word": "not", "start": 90.69, "end": 90.99, "p": 33}, {"word": "just", "start": 91.02, "end": 91.32, "p": 33}, {"word": "another", "start": 91.35, "end": 91.65, "p": 33}, {"word": "dancer", "start": 91.68, "end": 91.98, "p": 33}, {"word": "You're", "start": 92.26, "end": 92.56, "p": 34}, {"word": "the", "start": 92.59, "end": 92.89, "p": 34}, {"word": "reason", "start": 92.92, "end": 93.22, "p": 34}, {"word": "this", "start": 93.25, "end": 93.55, "p": 34}, {"word": "town", "start": 93.58, "end": 93.88, "p": 34}, {"word": "exists", "start": 93.91, "end": 94.21, "p": 34}], "phrases": []}
+{
+"duration": 93.967,
+"words": [
+{
+"word": "In",
+"start": 0.15,
+"end": 0.39,
+"p": 0
+},
+{
+"word": "this",
+"start": 0.39,
+"end": 0.63,
+"p": 0
+},
+{
+"word": "town",
+"start": 0.63,
+"end": 1.03,
+"p": 0
+},
+{
+"word": "everyone",
+"start": 1.03,
+"end": 1.43,
+"p": 0
+},
+{
+"word": "has",
+"start": 1.43,
+"end": 1.59,
+"p": 0
+},
+{
+"word": "to",
+"start": 1.59,
+"end": 1.75,
+"p": 0
+},
+{
+"word": "keep",
+"start": 1.75,
+"end": 1.99,
+"p": 0
+},
+{
+"word": "dancing",
+"start": 1.99,
+"end": 2.571,
+"p": 0
+},
+{
+"word": "And",
+"start": 2.72,
+"end": 2.96,
+"p": 1
+},
+{
+"word": "if",
+"start": 2.96,
+"end": 3.12,
+"p": 1
+},
+{
+"word": "you",
+"start": 3.12,
+"end": 3.24,
+"p": 1
+},
+{
+"word": "stop",
+"start": 3.2,
+"end": 3.6,
+"p": 1
+},
+{
+"word": "something",
+"start": 3.6,
+"end": 3.92,
+"p": 1
+},
+{
+"word": "terrible",
+"start": 3.92,
+"end": 4.4,
+"p": 1
+},
+{
+"word": "happens",
+"start": 4.4,
+"end": 5.004,
+"p": 1
+},
+{
+"word": "Why",
+"start": 5.454,
+"end": 5.774,
+"p": 2
+},
+{
+"word": "is",
+"start": 5.774,
+"end": 5.934,
+"p": 2
+},
+{
+"word": "everyone",
+"start": 5.934,
+"end": 6.254,
+"p": 2
+},
+{
+"word": "dancing",
+"start": 6.254,
+"end": 6.766,
+"p": 2
+},
+{
+"word": "Never",
+"start": 7.066,
+"end": 7.466,
+"p": 3
+},
+{
+"word": "Stop",
+"start": 7.466,
+"end": 7.866,
+"p": 3
+},
+{
+"word": "Moving",
+"start": 7.866,
+"end": 8.295,
+"p": 3
+},
+{
+"word": "Nobody",
+"start": 8.795,
+"end": 9.195,
+"p": 4
+},
+{
+"word": "knew",
+"start": 9.195,
+"end": 9.435,
+"p": 4
+},
+{
+"word": "why",
+"start": 9.435,
+"end": 9.595,
+"p": 4
+},
+{
+"word": "they",
+"start": 9.595,
+"end": 9.755,
+"p": 4
+},
+{
+"word": "had",
+"start": 9.755,
+"end": 9.915,
+"p": 4
+},
+{
+"word": "to",
+"start": 9.915,
+"end": 10.035,
+"p": 4
+},
+{
+"word": "dance",
+"start": 9.995,
+"end": 10.521,
+"p": 4
+},
+{
+"word": "They",
+"start": 10.671,
+"end": 10.991,
+"p": 5
+},
+{
+"word": "just",
+"start": 10.991,
+"end": 11.231,
+"p": 5
+},
+{
+"word": "knew",
+"start": 11.231,
+"end": 11.551,
+"p": 5
+},
+{
+"word": "what",
+"start": 11.551,
+"end": 11.791,
+"p": 5
+},
+{
+"word": "happened",
+"start": 11.791,
+"end": 12.191,
+"p": 5
+},
+{
+"word": "to",
+"start": 12.191,
+"end": 12.351,
+"p": 5
+},
+{
+"word": "people",
+"start": 12.351,
+"end": 12.591,
+"p": 5
+},
+{
+"word": "who",
+"start": 12.591,
+"end": 12.831,
+"p": 5
+},
+{
+"word": "stopped",
+"start": 12.831,
+"end": 13.344,
+"p": 5
+},
+{
+"word": "What",
+"start": 18.944,
+"end": 19.104,
+"p": 6
+},
+{
+"word": "was",
+"start": 19.104,
+"end": 19.264,
+"p": 6
+},
+{
+"word": "that",
+"start": 19.264,
+"end": 19.553,
+"p": 6
+},
+{
+"word": "The",
+"start": 19.903,
+"end": 20.143,
+"p": 7
+},
+{
+"word": "town",
+"start": 20.143,
+"end": 20.383,
+"p": 7
+},
+{
+"word": "needs",
+"start": 20.383,
+"end": 20.623,
+"p": 7
+},
+{
+"word": "us",
+"start": 20.623,
+"end": 20.783,
+"p": 7
+},
+{
+"word": "moving",
+"start": 20.783,
+"end": 21.236,
+"p": 7
+},
+{
+"word": "That",
+"start": 21.916,
+"end": 22.156,
+"p": 8
+},
+{
+"word": "night",
+"start": 22.156,
+"end": 22.476,
+"p": 8
+},
+{
+"word": "he",
+"start": 22.476,
+"end": 22.636,
+"p": 8
+},
+{
+"word": "decided",
+"start": 22.636,
+"end": 23.036,
+"p": 8
+},
+{
+"word": "to",
+"start": 23.036,
+"end": 23.196,
+"p": 8
+},
+{
+"word": "investigate",
+"start": 23.196,
+"end": 23.879,
+"p": 8
+},
+{
+"word": "He",
+"start": 24.229,
+"end": 24.469,
+"p": 9
+},
+{
+"word": "found",
+"start": 24.469,
+"end": 24.709,
+"p": 9
+},
+{
+"word": "the",
+"start": 24.709,
+"end": 24.829,
+"p": 9
+},
+{
+"word": "town's",
+"start": 24.789,
+"end": 25.189,
+"p": 9
+},
+{
+"word": "old",
+"start": 25.189,
+"end": 25.429,
+"p": 9
+},
+{
+"word": "security",
+"start": 25.429,
+"end": 25.909,
+"p": 9
+},
+{
+"word": "footage",
+"start": 25.909,
+"end": 26.441,
+"p": 9
+},
+{
+"word": "Fifty",
+"start": 26.771,
+"end": 27.171,
+"p": 10
+},
+{
+"word": "years",
+"start": 27.171,
+"end": 27.331,
+"p": 10
+},
+{
+"word": "ago",
+"start": 27.331,
+"end": 27.811,
+"p": 10
+},
+{
+"word": "Everyone",
+"start": 27.811,
+"end": 28.131,
+"p": 10
+},
+{
+"word": "dancing",
+"start": 28.131,
+"end": 28.578,
+"p": 10
+},
+{
+"word": "A",
+"start": 28.828,
+"end": 28.988,
+"p": 11
+},
+{
+"word": "hundred",
+"start": 28.988,
+"end": 29.308,
+"p": 11
+},
+{
+"word": "years",
+"start": 29.308,
+"end": 29.548,
+"p": 11
+},
+{
+"word": "ago",
+"start": 29.548,
+"end": 29.948,
+"p": 11
+},
+{
+"word": "Everyone",
+"start": 29.948,
+"end": 30.268,
+"p": 11
+},
+{
+"word": "dancing",
+"start": 30.268,
+"end": 30.797,
+"p": 11
+},
+{
+"word": "Two",
+"start": 31.127,
+"end": 31.687,
+"p": 12
+},
+{
+"word": "hundred",
+"start": 31.687,
+"end": 31.927,
+"p": 12
+},
+{
+"word": "years",
+"start": 31.927,
+"end": 32.047,
+"p": 12
+},
+{
+"word": "ago",
+"start": 31.927,
+"end": 32.407,
+"p": 12
+},
+{
+"word": "Everyone",
+"start": 32.407,
+"end": 32.807,
+"p": 12
+},
+{
+"word": "dancing",
+"start": 32.807,
+"end": 33.296,
+"p": 12
+},
+{
+"word": "Then",
+"start": 33.696,
+"end": 34.016,
+"p": 13
+},
+{
+"word": "he",
+"start": 34.016,
+"end": 34.136,
+"p": 13
+},
+{
+"word": "found",
+"start": 34.096,
+"end": 34.336,
+"p": 13
+},
+{
+"word": "an",
+"start": 34.336,
+"end": 34.496,
+"p": 13
+},
+{
+"word": "old",
+"start": 34.496,
+"end": 34.656,
+"p": 13
+},
+{
+"word": "newspaper",
+"start": 34.656,
+"end": 35.364,
+"p": 13
+},
+{
+"word": "The",
+"start": 35.614,
+"end": 35.774,
+"p": 14
+},
+{
+"word": "dancing",
+"start": 35.774,
+"end": 36.254,
+"p": 14
+},
+{
+"word": "has",
+"start": 36.254,
+"end": 36.414,
+"p": 14
+},
+{
+"word": "kept",
+"start": 36.414,
+"end": 36.654,
+"p": 14
+},
+{
+"word": "the",
+"start": 36.654,
+"end": 36.814,
+"p": 14
+},
+{
+"word": "thing",
+"start": 36.814,
+"end": 36.934,
+"p": 14
+},
+{
+"word": "asleep",
+"start": 36.814,
+"end": 37.054,
+"p": 14
+},
+{
+"word": "for",
+"start": 37.054,
+"end": 37.854,
+"p": 14
+},
+{
+"word": "two",
+"start": 37.854,
+"end": 38.014,
+"p": 14
+},
+{
+"word": "hundred",
+"start": 38.014,
+"end": 38.574,
+"p": 14
+},
+{
+"word": "years",
+"start": 38.574,
+"end": 38.992,
+"p": 14
+},
+{
+"word": "Suddenly",
+"start": 39.592,
+"end": 40.152,
+"p": 15
+},
+{
+"word": "the",
+"start": 40.152,
+"end": 40.312,
+"p": 15
+},
+{
+"word": "computer",
+"start": 40.312,
+"end": 40.712,
+"p": 15
+},
+{
+"word": "turned",
+"start": 40.712,
+"end": 41.112,
+"p": 15
+},
+{
+"word": "on",
+"start": 41.112,
+"end": 41.432,
+"p": 15
+},
+{
+"word": "by",
+"start": 41.432,
+"end": 41.592,
+"p": 15
+},
+{
+"word": "itself",
+"start": 41.592,
+"end": 42.001,
+"p": 15
+},
+{
+"word": "Do",
+"start": 42.401,
+"end": 42.641,
+"p": 16
+},
+{
+"word": "not",
+"start": 42.641,
+"end": 42.801,
+"p": 16
+},
+{
+"word": "stop",
+"start": 42.801,
+"end": 43.183,
+"p": 16
+},
+{
+"word": "But",
+"start": 43.883,
+"end": 44.123,
+"p": 17
+},
+{
+"word": "he",
+"start": 44.123,
+"end": 44.283,
+"p": 17
+},
+{
+"word": "made",
+"start": 44.283,
+"end": 44.443,
+"p": 17
+},
+{
+"word": "one",
+"start": 44.443,
+"end": 44.683,
+"p": 17
+},
+{
+"word": "decision",
+"start": 44.683,
+"end": 45.163,
+"p": 17
+},
+{
+"word": "that",
+"start": 45.163,
+"end": 45.323,
+"p": 17
+},
+{
+"word": "would",
+"start": 45.323,
+"end": 45.563,
+"p": 17
+},
+{
+"word": "change",
+"start": 45.563,
+"end": 46.043,
+"p": 17
+},
+{
+"word": "everything",
+"start": 46.043,
+"end": 46.587,
+"p": 17
+},
+{
+"word": "He",
+"start": 46.987,
+"end": 47.227,
+"p": 18
+},
+{
+"word": "walked",
+"start": 47.227,
+"end": 47.547,
+"p": 18
+},
+{
+"word": "into",
+"start": 47.547,
+"end": 47.707,
+"p": 18
+},
+{
+"word": "the",
+"start": 47.707,
+"end": 47.867,
+"p": 18
+},
+{
+"word": "town",
+"start": 47.867,
+"end": 48.187,
+"p": 18
+},
+{
+"word": "square",
+"start": 48.187,
+"end": 48.667,
+"p": 18
+},
+{
+"word": "and",
+"start": 48.667,
+"end": 48.987,
+"p": 18
+},
+{
+"word": "slowly",
+"start": 48.987,
+"end": 49.307,
+"p": 18
+},
+{
+"word": "stopped",
+"start": 49.307,
+"end": 49.707,
+"p": 18
+},
+{
+"word": "moving",
+"start": 49.707,
+"end": 50.137,
+"p": 18
+},
+{
+"word": "Please",
+"start": 50.487,
+"end": 50.887,
+"p": 19
+},
+{
+"word": "Not",
+"start": 50.887,
+"end": 51.047,
+"p": 19
+},
+{
+"word": "you",
+"start": 51.047,
+"end": 51.416,
+"p": 19
+},
+{
+"word": "Then",
+"start": 54.616,
+"end": 54.936,
+"p": 20
+},
+{
+"word": "the",
+"start": 54.936,
+"end": 55.056,
+"p": 20
+},
+{
+"word": "ground",
+"start": 55.016,
+"end": 55.336,
+"p": 20
+},
+{
+"word": "began",
+"start": 55.336,
+"end": 55.656,
+"p": 20
+},
+{
+"word": "to",
+"start": 55.656,
+"end": 55.816,
+"p": 20
+},
+{
+"word": "shake",
+"start": 55.816,
+"end": 56.304,
+"p": 20
+},
+{
+"word": "The",
+"start": 56.504,
+"end": 56.664,
+"p": 21
+},
+{
+"word": "sky",
+"start": 56.664,
+"end": 56.984,
+"p": 21
+},
+{
+"word": "turned",
+"start": 56.984,
+"end": 57.224,
+"p": 21
+},
+{
+"word": "black",
+"start": 57.224,
+"end": 57.584,
+"p": 21
+},
+{
+"word": "And",
+"start": 57.834,
+"end": 58.074,
+"p": 22
+},
+{
+"word": "every",
+"start": 58.074,
+"end": 58.314,
+"p": 22
+},
+{
+"word": "single",
+"start": 58.314,
+"end": 58.714,
+"p": 22
+},
+{
+"word": "person",
+"start": 58.714,
+"end": 59.034,
+"p": 22
+},
+{
+"word": "turned",
+"start": 59.034,
+"end": 59.434,
+"p": 22
+},
+{
+"word": "to",
+"start": 59.434,
+"end": 59.594,
+"p": 22
+},
+{
+"word": "look",
+"start": 59.594,
+"end": 59.834,
+"p": 22
+},
+{
+"word": "at",
+"start": 59.834,
+"end": 59.994,
+"p": 22
+},
+{
+"word": "him",
+"start": 59.994,
+"end": 60.279,
+"p": 22
+},
+{
+"word": "Something",
+"start": 60.729,
+"end": 61.208,
+"p": 23
+},
+{
+"word": "enormous",
+"start": 61.208,
+"end": 61.768,
+"p": 23
+},
+{
+"word": "rose",
+"start": 61.768,
+"end": 62.089,
+"p": 23
+},
+{
+"word": "from",
+"start": 62.089,
+"end": 62.248,
+"p": 23
+},
+{
+"word": "beneath",
+"start": 62.248,
+"end": 62.568,
+"p": 23
+},
+{
+"word": "the",
+"start": 62.568,
+"end": 62.688,
+"p": 23
+},
+{
+"word": "town",
+"start": 62.648,
+"end": 63.134,
+"p": 23
+},
+{
+"word": "But",
+"start": 63.484,
+"end": 63.724,
+"p": 24
+},
+{
+"word": "it",
+"start": 63.724,
+"end": 63.884,
+"p": 24
+},
+{
+"word": "didn't",
+"start": 63.884,
+"end": 64.124,
+"p": 24
+},
+{
+"word": "attack",
+"start": 64.124,
+"end": 64.364,
+"p": 24
+},
+{
+"word": "him",
+"start": 64.364,
+"end": 64.7,
+"p": 24
+},
+{
+"word": "Finally",
+"start": 65.15,
+"end": 65.79,
+"p": 25
+},
+{
+"word": "Someone",
+"start": 65.79,
+"end": 66.11,
+"p": 25
+},
+{
+"word": "has",
+"start": 66.11,
+"end": 66.27,
+"p": 25
+},
+{
+"word": "stopped",
+"start": 66.27,
+"end": 66.59,
+"p": 25
+},
+{
+"word": "feeding",
+"start": 66.59,
+"end": 66.83,
+"p": 25
+},
+{
+"word": "me",
+"start": 66.83,
+"end": 67.188,
+"p": 25
+},
+{
+"word": "He",
+"start": 67.788,
+"end": 68.028,
+"p": 26
+},
+{
+"word": "thought",
+"start": 68.028,
+"end": 68.268,
+"p": 26
+},
+{
+"word": "stopping",
+"start": 68.268,
+"end": 68.668,
+"p": 26
+},
+{
+"word": "the",
+"start": 68.668,
+"end": 68.788,
+"p": 26
+},
+{
+"word": "dancing",
+"start": 68.748,
+"end": 69.228,
+"p": 26
+},
+{
+"word": "would",
+"start": 69.228,
+"end": 69.388,
+"p": 26
+},
+{
+"word": "save",
+"start": 69.388,
+"end": 69.628,
+"p": 26
+},
+{
+"word": "everyone",
+"start": 69.628,
+"end": 70.167,
+"p": 26
+},
+{
+"word": "But",
+"start": 70.317,
+"end": 70.557,
+"p": 27
+},
+{
+"word": "he",
+"start": 70.557,
+"end": 70.677,
+"p": 27
+},
+{
+"word": "had",
+"start": 70.637,
+"end": 70.797,
+"p": 27
+},
+{
+"word": "just",
+"start": 70.797,
+"end": 70.957,
+"p": 27
+},
+{
+"word": "released",
+"start": 70.957,
+"end": 71.437,
+"p": 27
+},
+{
+"word": "the",
+"start": 71.437,
+"end": 71.597,
+"p": 27
+},
+{
+"word": "thing",
+"start": 71.597,
+"end": 71.917,
+"p": 27
+},
+{
+"word": "they'd",
+"start": 71.917,
+"end": 72.237,
+"p": 27
+},
+{
+"word": "been",
+"start": 72.237,
+"end": 72.397,
+"p": 27
+},
+{
+"word": "keeping",
+"start": 72.397,
+"end": 72.717,
+"p": 27
+},
+{
+"word": "alive",
+"start": 72.717,
+"end": 73.295,
+"p": 27
+},
+{
+"word": "People",
+"start": 73.805,
+"end": 74.125,
+"p": 28
+},
+{
+"word": "started",
+"start": 74.125,
+"end": 74.525,
+"p": 28
+},
+{
+"word": "collapsing",
+"start": 74.525,
+"end": 75.193,
+"p": 28
+},
+{
+"word": "Then",
+"start": 75.443,
+"end": 75.763,
+"p": 29
+},
+{
+"word": "his",
+"start": 75.763,
+"end": 75.923,
+"p": 29
+},
+{
+"word": "hands",
+"start": 75.923,
+"end": 76.163,
+"p": 29
+},
+{
+"word": "began",
+"start": 76.163,
+"end": 76.403,
+"p": 29
+},
+{
+"word": "to",
+"start": 76.403,
+"end": 76.563,
+"p": 29
+},
+{
+"word": "glow",
+"start": 76.563,
+"end": 77.006,
+"p": 29
+},
+{
+"word": "You're",
+"start": 77.356,
+"end": 77.676,
+"p": 30
+},
+{
+"word": "the",
+"start": 77.676,
+"end": 77.836,
+"p": 30
+},
+{
+"word": "only",
+"start": 77.836,
+"end": 77.996,
+"p": 30
+},
+{
+"word": "one",
+"start": 77.996,
+"end": 78.236,
+"p": 30
+},
+{
+"word": "who",
+"start": 78.236,
+"end": 78.396,
+"p": 30
+},
+{
+"word": "can",
+"start": 78.396,
+"end": 78.636,
+"p": 30
+},
+{
+"word": "replace",
+"start": 78.636,
+"end": 79.196,
+"p": 30
+},
+{
+"word": "me",
+"start": 79.196,
+"end": 79.609,
+"p": 30
+},
+{
+"word": "Then",
+"start": 80.109,
+"end": 80.349,
+"p": 31
+},
+{
+"word": "Grandma",
+"start": 80.349,
+"end": 80.829,
+"p": 31
+},
+{
+"word": "grabbed",
+"start": 80.829,
+"end": 81.149,
+"p": 31
+},
+{
+"word": "his",
+"start": 81.149,
+"end": 81.309,
+"p": 31
+},
+{
+"word": "arm",
+"start": 81.309,
+"end": 81.747,
+"p": 31
+},
+{
+"word": "I've",
+"start": 81.997,
+"end": 82.317,
+"p": 32
+},
+{
+"word": "been",
+"start": 82.317,
+"end": 82.437,
+"p": 32
+},
+{
+"word": "waiting",
+"start": 82.397,
+"end": 82.797,
+"p": 32
+},
+{
+"word": "two",
+"start": 82.797,
+"end": 83.437,
+"p": 32
+},
+{
+"word": "hundred",
+"start": 83.437,
+"end": 83.557,
+"p": 32
+},
+{
+"word": "years",
+"start": 83.437,
+"end": 83.757,
+"p": 32
+},
+{
+"word": "for",
+"start": 83.757,
+"end": 83.997,
+"p": 32
+},
+{
+"word": "this",
+"start": 83.997,
+"end": 84.237,
+"p": 32
+},
+{
+"word": "moment",
+"start": 84.237,
+"end": 84.766,
+"p": 32
+},
+{
+"word": "You're",
+"start": 85.366,
+"end": 85.606,
+"p": 33
+},
+{
+"word": "not",
+"start": 85.606,
+"end": 85.766,
+"p": 33
+},
+{
+"word": "just",
+"start": 85.766,
+"end": 86.006,
+"p": 33
+},
+{
+"word": "another",
+"start": 86.006,
+"end": 86.326,
+"p": 33
+},
+{
+"word": "dancer",
+"start": 86.326,
+"end": 86.894,
+"p": 33
+},
+{
+"word": "You're",
+"start": 87.144,
+"end": 87.384,
+"p": 34
+},
+{
+"word": "the",
+"start": 87.384,
+"end": 87.544,
+"p": 34
+},
+{
+"word": "reason",
+"start": 87.544,
+"end": 87.784,
+"p": 34
+},
+{
+"word": "this",
+"start": 87.784,
+"end": 87.944,
+"p": 34
+},
+{
+"word": "town",
+"start": 87.944,
+"end": 88.264,
+"p": 34
+},
+{
+"word": "exists",
+"start": 88.264,
+"end": 88.967,
+"p": 34
+}
+],
+"phrases": []
+}
