@@ -87,6 +87,7 @@ All three were 576×1024 vertical at 30 fps. For our renders, use 1080×1920 at 
 - **Leave the bottom-right corner clear for the platform watermark.**
 
 ## 7. Audio
+- **Default narrator voice:** "Casual YouTuber", a Kokoro blend of 50% `am_puck` and 50% `am_liam` at 1.18× speed (see `CLAUDE.md`).
 - **Narration runs non-stop** from the first frame to the last, in an intimate storytelling tone.
 - **Music:** quiet, emotional piano or soft beats, ducked under the voice.
 - **Small sound effects on the key beats** (cash, a heartbeat, rain, a stamp hit).
