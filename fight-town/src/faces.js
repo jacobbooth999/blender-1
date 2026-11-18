@@ -13,11 +13,12 @@ scene.add(ch.root);
 const camera = new THREE.PerspectiveCamera(24, W / H, .1, 100);
 const box = new THREE.Box3().setFromObject(ch.head); const c = box.getCenter(new THREE.Vector3());
 camera.position.set(c.x, c.y + .1, c.z + 7.4); camera.lookAt(c.x, c.y - .35, c.z);
+const LIST = params.get('list') ? params.get('list').split(',') : null;
 window.renderFrame = (i) => {
-  setFace(ch, 't' + (i + 1)); renderer.render(scene, camera);
+  setFace(ch, LIST ? LIST[i] : 't' + (i + 1)); renderer.render(scene, camera);
   const out = document.getElementById('out'); out.width = W; out.height = H; const g = out.getContext('2d');
   g.drawImage(renderer.domElement, 0, 0);
   g.font = `900 ${H * .09}px Montserrat`; g.textAlign = 'left'; g.textBaseline = 'top'; g.lineJoin = 'round';
-  g.lineWidth = H * .016; g.strokeStyle = '#3a1a00'; g.strokeText(String(i + 1), W * .05, H * .04); g.fillStyle = '#ff9a2a'; g.fillText(String(i + 1), W * .05, H * .04);
+  g.lineWidth = H * .016; g.strokeStyle = '#3a1a00'; const lab = LIST ? LIST[i] : String(i + 1); g.strokeText(lab, W * .05, H * .04); g.fillStyle = '#ff9a2a'; g.fillText(lab, W * .05, H * .04);
 };
 window.ready = Promise.resolve(true);

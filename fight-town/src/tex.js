@@ -114,8 +114,27 @@ export function templateFaceTex(n, blink = false) {
 }
 
 export const FACES = ['sick', 'angry', 'tongue', 'neutral', 'smile', 'grin', 'shock', 'sad', 'cry', 'smug', 'worried', 'determined', 'laugh', 'happycry', 'greedy', 'talk'];
+// The template faces are the default look: the named expressions map onto them (tears drawn on top where needed).
+// 'sick' (X eyes) and 'greedy' ($ eyes) have no template and keep their own drawings; 'classic:<name>' gets the old face.
+export const FACE_MAP = { neutral: 4, talk: 6, smile: 1, grin: 3, laugh: 21, shock: 15, sad: 16, cry: 16, happycry: 21,
+  worried: 2, angry: 9, determined: 8, smug: 12, tongue: 17 };
+function tplTears(g) {
+  for (const x of [150, 362]) {
+    const gr = g.createLinearGradient(0, 262, 0, 430); gr.addColorStop(0, '#3fa9ff'); gr.addColorStop(1, '#1e6fe0');
+    g.fillStyle = gr; g.beginPath(); g.moveTo(x - 10, 262); g.lineTo(x + 10, 262); g.lineTo(x + 14, 410); g.quadraticCurveTo(x, 435, x - 14, 410); g.closePath(); g.fill();
+    g.fillStyle = 'rgba(255,255,255,.7)'; g.fillRect(x - 4, 280, 4, 90);
+  }
+}
 export function faceTex(name, blink = false) {
   if (/^t\d+$/.test(name)) return templateFaceTex(+name.slice(1), blink);
+  if (name in FACE_MAP) {
+    const n = FACE_MAP[name];
+    if (name !== 'cry' && name !== 'happycry') return templateFaceTex(n, blink);
+    return canvasTex(`tface:${name}:${blink}`, 512, 512, (g) => {
+      const [e, m] = TPL[n]; g.save(); g.translate(256, 292); g.scale(1.6, 1.6); g.translate(-256, -270); tplEyes(g, e, blink); tplMouth(g, m); g.restore(); tplTears(g);
+    });
+  }
+  if (name.startsWith('classic:')) name = name.slice(8);
   return canvasTex(`face:${name}:${blink}`, 512, 512, (g) => {
     g.strokeStyle = INK; g.fillStyle = INK;
     switch (name) {

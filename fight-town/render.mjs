@@ -23,7 +23,7 @@ const browser = await chromium.launch({ args: ['--use-gl=angle', '--use-angle=sw
 const page = await browser.newPage({ viewport: { width: Math.min(W, 1200), height: Math.min(H, 1200) } });
 page.on('console', (m) => { if (m.type() === 'error' || m.type() === 'warning') console.error('[page]', m.text()); });
 page.on('pageerror', (e) => console.error('[pageerror]', e.message));
-await page.goto(`http://localhost:${port}/${process.env.PAGE || 'src/index.html'}?w=${W}&h=${H}`);
+await page.goto(`http://localhost:${port}/${process.env.PAGE || 'src/index.html'}?w=${W}&h=${H}${process.env.QS || ''}`);
 await page.waitForFunction(() => window.booted && window.ready, null, { timeout: 120000 });
 await page.evaluate(() => window.ready);
 
