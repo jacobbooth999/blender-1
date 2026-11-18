@@ -300,16 +300,12 @@ const OV = {
     g.font = `900 ${42 * PX}px Montserrat`; g.textBaseline = 'middle'; g.fillText('LIVE', x + 58 * PX, y + 35 * PX); g.restore();
   },
   flash: 0,
-  // comic "HUS!" punch text with a starburst; i picks position/rotation
-  hus(g, t, t0, i, until) {
-    const k = (t - t0) / .1; if (k < 0 || t > (until ?? t0 + .45)) return;
-    const hh = (n) => { const x = Math.sin(n * 91.7 + 3.1) * 43758.5; return x - Math.floor(x); };
-    const x = W * (.3 + hh(i) * .4), y = H * (.24 + hh(i + 5) * .2), rot = (hh(i + 9) - .5) * .5, s = (k >= 1 ? 1 : 1.7 - .7 * k) * PX;
-    g.save(); g.translate(x, y); g.rotate(rot); g.scale(s, s);
-    g.beginPath(); for (let j = 0; j < 24; j++) { const r = j % 2 ? 120 : 190 + hh(i * 7 + j) * 40, a = j / 24 * Math.PI * 2; g.lineTo(Math.cos(a) * r * 1.25, Math.sin(a) * r * .8); }
-    g.closePath(); g.fillStyle = '#ff5a1f'; g.fill(); g.lineWidth = 10; g.strokeStyle = '#ffffff'; g.stroke();
-    g.font = '900 150px Montserrat'; g.textAlign = 'center'; g.textBaseline = 'middle'; g.lineJoin = 'round';
-    g.lineWidth = 26; g.strokeStyle = '#5a0010'; g.strokeText('HUS!', 0, 8); g.fillStyle = '#ffe14d'; g.fillText('HUS!', 0, 8); g.restore();
+  // "HUS!" as a plain caption (same white style as the narration words); narrated ones sit in the caption
+  // slot, extra on-screen ones (y='below') one line under it so they never cover a narrated word
+  hus(g, t, t0, i, until, y = 'below') {
+    if (t < t0 || t > (until ?? t0 + .3)) return;
+    const k = (t - t0 + .02) / .1, s = k >= 1 ? 1 : .6 + .4 * this.easeBack(Math.max(0, k));
+    this.text(g, 'HUS!', W / 2, H * (y === 'below' ? .41 : .335), 86 * PX, '#ffffff', { weight: 800, scale: s, stroke: 'rgba(0,0,0,.35)', strokeW: 7 * PX });
   },
 };
 function drawCaption(T) {
@@ -320,7 +316,7 @@ function drawCaption(T) {
     if (T >= w.start - .02 && T < end) { cur = w; break; }
   }
   if (!cur) return;
-  if (cur.hus) { OV.hus(g2, T, cur.start - .02, WORDS.indexOf(cur), cur.start + .45); return; }
+  if (cur.hus) { OV.hus(g2, T, cur.start - .02, 0, end, 'cap'); return; }
   const txt = cur.word.toLowerCase().replace(/[^a-z0-9'$,]/g, '').replace(/,$/, '');
   const k = (T - cur.start + .02) / .1;
   const s = k >= 1 ? 1 : .6 + .4 * OV.easeBack(Math.max(0, k));

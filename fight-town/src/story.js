@@ -63,7 +63,7 @@ shot(at(2, 0), { set: 'town', light: 'golden', dof: 8, shadow: 16, fx: all(crowd
   cam: side(299.8, 2.2, 10, { yaw: -12 }),
   cast: [{ c: 'f1', p: FP, ry: 90, pose: 'idle', face: 'determined' }, { an: 'chicken', p: [301.2, Y, 0], ry: -90, mode: 'attack', eyes: 'angry' }] });
 // "HUS! HUS! HUS!"
-shot(at(2, 1), { set: 'town', light: 'golden', dof: 9, shadow: 12, kicks: [[0, .1], [.2, .1], [.4, .14]], fx: crowd(1),
+shot(at(2, 1), { set: 'town', light: 'golden', dof: 9, shadow: 12, kicks: [[0, .1], [.34, .1], [.66, .14]], fx: crowd(1),
   cam: side(299.5, 2.6, 7.5, { yaw: 18, h: .5, push: .15 }),
   cast: [{ c: 'f1', p: FP, ry: 90, pose: 'punch', face: 'angry' }, { an: 'chicken', p: [300.2, Y, 0], ry: -90, mode: (t) => t < .45 ? 'hit' : 'ko', k: (t) => cl(t / .45), eyes: (t) => t < .45 ? 'shock' : 'dizzy' }] });
 // "Sandwich."
@@ -91,7 +91,7 @@ shot(at(5, 0), { set: 'town', light: 'golden', dof: 6, shadow: 18, fx: all(crowd
   cam: { pos: [AX + 9, 2.4, 14], pos2: [AX + 8.4, 2.5, 13.2], tgt: [AX + 1.6, 4.8, -.5], fov: 46 },
   cast: [{ c: 'f4', p: [298.3, Y, 1.2], ry: 70, pose: 'idle', face: 'determined' }, { an: 'bear', p: [303, Y, -1.5], ry: -110, mode: 'roar', eyes: 'angry' }] });
 // "HUS! HUS! HUS!"
-shot(at(5, 1), { set: 'town', light: 'golden', dof: 0, shadow: 14, fx: crowd(1), kicks: [[0, .14], [.2, .14], [.4, .2]],
+shot(at(5, 1), { set: 'town', light: 'golden', dof: 0, shadow: 14, fx: crowd(1), kicks: [[0, .14], [.34, .14], [.66, .2]],
   cam: side(300.2, 3.4, 13, { yaw: -15, push: .14 }),
   cast: [{ c: 'f4', p: FP, ry: 90, pose: (t) => t < .4 ? 'punch' : 'uppercut', face: 'angry' }, { an: 'bear', p: [302.4, Y, 0], ry: -90, mode: (t) => t < .4 ? 'attack' : 'hit', k: (t) => cl((t - .4) / .3), eyes: (t) => t < .4 ? 'angry' : 'dizzy' }] });
 // "A feast."

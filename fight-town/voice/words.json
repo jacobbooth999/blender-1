@@ -82,21 +82,21 @@
 {
 "word": "HUS",
 "start": 5.106,
-"end": 5.6,
+"end": 5.415,
 "p": 2,
 "hus": true
 },
 {
 "word": "HUS",
-"start": 5.69,
-"end": 6.16,
+"start": 5.445,
+"end": 5.739,
 "p": 2,
 "hus": true
 },
 {
 "word": "HUS",
-"start": 6.25,
-"end": 6.699,
+"start": 5.769,
+"end": 6.05,
 "p": 2,
 "hus": true
 },
@@ -139,21 +139,21 @@
 {
 "word": "HUS",
 "start": 10.467,
-"end": 10.961,
+"end": 10.776,
 "p": 5,
 "hus": true
 },
 {
 "word": "HUS",
-"start": 11.051,
-"end": 11.522,
+"start": 10.806,
+"end": 11.1,
 "p": 5,
 "hus": true
 },
 {
 "word": "HUS",
-"start": 11.612,
-"end": 12.061,
+"start": 11.13,
+"end": 11.411,
 "p": 5,
 "hus": true
 },
@@ -496,21 +496,21 @@
 {
 "word": "HUS",
 "start": 30.758,
-"end": 31.252,
+"end": 31.067,
 "p": 13,
 "hus": true
 },
 {
 "word": "HUS",
-"start": 31.342,
-"end": 31.813,
+"start": 31.097,
+"end": 31.391,
 "p": 13,
 "hus": true
 },
 {
 "word": "HUS",
-"start": 31.903,
-"end": 32.352,
+"start": 31.421,
+"end": 31.702,
 "p": 13,
 "hus": true
 },
@@ -871,21 +871,21 @@
 {
 "word": "HUS",
 "start": 53.241,
-"end": 53.735,
+"end": 53.55,
 "p": 21,
 "hus": true
 },
 {
 "word": "HUS",
-"start": 53.825,
-"end": 54.295,
+"start": 53.58,
+"end": 53.874,
 "p": 21,
 "hus": true
 },
 {
 "word": "HUS",
-"start": 54.385,
-"end": 54.834,
+"start": 53.904,
+"end": 54.185,
 "p": 21,
 "hus": true
 },
