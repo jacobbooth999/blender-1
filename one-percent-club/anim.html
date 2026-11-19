@@ -1,0 +1,366 @@
+<!doctype html>
+<html><head><meta charset="utf-8">
+<style>html,body{margin:0;background:#050505;overflow:hidden}svg{display:block}text{font-family:Inter,sans-serif}</style>
+</head><body>
+<svg id="s" xmlns="http://www.w3.org/2000/svg" width="1080" height="1920" viewBox="0 0 1080 1920"></svg>
+<script>
+/* ============ "THE 1% CLUB" — glowing monochrome line-art short ============ */
+const W=1080,H=1920;
+const TIMING=window.TIMING||{duration:40.85,lines:[]};
+const L=TIMING.lines.map(l=>({s:l.start,e:l.end}));
+const END=L[11].e+2.0;
+window.VIDEO_END=END;
+
+/* ---------- math ---------- */
+const clamp=(x,a=0,b=1)=>Math.min(b,Math.max(a,x));
+const P=(t,a,d)=>clamp((t-a)/d);
+const eo=x=>1-Math.pow(1-x,3);
+const eio=x=>x<.5?4*x*x*x:1-Math.pow(-2*x+2,3)/2;
+const back=x=>{const c=1.9;return x<=0?0:1+(c+1)*Math.pow(x-1,3)+c*Math.pow(x-1,2)};
+const lerp=(a,b,u)=>a+(b-a)*u;
+
+/* ---------- output + cues ---------- */
+let out='',uid=0,T=0;
+const add=s=>{out+=s};
+const CUES=new Map();
+function cue(type,t0,vol=1){const k=type+'@'+t0.toFixed(3);if(!CUES.has(k))CUES.set(k,{type,t:+t0.toFixed(3),vol});}
+
+/* ---------- static defs ---------- */
+function grainURL(seed){const c=document.createElement('canvas');c.width=540;c.height=960;const g=c.getContext('2d');const im=g.createImageData(540,960);
+  let s=seed*9301+49297;for(let i=0;i<im.data.length;i+=4){s=(s*9301+49297)%233280;const v=s/233280*255;im.data[i]=im.data[i+1]=im.data[i+2]=v;im.data[i+3]=255;}
+  g.putImageData(im,0,0);return c.toDataURL('image/png');}
+const GRAINS=[1,2,3,4].map(grainURL);
+const DEFS=`<defs>
+<radialGradient id="vig" cx="50%" cy="46%" r="72%"><stop offset="0" stop-color="#1b1b1b"/><stop offset=".55" stop-color="#0c0c0c"/><stop offset="1" stop-color="#030303"/></radialGradient>
+<radialGradient id="edge" cx="50%" cy="50%" r="72%"><stop offset=".62" stop-color="#000" stop-opacity="0"/><stop offset="1" stop-color="#000" stop-opacity=".75"/></radialGradient>
+<radialGradient id="bk"><stop offset="0" stop-color="#fff" stop-opacity="1"/><stop offset=".55" stop-color="#fff" stop-opacity=".5"/><stop offset="1" stop-color="#fff" stop-opacity="0"/></radialGradient>
+<pattern id="dots" width="30" height="30" patternUnits="userSpaceOnUse"><circle cx="15" cy="15" r="1.4" fill="#fff" fill-opacity=".075"/></pattern>
+<linearGradient id="cone" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#fff" stop-opacity="0"/><stop offset=".4" stop-color="#fff" stop-opacity=".09"/><stop offset="1" stop-color="#fff" stop-opacity=".22"/></linearGradient>
+<linearGradient id="fog" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#0d0d0d" stop-opacity="1"/><stop offset=".75" stop-color="#0d0d0d" stop-opacity=".97"/><stop offset="1" stop-color="#0d0d0d" stop-opacity="0"/></linearGradient>
+<filter id="glow" x="-50%" y="-50%" width="200%" height="200%"><feGaussianBlur stdDeviation="5" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+<filter id="glowS" x="-50%" y="-50%" width="200%" height="200%"><feGaussianBlur stdDeviation="2.5" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+<filter id="glowL" x="-50%" y="-80%" width="200%" height="260%"><feGaussianBlur stdDeviation="16" result="b1"/><feGaussianBlur in="SourceGraphic" stdDeviation="4" result="b2"/><feMerge><feMergeNode in="b1"/><feMergeNode in="b2"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+<filter id="blur12" x="-50%" y="-50%" width="200%" height="200%"><feGaussianBlur stdDeviation="12"/></filter>
+</defs>`;
+
+/* ---------- primitives ---------- */
+const esc=s=>String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;');
+function g(attrs,fn){add(`<g ${attrs}>`);fn();add('</g>');}
+function label(x,y,t,{size=22,op=.72,anchor='middle',weight=700,sp=.24,fill='#fff',glow=false}={}){
+  add(`<text x="${x}" y="${y}" font-size="${size}" font-weight="${weight}" letter-spacing="${size*sp}" fill="${fill}" fill-opacity="${op}" text-anchor="${anchor}" ${glow?'filter="url(#glowS)"':''}>${esc(t)}</text>`);}
+function title(x,y,t,{size=120,sp=.05,op=1,anchor='middle'}={}){
+  add(`<text x="${x}" y="${y}" font-size="${size}" font-weight="800" letter-spacing="${size*sp}" fill="#fff" fill-opacity="${op}" text-anchor="${anchor}" filter="url(#glowL)">${esc(t)}</text>`);}
+function pillShape(x,y,t,{size=22,dark=false,pad=28}={}){
+  const w=t.length*size*0.92+pad*2,h=size*2.1;
+  if(dark){add(`<g filter="url(#glowS)"><rect x="${x-w/2}" y="${y-h/2}" width="${w}" height="${h}" rx="${h/2}" fill="#0a0a0a" stroke="#fff" stroke-opacity=".8" stroke-width="2"/></g>`);label(x,y+size*.36,t,{size,op:.95,weight:800,sp:.2});}
+  else{add(`<g filter="url(#glow)"><rect x="${x-w/2}" y="${y-h/2}" width="${w}" height="${h}" rx="${h/2}" fill="#f4f4f4"/></g>`);label(x,y+size*.36,t,{size,op:1,weight:800,sp:.2,fill:'#0b0b0b'});}
+  return w;}
+/* animated wrappers */
+function fadeIn(t0,fn,{d=.45,dy=22,outAt=null,outD=.3}={}){let p=eo(P(T,t0,d));if(outAt!=null)p*=1-P(T,outAt,outD);if(p<=0.001)return;g(`opacity="${p.toFixed(3)}" transform="translate(0,${((1-p)*dy).toFixed(2)})"`,fn);}
+function pop(t0,x,y,fn,{d=.42,snd='pop',vol=1,outAt=null}={}){if(snd)cue(snd,t0,vol);const q=P(T,t0,d);if(q<=0)return;let o=Math.min(1,q*3);if(outAt!=null)o*=1-P(T,outAt,.25);if(o<=0.001)return;const s=back(q);
+  g(`opacity="${o.toFixed(3)}" transform="translate(${x},${y}) scale(${s.toFixed(4)}) translate(${-x},${-y})"`,fn);}
+function pill(t0,x,y,txt,o={}){pop(t0,x,y,()=>pillShape(x,y,txt,o),{outAt:o.outAt});}
+function drawPath(d,p,{sw=4,op=1,glow='glow',dash=null,fill='none',cap='round'}={}){if(p<=0)return;
+  if(dash){const id='c'+(uid++);const bb=pathBox(d);add(`<clipPath id="${id}"><rect x="${bb[0]-20}" y="-50" width="${(bb[2]-bb[0]+40)*p}" height="${H+100}"/></clipPath>`);
+    add(`<path d="${d}" stroke="#fff" stroke-opacity="${op}" stroke-width="${sw}" fill="none" stroke-dasharray="${dash}" stroke-linecap="${cap}" clip-path="url(#${id})" ${glow?`filter="url(#${glow})"`:''}/>`);return;}
+  if(glow){const n=d.match(/-?\d+(\.\d+)?/g).map(Number);let xs=[],ys=[];for(let i=0;i+1<n.length;i+=2){xs.push(n[i]);ys.push(n[i+1]);}
+    if(Math.max(...xs)-Math.min(...xs)<1||Math.max(...ys)-Math.min(...ys)<1){add(`<path d="${d}" pathLength="1" stroke-dasharray="1 2" stroke-dashoffset="${(1-p).toFixed(4)}" stroke="#fff" stroke-opacity="${op*.35}" stroke-width="${sw*3}" fill="none" stroke-linecap="${cap}"/>`);glow=null;}}
+  add(`<path d="${d}" pathLength="1" stroke-dasharray="1 2" stroke-dashoffset="${(1-p).toFixed(4)}" stroke="#fff" stroke-opacity="${op}" stroke-width="${sw}" fill="${fill}" stroke-linecap="${cap}" stroke-linejoin="round" ${glow?`filter="url(#${glow})"`:''}/>`);}
+function pathBox(d){const n=d.match(/-?\d+(\.\d+)?/g).map(Number);let xs=[];for(let i=0;i<n.length;i+=2)xs.push(n[i]);return[Math.min(...xs),0,Math.max(...xs),0];}
+function ground(y,p=1,{op=.55,x1=-10,x2=W+10,dash=true}={}){if(p<=0)return;const id='c'+(uid++);
+  add(`<clipPath id="${id}"><rect x="${x1}" y="${y-10}" width="${(x2-x1)*p}" height="20"/></clipPath><line x1="${x1}" y1="${y}" x2="${x2}" y2="${y}" stroke="#fff" stroke-opacity="${op}" stroke-width="2.5" ${dash?'stroke-dasharray="12 9"':''} clip-path="url(#${id})"/>`);}
+function spotlight(x,gy,s=1,op=1){const top=gy-620*s,wt=40*s,wb=135*s;
+  add(`<g opacity="${op}"><g filter="url(#blur12)"><polygon points="${x-wt},${top} ${x+wt},${top} ${x+wb},${gy} ${x-wb},${gy}" fill="url(#cone)"/></g><ellipse cx="${x}" cy="${gy+4}" rx="${120*s}" ry="${22*s}" fill="url(#bk)" fill-opacity=".14"/></g>`);}
+function person(x,gy,s=1,{arm=null,op=1,ring=true,spot=false,bob=0}={}){
+  if(spot)spotlight(x,gy,s,typeof spot==='number'?spot:1);
+  if(ring)add(`<ellipse cx="${x}" cy="${gy+4}" rx="${62*s}" ry="${13*s}" fill="none" stroke="#fff" stroke-opacity="${.35*op}" stroke-width="2" stroke-dasharray="7 6"/>`);
+  const by=gy-bob,bw=32*s,bh=78*s,r=30*s;
+  let p=`<g ${s>.5?'filter="url(#glow)"':'filter="url(#glowS)"'} opacity="${op}">`;
+  p+=`<path d="M${x-bw},${by} L${x-bw},${by-bh+r} Q${x-bw},${by-bh} ${x-bw+r},${by-bh} L${x+bw-r},${by-bh} Q${x+bw},${by-bh} ${x+bw},${by-bh+r} L${x+bw},${by} Z" fill="#efefef"/>`;
+  p+=`<circle cx="${x}" cy="${by-bh-34*s}" r="${25*s}" fill="#efefef"/>`;
+  if(arm){const[ax,ay]=arm;p+=`<path d="M${x+bw*.4*Math.sign(ax||1)},${by-bh+22*s} L${x+ax*s},${by-bh+22*s+ay*s}" stroke="#efefef" stroke-width="${15*s}" stroke-linecap="round" fill="none"/>`;}
+  add(p+'</g>');}
+function orb(x,y,r=7,op=1){add(`<g opacity="${op}"><circle cx="${x}" cy="${y}" r="${r*6}" fill="url(#bk)" fill-opacity=".18"/><circle cx="${x}" cy="${y}" r="${r}" fill="#fff" filter="url(#glow)"/></g>`);}
+function bokeh(list,drift=0){list.forEach(([x,y,r,o],i)=>add(`<circle cx="${x+Math.sin(drift*.3+i)*20}" cy="${y+Math.cos(drift*.25+i*2)*16}" r="${r}" fill="url(#bk)" fill-opacity="${o}"/>`));}
+function box(x,y,w,h,{r=18,op=.85,sw=2.5,fill='#0a0a0a',dash=false,glow=true}={}){
+  add(`<rect x="${x}" y="${y}" width="${w}" height="${h}" rx="${r}" fill="${fill}" stroke="#fff" stroke-opacity="${op}" stroke-width="${sw}" ${dash?'stroke-dasharray="10 8"':''} ${glow?'filter="url(#glowS)"':''}/>`);}
+function cross(x,y,s=1,op=.9,p=1){if(p<=0)return;const a=clamp(p*2),b=clamp(p*2-1);
+  add(`<g stroke="#fff" stroke-opacity="${op}" stroke-width="${5*s}" stroke-linecap="round" filter="url(#glowS)"><line x1="${x-s*20}" y1="${y-s*20}" x2="${x-s*20+40*s*a}" y2="${y-s*20+40*s*a}"/>${b>0?`<line x1="${x+s*20}" y1="${y-s*20}" x2="${x+s*20-40*s*b}" y2="${y-s*20+40*s*b}"/>`:''}</g>`);}
+function qmark(x,y,size=56,op=1){add(`<text x="${x}" y="${y}" font-size="${size}" font-weight="800" fill="#fff" fill-opacity="${op}" text-anchor="middle" filter="url(#glowL)">?</text>`);}
+
+/* ============ SCENES ============ */
+const S=[];
+function scene(s,e,draw,cam={}){S.push({s,e,draw,cam});}
+const BK1=[[170,420,150,.05],[930,1480,190,.045],[860,300,90,.04],[120,1650,120,.035]];
+
+/* A — hook: the top 1% (L0, L1) */
+scene(0,L[2].s-.25,(lt)=>{
+  const a0=L[0].s,a1=L[1].s;
+  bokeh(BK1,T);
+  fadeIn(.15,()=>label(540,330,'EVERYONE WANTS TO BE IN',{size:24,op:.7}));
+  pop(.35,540,420,()=>title(540,450,'THE 1% CLUB',{size:104}),{snd:'hit'});
+  const ci=5,cr=4;
+  const hl=a0+1.45; const dimAll=lerp(.4,.14,eo(P(T,a1,.6)));
+  for(let r=0;r<10;r++)for(let c=0;c<10;c++){
+    const x=150+c*86.7,y=640+r*74,dd=Math.hypot(c-ci,r-cr);const t0=.25+dd*.055;
+    const q=P(T,t0,.35);if(q<=0)continue;const isC=(c===ci&&r===cr);
+    const op=isC?lerp(.4,1,eo(P(T,hl,.4))):dimAll;
+    g(`opacity="${Math.min(1,q*2)}" transform="translate(0,${(1-eo(q))*14})"`,()=>person(x,y,.3,{op,ring:false}));
+  }
+  cue('sweep',.25,.6);
+  const cx=150+ci*86.7,cy=640+cr*74;
+  const hp=eo(P(T,hl,.5));
+  if(hp>0){const pulse=1+.08*Math.sin(T*5);
+    add(`<circle cx="${cx}" cy="${cy-22}" r="${48*hp*pulse}" fill="none" stroke="#fff" stroke-opacity="${.7*hp}" stroke-width="2.5" stroke-dasharray="6 6" filter="url(#glowS)"/>`);
+    add(`<circle cx="${cx}" cy="${cy-22}" r="${70*hp}" fill="url(#bk)" fill-opacity="${.12*hp}"/>`);}
+  pill(hl+.15,cx,cy-100,'TOP 1%',{size:20});
+  pill(a1+.85,540,1440,'HOW DO YOU GET THERE?',{size:22,dark:true});
+  [[150+2*86.7,640+1*74],[150+8*86.7,640+7*74],[150+1*86.7,640+8*74]].forEach(([x,y],i)=>pop(a1+1.3+i*.15,x,y-60,()=>qmark(x,y-40,40,.75),{snd:i?null:'pop',vol:.5}));
+},{zoom:.04});
+
+/* B — Rome wasn't built in a day (L2) */
+scene(L[2].s-.25,L[3].s-.2,(lt)=>{
+  const a=L[2].s;
+  bokeh([[540,1150,320,.06],[900,380,110,.04],[140,520,120,.035]],T);
+  fadeIn(a-.15,()=>label(540,410,'REMEMBER',{size:24,op:.65}));
+  pop(a-.05,540,540,()=>title(540,560,"ROME WASN'T",{size:96}),{snd:'hit',vol:.8});
+  pop(a+.6,540,660,()=>title(540,675,'BUILT IN A DAY.',{size:96}),{snd:'pop'});
+  // colosseum
+  const G=1380;ground(G,eo(P(T,a-.2,.6)));
+  const x0=170,bays=9,bw=82.2;
+  const tiers=[[G,G-125,bays],[G-125,G-240,bays],[G-240,G-345,7],[G-345,G-415,5]];
+  add(`<ellipse cx="540" cy="${G-200}" rx="420" ry="230" fill="url(#bk)" fill-opacity=".05"/>`);
+  tiers.forEach(([yb,yt,n],ti)=>{
+    const t0=a+.05+ti*.28;
+    // cornice line
+    drawPath(`M${x0-10},${yt} L${x0+n*bw+(ti<2?10:0)},${yt}`,eo(P(T,t0,.5)),{sw:3.5,glow:'glowS'});
+    for(let b=0;b<n;b++){const bx=x0+b*bw,p=eo(P(T,t0+b*.05,.4));if(p<=0)continue;
+      if(ti<3){const aw=50,ins=(bw-aw)/2,r=aw/2,top=yt+16;
+        drawPath(`M${bx+ins},${yb} L${bx+ins},${top+r} A${r},${r} 0 0 1 ${bx+ins+aw},${top+r} L${bx+ins+aw},${yb}`,p,{sw:3,glow:'glowS',op:.9});
+        if(b>0)drawPath(`M${bx},${yb} L${bx},${yt}`,p,{sw:2,glow:null,op:.35});
+      }else{drawPath(`M${bx+28},${yt+22} L${bx+54},${yt+22} L${bx+54},${yt+46} L${bx+28},${yt+46} Z`,p,{sw:2.5,glow:'glowS',op:.8});}
+    }
+    // ruined right edge
+    if(ti>=2){const ex=x0+n*bw;drawPath(`M${ex},${yt} L${ex+18},${yt+30} L${ex+8},${yt+60} L${ex+30},${yb}`,eo(P(T,t0+.3,.4)),{sw:3,glow:'glowS'});}
+  });
+  drawPath(`M${x0},${G} L${x0},${G-415}`,eo(P(T,a,.5)),{sw:3.5,glow:'glowS'});
+  fadeIn(a+.9,()=>label(540,G+60,'IT TOOK CENTURIES',{size:20,op:.6}));
+},{zoom:.05});
+
+/* C — brick by brick (L3) */
+const BR=(()=>{const list=[],bw=100,bh=46,gap=8,x0=380,G=1360,rows=12;
+  for(let r=0;r<rows;r++){const y=G-(r+1)*(bh+gap)+gap;
+    if(r%2===0){for(let c=0;c<5;c++)list.push([x0+c*(bw+gap),y,bw,bh]);}
+    else{list.push([x0,y,bw/2-gap/2,bh]);for(let c=0;c<4;c++)list.push([x0+bw/2+gap/2+c*(bw+gap),y,bw,bh]);list.push([x0+bw/2+gap/2+4*(bw+gap),y,bw/2-gap/2,bh]);}}
+  return list;})();
+scene(L[3].s-.2,L[4].s-.25,(lt)=>{
+  const a=L[3].s,G=1360;
+  bokeh([[640,1000,300,.05],[150,420,120,.035],[930,1600,140,.035]],T);
+  ground(G,1);
+  const a0=a+.15,D=(L[4].s-.6)-a0,N=BR.length;
+  let landed=0;
+  BR.forEach((b,k)=>{const tl=a0+D*Math.pow(k/(N-1),.72);cue('brick',tl,k<6?1:.45);
+    const q=P(T,tl-.2,.2);if(q<=0)return;if(T>=tl)landed++;
+    const dy=(1-eo(q))*-70,glowAmt=1-P(T,tl,.5);
+    add(`<rect x="${b[0]}" y="${b[1]+dy}" width="${b[2]}" height="${b[3]}" rx="6" fill="#fff" fill-opacity="${(.04+.85*glowAmt*(T>=tl?1:0)).toFixed(3)}" stroke="#fff" stroke-opacity="${(.55+.4*glowAmt).toFixed(2)}" stroke-width="2.5" opacity="${Math.min(1,q*2)}" ${glowAmt>.05?'filter="url(#glowS)"':''}/>`);});
+  const day=Math.round(1+364*landed/N);
+  fadeIn(a-.1,()=>label(540,390,'BRICK BY BRICK',{size:24,op:.7}));
+  fadeIn(a,()=>title(540,490,'DAY '+String(day).padStart(3,'0'),{size:70,sp:.04}));
+  pill(a+2.0,540,600,'ONE STONE. EVERY DAY.',{size:21});
+  const lift=Math.sin(T*9)>.3?6:0;
+  person(220,G,.9,{spot:true,arm:[62,-55+lift]});
+  fadeIn(a+.3,()=>label(220,G+55,'YOU',{size:20,op:.6}));
+},{zoom:.045});
+
+/* D — 1% better today, won't notice (L4) */
+scene(L[4].s-.25,L[5].s-.2,(lt)=>{
+  const a=L[4].s;
+  bokeh([[760,700,220,.045],[150,1500,150,.035]],T);
+  fadeIn(a-.15,()=>label(540,430,'SMALL WINS',{size:24,op:.7}));
+  const card=(x,lab,val,hi)=>{box(x,560,340,300,{r:22,op:hi?.95:.5});label(x+170,610,lab,{size:18,op:hi?.8:.5});
+    add(`<text x="${x+170}" y="${770}" font-size="110" font-weight="800" fill="#fff" fill-opacity="${hi?1:.45}" text-anchor="middle" ${hi?'filter="url(#glowS)"':''}>${val}</text>`);
+    add(`<rect x="${x+50}" y="815" width="240" height="6" rx="3" fill="#fff" fill-opacity="${hi?.5:.2}"/>`);};
+  pop(a-.1,320,710,()=>card(150,'YESTERDAY','1.00',false));
+  fadeIn(a+.35,()=>add(`<path d="M512,710 L568,710 M548,692 L568,710 L548,728" stroke="#fff" stroke-opacity=".7" stroke-width="4" fill="none" stroke-linecap="round" stroke-linejoin="round"/>`));
+  const v=(1+.01*eo(P(T,a+.9,.5))).toFixed(2);
+  pop(a+.45,760,710,()=>card(590,'TODAY',v,true));
+  pill(a+1.0,760,520,'+1%',{size:24,pad:22});
+  // magnifier sweeping
+  const mp=eo(P(T,a+1.6,.6));
+  if(mp>0){const mx=lerp(980,800,mp),my=lerp(900,760,mp);
+    add(`<g opacity="${mp}" filter="url(#glowS)"><circle cx="${mx}" cy="${my}" r="62" fill="#fff" fill-opacity=".05" stroke="#fff" stroke-width="5"/><line x1="${mx+44}" y1="${my+44}" x2="${mx+88}" y2="${my+88}" stroke="#fff" stroke-width="10" stroke-linecap="round"/></g>`);}
+  pill(a+1.85,540,1010,"YOU WON'T EVEN NOTICE",{size:22,dark:true});
+  const G=1420;ground(G,eo(P(T,a-.2,.5)));
+  person(540,G,.9,{spot:true,arm:[55,-10]});
+  pop(a+2.3,600,G-200,()=>qmark(600,G-190,52,.9),{vol:.6});
+},{zoom:.04});
+
+/* E — compounding to 37x (L5) */
+const GX={ox:205,oy:1150,ex:895,ey:715};
+function gridAxes(){const{ox,oy,ex,ey}=GX;box(130,630,820,600,{r:24,op:.5});
+  add(`<g stroke="#fff" stroke-opacity=".45" stroke-width="2.5"><line x1="${ox}" y1="${oy}" x2="${ex+15}" y2="${oy}"/><line x1="${ox}" y1="${oy}" x2="${ox}" y2="${ey-15}"/></g>`);
+  for(let i=1;i<=4;i++){const x=ox+(ex-ox)*i/4;add(`<line x1="${x}" y1="${oy}" x2="${x}" y2="${oy+10}" stroke="#fff" stroke-opacity=".4" stroke-width="2"/>`);}
+  label(ex,oy+45,'365 DAYS',{size:16,op:.5,anchor:'end'});label(ox,oy+45,'DAY 1',{size:16,op:.5,anchor:'start'});}
+function curvePts(fn,u){const{ox,oy,ex,ey}=GX;const n=Math.max(2,Math.round(120*u));let pts=[];for(let i=0;i<=n;i++){const d=365*u*i/n;pts.push([ox+(ex-ox)*d/365,oy-(oy-ey)*fn(d)]);}return pts;}
+const grow=d=>(Math.pow(1.01,d)-1)/(Math.pow(1.01,365)-1);
+const decay=d=>Math.pow(.99,d);
+function eq(base,y,op=1){add(`<text x="575" y="${y}" font-size="120" font-weight="800" fill="#fff" fill-opacity="${op}" text-anchor="end" filter="url(#glowL)">${base}</text><text x="588" y="${y-62}" font-size="50" font-weight="800" fill="#fff" fill-opacity="${op}" filter="url(#glowS)">365</text>`);}
+scene(L[5].s-.2,L[6].s-.2,(lt)=>{
+  const a=L[5].s;
+  bokeh([[880,760,230,.05],[160,1560,150,.035]],T);
+  fadeIn(a-.15,()=>label(540,365,'NOW DO IT EVERY DAY',{size:24,op:.7}));
+  pop(a+.1,540,480,()=>eq('1.01',530),{snd:'hit',vol:.7});
+  fadeIn(a+.3,gridAxes,{dy:10});
+  const u=eio(P(T,a+.7,3.0));cue('rise',a+.7,1);
+  if(u>0){const pts=curvePts(grow,u);add(`<polyline points="${pts.map(p=>p.map(v=>v.toFixed(1)).join(',')).join(' ')}" fill="none" stroke="#fff" stroke-width="5" stroke-linecap="round" stroke-linejoin="round" filter="url(#glow)"/>`);
+    const tip=pts[pts.length-1];orb(tip[0],tip[1],8);
+    const val=Math.pow(1.01,365*u);
+    label(235,725,'RESULT',{size:17,op:.55,anchor:'start'});
+    add(`<text x="232" y="815" font-size="78" font-weight="800" fill="#fff" text-anchor="start" filter="url(#glowS)">${val.toFixed(val<10?2:1)}x</text>`);
+    label(tip[0]-14,tip[1]+40,'DAY '+Math.round(1+364*u),{size:15,op:.6,anchor:'end'});}
+  pill(a+3.65,540,1320,'37x BETTER',{size:26});
+  const G=1500;ground(G,eo(P(T,a,.5)));
+  person(540,G,.85,{spot:true,arm:[45,-60]});
+},{zoom:.04});
+
+/* F — 1% worse decays (L6) */
+scene(L[6].s-.2,L[7].s-.2,(lt)=>{
+  const a=L[6].s;
+  bokeh([[200,760,200,.035],[900,1560,150,.03]],T);
+  fadeIn(a-.15,()=>label(540,365,'AND THE OTHER WAY?',{size:24,op:.7}));
+  pop(a+.05,540,480,()=>eq('0.99',530,.85),{snd:'hit',vol:.6});
+  gridAxes();
+  // ghost of growth
+  add(`<polyline points="${curvePts(grow,1).map(p=>p.join(',')).join(' ')}" fill="none" stroke="#fff" stroke-opacity=".18" stroke-width="3" stroke-dasharray="8 8"/>`);
+  const u=eio(P(T,a+.3,2.3));cue('fall',a+.3,1);
+  if(u>0){const pts=curvePts(decay,u);add(`<polyline points="${pts.map(p=>p.map(v=>v.toFixed(1)).join(',')).join(' ')}" fill="none" stroke="#fff" stroke-opacity=".8" stroke-width="5" stroke-linecap="round" filter="url(#glowS)"/>`);
+    const tip=pts[pts.length-1];orb(tip[0],tip[1],7,.8);const val=Math.pow(.99,365*u);
+    label(870,725,'RESULT',{size:17,op:.55,anchor:'end'});
+    add(`<text x="872" y="815" font-size="78" font-weight="800" fill="#fff" fill-opacity=".85" text-anchor="end">${val.toFixed(2)}x</text>`);}
+  pill(a+2.3,540,1320,'ALMOST NOTHING',{size:24,dark:true});
+  const G=1500;ground(G,1,{op:.4});
+  person(540,G,.85,{op:lerp(1,.3,eio(P(T,a+.4,2.4))),spot:lerp(1,.25,P(T,a+.4,2.4))});
+},{zoom:.03});
+
+/* staircase shared by G, H, I */
+const ST={x0:130,y0:1520,n:12,w:63.5,h:78};
+function stairD(){const{x0,y0,n,w,h}=ST;let d=`M${x0-120},${y0} L${x0},${y0}`;for(let i=0;i<n;i++){d+=` L${x0+i*w},${y0-(i+1)*h} L${x0+(i+1)*w},${y0-(i+1)*h}`;}d+=` L${x0+n*w+60},${y0-n*h}`;return d;}
+function stepTop(i){const{x0,y0,w,h}=ST;return[x0+(i+.5)*w,y0-(i+1)*h];}
+function flag(p,bright=0){if(p<=0)return;const fx=ST.x0+ST.n*ST.w+30,fy=ST.y0-ST.n*ST.h;
+  drawPath(`M${fx},${fy} L${fx},${fy-120}`,eo(p),{sw:4,glow:'glowS'});
+  if(p>.5)add(`<path d="M${fx},${fy-120} L${fx+70},${fy-98} L${fx},${fy-76} Z" fill="#fff" fill-opacity="${.85}" opacity="${clamp(p*2-1)}" filter="url(#glow)"/>`);
+  if(bright>0)add(`<circle cx="${fx}" cy="${fy-60}" r="${160}" fill="url(#bk)" fill-opacity="${.18*bright}"/>`);}
+
+/* G — not a leap, a staircase (L7) */
+scene(L[7].s-.2,L[8].s-.2,(lt)=>{
+  const a=L[7].s;
+  bokeh([[820,520,220,.05],[150,1600,150,.035]],T);
+  fadeIn(a-.15,()=>label(330,430,'GREATNESS ISN’T',{size:24,op:.7}));
+  ground(ST.y0,eo(P(T,a-.2,.5)),{x2:ST.x0});
+  // leap arc
+  const leapOut=1-P(T,a+1.35,.35);
+  if(leapOut>0){g(`opacity="${leapOut}"`,()=>{
+    drawPath(`M100,${ST.y0-110} C 260,380 760,300 930,${ST.y0-ST.n*ST.h-40}`,eo(P(T,a,.8)),{sw:3,dash:'10 10',glow:'glowS',op:.7});
+    pill(a+.5,500,560,'ONE GIANT LEAP',{size:22,dark:true});
+    cross(500,560,2.2,.95,P(T,a+1.0,.25));});cue('nope',a+1.0,1);}
+  // staircase
+  drawPath(stairD(),eio(P(T,a+1.5,1.3)),{sw:4,glow:'glow'});cue('stairs',a+1.5,1);
+  flag(P(T,a+2.6,.5));
+  pill(a+1.85,330,800,'IT’S A STAIRCASE',{size:22});
+  pop(a+2.9,ST.x0+ST.n*ST.w+30,ST.y0-ST.n*ST.h-190,()=>pillShape(ST.x0+ST.n*ST.w+30,ST.y0-ST.n*ST.h-190,'TOP 1%',{size:20,dark:true}),{vol:.6});
+  person(70,ST.y0,.7,{});
+},{zoom:.03});
+
+/* H — most people quit (L8) */
+const CL=[[0,-14],[0,14],[1,-12],[1,12],[2,0],[-1,0],[3,-10],[-1,-60],[4,0]];
+scene(L[8].s-.2,L[9].s-.2,(lt)=>{
+  const a=L[8].s;
+  bokeh([[820,520,220,.05],[150,1600,150,.035]],T);
+  ground(ST.y0,1,{x2:ST.x0});drawPath(stairD(),1,{sw:4,glow:'glow'});flag(1);
+  pillShape(ST.x0+ST.n*ST.w+30,ST.y0-ST.n*ST.h-190,'TOP 1%',{size:20,dark:true});
+  let quit=0;
+  CL.forEach(([si,off],k)=>{const[px,py]=si<0?[ST.x0+off-10,ST.y0]:stepTop(si);const x=px+off;
+    const tq=a+.35+k*.27;cue('drop',tq,.55);
+    const q=P(T,tq,.35);if(q>=.5)quit++;
+    const enter=P(T,a-.2,.3);
+    if(q<1)person(x,py+q*40,.38,{op:(1-q)*.55*enter,ring:false});
+    if(q>0)cross(x,py-22,.55,.5,P(T,tq+.15,.2));});
+  label(150,420,'QUIT:',{size:24,op:.7,anchor:'start'});
+  add(`<text x="262" y="${422}" font-size="40" font-weight="800" fill="#fff" filter="url(#glowS)">${quit}</text>`);
+  // fog over the top
+  const fp=eio(P(T,a+1.9,.7));
+  if(fp>0){add(`<rect x="430" y="300" width="700" height="${820}" fill="url(#fog)" opacity="${fp}"/>`);
+    pop(a+2.3,800,560,()=>qmark(800,580,90,.8),{vol:.5});}
+  pill(a+2.2,330,800,'CAN’T SEE THE TOP',{size:22,dark:true});
+  const[yx,yy]=stepTop(2);person(yx+18,yy,.45,{spot:.6});
+},{zoom:.025});
+
+/* I — the 1% keep climbing (L9) */
+scene(L[9].s-.2,L[10].s-.3,(lt)=>{
+  const a=L[9].s;
+  bokeh([[820,520,240,.06],[150,1600,150,.035]],T);
+  ground(ST.y0,1,{x2:ST.x0});drawPath(stairD(),1,{sw:4,glow:'glow'});
+  CL.forEach(([si,off])=>{const[px,py]=si<0?[ST.x0+off-10,ST.y0]:stepTop(si);cross(px+off,py-22,.55,.35,1);});
+  const fogOut=1-eio(P(T,a-.2,.6));if(fogOut>0)add(`<rect x="430" y="300" width="700" height="820" fill="url(#fog)" opacity="${fogOut}"/>`);
+  // climb from step 2 to top platform (index 12 = platform)
+  const c0=a+.35,hop=.2,steps=10;const k=clamp((T-c0)/hop,0,steps);const i=Math.floor(k),f=k-i;
+  for(let s=0;s<steps;s++)cue('hop',c0+s*hop,.5);
+  const pos=n=>{if(n>=12){return[ST.x0+12*ST.w+10,ST.y0-12*ST.h];}const p=stepTop(n);return[p[0]+18,p[1]];};
+  const A=pos(2+i),B=pos(Math.min(12,3+i));const ff=i>=steps?0:f;
+  const x=lerp(A[0],B[0],ff),y=lerp(A[1],B[1],ff)-Math.sin(Math.PI*ff)*36;
+  const top=P(T,c0+steps*hop,.5);
+  flag(1,top);
+  pop(a,ST.x0+ST.n*ST.w+30,ST.y0-ST.n*ST.h-190,()=>pillShape(ST.x0+ST.n*ST.w+30,ST.y0-ST.n*ST.h-190,'TOP 1%',{size:20,dark:top<.5}),{snd:null,d:.01});
+  if(top>0){cue('win',c0+steps*hop,1);const rr=eo(top);add(`<circle cx="${x}" cy="${y-40}" r="${40+160*rr}" fill="none" stroke="#fff" stroke-opacity="${.6*(1-rr)}" stroke-width="3" filter="url(#glowS)"/>`);}
+  person(x,y,.5,{spot:.8,ring:false,arm:top>0?[40,-55]:null});
+  pill(a+.6,330,800,'THEY KEEP CLIMBING',{size:22});
+},{zoom:.08,fx:720,fy:820});
+
+/* J — lay your brick + outro (L10, L11) */
+scene(L[10].s-.3,END,(lt)=>{
+  const a=L[10].s,b=L[11].s,G=1380;
+  bokeh([[540,820,330,.06],[170,1560,140,.035],[900,320,120,.035]],T);
+  ground(G,eo(P(T,a-.3,.5)));
+  const tl=a+.45;cue('thud',tl,1);
+  const q=P(T,tl-.25,.25);
+  if(q>0){const dy=(1-eo(q))*-260,gl=1-P(T,tl,1.2);
+    add(`<g opacity="${Math.min(1,q*2)}" ${'filter="url(#glow)"'}><rect x="540" y="${G-54+dy}" width="130" height="54" rx="7" fill="#fff" fill-opacity="${.08+.8*gl*(T>=tl?1:0)}" stroke="#fff" stroke-width="3"/></g>`);
+    if(T>=tl){label(605,G-19,'DAY 1',{size:16,op:lerp(1,.85,gl),fill:gl>.5?'#000':'#fff',weight:800});
+      const rp=P(T,tl,.6);add(`<ellipse cx="605" cy="${G}" rx="${70+220*eo(rp)}" ry="${10+26*eo(rp)}" fill="none" stroke="#fff" stroke-opacity="${.5*(1-rp)}" stroke-width="2.5"/>`);}}
+  person(430,G,.9,{spot:true,arm:[60,10]});
+  fadeIn(a-.1,()=>label(540,G+60,'LAY YOUR BRICK TODAY',{size:22,op:.7}));
+  fadeIn(b-.05,()=>label(540,600,'WELCOME TO',{size:28,op:.75}));
+  const pulse=1+.02*Math.sin((T-b)*3);
+  pop(b+.35,540,760,()=>g(`transform="translate(540,760) scale(${pulse}) translate(-540,-760)"`,()=>{title(540,800,'THE 1%',{size:178});title(540,980,'CLUB',{size:178});}),{snd:'impact',d:.5});
+  fadeIn(L[11].e+.35,()=>label(540,1520,'FOLLOW FOR DAILY MOTIVATION',{size:19,op:.5}));
+},{zoom:.035});
+
+/* ============ RENDER ============ */
+function render(t,dry=false){
+  T=t;out='';uid=0;
+  add(`<rect width="${W}" height="${H}" fill="url(#vig)"/><rect width="${W}" height="${H}" fill="url(#dots)"/>`);
+  const X=.2;
+  for(const sc of S){
+    if(t<sc.s-X||t>sc.e+X)continue;
+    let o=1;const first=sc===S[0],last=sc===S[S.length-1];
+    if(!first)o=Math.min(o,P(t,sc.s-X,2*X));
+    if(!last)o=Math.min(o,1-P(t,sc.e-X,2*X));
+    if(o<=0)continue;
+    if(!first)cue('whoosh',sc.s-X,.8);
+    const u=clamp((t-sc.s)/(sc.e-sc.s+.001));
+    const enter=first?0:(1-eo(P(t,sc.s-X,.7)));
+    const z=1+(sc.cam.zoom||.03)*eio(u)+.035*enter;
+    const fx=sc.cam.fx||540,fy=sc.cam.fy||940;
+    add(`<g opacity="${o.toFixed(3)}" transform="translate(${fx},${fy}) scale(${z.toFixed(5)}) translate(${-fx},${-fy})">`);
+    sc.draw(t-sc.s);add('</g>');
+  }
+  add(`<image href="${GRAINS[Math.floor(t*15)%4]}" width="${W}" height="${H}" opacity=".055" style="mix-blend-mode:screen" preserveAspectRatio="none"/>`);
+  add(`<rect width="${W}" height="${H}" fill="url(#edge)"/>`);
+  const fin=P(t,END-.6,.6);if(fin>0)add(`<rect width="${W}" height="${H}" fill="#000" opacity="${fin}"/>`);
+  const fin0=1-P(t,0,.25);if(fin0>0)add(`<rect width="${W}" height="${H}" fill="#000" opacity="${fin0}"/>`);
+  if(!dry)document.getElementById('s').innerHTML=DEFS+out;
+}
+window.render=render;
+window.collectCues=(fps=30)=>{CUES.clear();for(let f=0;f<=END*fps;f++)render(f/fps,true);return[...CUES.values()].sort((a,b)=>a.t-b.t);};
+render(+(location.hash.slice(1)||1.5));
+</script></body></html>
