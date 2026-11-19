@@ -1,0 +1,36 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Hunted</title>
+<style>
+:root{--bg:#141210;--fg:#f3ecdc}
+html,body{margin:0;height:100%;background:var(--bg);color:var(--fg);font-family:system-ui,sans-serif;overflow:hidden}
+#wrap{position:absolute;inset:0 0 56px 0;display:flex;align-items:center;justify-content:center;padding:0 16px}
+canvas{width:100%;height:auto;max-height:100%;aspect-ratio:16/9;object-fit:contain;display:block}
+#ui{position:absolute;left:16px;right:16px;bottom:12px;display:flex;gap:8px;align-items:center}
+#ui input{flex:1} button{background:#2c2924;color:var(--fg);border:1px solid #4a443c;border-radius:8px;padding:6px 12px;font:inherit}
+body.render #ui{display:none} body.render #wrap{inset:0;padding:0}
+</style>
+</head>
+<body>
+<div id="wrap"><canvas id="c"></canvas></div>
+<div id="ui"><button id="pp">Play</button><input id="sc" type="range" min="0" max="1000" value="0"><span id="tc">0.0</span></div>
+<script src="engine.js"></script>
+<script src="sets.js"></script>
+<script src="shots.js"></script>
+<script>
+if (Q.has('render')){ document.body.classList.add('render'); window.READY = true; }
+else {
+  let playing = false, T = +(Q.get('t') || 0), last = performance.now(), lastF = -1;
+  const sc = document.getElementById('sc'), tc = document.getElementById('tc'), pp = document.getElementById('pp');
+  pp.onclick = () => { playing = !playing; pp.textContent = playing ? 'Pause' : 'Play'; last = performance.now(); };
+  sc.oninput = () => { T = sc.value / 1000 * DURATION; lastF = -1; };
+  (function loop(){ const now = performance.now(); if (playing){ T += (now - last)/1000; if (T >= DURATION) T = 0; } last = now;
+    const f = Math.floor(T*24); if (f !== lastF){ lastF = f; renderAt(T); sc.value = T / DURATION * 1000; tc.textContent = T.toFixed(1) + 's ' + shotAt(T).name; }
+    requestAnimationFrame(loop); })();
+}
+</script>
+</body>
+</html>
