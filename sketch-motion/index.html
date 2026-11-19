@@ -1,0 +1,760 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Sketchbook Motion</title>
+<style>
+:root{--bg:#1d1b18;--fg:#f3ecdc;--btn:#2c2924;--on:#e4503a}
+html,body{margin:0;height:100%;background:var(--bg);color:var(--fg);font-family:ui-rounded,system-ui,sans-serif;overflow:hidden}
+#wrap{position:absolute;inset:0 0 64px 0;display:flex;align-items:center;justify-content:center;padding:0 16px}
+canvas{width:100%;height:auto;max-height:100%;aspect-ratio:16/9;object-fit:contain;display:block}
+#ui{position:absolute;left:0;right:0;bottom:12px;display:flex;gap:6px;justify-content:center;flex-wrap:wrap;padding:0 16px}
+button{background:var(--btn);color:var(--fg);border:1px solid #4a443c;border-radius:8px;padding:8px 12px;font:inherit;font-size:14px;cursor:pointer}
+button.on{background:var(--on);border-color:var(--on)}
+body.still #ui{display:none}
+body.still #wrap{inset:0;padding:0}
+</style>
+</head>
+<body>
+<div id="wrap"><canvas id="c"></canvas></div>
+<div id="ui"></div>
+<script>
+// ============================================================================
+// Sketchbook Motion — hand-drawn 2D character in a sketchy 3D world.
+// Character: 2D rig, ink lines that "boil" every drawing, animated on 12s,
+// pose-to-pose with snappy overshoot + smear lines. Background: real 3D
+// (perspective camera, painter's sort) rendered as watercolor + pencil + hatching.
+// ============================================================================
+const W = 1600, H = 900, FPS = 12;
+const Q = new URLSearchParams(location.search);
+const STILL = Q.has('still');
+const DPR = +(Q.get('dpr') || Math.min(2, window.devicePixelRatio || 1));
+if (STILL) document.body.classList.add('still');
+
+const cv = document.getElementById('c');
+cv.width = W * DPR; cv.height = H * DPR;
+const mainCtx = cv.getContext('2d');
+const charCv = document.createElement('canvas'); charCv.width = cv.width; charCv.height = cv.height;
+const charCtx = charCv.getContext('2d');
+let ctx = mainCtx;
+
+// ---------- math ----------
+const rad = d => d * Math.PI / 180, deg = r => r * 180 / Math.PI;
+const lerp = (a, b, p) => a + (b - a) * p, clamp = (x, a, b) => Math.max(a, Math.min(b, x));
+const sub = (a, b) => [a[0]-b[0], a[1]-b[1], a[2]-b[2]], add = (a, b) => [a[0]+b[0], a[1]+b[1], a[2]+b[2]];
+const dot = (a, b) => a[0]*b[0] + a[1]*b[1] + a[2]*b[2];
+const cross = (a, b) => [a[1]*b[2]-a[2]*b[1], a[2]*b[0]-a[0]*b[2], a[0]*b[1]-a[1]*b[0]];
+const norm = a => { const l = Math.hypot(a[0], a[1], a[2]) || 1; return [a[0]/l, a[1]/l, a[2]/l]; };
+const hex = c => { if (Array.isArray(c)) return c; if (c.startsWith('rgb')) return c.match(/[\d.]+/g).slice(0,3).map(Number); c = c.replace('#',''); return [parseInt(c.slice(0,2),16), parseInt(c.slice(2,4),16), parseInt(c.slice(4,6),16)]; };
+const rgba = (a, al = 1) => `rgba(${a[0]|0},${a[1]|0},${a[2]|0},${al})`;
+const mix = (a, b, p) => [lerp(a[0],b[0],p), lerp(a[1],b[1],p), lerp(a[2],b[2],p)];
+const shadeRGB = (c, k, cool = 0) => [c[0]*k - cool*14, c[1]*k - cool*4, c[2]*k + cool*16].map(v => clamp(v, 0, 255));
+function mulberry(a){ return function(){ a |= 0; a = a + 0x6D2B79F5 | 0; let t = Math.imul(a ^ a >>> 15, 1 | a); t = t + Math.imul(t ^ t >>> 7, 61 | t) ^ t; return ((t ^ t >>> 14) >>> 0) / 4294967296; }; }
+let BOIL = 0, SC = 0;
+const R = () => { SC++; return mulberry(((BOIL + 1) * 73856093) ^ (SC * 19349663)); };
+
+const INK = '#1c1a1e', PENCIL = [61, 52, 44];
+const C = { skin:'#f4c7a1', shirt:'#e4503a', pants:'#2e4b7d', shoe:'#2a2522', hair:'#2b1e17' };
+
+// ---------- 2D drawing primitives ----------
+function pathPts(p){ ctx.beginPath(); ctx.moveTo(p[0][0], p[0][1]); for (let i = 1; i < p.length; i++) ctx.lineTo(p[i][0], p[i][1]); ctx.closePath(); }
+function resample(pts, step){
+  const out = [pts[0]];
+  for (let i = 1; i < pts.length; i++){
+    const a = pts[i-1], b = pts[i], d = Math.hypot(b[0]-a[0], b[1]-a[1]), n = Math.max(1, Math.ceil(d / step));
+    for (let k = 1; k <= n; k++) out.push([a[0]+(b[0]-a[0])*k/n, a[1]+(b[1]-a[1])*k/n]);
+  }
+  return out;
+}
+// Tapered, wobbly brush stroke (filled ribbon).
+function inkLine(pts, w, color, o = {}){
+  const r = R(), j = o.jit ?? 1, step = o.step ?? 5;
+  let p = resample(pts, step); const n = p.length; if (n < 2) return;
+  const ph1 = r()*6.28, ph2 = r()*6.28, f1 = 0.12 + r()*0.2, wb = 0.85 + r()*0.3, ta = o.ta ?? 0.25;
+  p = p.map((q, i) => [q[0] + Math.sin(i*f1+ph1)*j + (r()-.5)*j*.5, q[1] + Math.sin(i*f1*1.3+ph2)*j + (r()-.5)*j*.5]);
+  const L = [], Rr = [];
+  for (let i = 0; i < n; i++){
+    const a = p[Math.max(0,i-1)], b = p[Math.min(n-1,i+1)];
+    let tx = b[0]-a[0], ty = b[1]-a[1]; const d = Math.hypot(tx,ty) || 1; tx /= d; ty /= d;
+    const u = i/(n-1);
+    const tp = o.flat ? 1 : Math.max(0.12, Math.pow(Math.min(1, u/ta, (1-u)/ta), 0.6));
+    const ww = w * wb * tp * (0.82 + 0.36*(0.5+0.5*Math.sin(i*0.23+ph1))) / 2;
+    L.push([p[i][0]-ty*ww, p[i][1]+tx*ww]); Rr.push([p[i][0]+ty*ww, p[i][1]-tx*ww]);
+  }
+  ctx.save(); ctx.globalAlpha = o.a ?? 1; ctx.fillStyle = color;
+  pathPts(L.concat(Rr.reverse())); ctx.fill(); ctx.restore();
+}
+// Filled shape: misregistered colour, cel shade crescent, boiling ink outline that overshoots its start.
+function shape(loop, fill, o = {}){
+  const r = R(), mis = o.mis ?? [1.8, -1.2], sh = o.sh ?? 3.2;
+  const shifted = loop.map(p => [p[0]+mis[0], p[1]+mis[1]]);
+  ctx.save();
+  pathPts(shifted); ctx.fillStyle = fill; ctx.fill();
+  if (o.shade !== false){
+    ctx.clip(); ctx.fillStyle = rgba(shadeRGB(hex(fill), 0.74, 0.35)); ctx.fill();
+    pathPts(shifted.map(p => [p[0]-sh, p[1]-sh])); ctx.fillStyle = fill; ctx.fill();
+  }
+  ctx.restore();
+  if (o.ink === 0) return;
+  const n = loop.length, st = Math.floor(r()*n), ext = Math.ceil(n*0.07);
+  const seq = []; for (let i = 0; i <= n + ext; i++) seq.push(loop[(st+i) % n]);
+  inkLine(seq, o.ink ?? 2.6, INK, { jit: o.jit ?? 0.7, step: 4, ta: 0.1 });
+}
+function circlePts(cx, cy, rx, ry = rx, n = 28){ const r = R(), out = []; for (let i = 0; i < n; i++){ const a = i/n*Math.PI*2; const k = 1 + (r()-.5)*0.05; out.push([cx+Math.cos(a)*rx*k, cy+Math.sin(a)*ry*k]); } return out; }
+// Outline loop around a variable-width tube following a polyline.
+function tubeLoop(pts, ws){
+  const p = resample(pts, 4), n = p.length;
+  const cum = [0]; for (let i = 1; i < n; i++) cum.push(cum[i-1] + Math.hypot(p[i][0]-p[i-1][0], p[i][1]-p[i-1][1]));
+  const jc = [0]; for (let i = 1; i < pts.length; i++) jc.push(jc[i-1] + Math.hypot(pts[i][0]-pts[i-1][0], pts[i][1]-pts[i-1][1]));
+  const wAt = s => { for (let i = 1; i < jc.length; i++) if (s <= jc[i] || i === jc.length-1){ const u = clamp((s-jc[i-1])/((jc[i]-jc[i-1])||1),0,1); return lerp(ws[i-1], ws[i], u); } return ws[0]; };
+  const L = [], Rr = [], T = [];
+  for (let i = 0; i < n; i++){
+    const a = p[Math.max(0,i-2)], b = p[Math.min(n-1,i+2)];
+    let tx = b[0]-a[0], ty = b[1]-a[1]; const d = Math.hypot(tx,ty) || 1; tx /= d; ty /= d; T.push([tx,ty]);
+    const w = wAt(cum[i]) / 2;
+    L.push([p[i][0]-ty*w, p[i][1]+tx*w]); Rr.push([p[i][0]+ty*w, p[i][1]-tx*w]);
+  }
+  const cap = (c, t, w, from) => { const out = [], a0 = Math.atan2(t[1], t[0]); for (let k = 1; k < 6; k++){ const a = a0 + from - k*Math.PI/6; out.push([c[0]+Math.cos(a)*w, c[1]+Math.sin(a)*w]); } return out; };
+  const capE = cap(p[n-1], T[n-1], ws[ws.length-1]/2, Math.PI/2);
+  const capS = cap(p[0], T[0], ws[0]/2, -Math.PI/2);
+  return L.concat(capE, Rr.reverse(), capS);
+}
+const limb = (pts, ws, fill, o) => shape(tubeLoop(pts, ws), fill, o);
+const P2 = (a, d, l) => [a[0] + d[0]*l, a[1] + d[1]*l];
+
+// ---------- character rig ----------
+const STAND = { rx:0, air:0, torso:3, head:0, aFu:6, aFl:12, aBu:-6, aBl:12, lFu:4, lFl:-2, lBu:-4, lBl:-2, eye:'dot', mouth:'flat', brow:0 };
+const NUM = ['rx','air','torso','head','aFu','aFl','aBu','aBl','lFu','lFl','lBu','lBl','brow','gx','gy','ax'];
+const pz = o => ({ ...STAND, ...o });
+const EASE = {
+  snap: p => { const s = 2.1, q = p - 1; return 1 + (s+1)*q*q*q + s*q*q; }, // fast arrival + overshoot
+  out: p => 1 - Math.pow(1-p, 3),
+  inout: p => p*p*(3-2*p),
+};
+function poseAt(sc, t){
+  const keys = sc.keys, loop = sc.loop; t = ((t % loop) + loop) % loop;
+  let i = keys.length - 1; for (let k = 0; k < keys.length; k++) if (keys[k].t <= t) i = k;
+  const cur = keys[i], prev = keys[(i - 1 + keys.length) % keys.length];
+  const p = clamp((t - cur.t) / (cur.in || 0.1), 0, 1), e = EASE[cur.ease || 'snap'](p);
+  const out = { ...cur.pose };
+  for (const k of NUM){ const a = prev.pose[k] ?? 0, b = cur.pose[k] ?? 0; out[k] = a + (b - a)*e; }
+  for (const k of ['eye','mouth']) out[k] = p < 0.35 ? prev.pose[k] : cur.pose[k];
+  return out;
+}
+const dn = a => [Math.sin(rad(a)), Math.cos(rad(a))];   // limb angle measured from straight down, + = forward
+const up = a => [Math.sin(rad(a)), -Math.cos(rad(a))];  // measured from straight up, + = forward
+function fk(o, a, b, l1, l2){ const j = P2(o, dn(a), l1), e = P2(j, dn(a+b), l2); return [o, j, e, a+b]; }
+function ik(o, t, l1, l2){
+  const dx = t[0]-o[0], dy = t[1]-o[1], d = clamp(Math.hypot(dx,dy), Math.abs(l1-l2)+0.5, l1+l2-0.5), a = Math.atan2(dy,dx);
+  const A = Math.acos(clamp((l1*l1 + d*d - l2*l2)/(2*l1*d), -1, 1));
+  const j = [o[0]+Math.cos(a+A)*l1, o[1]+Math.sin(a+A)*l1], e = [o[0]+Math.cos(a)*d, o[1]+Math.sin(a)*d];
+  return [o, j, e, deg(Math.atan2(e[0]-j[0], e[1]-j[1]))];
+}
+function solve(P){
+  const leg = (a, b) => 46*Math.cos(rad(a)) + 46*Math.cos(rad(a+b));
+  const hip = [P.rx || 0, -Math.max(leg(P.lFu,P.lFl), leg(P.lBu,P.lBl)) - (P.air || 0)];
+  const td = up(P.torso);
+  const neck = P2(hip, td, 70), sh = P2(hip, td, 60), ha = P.torso + P.head, head = P2(neck, up(ha), 27);
+  const r = { P, hip, td, neck, sh, ha, head, lF: fk(hip, P.lFu, P.lFl, 46, 46), lB: fk([hip[0]-3, hip[1]], P.lBu, P.lBl, 46, 46) };
+  if (P.ik){
+    r.grip = [sh[0] + P.gx, sh[1] + P.gy]; r.adir = up(P.ax);
+    r.aF = ik(sh, P2(r.grip, r.adir, 13), 36, 34); r.aB = ik(sh, r.grip, 36, 34);
+  } else { r.aF = fk(sh, P.aFu, P.aFl, 36, 34); r.aB = fk(sh, P.aBu, P.aBl, 36, 34); }
+  return r;
+}
+function drawArm(a, back){
+  const k = back ? 0.8 : 1, shirt = rgba(shadeRGB(hex(C.shirt), k)), skin = rgba(shadeRGB(hex(C.skin), k));
+  limb([a[1], a[2]], [10, 9], skin, { ink: 2.3 });
+  shape(circlePts(...P2(a[2], dn(a[3]), 3), 7, 7, 14), skin, { ink: 2.2, sh: 2 });
+  limb([a[0], a[1]], [15, 12], shirt, { ink: 2.4 });
+}
+function drawLeg(l, back){
+  const k = back ? 0.78 : 1;
+  limb([l[0], l[1], l[2]], [20, 16, 13], rgba(shadeRGB(hex(C.pants), k)), { ink: 2.5 });
+  const fd = [Math.cos(rad(l[3])), -Math.sin(rad(l[3]))], sd = dn(l[3]);
+  const a = P2(P2(l[2], fd, -3), sd, 3), b = P2(P2(l[2], fd, 15), sd, 5);
+  limb([a, b], [12, 11], rgba(shadeRGB(hex(C.shoe), back ? 0.9 : 1.2)), { ink: 2.4, sh: 2 });
+}
+function drawHead(r){
+  const P = r.P;
+  limb([r.neck, P2(r.neck, up(r.ha), 12)], [11, 11], C.skin, { ink: 2.2 });
+  ctx.save(); ctx.translate(r.head[0], r.head[1]); ctx.rotate(rad(r.ha));
+  shape(circlePts(23, 2, 4.5, 4.5, 12), C.skin, { ink: 2, shade: false });           // nose
+  shape(circlePts(0, 0, 24, 25, 30), C.skin, { ink: 2.8 });                            // head
+  ctx.save(); ctx.globalAlpha = 0.35; ctx.fillStyle = '#ef7d6b'; ctx.beginPath(); ctx.ellipse(8, 8, 6, 4, 0, 0, 7); ctx.fill(); ctx.restore();
+  inkLine([[-2,-6],[-8,-2],[-7,5],[-2,5]], 2.2, INK, { jit: .4 });                     // ear
+  const hp = []; for (let a = -38; a >= -216; a -= 12) hp.push([Math.cos(rad(a))*28, Math.sin(rad(a))*28 - 1]);
+  hp.push([-21, 8], [-15, -4], [-6, -11], [3, -14], [12, -15], [18, -13]);
+  shape(hp, C.hair, { ink: 2.4, shade: false, mis: [1, -1] });
+  inkLine([[-4,-27],[0,-36],[4,-30]], 2.2, INK, { jit: .5 });                          // cowlick
+  const ex = 11, ey = -3;
+  if (P.eye === 'wide'){ shape(circlePts(ex+1, ey, 6.5, 7, 14), '#fffaf0', { ink: 2, shade: false }); ctx.fillStyle = INK; ctx.beginPath(); ctx.arc(ex+3, ey, 2.8, 0, 7); ctx.fill(); }
+  else if (P.eye === 'squint') inkLine([[ex-3,ey-6],[ex+3,ey-1],[ex-3,ey+3]], 2.6, INK, { jit: .3, ta: .2 });
+  else if (P.eye === 'closed') inkLine([[ex-4,ey+1],[ex,ey-4],[ex+4,ey+1]], 2.6, INK, { jit: .3, ta: .2 });
+  else { ctx.fillStyle = INK; ctx.beginPath(); ctx.ellipse(ex, ey, 3.2, 4, 0, 0, 7); ctx.fill(); }
+  const b = P.brow || 0; inkLine([[ex-6, -13 - b*0.3], [ex+5, -12 + b*0.3]], 2.8, INK, { jit: .3 });
+  const m = P.mouth;
+  if (m === 'smile') inkLine([[8,8],[13,13],[19,8]], 2.4, INK, { jit: .3 });
+  else if (m === 'o') shape(circlePts(16, 11, 3.6, 4.2, 10), '#5a1f22', { ink: 2, shade: false });
+  else if (m === 'open') shape([[8,7],[20,6],[18,15],[11,16]], '#5a1f22', { ink: 2.2, shade: false });
+  else if (m === 'grit'){ shape([[8,7],[19,7],[19,13],[8,13]], '#fffaf0', { ink: 2, shade: false }); inkLine([[8,10],[19,10]], 1.4, INK, { jit: .2, flat: 1 }); }
+  else inkLine([[9,10],[18,9]], 2.4, INK, { jit: .3 });
+  ctx.restore();
+}
+function drawTorso(r){
+  const a = P2(r.hip, r.td, -6), m = P2(r.hip, r.td, 34), b = P2(r.hip, r.td, 66);
+  limb([a, m, b], [34, 38, 28], C.shirt, { ink: 2.8 });
+}
+function drawCharacter(sc, r, t){
+  sc.propsBack && sc.propsBack(r, t);
+  drawArm(r.aB, true); drawLeg(r.lB, true); drawLeg(r.lF, false);
+  drawTorso(r); drawHead(r);
+  sc.propsMid && sc.propsMid(r, t);
+  drawArm(r.aF, false);
+  sc.propsFront && sc.propsFront(r, t);
+}
+// Smear / speed lines: trace extremities over the last few in-between frames.
+function extremities(sc, r){ const e = [r.aF[2], r.aB[2], r.lF[2], r.lB[2]]; if (sc.extra) e.push(...sc.extra(r)); return e; }
+function drawTrails(sc, t){
+  const hist = []; for (let k = 0; k <= 5; k++) hist.push(extremities(sc, solve(poseAt(sc, t - k/36))));
+  for (let i = 0; i < hist[0].length; i++){
+    const ch = hist.map(h => h[i]); let len = 0; for (let k = 1; k < ch.length; k++) len += Math.hypot(ch[k][0]-ch[k-1][0], ch[k][1]-ch[k-1][1]);
+    if (len < 30) continue;
+    const pts = resample(ch.slice(1), 4); if (pts.length < 3) continue;
+    const a = pts[0], b = pts[Math.min(3, pts.length-1)], d = Math.hypot(b[0]-a[0], b[1]-a[1]) || 1, nx = -(b[1]-a[1])/d, ny = (b[0]-a[0])/d;
+    const al = clamp((len - 30)/80, 0.35, 0.9);
+    for (const off of [-9, 0, 9]){
+      const sc2 = 1 - Math.abs(off)/30;
+      inkLine(pts.slice(0, Math.max(3, Math.floor(pts.length*sc2))).map(p => [p[0]+nx*off, p[1]+ny*off]), off ? 2.2 : 3.2, INK, { jit: .6, a: al, ta: .45 });
+    }
+  }
+}
+
+// ---------- 3D world ----------
+let SUN = norm([-0.5, 0.8, 0.45]);
+function makeCam(c){ const f = norm(sub(c.target, c.pos)), r = norm(cross(f, [0,1,0])), u = cross(r, f); return { pos: c.pos, f, r, u, fl: (H/2)/Math.tan(rad(c.fov || 42)/2) }; }
+const toCam = (cam, p) => { const d = sub(p, cam.pos); return [dot(d, cam.r), dot(d, cam.u), dot(d, cam.f)]; };
+const projC = (cam, q) => [W/2 + cam.fl*q[0]/q[2], H/2 - cam.fl*q[1]/q[2]];
+function clipNear(q, n = 0.2){
+  const out = [];
+  for (let i = 0; i < q.length; i++){ const a = q[i], b = q[(i+1) % q.length], ai = a[2] >= n, bi = b[2] >= n;
+    if (ai) out.push(a); if (ai !== bi){ const t = (n - a[2])/(b[2] - a[2]); out.push([a[0]+(b[0]-a[0])*t, a[1]+(b[1]-a[1])*t, n]); } }
+  return out;
+}
+// geometry helpers (y up, metres)
+const face = (p, c, n, o = {}) => ({ p, c, n, ...o });
+function box(x0, y0, z0, x1, y1, z1, c, o = {}){
+  const F = [], col = k => o[k] || c;
+  F.push(face([[x1,y0,z0],[x1,y1,z0],[x1,y1,z1],[x1,y0,z1]], col('sx'), [1,0,0], o));
+  F.push(face([[x0,y0,z1],[x0,y1,z1],[x0,y1,z0],[x0,y0,z0]], col('sx'), [-1,0,0], o));
+  F.push(face([[x0,y1,z0],[x0,y1,z1],[x1,y1,z1],[x1,y1,z0]], col('top'), [0,1,0], o));
+  F.push(face([[x0,y0,z1],[x1,y0,z1],[x1,y1,z1],[x0,y1,z1]], col('front'), [0,0,1], o));
+  F.push(face([[x1,y0,z0],[x0,y0,z0],[x0,y1,z0],[x1,y1,z0]], col('back'), [0,0,-1], o));
+  return F;
+}
+const plane = (x0, z0, x1, z1, y, c, o = {}) => face([[x0,y,z0],[x0,y,z1],[x1,y,z1],[x1,y,z0]], c, [0,1,0], { layer: -1, edge: false, ...o });
+const rectZ = (x0, y0, x1, y1, z, c, o = {}) => face([[x0,y0,z],[x1,y0,z],[x1,y1,z],[x0,y1,z]], c, [0,0,o.nz || 1], o);
+const rectX = (z0, y0, z1, y1, x, c, o = {}) => face([[x,y0,z0],[x,y0,z1],[x,y1,z1],[x,y1,z0]], c, [o.nx || 1,0,0], o);
+const discY = (cx, y, cz, r, c, o = {}) => face(Array.from({length: 12}, (_, i) => [cx + Math.cos(i/12*6.283)*r, y, cz + Math.sin(i/12*6.283)*r]), c, [0,1,0], o);
+const discZ = (cx, cy, z, r, c, o = {}) => face(Array.from({length: 10}, (_, i) => [cx + Math.cos(i/10*6.283)*r, cy + Math.sin(i/10*6.283)*r, z]), c, [0,0,1], o);
+function prism(cx, cz, r, y0, y1, n, c, o = {}){
+  const F = [], ring = Array.from({length: n}, (_, i) => i/n*Math.PI*2 + (o.rot || 0));
+  for (let i = 0; i < n; i++){ const a = ring[i], b = ring[(i+1) % n], m = (a + b)/2 + (b < a ? Math.PI : 0);
+    F.push(face([[cx+Math.cos(a)*r,y0,cz+Math.sin(a)*r],[cx+Math.cos(b)*r,y0,cz+Math.sin(b)*r],[cx+Math.cos(b)*r,y1,cz+Math.sin(b)*r],[cx+Math.cos(a)*r,y1,cz+Math.sin(a)*r]], c, [Math.cos(m),0,Math.sin(m)], o)); }
+  if (!o.notop) F.push(face(ring.map(a => [cx+Math.cos(a)*r, y1, cz+Math.sin(a)*r]), o.top || c, [0,1,0], o));
+  return F;
+}
+function cone(cx, cz, r, y0, y1, n, c, o = {}){
+  const F = [], h = y1 - y0, rot = o.rot || 0;
+  for (let i = 0; i < n; i++){ const a = i/n*Math.PI*2 + rot, b = (i+1)/n*Math.PI*2 + rot, m = (a+b)/2;
+    F.push(face([[cx+Math.cos(a)*r,y0,cz+Math.sin(a)*r],[cx+Math.cos(b)*r,y0,cz+Math.sin(b)*r],[cx,y1,cz]], c, norm([Math.cos(m)*h, r, Math.sin(m)*h]), o)); }
+  return F;
+}
+const line3 = (pts, o = {}) => ({ kind: 'line', p: pts, ...o });
+const withDecals = (f, decals) => { f.decals = decals; return f; };
+
+// painters
+function pencil(s, w, al, col = PENCIL){
+  const r = R();
+  for (let i = 1; i < s.length; i++){
+    const a = s[i-1], b = s[i], d = Math.hypot(b[0]-a[0], b[1]-a[1]); if (d < 1) continue;
+    const ux = (b[0]-a[0])/d, uy = (b[1]-a[1])/d, e1 = 2 + r()*7, e2 = 2 + r()*7;
+    ctx.beginPath(); ctx.moveTo(a[0]-ux*e1 + (r()-.5)*1.5, a[1]-uy*e1 + (r()-.5)*1.5);
+    ctx.quadraticCurveTo((a[0]+b[0])/2 + (r()-.5)*d*0.02, (a[1]+b[1])/2 + (r()-.5)*d*0.02, b[0]+ux*e2, b[1]+uy*e2);
+    ctx.strokeStyle = rgba(col, al); ctx.lineWidth = w; ctx.stroke();
+    if (r() < 0.35){ ctx.beginPath(); ctx.moveTo(a[0]+(r()-.5)*3, a[1]+(r()-.5)*3); ctx.lineTo(b[0]+(r()-.5)*3, b[1]+(r()-.5)*3); ctx.strokeStyle = rgba(col, al*0.4); ctx.lineWidth = w*0.7; ctx.stroke(); }
+  }
+}
+function wash(s, col, big){
+  const r = R();
+  ctx.save(); pathPts(s); ctx.fillStyle = rgba(col, 0.93); ctx.fill();
+  ctx.clip();
+  for (let i = 0; i < 2; i++){ pathPts(s.map(p => [p[0] + (r()-.5)*7, p[1] + (r()-.5)*7])); ctx.fillStyle = rgba(shadeRGB(col, 0.9 + r()*0.16), 0.22); ctx.fill(); }
+  if (big){ // wet-in-wet blooms
+    let x0 = 1e9, y0 = 1e9, x1 = -1e9, y1 = -1e9; for (const p of s){ x0 = Math.min(x0,p[0]); y0 = Math.min(y0,p[1]); x1 = Math.max(x1,p[0]); y1 = Math.max(y1,p[1]); }
+    x0 = Math.max(x0, -50); x1 = Math.min(x1, W+50); y0 = Math.max(y0, -50); y1 = Math.min(y1, H+50);
+    for (let i = 0; i < 4; i++){ const cx = lerp(x0,x1,r()), cy = lerp(y0,y1,r()), rr = 40 + r()*160;
+      const g = ctx.createRadialGradient(cx, cy, 0, cx, cy, rr); const cc = shadeRGB(col, r() < .5 ? 0.86 : 1.08);
+      g.addColorStop(0, rgba(cc, 0.35)); g.addColorStop(0.75, rgba(cc, 0.12)); g.addColorStop(1, rgba(cc, 0));
+      ctx.fillStyle = g; ctx.fillRect(cx-rr, cy-rr, rr*2, rr*2); }
+  }
+  pathPts(s); ctx.strokeStyle = rgba(shadeRGB(col, 0.72), 0.45); ctx.lineWidth = 2.6; ctx.stroke(); // pigment pools at the edge
+  ctx.restore();
+}
+function hatch(s, amt, al){
+  const r = R(); let x0 = 1e9, y0 = 1e9, x1 = -1e9, y1 = -1e9;
+  for (const p of s){ x0 = Math.min(x0,p[0]); y0 = Math.min(y0,p[1]); x1 = Math.max(x1,p[0]); y1 = Math.max(y1,p[1]); }
+  x0 = Math.max(x0, 0); y0 = Math.max(y0, 0); x1 = Math.min(x1, W); y1 = Math.min(y1, H); if (x1 <= x0 || y1 <= y0) return;
+  ctx.save(); pathPts(s); ctx.clip(); ctx.strokeStyle = rgba(PENCIL, 0.38*al); ctx.lineWidth = 1.1;
+  const sp = lerp(13, 5.5, amt), span = (x1-x0) + (y1-y0);
+  ctx.beginPath();
+  for (let d = -span; d < span; d += sp*(0.8 + r()*0.4)){ const xa = x0 + d, ya = y1; ctx.moveTo(xa + (r()-.5)*3, ya); ctx.lineTo(xa + (y1-y0)*0.7 + (r()-.5)*3, y0); }
+  ctx.stroke(); ctx.restore();
+}
+let FOG = null;
+function paintFace(fc, s, z){
+  if (fc.kind === 'line'){ pencil(s, fc.w || 1.3, (fc.a ?? .8)*(1 - fogK(z)*0.8), fc.col ? hex(fc.col) : PENCIL); return; }
+  let col = hex(fc.c), d = fc.n ? dot(fc.n, SUN) : 1;
+  if (!fc.flat){ const lit = 0.66 + 0.42*Math.max(0, d); col = shadeRGB(col, lit, lit < 0.8 ? (0.8 - lit)*2.5 : 0); }
+  const fk = fogK(z); if (fk > 0) col = mix(col, FOG.col, fk);
+  if (fc.glow){ ctx.save(); pathPts(s); ctx.fillStyle = rgba(col); ctx.shadowColor = rgba(col, .9); ctx.shadowBlur = 14*DPR; ctx.fill(); ctx.restore(); return; }
+  if (fc.simple){ ctx.save(); pathPts(s); ctx.fillStyle = rgba(col, .92); ctx.fill(); ctx.restore(); }
+  else {
+    let area = 0; for (let i = 0; i < s.length; i++){ const a = s[i], b = s[(i+1) % s.length]; area += a[0]*b[1] - b[0]*a[1]; }
+    wash(s, col, Math.abs(area) > 40000);
+    if (fc.n && !fc.nohatch && d < 0.12) hatch(s, clamp((0.12 - d)/1.0, 0, 1), 1 - fk);
+  }
+  if (fc.edge !== false && !fc.simple) pencil(s.concat([s[0]]), fc.ew || 1.3, 0.72*(1 - fk*0.85));
+}
+const fogK = z => FOG ? clamp((z - FOG.near)/(FOG.far - FOG.near), 0, FOG.max ?? 0.8) : 0;
+function renderWorld(faces, cam, layer){
+  const items = [];
+  for (const fc of faces){
+    if ((fc.layer || 0) !== layer) continue;
+    if (fc.n && !fc.two && fc.kind !== 'line'){ const c = fc.p.reduce((a, p) => add(a, p), [0,0,0]).map(v => v / fc.p.length); if (dot(fc.n, sub(c, cam.pos)) > 0) continue; }
+    const it = projectFace(fc, cam); if (it) items.push(it);
+  }
+  items.sort((a, b) => b.z - a.z);
+  for (const it of items){
+    paintFace(it.fc, it.s, it.z);
+    if (it.fc.decals) for (const d of it.fc.decals){ const dj = projectFace(d, cam); if (dj) paintFace(d, dj.s, dj.z); }
+  }
+}
+function projectFace(fc, cam){
+  let q = fc.p.map(p => toCam(cam, p));
+  if (fc.kind === 'line'){ if (q.some(v => v[2] < 0.2)) return null; }
+  else { q = clipNear(q); if (q.length < 3) return null; }
+  const s = q.map(v => projC(cam, v));
+  let x0 = 1e9, y0 = 1e9, x1 = -1e9, y1 = -1e9; for (const p of s){ x0 = Math.min(x0,p[0]); y0 = Math.min(y0,p[1]); x1 = Math.max(x1,p[0]); y1 = Math.max(y1,p[1]); }
+  if (x1 < -20 || x0 > W+20 || y1 < -20 || y0 > H+20) return null;
+  return { fc, s, z: fc.zsort ?? q.reduce((a, v) => a + v[2], 0)/q.length };
+}
+function drawSky(sc, cam, t){
+  const k = sc.sky, hz = projC(cam, toCam(cam, add(cam.pos, [cam.f[0]*1e4, 0, cam.f[2]*1e4])))[1];
+  const g = ctx.createLinearGradient(0, 0, 0, Math.max(hz, 50));
+  g.addColorStop(0, k.top); g.addColorStop(1, k.hor);
+  ctx.fillStyle = g; ctx.fillRect(0, 0, W, H);
+  const r = R();
+  if (k.stars) for (let i = 0; i < 140; i++){ const rr = mulberry(i*31+7), x = rr()*W, y = rr()*hz*0.95, tw = 0.5 + 0.5*Math.sin(t*3 + i); ctx.fillStyle = `rgba(255,246,220,${0.35 + 0.5*rr()*tw})`; ctx.fillRect(x, y, 2 + rr()*1.5, 2 + rr()*1.5); }
+  if (k.moon){ const [mx, my] = k.moon; ctx.save(); ctx.shadowColor = 'rgba(255,240,200,.8)'; ctx.shadowBlur = 40*DPR; shape(circlePts(mx, my, 46, 46, 30), '#f6ecc8', { ink: 2.2, shade: false, mis: [0, 0] }); ctx.restore();
+    ctx.fillStyle = 'rgba(190,170,130,.4)'; for (const [dx, dy, rr2] of [[-14,-8,9],[12,10,7],[6,-18,5]]){ ctx.beginPath(); ctx.arc(mx+dx, my+dy, rr2, 0, 7); ctx.fill(); } }
+  for (const cl of k.clouds || []){
+    const x = ((cl[0] - cam.pos[0]*6 - t*cl[3]) % (W + 600) + W + 600) % (W + 600) - 300, y = cl[1], w = cl[2];
+    ctx.save(); ctx.globalAlpha = 0.7;
+    const blobs = [[0,0,1],[-.55,.15,.7],[.55,.12,.75],[-.25,-.25,.7],[.28,-.22,.62]];
+    ctx.fillStyle = k.cloud || '#fbf6ea'; ctx.beginPath();
+    for (const [bx, by, br] of blobs){ ctx.moveTo(x + bx*w + br*w*0.42, y + by*w); ctx.arc(x + bx*w, y + by*w, br*w*0.42, 0, 7); }
+    ctx.rect(x - w*0.75, y, w*1.5, w*0.22); ctx.fill();
+    ctx.restore();
+    for (const [bx, by, br] of blobs.slice(3)) { const a0 = Math.PI*1.05, a1 = Math.PI*1.95, pts = []; for (let a = a0; a <= a1; a += 0.15) pts.push([x + bx*w + Math.cos(a)*br*w*0.42, y + by*w + Math.sin(a)*br*w*0.42]); pencil(pts, 1.2, 0.35); }
+  }
+}
+
+// ---------- paper ----------
+const paper = (() => {
+  const c = document.createElement('canvas'); c.width = W; c.height = H; const g = c.getContext('2d');
+  const id = g.createImageData(W, H), d = id.data, r = mulberry(11), GW = 50, GH = 30, grid = [];
+  for (let i = 0; i < (GW+1)*(GH+1); i++) grid.push(r());
+  for (let y = 0; y < H; y++) for (let x = 0; x < W; x++){
+    const gx = x/W*GW, gy = y/H*GH, ix = gx|0, iy = gy|0, fx = gx-ix, fy = gy-iy, G = (i, j) => grid[j*(GW+1)+i];
+    const low = lerp(lerp(G(ix,iy), G(ix+1,iy), fx), lerp(G(ix,iy+1), G(ix+1,iy+1), fx), fy);
+    const v = 236 + low*14 + (r()-.5)*20, i = (y*W+x)*4;
+    d[i] = v + 2; d[i+1] = v - 2; d[i+2] = v - 12; d[i+3] = 255;
+  }
+  g.putImageData(id, 0, 0);
+  g.strokeStyle = 'rgba(150,130,100,.18)'; g.lineWidth = 0.8;
+  for (let i = 0; i < 260; i++){ const x = r()*W, y = r()*H, a = r()*6.28, l = 6 + r()*22; g.beginPath(); g.moveTo(x, y); g.quadraticCurveTo(x + Math.cos(a)*l*0.5 + (r()-.5)*6, y + Math.sin(a)*l*0.5 + (r()-.5)*6, x + Math.cos(a)*l, y + Math.sin(a)*l); g.stroke(); }
+  const vg = g.createRadialGradient(W/2, H/2, H*0.45, W/2, H/2, H*1.05); vg.addColorStop(0, 'rgba(0,0,0,0)'); vg.addColorStop(1, 'rgba(60,40,20,.32)');
+  g.fillStyle = vg; g.fillRect(0, 0, W, H);
+  return c;
+})();
+
+// ---------- props ----------
+function burst(c, rIn, rOut, n, fill, seedOff = 0){
+  const r = mulberry(n*7 + seedOff + BOIL), pts = [];
+  for (let i = 0; i < n*2; i++){ const a = i/(n*2)*Math.PI*2 + r()*0.2, rr = (i % 2 ? rIn : rOut)*(0.8 + r()*0.4); pts.push([c[0] + Math.cos(a)*rr, c[1] + Math.sin(a)*rr]); }
+  shape(pts, fill, { ink: 2.4, shade: false, mis: [0, 0] });
+}
+function radLines(c, r0, r1, n, w = 2.6, seedOff = 0){
+  const r = mulberry(n*13 + seedOff + BOIL);
+  for (let i = 0; i < n; i++){ const a = i/n*Math.PI*2 + r()*0.4, k = 0.8 + r()*0.5; inkLine([[c[0]+Math.cos(a)*r0, c[1]+Math.sin(a)*r0], [c[0]+Math.cos(a)*r1*k, c[1]+Math.sin(a)*r1*k]], w, INK, { jit: .4, ta: .5 }); }
+}
+function dust(c, k, seed){
+  const r = mulberry(seed + BOIL);
+  for (let i = 0; i < 4; i++){ const x = c[0] - i*12*k - r()*6, y = c[1] - 6 - r()*10, s = (9 - i*1.5)*k; if (s <= 1) continue; shape(circlePts(x, y, s, s*0.85, 10), '#e8dcc4', { ink: 1.8, shade: false, mis: [0,0] }); }
+}
+
+// ---------- scenes ----------
+const SCENES = [];
+
+// 1 — SPRINT down a city street ------------------------------------------------
+SCENES.push({
+  name: 'Sprint', dur: 6, loop: 8/12, stillT: 2 + 8/12*0.75 + 1/12, facing: 1,
+  sky: { top: '#8fb6d6', hor: '#f1e2c4', clouds: [[200,120,110,6],[900,80,140,4],[1400,170,90,8],[600,210,70,5]] },
+  fog: { col: hex('#e9dcc4'), near: 14, far: 70, max: .75 },
+  keys: [
+    { t: 0,      in: .09, pose: pz({ torso:16, head:-4, lFu:42,lFl:-12, lBu:-32,lBl:-55, aFu:-48,aFl:85, aBu:50,aBl:65, mouth:'open', brow:8 }) },
+    { t: 2/12,   in: .09, pose: pz({ torso:22, head:-6, air:18, lFu:-40,lFl:-18, lBu:64,lBl:-82, aFu:60,aFl:70, aBu:-58,aBl:92, mouth:'open', brow:8 }) },
+    { t: 4/12,   in: .09, pose: pz({ torso:16, head:-4, lFu:-32,lFl:-55, lBu:42,lBl:-12, aFu:50,aFl:65, aBu:-48,aBl:85, mouth:'open', brow:8 }) },
+    { t: 6/12,   in: .09, pose: pz({ torso:22, head:-6, air:18, lFu:64,lFl:-82, lBu:-40,lBl:-18, aFu:-58,aFl:92, aBu:60,aBl:70, mouth:'open', brow:8 }) },
+  ],
+  charPos: t => [t*6.5, 0, 3],
+  cam: t => { const x = t*6.5; return { pos: [x - 1.2, 1.15 + Math.sin(t*14)*0.02, 7.3], target: [x + 1.0, 1.05, 0], fov: 40 }; },
+  build(){
+    const F = [], r = mulberry(5);
+    F.push(plane(-40, 1.0, 120, 8, 0, '#d6ccb8'));
+    const road = plane(-40, -6, 120, 1.0, 0, '#8e8a86');
+    road.decals = []; for (let x = -40; x < 120; x += 4.5) road.decals.push(plane(x, -2.65, x + 2.2, -2.35, 0, '#f2e8c8', { simple: true }));
+    F.push(road, plane(-40, -10, 120, -6, 0, '#cbc1af'));
+    F.push(...box(-40, 0, 0.85, 120, 0.16, 1.0, '#bdb4a3', { edge: true }));
+    F.push(...box(-40, 0, -6.15, 120, 0.16, -6.0, '#bdb4a3'));
+    const pal = ['#d98e6a','#e8c07a','#9bb0a6','#c97b6b','#b6a58e','#8fa3bf','#d7a58c'];
+    for (let x = -30; x < 110;){
+      const w = 4 + r()*4, h = 5 + r()*10, c = pal[(r()*pal.length)|0];
+      const fb = box(x, 0, -17, x + w - 0.3, h, -10, c, { top: '#8a7d70' });
+      const front = fb[3]; front.decals = [];
+      for (let wy = 1.6; wy < h - 0.8; wy += 2) for (let wx = x + 0.7; wx < x + w - 1.2; wx += 1.5)
+        front.decals.push(rectZ(wx, wy, wx + 0.8, wy + 1.1, -9.98, r() < .25 ? '#f3dc9a' : '#5f7a96', { nohatch: true, ew: 1 }));
+      front.decals.push(rectZ(x + w/2 - 0.6, 0, x + w/2 + 0.4, 2.2, -9.98, '#6b4a3a', { nohatch: true }));
+      if (r() < .5) front.decals.push(rectZ(x + 0.2, 2.5, x + w - 0.5, 3.0, -9.97, pal[(r()*pal.length)|0], { nohatch: true }));
+      F.push(...fb); x += w;
+    }
+    for (let x = -36; x < 116; x += 11){
+      F.push(...prism(x, -6.6, 0.07, 0, 4.2, 5, '#3f4a52', { edge: false }));
+      F.push(...box(x - 0.1, 4.1, -6.85, x + 0.9, 4.3, -6.4, '#3f4a52'));
+      F.push(...prism(x + 5.5, -7.2, 0.15, 0, 1.8, 5, '#6b4a33'));
+      F.push(...cone(x + 5.5, -7.2, 1.3, 1.4, 4.4, 7, '#6f9455', { rot: r() }));
+    }
+    return F;
+  },
+  propsBack(r, t){
+    const k = 1, rr = mulberry(BOIL*3);
+    for (let i = 0; i < 6; i++){ const y = -40 - i*28 - rr()*12, x0 = -70 - rr()*50, l = 60 + rr()*110; inkLine([[x0, y], [x0 - l, y + (rr()-.5)*4]], 2.2, INK, { jit: .5, a: .55, ta: .5 }); }
+    const ph = ((t % this.loop) + this.loop) % this.loop;
+    if (ph < 2/12) dust([r.lF[2][0] - 10, 0], k, 1); else if (ph >= 4/12 && ph < 6/12) dust([r.lB[2][0] - 10, 0], k, 2);
+  },
+});
+
+// 2 — PANCAKE FLIP in a kitchen --------------------------------------------------
+const PB = { torso:6, head:12, aFu:74, aFl:16, aBu:-10, aBl:25, lFu:8, lFl:-4, lBu:-8, lBl:-4, brow:4 };
+SCENES.push({
+  name: 'Pancake flip', dur: 6, loop: 2.6, stillT: 1.0, facing: 1,
+  sky: { top: '#f3e3c3', hor: '#f3e3c3' },
+  fog: null,
+  keys: [
+    { t: 0,    in: .3,  ease: 'out', pose: pz({ ...PB }) },
+    { t: .55,  in: .25, ease: 'out', pose: pz({ ...PB, torso:14, head:16, aFu:54, aFl:8, lFu:22,lFl:-36, lBu:-6,lBl:-34, brow:12, eye:'squint', mouth:'grit' }) },
+    { t: .85,  in: .09, pose: pz({ ...PB, torso:-10, head:-30, aFu:122, aFl:26, aBu:-70, aBl:24, lFu:6,lFl:0, lBu:-10,lBl:0, air:6, eye:'wide', mouth:'o', brow:-8 }) },
+    { t: 1.35, in: .25, ease: 'out', pose: pz({ ...PB, torso:-2, head:-24, aFu:82, aFl:14, eye:'wide', mouth:'o', brow:-6 }) },
+    { t: 1.55, in: .07, pose: pz({ ...PB, torso:10, head:14, aFu:64, aFl:12, lFu:20,lFl:-32, lBu:-6,lBl:-30, eye:'squint', mouth:'grit', brow:8 }) },
+    { t: 1.8,  in: .12, pose: pz({ ...PB, head:4, aBu:140, aBl:40, eye:'closed', mouth:'smile', brow:-6 }) },
+  ],
+  charPos: () => [0, 0, 0],
+  cam: t => ({ pos: [0.7 + Math.sin(t*0.5)*0.15, 1.4, 4.3], target: [0.6, 1.1, 0], fov: 44 }),
+  build(){
+    const F = [];
+    const floor = plane(-4, -3, 4.5, 5, 0, '#d9c9a6'); floor.decals = [];
+    for (let x = -4; x < 4.5; x++) for (let z = -3; z < 5; z++) if ((x + z) & 1) floor.decals.push(plane(x, z, x + 1, z + 1, 0, '#b9a684', { simple: true }));
+    F.push(floor);
+    const back = rectZ(-4, 0, 4.5, 3.2, -3, '#ecd9b0', { layer: -1, edge: false }); back.decals = [
+      rectZ(-2.3, 1.15, 0.1, 2.45, -2.99, '#a9cde0', { nohatch: true, ew: 1.6 }),
+      line3([[-1.1,1.15,-2.98],[-1.1,2.45,-2.98]], { w: 2 }), line3([[-2.3,1.8,-2.98],[0.1,1.8,-2.98]], { w: 2 }),
+      rectZ(-2.5, 0.92, 3.5, 1.35, -2.99, '#cfe0dc', { nohatch: true, edge: false }),
+    ];
+    for (let x = -2.5; x < 3.5; x += 0.3) back.decals.push(line3([[x,0.92,-2.98],[x,1.35,-2.98]], { w: .8, a: .4 }));
+    F.push(back, rectX(-3, 0, 5, 3.2, -4, '#dcc79c', { layer: -1, edge: false }));
+    const ctr = box(-2.6, 0, -3, 3.5, 0.9, -2.35, '#6f8fa3', { top: '#e8e2d4' }); F.push(...ctr);
+    ctr[3].decals = [];
+    for (let x = -2.6; x < 3.4; x += 1) ctr[3].decals.push(rectZ(x + 0.06, 0.08, x + 0.94, 0.8, -2.34, '#7f9fb2', { nohatch: true, ew: 1 }));
+    F.push(...box(1.0, 1.65, -3, 3.5, 2.45, -2.65, '#6f8fa3'));
+    F.push(...box(-3.95, 0, -3, -2.95, 2.15, -2.2, '#e9eef0', { top: '#d2d8da' }));
+    F.push(...prism(-1.6, -2.65, 0.14, 0.9, 1.15, 6, '#c96a4a'), ...cone(-1.6, -2.65, 0.3, 1.1, 1.55, 6, '#6f9455'));
+    const st = box(0.8, 0, -0.5, 1.85, 0.88, 0.5, '#8a9aa6', { top: '#3c3b41' }); F.push(...st);
+    st[2].decals = [discY(1.1, 0.885, -0.2, 0.17, '#1f1e22', { nohatch: true }), discY(1.55, 0.885, 0.2, 0.17, '#1f1e22', { nohatch: true }), discY(1.1, 0.885, 0.25, 0.13, '#1f1e22', { nohatch: true })];
+    st[3].decals = [rectZ(0.9, 0.1, 1.75, 0.6, 0.51, '#2d2c31', { nohatch: true })];
+    F.push(line3([[1.3,3.2,0],[1.3,2.45,0]], { w: 1.4 }), ...cone(1.3, 0, 0.32, 2.1, 2.5, 8, '#e4503a'));
+    return F;
+  },
+  pan(r){ const w = r.aF[2], fa = r.aF[3], d = dn(fa); const c = P2(w, d, 48); return { w, d, c, ang: fa - 90 }; },
+  extra(r){ return [this.pan(r).c]; },
+  propsMid(r, t){
+    const pn = this.pan(r);
+    const tl = 0.86, tc = 1.55, ph = ((t % this.loop) + this.loop) % this.loop;
+    const flight = ph > tl && ph < tc;
+    const panPts = []; const ca = Math.cos(rad(pn.ang)), sa = Math.sin(rad(pn.ang));
+    const L = (x, y) => [pn.c[0] + x*ca - y*sa, pn.c[1] + x*sa + y*ca];
+    for (const [x, y] of [[-24,-2],[-20,6],[-10,9],[10,9],[20,6],[24,-2]]) panPts.push(L(x, y));
+    if (!flight){ shape([L(-17,-3), L(17,-3), L(14,-9), L(-14,-9)], '#e9b45c', { ink: 2.2 }); }
+    limb([pn.w, P2(pn.w, pn.d, 26)], [6, 6], '#3a3438', { ink: 2.2, shade: false });
+    shape(panPts, '#33303a', { ink: 2.6, sh: 2.5 });
+    if (flight){
+      const u = (ph - tl)/(tc - tl);
+      const a = this.pan(solve(poseAt(this, tl))).c, b = this.pan(solve(poseAt(this, tc))).c;
+      const pos = u2 => [lerp(a[0], b[0], u2), lerp(a[1], b[1], u2) - 165*4*u2*(1-u2) - 8];
+      const p = pos(u), spin = u*Math.PI*2.2;
+      const arc = []; for (let k = 0; k <= 10; k++){ const uu = Math.max(0, u - 0.22 + k*0.022); arc.push(pos(uu)); }
+      inkLine(arc.slice(0, 8), 2.4, INK, { jit: .5, a: .6, ta: .5 });
+      ctx.save(); ctx.translate(p[0], p[1]); ctx.rotate(spin);
+      shape(circlePts(0, 0, 18, 6, 18), '#e9b45c', { ink: 2.4 });
+      ctx.fillStyle = 'rgba(160,90,30,.6)'; for (const [x, y] of [[-6,-1],[5,1],[0,-2]]){ ctx.beginPath(); ctx.arc(x, y, 1.6, 0, 7); ctx.fill(); }
+      ctx.restore();
+      if (u < 0.35) radLines(p, 26, 40, 7, 2.2, 3);
+    } else if (ph < tl - 0.05){
+      for (let i = 0; i < 3; i++){ const x = pn.c[0] - 10 + i*10, y0 = pn.c[1] - 16; inkLine([[x, y0], [x + 4, y0 - 8], [x - 2, y0 - 16], [x + 2, y0 - 24]], 1.6, INK, { jit: .6, a: .5 }); }
+    }
+  },
+});
+
+// 3 — FOOTBALL KICK on a field ------------------------------------------------------
+SCENES.push({
+  name: 'Kick', dur: 6, loop: 2.6, stillT: 8/12, facing: 1,
+  sky: { top: '#76aee0', hor: '#eef0dd', clouds: [[150,110,120,5],[700,170,90,3],[1250,90,150,6]] },
+  fog: { col: hex('#e3e8d4'), near: 12, far: 90, max: .7 },
+  keys: [
+    { t: 0,    in: .2,  ease: 'out', pose: pz({ torso:12, head:10, lFu:-25,lFl:-40, lBu:25,lBl:-10, aFu:30,aFl:40, aBu:-30,aBl:40, rx:-30, brow:8 }) },
+    { t: .45,  in: .18, ease: 'out', pose: pz({ torso:-2, head:20, lFu:-58,lFl:-98, lBu:8,lBl:-14, aFu:-45,aFl:30, aBu:78,aBl:10, rx:-12, eye:'squint', mouth:'grit', brow:14 }) },
+    { t: .6,   in: .07, pose: pz({ torso:-24, head:8, lFu:96,lFl:-4, lBu:-4,lBl:-6, aFu:-82,aFl:20, aBu:98,aBl:5, eye:'squint', mouth:'open', brow:12 }) },
+    { t: .95,  in: .25, ease: 'out', pose: pz({ torso:-12, head:-8, lFu:55,lFl:-40, lBu:-2,lBl:-6, aFu:-50,aFl:30, aBu:60,aBl:20, eye:'wide', mouth:'o', brow:-4 }) },
+    { t: 1.4,  in: .1,  pose: pz({ torso:-6, head:-14, lFu:10,lFl:-4, lBu:-10,lBl:-4, aFu:165,aFl:15, aBu:160,aBl:20, eye:'closed', mouth:'open', brow:-6 }) },
+    { t: 1.7,  in: .1,  pose: pz({ torso:-6, head:-16, air:22, lFu:28,lFl:-55, lBu:-22,lBl:-45, aFu:172,aFl:5, aBu:168,aBl:10, eye:'closed', mouth:'open', brow:-6 }) },
+    { t: 1.95, in: .08, pose: pz({ torso:0, head:-10, lFu:14,lFl:-20, lBu:-12,lBl:-20, aFu:165,aFl:15, aBu:160,aBl:20, eye:'closed', mouth:'smile', brow:-6 }) },
+  ],
+  charPos: () => [0, 0, 0],
+  cam: t => ({ pos: [-0.9 + Math.sin(t*0.4)*0.2, 0.8, 4.6], target: [1.9, 1.05, 0], fov: 42 }),
+  build(){
+    const F = [], r = mulberry(9);
+    const g = plane(-60, -70, 90, 15, 0, '#8fb066'); g.decals = [];
+    for (let x = -60; x < 90; x += 8) g.decals.push(plane(x, -70, x + 4, 15, 0, '#9dbd73', { simple: true }));
+    g.decals.push(plane(14, -14.1, 30, -13.95, 0, '#f4f1e4', { simple: true }), plane(14, -4.05, 30, -3.9, 0, '#f4f1e4', { simple: true }), plane(14, -14, 14.15, -3.9, 0, '#f4f1e4', { simple: true }));
+    F.push(g);
+    const gx = 22, z0 = -12.5, z1 = -5.5, hh = 2.44, wcol = '#f6f3ea';
+    F.push(...box(gx, 0, z0 - 0.07, gx + 0.14, hh, z0 + 0.07, wcol, { nohatch: true }), ...box(gx, 0, z1 - 0.07, gx + 0.14, hh, z1 + 0.07, wcol, { nohatch: true }), ...box(gx, hh - 0.14, z0, gx + 0.14, hh, z1, wcol, { nohatch: true }));
+    for (let z = z0; z <= z1 + 0.01; z += 0.7) F.push(line3([[gx, hh, z], [gx + 1.8, 0, z]], { w: 1, a: .55 }));
+    for (let k = 0; k <= 5; k++){ const u = k/5; F.push(line3([[gx + 1.8*u, hh*(1-u), z0], [gx + 1.8*u, hh*(1-u), z1]], { w: 1, a: .5 })); }
+    for (let x = -50; x < 85; x += 3.5 + r()*3){ const z = -38 - r()*10, h = 4 + r()*4;
+      F.push(...prism(x, z, 0.3, 0, h*0.35, 5, '#6b4a33'), ...cone(x, z, 1.8 + r(), h*0.25, h, 7, r() < .5 ? '#5d8a4e' : '#6f9a57', { rot: r() })); }
+    for (let x = -50; x < 85; x += 2.5) F.push(...box(x, 0, -30.1, x + 0.12, 1.1, -30, '#d9d0bd', { edge: false }));
+    F.push(...box(-50, 0.85, -30.12, 85, 0.98, -30.02, '#d9d0bd', { edge: false }));
+    F.push(...box(26, 0, -40, 46, 1.5, -34, '#c46a52'), ...box(26, 1.5, -40, 46, 3, -37, '#d88a5a'), ...box(26, 3, -40, 46, 4.5, -39, '#e0b26a'));
+    F.push(...prism(-6, -16, 0.04, 0, 1.6, 4, '#3a3438', { edge: false }), face([[-6,1.6,-16],[-6,1.25,-16],[-5.4,1.42,-16]], '#e4503a', [0,0,1], { two: true }));
+    return F;
+  },
+  ball(r, t){
+    const ph = ((t % this.loop) + this.loop) % this.loop, tk = 0.63;
+    if (ph < tk || ph > 1.6) return { p: [40, -11], s: 1, rot: 0, fly: false };
+    const u = ph - tk; return { p: [40 + 1250*u, -11 - 560*u + 380*u*u], s: 1/(1 + 2.2*u), rot: u*20, fly: true, u };
+  },
+  propsBack(r, t){
+    const b = this.ball(r, t);
+    if (b.fly && b.u < 0.12){ burst([b.p[0] - 14, b.p[1]], 18, 46, 9, '#fff2b0', 2); radLines([b.p[0] - 14, b.p[1]], 50, 85, 10, 2.6, 5); }
+    if (b.fly){ for (const off of [-8, 0, 8]) inkLine([[b.p[0] - 20*b.s, b.p[1] + off*b.s], [b.p[0] - (90 + Math.abs(off)*-3)*b.s, b.p[1] + off*b.s + 20*b.s]], 2.4, INK, { a: .65, ta: .5 }); }
+    ctx.save(); ctx.translate(b.p[0], b.p[1]); ctx.scale(b.s, b.s); ctx.rotate(b.rot);
+    shape(circlePts(0, 0, 12, 12, 18), '#fbf8ef', { ink: 2.4, sh: 2.5 });
+    ctx.fillStyle = INK; for (const [x, y, s] of [[0,0,4],[7,-7,2.6],[-8,-5,2.6],[-2,9,2.6],[9,5,2]]){ ctx.beginPath(); for (let i = 0; i < 5; i++){ const a = i/5*6.283; ctx.lineTo(x + Math.cos(a)*s, y + Math.sin(a)*s); } ctx.fill(); }
+    ctx.restore();
+    if (!b.fly){ ctx.save(); ctx.globalAlpha = .25; ctx.fillStyle = '#1b2a10'; ctx.beginPath(); ctx.ellipse(40, 0, 13, 3, 0, 0, 7); ctx.fill(); ctx.restore(); }
+  },
+});
+
+// 4 — ROOFTOP DANCE at night -----------------------------------------------------------
+SCENES.push({
+  name: 'Rooftop dance', dur: 6, loop: 2.0, stillT: 13/12, facing: 1, night: true,
+  sky: { top: '#141a36', hor: '#43396a', stars: true, moon: [1290, 130] },
+  fog: { col: hex('#3c3562'), near: 20, far: 120, max: .55 },
+  keys: [
+    { t: 0,    in: .06, pose: pz({ torso:-6, head:-18, aFu:165,aFl:8, aBu:-35,aBl:95, lFu:22,lFl:-8, lBu:-14,lBl:-6, eye:'closed', mouth:'smile', brow:-4 }) },
+    { t: .25,  in: .14, ease: 'out', pose: pz({ torso:-2, head:-14, aFu:156,aFl:12, aBu:-35,aBl:95, lFu:26,lFl:-22, lBu:-12,lBl:-22, eye:'closed', mouth:'smile', brow:-4 }) },
+    { t: .5,   in: .06, pose: pz({ torso:24, head:12, aFu:38,aFl:-8, aBu:28,aBl:-4, lFu:50,lFl:-90, lBu:-28,lBl:-62, eye:'squint', mouth:'grit', brow:12 }) },
+    { t: .75,  in: .14, ease: 'out', pose: pz({ torso:20, head:10, aFu:42,aFl:-6, aBu:30,aBl:-2, lFu:46,lFl:-80, lBu:-26,lBl:-56, eye:'squint', mouth:'grit', brow:12 }) },
+    { t: 1.0,  in: .06, pose: pz({ torso:-4, head:-12, air:30, aFu:128,aFl:14, aBu:-128,aBl:-14, lFu:32,lFl:-6, lBu:-32,lBl:-6, eye:'wide', mouth:'open', brow:-8 }) },
+    { t: 1.22, in: .08, pose: pz({ torso:6, head:-4, aFu:118,aFl:18, aBu:-118,aBl:-18, lFu:30,lFl:-40, lBu:-26,lBl:-40, eye:'wide', mouth:'open', brow:-8 }) },
+    { t: 1.5,  in: .06, pose: pz({ torso:8, head:4, lFu:96,lFl:-118, lBu:-6,lBl:-4, aFu:22,aFl:-152, aBu:70,aBl:80, eye:'dot', mouth:'smile' }) },
+    { t: 1.75, in: .14, ease: 'out', pose: pz({ torso:5, head:2, lFu:90,lFl:-112, lBu:-6,lBl:-10, aFu:24,aFl:-148, aBu:66,aBl:84, eye:'dot', mouth:'smile' }) },
+  ],
+  charPos: () => [0, 0, 0],
+  cam: t => ({ pos: [Math.sin(t*0.6)*0.4, 1.7, 4.6], target: [0.2, 1.15, 0], fov: 44 }),
+  build(){
+    const F = [], r = mulberry(21);
+    F.push(plane(-25, -6.2, 25, 10, 0, '#6e6a80'));
+    F.push(...box(-25, 0, -6.6, 25, 0.95, -6.1, '#857e96', { top: '#9a93aa' }));
+    F.push(...prism(-3.6, -4.6, 0.9, 1.2, 2.7, 10, '#7a5a48', { top: '#5e4538' }), ...cone(-3.6, -4.6, 1.05, 2.7, 3.2, 10, '#5e4538'));
+    for (const [dx, dz] of [[-0.8,-0.8],[0.8,-0.8],[-0.8,0.8],[0.8,0.8]]) F.push(...prism(-3.6 + dx*0.8, -4.6 + dz*0.8, 0.07, 0, 1.2, 4, '#3d3846', { edge: false }));
+    F.push(...box(3.6, 0, -5.4, 5.4, 1.1, -4.2, '#9a9db0'));
+    for (let x = -90; x < 90;){ const w = 6 + r()*10, z = -45 - r()*45, h = 2 + r()*22;
+      const fb = box(x, -30, z - 8, x + w, h, z, ['#3b3f63','#463c66','#2f3a58','#523f6a'][(r()*4)|0], { top: '#2a2c48', nohatch: true, layer: -2 });
+      fb[3].decals = []; for (let wy = -6; wy < h - 1; wy += 1.8) for (let wx = x + 0.6; wx < x + w - 0.8; wx += 1.4) if (r() < .32) fb[3].decals.push(rectZ(wx, wy, wx + 0.7, wy + 0.9, z + 0.02, r() < .8 ? '#ffd36b' : '#9fd8ff', { simple: true, flat: true }));
+      F.push(...fb); x += w + r()*3; }
+    const pole = (x, z, h) => F.push(...prism(x, z, 0.05, 0, h, 4, '#2e2a36', { edge: false }));
+    pole(-6.5, -5.6, 2.8); pole(6.5, -5.6, 2.8); pole(7.5, 2, 2.6);
+    const strand = (a, b, sag) => { const pts = []; for (let i = 0; i <= 16; i++){ const u = i/16; pts.push([lerp(a[0],b[0],u), lerp(a[1],b[1],u) - sag*4*u*(1-u), lerp(a[2],b[2],u)]); }
+      F.push(line3(pts, { w: 1.2, a: .8, col: '#d7cfe8' }));
+      pts.forEach((p, i) => { if (i % 2) F.push({ ...discZ(p[0], p[1] - 0.08, p[2], 0.07, ['#ffd36b','#ff8a6b','#9fe0ff'][i % 3]), glow: true, flat: true, two: true }); }); };
+    strand([-6.5, 2.8, -5.6], [6.5, 2.8, -5.6], 0.7); strand([6.5, 2.8, -5.6], [7.5, 2.6, 2], 0.5);
+    return F;
+  },
+  propsFront(r, t){
+    const ph = ((t % this.loop) + this.loop) % this.loop, hit = ph % 0.5;
+    if (hit < 0.12) for (const h of [r.aF[2], r.aB[2]]) radLines(h, 14, 30, 5, 2.4, Math.floor(ph*2));
+  },
+});
+
+// 5 — CHOPPING WOOD in a forest clearing ---------------------------------------------------
+const CB = { ik: 1, lFu:12, lFl:-6, lBu:-12, lBl:-6 };
+SCENES.push({
+  name: 'Chop', dur: 6, loop: 2.4, stillT: 1.0, facing: 1,
+  sky: { top: '#a6c7d9', hor: '#f4e4c6', clouds: [[300,140,100,3],[1100,90,130,4]] },
+  fog: { col: hex('#dfe0cf'), near: 12, far: 70, max: .75 },
+  keys: [
+    { t: 0,    in: .4,  ease: 'inout', pose: pz({ ...CB, torso:8, head:10, gx:26, gy:62, ax:150, brow:4 }) },
+    { t: .7,   in: .4,  ease: 'out', pose: pz({ ...CB, torso:-16, head:-14, gx:-16, gy:-60, ax:-38, lFu:22,lFl:-4, lBu:-22,lBl:-4, air:3, eye:'squint', mouth:'grit', brow:12 }) },
+    { t: .95,  in: .06, pose: pz({ ...CB, torso:28, head:22, gx:52, gy:34, ax:100, lFu:28,lFl:-34, lBu:-24,lBl:-32, eye:'squint', mouth:'open', brow:14 }) },
+    { t: 1.5,  in: .3,  ease: 'out', pose: pz({ ...CB, torso:18, head:0, gx:48, gy:38, ax:104, lFu:24,lFl:-24, lBu:-20,lBl:-22, eye:'closed', mouth:'smile', brow:-4 }) },
+  ],
+  charPos: () => [0, 0, 0],
+  cam: t => ({ pos: [0.7 + Math.sin(t*0.5)*0.2, 1.1, 5.0], target: [1.2, 1.0, 0], fov: 42 }),
+  build(){
+    const F = [], r = mulberry(33);
+    const g = plane(-70, -90, 70, 14, 0, '#9aa564'); g.decals = [face(Array.from({length: 10}, (_, i) => [1.2 + Math.cos(i/10*6.28)*2.6, 0, Math.sin(i/10*6.28)*1.8]), '#c2a173', [0,1,0], { simple: true })];
+    F.push(g);
+    const cab = box(-8, 0, -11, -2.5, 2.8, -7, '#9a6a45', { top: '#7a5235' }); F.push(...cab);
+    cab[3].decals = [rectZ(-5.8, 0, -4.8, 2.0, -6.98, '#5a3a28', { nohatch: true }), rectZ(-4.0, 1.0, -3.0, 1.9, -6.98, '#f3dc9a', { nohatch: true })];
+    for (let y = 0.35; y < 2.8; y += 0.35) cab[3].decals.push(line3([[-8, y, -6.97], [-2.5, y, -6.97]], { w: .9, a: .45 }));
+    const rx0 = -8.4, rx1 = -2.1, zc = -9, rf = '#b5523d';
+    F.push(face([[rx0,2.7,-6.6],[rx1,2.7,-6.6],[rx1,4.4,zc],[rx0,4.4,zc]], rf, norm([0,2.4,1.7])), face([[rx1,2.7,-11.4],[rx0,2.7,-11.4],[rx0,4.4,zc],[rx1,4.4,zc]], rf, norm([0,2.4,-1.7])));
+    F.push(face([[-2.5,2.8,-7],[-2.5,2.8,-11],[-2.5,4.4,zc]], '#9a6a45', [1,0,0]), face([[-8,2.8,-11],[-8,2.8,-7],[-8,4.4,zc]], '#9a6a45', [-1,0,0]));
+    F.push(...box(-4, 3.4, -10, -3.4, 5, -9.4, '#8d7f74'));
+    const wp = box(-1.8, 0, -6.2, 1.2, 1.1, -5.2, '#8a6242'); F.push(...wp); wp[3].decals = [];
+    for (let y = 0.18; y < 1.1; y += 0.32) for (let x = -1.62 + (y*3 % 0.3); x < 1.1; x += 0.34) wp[3].decals.push(discZ(x, y, -5.19, 0.15, '#d9b07a', { nohatch: true, ew: 1 }));
+    const tree = (x, z, s) => { F.push(...prism(x, z, 0.22*s, 0, 1.6*s, 5, '#6b4a33'), ...cone(x, z, 1.5*s, 1.0*s, 3.6*s, 7, '#4f7a4f', { rot: r() }), ...cone(x, z, 1.05*s, 2.7*s, 4.9*s, 7, '#64905a', { rot: r() })); };
+    for (let i = 0; i < 46; i++){ const x = -45 + r()*95, z = -14 - r()*36; if (x > -10 && x < 0 && z > -14) continue; tree(x, z, 0.9 + r()*0.8); }
+    tree(7.5, -3, 1.1); tree(-9.5, 1, 1.2);
+    for (const [mx, mh, c] of [[-70, 55, '#9fb0bf'], [10, 70, '#94a6b8'], [90, 50, '#a7b6c3']]){
+      const m = face([[mx - 75, -5, -200], [mx + 75, -5, -200], [mx, mh, -200]], c, [0,0,1], { nohatch: true, layer: -2 });
+      m.decals = [face([[mx - 75*0.22, mh*0.78, -199.5], [mx + 75*0.22, mh*0.78, -199.5], [mx, mh, -199.5]], '#f7f4ec', [0,0,1], { nohatch: true })];
+      F.push(m); }
+    return F;
+  },
+  axe(r){ const g = r.grip, d = r.adir, a = P2(g, d, -6), b = P2(g, d, 66), n = [Math.cos(rad(r.P.ax)), Math.sin(rad(r.P.ax))]; return { a, b, d, n, blade: P2(P2(b, n, 22), d, -4) }; },
+  extra(r){ return [this.axe(r).b]; },
+  init(){ const r = solve(poseAt(this, 0.95 + 0.06)); this.stump = this.axe(r).blade; },
+  propsBack(r, t){
+    if (!this.stump) this.init();
+    const sx = this.stump[0], top = this.stump[1] + 3, ph = ((t % this.loop) + this.loop) % this.loop;
+    const sTop = top + 34;
+    limb([[sx, 0], [sx, sTop]], [64, 60], '#7a5638', { ink: 2.6 });
+    shape(circlePts(sx, sTop, 30, 8, 18), '#d9b07a', { ink: 2.2, shade: false });
+    inkLine([[sx - 14, sTop], [sx + 12, sTop + 1]], 1.2, INK, { a: .5, flat: 1 });
+    const ts = 0.97, u = ph - ts;
+    if (ph < ts || ph > 2.2){
+      const k = ph > 2.2 ? EASE.snap(clamp((ph - 2.2)/0.12, 0, 1)) : 1;
+      ctx.save(); ctx.translate(0, (1 - k)*-60);
+      limb([[sx, sTop - 2], [sx, top]], [30, 30], '#c9955f', { ink: 2.4 });
+      shape(circlePts(sx, top, 15, 4.5, 14), '#efd09a', { ink: 2, shade: false });
+      ctx.restore();
+    } else {
+      for (const s of [-1, 1]){
+        const ox = sx + s*(8 + 260*u), oy = top + (sTop - top)/2 - 300*u + 900*u*u, rot = s*Math.min(u*7, 1.4);
+        const y = Math.min(oy, -12);
+        ctx.save(); ctx.translate(ox, y); ctx.rotate(rot);
+        shape([[-7*s - 7, -16], [7 - 7, -16], [7 - 7, 16], [-7*s - 7, 16]].map(p => [p[0] + s*7, p[1]]), '#c9955f', { ink: 2.3 });
+        ctx.restore();
+      }
+      if (u < 0.13){ burst([sx, top], 16, 44, 8, '#fff2b0', 7); radLines([sx, top], 48, 80, 9, 2.6, 9); }
+    }
+  },
+  propsMid(r, t){
+    const x = this.axe(r);
+    limb([x.a, x.b], [7, 7], '#c78f55', { ink: 2.3, sh: 2 });
+    const hd = [P2(x.b, x.d, 5), P2(P2(x.b, x.n, 22), x.d, 9), P2(P2(x.b, x.n, 24), x.d, -16), P2(x.b, x.d, -9), P2(P2(x.b, x.n, -8), x.d, -2)];
+    shape(hd, '#8a96a3', { ink: 2.6, sh: 2.5 });
+    inkLine([P2(P2(x.b, x.n, 22), x.d, 7), P2(P2(x.b, x.n, 24), x.d, -14)], 2, '#eef3f6', { flat: 1, jit: .3 });
+  },
+  propsFront(r, t){
+    const ph = ((t % this.loop) + this.loop) % this.loop, u = ph - 0.97;
+    if (u > 0 && u < 0.6){ const rr = mulberry(77);
+      for (let i = 0; i < 9; i++){ const vx = (rr() - .5)*700, vy = -300 - rr()*400, x = this.stump[0] + vx*u, y = this.stump[1] + vy*u + 1300*u*u; if (y > -2) continue;
+        ctx.save(); ctx.translate(x, y); ctx.rotate(u*12*(rr() - .5)); shape([[-4,-2],[5,-3],[3,3],[-5,2]], '#e2bd86', { ink: 1.6, shade: false, mis: [0,0] }); ctx.restore(); }
+    }
+  },
+});
+
+for (const sc of SCENES){ sc.faces = sc.build(); }
+
+// ---------- frame ----------
+function drawFrame(sc, tLive){
+  const tq = Math.floor(tLive*FPS + 1e-6)/FPS;   // animate on 12s: every drawing held 2 frames at 24
+  BOIL = Math.round(tq*FPS); SC = 0;
+  ctx = mainCtx; ctx.setTransform(DPR, 0, 0, DPR, 0, 0);
+  FOG = sc.fog;
+  const cam = makeCam(sc.cam(tq));
+  drawSky(sc, cam, tq);
+  renderWorld(sc.faces, cam, -2);
+  renderWorld(sc.faces, cam, -1);
+  renderWorld(sc.faces, cam, 0);
+
+  const P = poseAt(sc, tq), rig = solve(P);
+  const wp = sc.charPos(tq), feet = toCam(cam, wp), headP = toCam(cam, add(wp, [0, 1.8, 0]));
+  const fs = projC(cam, feet), hs = projC(cam, headP), s = (fs[1] - hs[1])/220;
+  // contact shadow on the 3D ground
+  ctx.save(); ctx.globalAlpha = 0.22*clamp(1 - (P.air || 0)/50, 0.3, 1); ctx.fillStyle = sc.night ? '#0d0b1c' : '#3b2f22';
+  ctx.beginPath(); ctx.ellipse(fs[0] + (rig.hip[0])*s*sc.facing, fs[1], 52*s, 9*s, 0, 0, 7); ctx.fill(); ctx.restore();
+
+  ctx = charCtx; ctx.setTransform(1, 0, 0, 1, 0, 0); ctx.clearRect(0, 0, charCv.width, charCv.height);
+  ctx.setTransform(DPR*s*sc.facing, 0, 0, DPR*s, DPR*fs[0], DPR*fs[1]);
+  drawTrails(sc, tq);
+  drawCharacter(sc, rig, tq);
+  ctx = mainCtx; ctx.setTransform(1, 0, 0, 1, 0, 0);
+  if (sc.night){ ctx.save(); ctx.filter = `drop-shadow(0 0 ${5*DPR}px rgba(255,214,150,.75))`; ctx.drawImage(charCv, 0, 0); ctx.restore(); }
+  else ctx.drawImage(charCv, 0, 0);
+  ctx.setTransform(DPR, 0, 0, DPR, 0, 0);
+  renderWorld(sc.faces, cam, 1);
+  ctx.save(); ctx.globalCompositeOperation = 'multiply'; ctx.drawImage(paper, 0, 0, W, H); ctx.restore();
+}
+
+// ---------- playback / UI ----------
+let cur = +(Q.get('scene') || 0), playing = true, auto = !Q.has('scene'), t0 = performance.now(), tPause = 0;
+if (STILL){
+  const sc = SCENES[cur]; drawFrame(sc, Q.has('t') ? +Q.get('t') : sc.stillT);
+  document.title = 'ready';
+} else {
+  const ui = document.getElementById('ui'), btns = [];
+  SCENES.forEach((sc, i) => { const b = document.createElement('button'); b.textContent = `${i+1}. ${sc.name}`; b.onclick = () => { cur = i; auto = false; t0 = performance.now(); sync(); }; ui.appendChild(b); btns.push(b); });
+  const ab = document.createElement('button'); ab.textContent = 'Auto-cycle'; ab.onclick = () => { auto = !auto; t0 = performance.now(); sync(); }; ui.appendChild(ab);
+  const pb = document.createElement('button'); pb.textContent = 'Pause'; pb.onclick = () => { playing = !playing; if (playing) t0 = performance.now() - tPause*1000; pb.textContent = playing ? 'Pause' : 'Play'; }; ui.appendChild(pb);
+  const sync = () => { btns.forEach((b, i) => b.classList.toggle('on', i === cur)); ab.classList.toggle('on', auto); };
+  sync();
+  let lastDrawn = -1;
+  (function loop(){
+    if (playing){
+      tPause = (performance.now() - t0)/1000;
+      if (auto && tPause > SCENES[cur].dur){ cur = (cur + 1) % SCENES.length; t0 = performance.now(); tPause = 0; sync(); }
+    }
+    const f = Math.floor(tPause*FPS);
+    if (f !== lastDrawn){ lastDrawn = f; drawFrame(SCENES[cur], tPause); }
+    requestAnimationFrame(loop);
+  })();
+}
+</script>
+</body>
+</html>
