@@ -3,38 +3,68 @@
  "cues": [
   {
    "type": "tick",
-   "t": 0.1,
-   "vol": 0.6
+   "t": 0.2,
+   "vol": 0.7
   },
   {
-   "type": "tick",
-   "t": 0.32,
+   "type": "nope",
+   "t": 0.45,
    "vol": 0.6
   },
   {
    "type": "drop",
-   "t": 0.55,
+   "t": 0.45,
    "vol": 0.8
   },
   {
-   "type": "whoosh",
-   "t": 0.7,
-   "vol": 1
+   "type": "tick",
+   "t": 0.737,
+   "vol": 0.5
+  },
+  {
+   "type": "tick",
+   "t": 0.856,
+   "vol": 0.5
+  },
+  {
+   "type": "tick",
+   "t": 0.947,
+   "vol": 0.5
+  },
+  {
+   "type": "tick",
+   "t": 1.024,
+   "vol": 0.5
+  },
+  {
+   "type": "tick",
+   "t": 1.092,
+   "vol": 0.5
+  },
+  {
+   "type": "tick",
+   "t": 1.153,
+   "vol": 0.5
+  },
+  {
+   "type": "tick",
+   "t": 1.21,
+   "vol": 0.5
+  },
+  {
+   "type": "tick",
+   "t": 1.262,
+   "vol": 0.5
   },
   {
    "type": "thud",
-   "t": 1.2,
+   "t": 1.3,
    "vol": 1
   },
   {
    "type": "pop",
-   "t": 1.4,
+   "t": 1.55,
    "vol": 1
-  },
-  {
-   "type": "pop",
-   "t": 1.95,
-   "vol": 0.5
   },
   {
    "type": "whoosh",

@@ -103,38 +103,47 @@ function bulb(x,y,s=1,op=1){add(`<g opacity="${op}" filter="url(#glow)" stroke="
 function xTile(x,y,s=60,op=.9){add(`<g opacity="${op}"><rect x="${x-s/2}" y="${y-s/2}" width="${s}" height="${s}" rx="${s*.18}" fill="#0b0b0b" stroke="#fff" stroke-width="3" filter="url(#glowS)"/></g>`);cross(x,y,s/80,op,1);}
 function strike(x1,x2,y,p){if(p>0)add(`<line x1="${x1}" y1="${y}" x2="${lerp(x1,x2,eo(p))}" y2="${y}" stroke="#fff" stroke-width="4" stroke-linecap="round"/>`);}
 
-/* HOOK — figure falls off a tall ladder (L[0], first 3 s) */
+/* HOOK — a rung snaps and the figure slides down the ladder (L[0], first 3 s) */
 scene(0,l(0)-.3,()=>{
-  const h=L[0].s,G=1560,lx0=600,lx1=700,top=640;
-  const tFall=.55,tLand=1.2;
-  // screen shake after landing
-  const sk=P(T,tLand,.35),amp=sk>0&&sk<1?(1-sk)*18:0;
+  const h=L[0].s,G=1560,lx0=410,lx1=670,top=600,cx=540,FS=1.15;
+  const rungs=[];for(let y=G-70;y>top+10;y-=92)rungs.push(y);
+  const bi=rungs.length-2,by=rungs[bi];           // the rung that breaks
+  const tCrack=.2,tSnap=.45,tLand=1.3,D=tLand-tSnap;
+  const sk=P(T,tLand,.35),amp=sk>0&&sk<1?(1-sk)*16:0;
   g(`transform="translate(${(Math.sin(T*90)*amp).toFixed(1)},${(Math.cos(T*77)*amp).toFixed(1)})"`,()=>{
   bokeh(B1,T);
-  // textual hook: on screen from frame 1
-  title(540,400,'THIS FALL',{size:128});
-  fadeIn(h+.7,()=>{label(540,478,'IS THE BEST THING THAT COULD',{size:24,op:.85});label(540,516,'EVER HAPPEN TO YOU',{size:24,op:.85});},{d:.3,dy:10});
-  // tall ladder
-  add(`<g filter="url(#glowS)" stroke="#fff" stroke-width="5" stroke-linecap="round"><line x1="${lx0}" y1="${G}" x2="${lx0}" y2="${top}"/><line x1="${lx1}" y1="${G}" x2="${lx1}" y2="${top}"/></g>`);
-  let r='';for(let y=G-60;y>top+10;y-=72)r+=`<line x1="${lx0}" y1="${y}" x2="${lx1}" y2="${y}"/>`;
-  add(`<g stroke="#fff" stroke-opacity=".75" stroke-width="4" stroke-linecap="round">${r}</g>`);
+  title(540,380,'THIS FALL',{size:128});
+  fadeIn(h+.7,()=>{label(540,458,'IS THE BEST THING THAT COULD',{size:24,op:.85});label(540,496,'EVER HAPPEN TO YOU',{size:24,op:.85});},{d:.3,dy:10});
+  // rails + rungs
+  add(`<g filter="url(#glowS)" stroke="#fff" stroke-width="7" stroke-linecap="round"><line x1="${lx0}" y1="${G}" x2="${lx0}" y2="${top}"/><line x1="${lx1}" y1="${G}" x2="${lx1}" y2="${top}"/></g>`);
+  let r='';rungs.forEach((y,i)=>{if(i!==bi)r+=`<line x1="${lx0}" y1="${y}" x2="${lx1}" y2="${y}"/>`;});
+  add(`<g stroke="#fff" stroke-opacity=".8" stroke-width="6" stroke-linecap="round">${r}</g>`);
+  // breaking rung: crack, then the two halves swing down from the rails
+  const sn=P(T,tSnap,.5),sw=sn>0?Math.min(78,78*(1-Math.exp(-sn*8)*Math.cos(sn*10))):0;
+  g(`transform="rotate(${sw.toFixed(2)},${lx0},${by})"`,()=>add(`<line x1="${lx0}" y1="${by}" x2="${cx-2}" y2="${by}" stroke="#fff" stroke-width="6" stroke-linecap="round"/>`));
+  g(`transform="rotate(${(-sw).toFixed(2)},${lx1},${by})"`,()=>add(`<line x1="${cx+2}" y1="${by}" x2="${lx1}" y2="${by}" stroke="#fff" stroke-width="6" stroke-linecap="round"/>`));
+  if(T>=tCrack&&T<tSnap)add(`<path d="M${cx-14},${by-8} L${cx},${by+3} L${cx+10},${by-6} L${cx+20},${by+7}" stroke="#fff" stroke-width="3.5" fill="none"/>`);
+  const fl=P(T,tSnap,.3);if(fl>0&&fl<1)add(`<g stroke="#fff" stroke-opacity="${1-fl}" stroke-width="3" stroke-linecap="round">${[0,1,2,3,4,5].map(k=>{const a=k*Math.PI/3+.4,r1=12+40*fl,r2=30+60*fl;return `<line x1="${cx+r1*Math.cos(a)}" y1="${by+r1*Math.sin(a)}" x2="${cx+r2*Math.cos(a)}" y2="${by+r2*Math.sin(a)}"/>`}).join('')}</g>`);
+  [[cx-40,-1],[cx+34,1]].forEach(([x,d],k)=>{const q=P(T,tSnap,.9);if(q>0&&q<1)add(`<rect x="${x+d*30*q}" y="${by+(G-by)*q*q}" width="8" height="5" rx="2" fill="#fff" fill-opacity="${.8*(1-q)}" transform="rotate(${q*400*d},${x+d*30*q},${by+(G-by)*q*q})"/>`);});
   ground(G,1);
-  // the figure: wobble, fall, land
-  const px0=650,py0=top+4;
-  if(T<tFall){const w=Math.sin(T*26)*(4+T*22);
-    g(`transform="rotate(${w.toFixed(2)},${px0},${py0})"`,()=>person(px0,py0,.8,{ring:false,arm:[-60,-40]}));
-    add(`<g opacity=".8">${[0,1].map(i=>`<path d="M${px0-70-i*14},${py0-120+i*20} q-10,10 0,20" stroke="#fff" stroke-width="3" fill="none" stroke-linecap="round"/>`).join('')}</g>`);
+  // the figure
+  if(T<tSnap){const w=T>tCrack?Math.sin(T*40)*5:Math.sin(T*6)*1.5;
+    g(`transform="rotate(${w.toFixed(2)},${cx},${by})"`,()=>person(cx,by,FS,{ring:false,arm:[40,-60]}));
   }else{
-    const f=P(T,tFall,tLand-tFall),ff=f*f;
-    const x=lerp(px0,400,eo(f)),y=lerp(py0,G,ff),ang=-100*eo(f);
-    if(f<1){add(`<g stroke="#fff" stroke-opacity=".5" stroke-width="3" stroke-linecap="round">${[-24,0,24].map(o=>`<line x1="${x+o}" y1="${y-190}" x2="${x+o}" y2="${y-190-120*f}"/>`).join('')}</g>`);}
-    g(`transform="rotate(${ang.toFixed(2)},${x},${y-40})"`,()=>person(x,y-(f<1?0:-0),.8,{ring:false,arm:f<1?[60,-70]:null}));
-    if(f>=1){const rp=P(T,tLand,.7);add(`<ellipse cx="${x-30}" cy="${G}" rx="${60+240*eo(rp)}" ry="${10+30*eo(rp)}" fill="none" stroke="#fff" stroke-opacity="${.7*(1-rp)}" stroke-width="3"/>`);
-      [-1,1].forEach(d=>[0,1,2].forEach(i=>{const q=eo(rp);add(`<circle cx="${x-30+d*(50+i*40)*q}" cy="${G-10-(30+i*12)*Math.sin(Math.PI*q)}" r="${5-i}" fill="#fff" fill-opacity="${.7*(1-rp)}"/>`);}));}
+    const f=P(T,tSnap,D),y=lerp(by,G,f*f),jit=f<1?Math.sin(T*70)*4:0;
+    const sq=f>=1?1-.22*Math.exp(-P(T,tLand,1)*8)*Math.cos(P(T,tLand,1)*30):1;
+    if(f<1){add(`<g stroke="#fff" stroke-opacity=".5" stroke-width="3" stroke-linecap="round">${[-45,0,45].map(o=>`<line x1="${cx+o}" y1="${y-230}" x2="${cx+o}" y2="${y-230-180*f}"/>`).join('')}</g>`);
+      // friction sparks at the rails
+      for(let k=0;k<6;k++){const ph=(T*9+k*.37)%1,sd=k%2?1:-1,rx=sd>0?lx1:lx0;add(`<circle cx="${rx+sd*ph*70}" cy="${y-90+ph*40-Math.sin(ph*Math.PI)*30}" r="${5-ph*3}" fill="#fff" fill-opacity="${1-ph}"/>`);}}
+    const armUp=Math.sin(T*30)>0?[-55,-75]:[55,-75];
+    g(`transform="translate(${cx+jit},${y}) scale(${(2-sq).toFixed(3)},${sq.toFixed(3)}) translate(${-(cx+jit)},${-y})"`,()=>person(cx+jit,y,FS,{ring:false,arm:f<1?armUp:null}));
+    if(f>=1){const rp=P(T,tLand,.7);add(`<ellipse cx="${cx}" cy="${G}" rx="${70+240*eo(rp)}" ry="${10+30*eo(rp)}" fill="none" stroke="#fff" stroke-opacity="${.7*(1-rp)}" stroke-width="3"/>`);
+      const st=P(T,tLand+.15,.3);if(st>0)for(let k=0;k<3;k++){const a=T*5+k*2.09;add(`<circle cx="${cx+60*Math.cos(a)}" cy="${G-205+14*Math.sin(a)}" r="6" fill="#fff" opacity="${st}" filter="url(#glowS)"/>`);}}
+    // rung rattles
+    rungs.forEach(yr=>{if(yr>by){const tf=tSnap+D*Math.sqrt((yr-by)/(G-by));cue('tick',tf,.5);}});
   }
-  cue('tick',.1,.6);cue('tick',.32,.6);cue('whoosh',tFall+.15,1);cue('drop',tFall,.8);cue('thud',tLand,1);
-  pop(tLand+.2,400,G-210,()=>pillShape(400,G-210,'FAILS: 1',{size:20,dark:true}),{snd:'pop'});
-  pop(tLand+.75,560,G-300,()=>qmark(560,G-290,64,.9),{vol:.5});
+  cue('tick',tCrack,.7);cue('nope',tSnap,.6);cue('drop',tSnap,.8);cue('thud',tLand,1);
+  pop(tLand+.25,830,G-240,()=>pillShape(830,G-240,'FAILS: 1',{size:20,dark:true}),{snd:'pop'});
   });
 },{zoom:.06,fx:540,fy:900});
 
