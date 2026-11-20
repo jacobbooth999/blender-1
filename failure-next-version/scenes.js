@@ -57,18 +57,38 @@ scene(0,l(0)-.3,()=>{
   });
 },{zoom:.06,fx:540,fy:900});
 
-/* A — what if failing is one of the best things (L0) */
+/* A — failing doesn't determine your outcome; only your bounce back does (L1) */
 scene(l(0)-.3,l(1)-.25,()=>{
-  const a=l(0),G=1400;
+  const a=l(0),b=a+2.2,G=1400;
   bokeh(B1,T);
-  fadeIn(a-.3,()=>label(540,470,'WHAT IF I TOLD YOU',{size:26,op:.75}));
-  pop(a+1.0,540,600,()=>title(540,630,'FAILING',{size:150}),{snd:'hit'});
-  fadeIn(a+2.0,()=>{label(540,720,'IS ONE OF THE BEST THINGS',{size:24,op:.8});label(540,760,'THAT CAN HAPPEN TO YOU',{size:24,op:.8});});
-  // F grade card tilting, then a glowing check
-  pop(a+1.4,540,1010,()=>{const r=-8+Math.sin(T*1.5)*2;g(`transform="rotate(${r},540,1010)"`,()=>{box(420,870,240,280,{r:20,op:.85});label(540,915,'GRADE',{size:16,op:.5});
-    add(`<text x="540" y="1080" font-size="150" font-weight="800" fill="#fff" fill-opacity=".9" text-anchor="middle" filter="url(#glowS)">F</text>`);});});
-  pop(a+3.4,650,880,()=>check(650,880,2.2),{snd:'pop'});cue('win',a+3.4,.4);
-  ground(G,eo(P(T,0,.8)));person(270,G,.8,{spot:true,arm:[55,-40]});
+  // part 1: failing doesn't determine your outcome
+  fadeIn(a-.25,()=>label(540,470,"FAILING DOESN'T DETERMINE",{size:26,op:.75}),{outAt:b-.25});
+  pop(a+.75,540,580,()=>title(540,600,'YOUR OUTCOME.',{size:100}),{snd:'hit',outAt:b-.25});
+  const p1=1-P(T,b-.25,.3);
+  if(p1>0)g(`opacity="${p1}"`,()=>{
+    pop(a+.2,320,960,()=>{const r=-7+Math.sin(T*1.5)*2;g(`transform="rotate(${r},320,960)"`,()=>{box(210,830,220,260,{r:20,op:.85});label(320,875,'FAIL',{size:16,op:.5});
+      add(`<text x="320" y="1030" font-size="140" font-weight="800" fill="#fff" fill-opacity=".9" text-anchor="middle" filter="url(#glowS)">F</text>`);});},{snd:'pop',vol:.6});
+    drawPath('M455,960 L625,960',eo(P(T,a+.6,.5)),{sw:3.5,dash:'10 9',glow:null,op:.7});
+    fadeIn(a+1.0,()=>add(`<path d="M612,944 L630,960 L612,976" stroke="#fff" stroke-opacity=".7" stroke-width="3.5" fill="none" stroke-linecap="round"/>`));
+    pop(a+.9,760,960,()=>{box(650,830,220,260,{r:20,op:.95});label(760,875,'OUTCOME',{size:16,op:.6});qmark(760,1025,110,1);},{snd:'pop',vol:.6});
+    cross(540,960,1.3,.95,P(T,a+1.5,.25));});
+  cue('nope',a+1.5,.6);
+  // part 2: only your bounce back does
+  fadeIn(b-.1,()=>label(540,470,'ONLY YOUR',{size:28,op:.8}));
+  pop(b+.45,540,590,()=>title(540,615,'BOUNCE BACK',{size:102}),{snd:'hit'});
+  // the figure bounces back up
+  const sq=P(T,b,.25),j=P(T,b+.25,.75),j2=P(T,b+1.0,.45);
+  let y=G,scx=1,scy=1;
+  if(j>0&&j<1){y=G-380*4*j*(1-j);scx=.9;scy=1.12;}
+  else if(j>=1&&j2<1){y=G-90*4*j2*(1-j2);if(j2<.12){scx=1.18;scy=.8;}}
+  else if(sq>0&&j<=0){scx=1+.2*eo(sq);scy=1-.22*eo(sq);}
+  if(j>0){let tr='';for(let k=0;k<=24;k++){const u=k/24*Math.min(j,1);tr+=`<circle cx="${540}" cy="${G-380*4*u*(1-u)-60}" r="3" fill="#fff" fill-opacity="${.15+.5*(k/24)}"/>`;}if(j<1)add(tr);
+    if(j<.5)add(`<g stroke="#fff" stroke-width="5" stroke-linecap="round" fill="none" opacity="${1-j*2}" filter="url(#glowS)">${[0,1].map(i=>`<path d="M${640},${y-60-i*36} l22,-22 l22,22"/>`).join('')}</g>`);}
+  const lr=P(T,b+1.0,.6);if(lr>0&&lr<1)add(`<ellipse cx="540" cy="${G}" rx="${70+200*eo(lr)}" ry="${12+24*eo(lr)}" fill="none" stroke="#fff" stroke-opacity="${.6*(1-lr)}" stroke-width="3"/>`);
+  cue('whoosh',b+.25,.7);cue('thud',b+1.0,.6);cue('win',b+1.05,.5);
+  ground(G,eo(P(T,a-.3,.8)));
+  spotlight(540,G,.9,1);
+  g(`transform="translate(540,${y}) scale(${scx},${scy}) translate(-540,${-y})"`,()=>person(540,y,.9,{ring:j<=0||j2>=1,arm:j>0&&j2<1?[50,-70]:null}));
 },{zoom:.04});
 
 /* B — think about it (L1) */
