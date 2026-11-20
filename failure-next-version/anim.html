@@ -91,7 +91,7 @@ function qmark(x,y,size=56,op=1){add(`<text x="${x}" y="${y}" font-size="${size}
 /* ============ SCENES — "FAILURE / THE NEXT VERSION" ============ */
 const S=[];
 function scene(s,e,draw,cam={}){S.push({s,e,draw,cam});}
-const l=i=>L[i].s, le=i=>L[i].e;
+const l=i=>L[i+1].s, le=i=>L[i+1].e;  // L[0] is the hook line
 const B1=[[170,420,150,.05],[930,1480,190,.045],[860,300,90,.04],[120,1650,120,.035]];
 
 /* extra primitives */
@@ -103,8 +103,43 @@ function bulb(x,y,s=1,op=1){add(`<g opacity="${op}" filter="url(#glow)" stroke="
 function xTile(x,y,s=60,op=.9){add(`<g opacity="${op}"><rect x="${x-s/2}" y="${y-s/2}" width="${s}" height="${s}" rx="${s*.18}" fill="#0b0b0b" stroke="#fff" stroke-width="3" filter="url(#glowS)"/></g>`);cross(x,y,s/80,op,1);}
 function strike(x1,x2,y,p){if(p>0)add(`<line x1="${x1}" y1="${y}" x2="${lerp(x1,x2,eo(p))}" y2="${y}" stroke="#fff" stroke-width="4" stroke-linecap="round"/>`);}
 
+/* HOOK — figure falls off a tall ladder (L[0], first 3 s) */
+scene(0,l(0)-.3,()=>{
+  const h=L[0].s,G=1560,lx0=600,lx1=700,top=640;
+  const tFall=.55,tLand=1.2;
+  // screen shake after landing
+  const sk=P(T,tLand,.35),amp=sk>0&&sk<1?(1-sk)*18:0;
+  g(`transform="translate(${(Math.sin(T*90)*amp).toFixed(1)},${(Math.cos(T*77)*amp).toFixed(1)})"`,()=>{
+  bokeh(B1,T);
+  // textual hook: on screen from frame 1
+  title(540,400,'THIS FALL',{size:128});
+  fadeIn(h+.7,()=>{label(540,478,'IS THE BEST THING THAT COULD',{size:24,op:.85});label(540,516,'EVER HAPPEN TO YOU',{size:24,op:.85});},{d:.3,dy:10});
+  // tall ladder
+  add(`<g filter="url(#glowS)" stroke="#fff" stroke-width="5" stroke-linecap="round"><line x1="${lx0}" y1="${G}" x2="${lx0}" y2="${top}"/><line x1="${lx1}" y1="${G}" x2="${lx1}" y2="${top}"/></g>`);
+  let r='';for(let y=G-60;y>top+10;y-=72)r+=`<line x1="${lx0}" y1="${y}" x2="${lx1}" y2="${y}"/>`;
+  add(`<g stroke="#fff" stroke-opacity=".75" stroke-width="4" stroke-linecap="round">${r}</g>`);
+  ground(G,1);
+  // the figure: wobble, fall, land
+  const px0=650,py0=top+4;
+  if(T<tFall){const w=Math.sin(T*26)*(4+T*22);
+    g(`transform="rotate(${w.toFixed(2)},${px0},${py0})"`,()=>person(px0,py0,.8,{ring:false,arm:[-60,-40]}));
+    add(`<g opacity=".8">${[0,1].map(i=>`<path d="M${px0-70-i*14},${py0-120+i*20} q-10,10 0,20" stroke="#fff" stroke-width="3" fill="none" stroke-linecap="round"/>`).join('')}</g>`);
+  }else{
+    const f=P(T,tFall,tLand-tFall),ff=f*f;
+    const x=lerp(px0,400,eo(f)),y=lerp(py0,G,ff),ang=-100*eo(f);
+    if(f<1){add(`<g stroke="#fff" stroke-opacity=".5" stroke-width="3" stroke-linecap="round">${[-24,0,24].map(o=>`<line x1="${x+o}" y1="${y-190}" x2="${x+o}" y2="${y-190-120*f}"/>`).join('')}</g>`);}
+    g(`transform="rotate(${ang.toFixed(2)},${x},${y-40})"`,()=>person(x,y-(f<1?0:-0),.8,{ring:false,arm:f<1?[60,-70]:null}));
+    if(f>=1){const rp=P(T,tLand,.7);add(`<ellipse cx="${x-30}" cy="${G}" rx="${60+240*eo(rp)}" ry="${10+30*eo(rp)}" fill="none" stroke="#fff" stroke-opacity="${.7*(1-rp)}" stroke-width="3"/>`);
+      [-1,1].forEach(d=>[0,1,2].forEach(i=>{const q=eo(rp);add(`<circle cx="${x-30+d*(50+i*40)*q}" cy="${G-10-(30+i*12)*Math.sin(Math.PI*q)}" r="${5-i}" fill="#fff" fill-opacity="${.7*(1-rp)}"/>`);}));}
+  }
+  cue('tick',.1,.6);cue('tick',.32,.6);cue('whoosh',tFall+.15,1);cue('drop',tFall,.8);cue('thud',tLand,1);
+  pop(tLand+.2,400,G-210,()=>pillShape(400,G-210,'FAILS: 1',{size:20,dark:true}),{snd:'pop'});
+  pop(tLand+.75,560,G-300,()=>qmark(560,G-290,64,.9),{vol:.5});
+  });
+},{zoom:.06,fx:540,fy:900});
+
 /* A — what if failing is one of the best things (L0) */
-scene(0,l(1)-.25,()=>{
+scene(l(0)-.3,l(1)-.25,()=>{
   const a=l(0),G=1400;
   bokeh(B1,T);
   fadeIn(a-.3,()=>label(540,470,'WHAT IF I TOLD YOU',{size:26,op:.75}));
@@ -346,7 +381,7 @@ function render(t,dry=false){
   add(`<image href="${GRAINS[Math.floor(t*15)%4]}" width="${W}" height="${H}" opacity=".055" style="mix-blend-mode:screen" preserveAspectRatio="none"/>`);
   add(`<rect width="${W}" height="${H}" fill="url(#edge)"/>`);
   const fin=P(t,END-.6,.6);if(fin>0)add(`<rect width="${W}" height="${H}" fill="#000" opacity="${fin}"/>`);
-  const fin0=1-P(t,0,.25);if(fin0>0)add(`<rect width="${W}" height="${H}" fill="#000" opacity="${fin0}"/>`);
+  const fin0=0;if(fin0>0)add(`<rect width="${W}" height="${H}" fill="#000" opacity="${fin0}"/>`);
   if(!dry)document.getElementById('s').innerHTML=DEFS+out;
 }
 window.render=render;

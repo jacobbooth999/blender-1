@@ -3,7 +3,7 @@ import json, wave, os, numpy as np
 H=os.path.dirname(os.path.abspath(__file__)); R=os.path.join(H,'..')
 SR=44100; rng=np.random.default_rng(3)
 C=json.load(open(os.path.join(H,'cues.json'))); END=C['end']+.3
-TM=json.load(open(os.path.join(R,'voice','timing.json'))); Ls=[(l['start'],l['end']) for l in TM['lines']]
+TM=json.load(open(os.path.join(R,'voice','timing.json'))); Ls=[(l['start'],l['end']) for l in TM['lines']]; Ls=Ls[1:]  # L[0] is the hook line
 N=int(END*SR); t_all=np.arange(N)/SR
 def env(n,a,d):  # attack seconds, exp decay time-constant
     t=np.arange(n)/SR; return np.minimum(1,t/max(a,1e-4))*np.exp(-t/d)

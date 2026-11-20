@@ -1,138 +1,144 @@
 {
- "duration": 63.783,
+ "duration": 66.609,
  "voice": "af_heart",
  "lines": [
   {
    "i": 0,
-   "text": "What if I told you that failing is actually one of the best things that can happen to you?",
-   "start": 0.6,
-   "end": 5.188
+   "text": "This fall, is the best thing that could ever happen to you.",
+   "start": 0.12,
+   "end": 2.976
   },
   {
    "i": 1,
-   "text": "Think about it.",
-   "start": 5.888,
-   "end": 6.738
+   "text": "What if I told you that failing is actually one of the best things that can happen to you?",
+   "start": 3.426,
+   "end": 8.014
   },
   {
    "i": 2,
-   "text": "Every time you fail, you learn something.",
-   "start": 7.438,
-   "end": 9.519
+   "text": "Think about it.",
+   "start": 8.714,
+   "end": 9.564
   },
   {
    "i": 3,
-   "text": "Every time you fall, you get another opportunity to stand back up.",
-   "start": 9.869,
-   "end": 13.527
+   "text": "Every time you fail, you learn something.",
+   "start": 10.264,
+   "end": 12.346
   },
   {
    "i": 4,
-   "text": "But most people never realise this.",
-   "start": 14.227,
-   "end": 16.063
+   "text": "Every time you fall, you get another opportunity to stand back up.",
+   "start": 12.696,
+   "end": 16.353
   },
   {
    "i": 5,
-   "text": "They fail once, and suddenly they think they're not good enough.",
-   "start": 16.463,
-   "end": 19.598
+   "text": "But most people never realise this.",
+   "start": 17.053,
+   "end": 18.889
   },
   {
    "i": 6,
-   "text": "They try something difficult, struggle, and decide it's not for them.",
-   "start": 19.948,
-   "end": 23.731
+   "text": "They fail once, and suddenly they think they're not good enough.",
+   "start": 19.289,
+   "end": 22.424
   },
   {
    "i": 7,
-   "text": "But look at anyone who's achieved something extraordinary.",
-   "start": 24.431,
-   "end": 27.488
+   "text": "They try something difficult, struggle, and decide it's not for them.",
+   "start": 22.774,
+   "end": 26.557
   },
   {
    "i": 8,
-   "text": "They've failed.",
-   "start": 27.938,
-   "end": 28.754
+   "text": "But look at anyone who's achieved something extraordinary.",
+   "start": 27.257,
+   "end": 30.314
   },
   {
    "i": 9,
-   "text": "They've been rejected.",
-   "start": 29.004,
-   "end": 30.193
+   "text": "They've failed.",
+   "start": 30.764,
+   "end": 31.58
   },
   {
    "i": 10,
-   "text": "They've made mistakes.",
-   "start": 30.443,
-   "end": 31.632
+   "text": "They've been rejected.",
+   "start": 31.83,
+   "end": 33.019
   },
   {
    "i": 11,
-   "text": "The difference?",
-   "start": 32.332,
-   "end": 33.175
+   "text": "They've made mistakes.",
+   "start": 33.269,
+   "end": 34.458
   },
   {
    "i": 12,
-   "text": "They didn't let failure become their identity.",
-   "start": 33.775,
-   "end": 35.983
+   "text": "The difference?",
+   "start": 35.158,
+   "end": 36.001
   },
   {
    "i": 13,
-   "text": "They used it as a lesson.",
-   "start": 36.333,
-   "end": 37.778
+   "text": "They didn't let failure become their identity.",
+   "start": 36.601,
+   "end": 38.81
   },
   {
    "i": 14,
-   "text": "Because failure doesn't mean you're losing.",
-   "start": 38.478,
-   "end": 40.431
+   "text": "They used it as a lesson.",
+   "start": 39.16,
+   "end": 40.604
   },
   {
    "i": 15,
-   "text": "It means you're trying something that challenges you.",
-   "start": 40.731,
-   "end": 43.102
+   "text": "Because failure doesn't mean you're losing.",
+   "start": 41.304,
+   "end": 43.257
   },
   {
    "i": 16,
-   "text": "So stop being afraid of getting things wrong.",
-   "start": 43.802,
-   "end": 45.999
+   "text": "It means you're trying something that challenges you.",
+   "start": 43.557,
+   "end": 45.928
   },
   {
    "i": 17,
-   "text": "Be afraid of never trying in the first place.",
-   "start": 46.349,
-   "end": 48.616
+   "text": "So stop being afraid of getting things wrong.",
+   "start": 46.628,
+   "end": 48.825
   },
   {
    "i": 18,
-   "text": "One day, the things you're struggling with today, could become the things you're most proud of overcoming.",
-   "start": 49.416,
-   "end": 54.394
+   "text": "Be afraid of never trying in the first place.",
+   "start": 49.175,
+   "end": 51.442
   },
   {
    "i": 19,
-   "text": "Failure isn't the end of your story.",
-   "start": 55.294,
-   "end": 57.402
+   "text": "One day, the things you're struggling with today, could become the things you're most proud of overcoming.",
+   "start": 52.242,
+   "end": 57.22
   },
   {
    "i": 20,
-   "text": "It's how the next version of you is built.",
-   "start": 57.902,
-   "end": 59.892
+   "text": "Failure isn't the end of your story.",
+   "start": 58.12,
+   "end": 60.228
   },
   {
    "i": 21,
+   "text": "It's how the next version of you is built.",
+   "start": 60.728,
+   "end": 62.719
+  },
+  {
+   "i": 22,
    "text": "The next version.",
-   "start": 60.792,
-   "end": 61.783
+   "start": 63.619,
+   "end": 64.609
   }
  ]
 }

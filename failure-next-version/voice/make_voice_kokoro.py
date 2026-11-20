@@ -4,7 +4,7 @@ from kokoro_onnx import Kokoro
 here=os.path.dirname(os.path.abspath(__file__))
 k=Kokoro(sys.argv[1],sys.argv[2]); voice=sys.argv[3] if len(sys.argv)>3 else 'af_heart'; speed=float(sys.argv[4]) if len(sys.argv)>4 else .95
 lines=json.load(open(os.path.join(here,'lines.json')))
-lead=.6; parts=[]; t=lead; timing=[]; SR=24000
+lead=float(os.environ.get('LEAD','.6')); parts=[]; t=lead; timing=[]; SR=24000
 parts.append(np.zeros(int(lead*SR)))
 for i,ln in enumerate(lines):
     txt,gap=ln[0],ln[1]; sp=ln[2] if len(ln)>2 else speed

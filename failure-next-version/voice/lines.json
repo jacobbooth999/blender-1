@@ -1,24 +1,97 @@
 [
- ["What if I told you that failing is actually one of the best things that can happen to you?", 0.7],
- ["Think about it.", 0.7],
- ["Every time you fail, you learn something.", 0.35],
- ["Every time you fall, you get another opportunity to stand back up.", 0.7],
- ["But most people never realise this.", 0.4],
- ["They fail once, and suddenly they think they're not good enough.", 0.35],
- ["They try something difficult, struggle, and decide it's not for them.", 0.7],
- ["But look at anyone who's achieved something extraordinary.", 0.45],
- ["They've failed.", 0.25],
- ["They've been rejected.", 0.25],
- ["They've made mistakes.", 0.7],
- ["The difference?", 0.6],
- ["They didn't let failure become their identity.", 0.35],
- ["They used it as a lesson.", 0.7],
- ["Because failure doesn't mean you're losing.", 0.3],
- ["It means you're trying something that challenges you.", 0.7],
- ["So stop being afraid of getting things wrong.", 0.35],
- ["Be afraid of never trying in the first place.", 0.8],
- ["One day, the things you're struggling with today, could become the things you're most proud of overcoming.", 0.9],
- ["Failure isn't the end of your story.", 0.5, 0.88],
- ["It's how the next version of you is built.", 0.9, 0.88],
- ["The next version.", 2.0, 0.9]
+ [
+  "This fall, is the best thing that could ever happen to you.",
+  0.45
+ ],
+ [
+  "What if I told you that failing is actually one of the best things that can happen to you?",
+  0.7
+ ],
+ [
+  "Think about it.",
+  0.7
+ ],
+ [
+  "Every time you fail, you learn something.",
+  0.35
+ ],
+ [
+  "Every time you fall, you get another opportunity to stand back up.",
+  0.7
+ ],
+ [
+  "But most people never realise this.",
+  0.4
+ ],
+ [
+  "They fail once, and suddenly they think they're not good enough.",
+  0.35
+ ],
+ [
+  "They try something difficult, struggle, and decide it's not for them.",
+  0.7
+ ],
+ [
+  "But look at anyone who's achieved something extraordinary.",
+  0.45
+ ],
+ [
+  "They've failed.",
+  0.25
+ ],
+ [
+  "They've been rejected.",
+  0.25
+ ],
+ [
+  "They've made mistakes.",
+  0.7
+ ],
+ [
+  "The difference?",
+  0.6
+ ],
+ [
+  "They didn't let failure become their identity.",
+  0.35
+ ],
+ [
+  "They used it as a lesson.",
+  0.7
+ ],
+ [
+  "Because failure doesn't mean you're losing.",
+  0.3
+ ],
+ [
+  "It means you're trying something that challenges you.",
+  0.7
+ ],
+ [
+  "So stop being afraid of getting things wrong.",
+  0.35
+ ],
+ [
+  "Be afraid of never trying in the first place.",
+  0.8
+ ],
+ [
+  "One day, the things you're struggling with today, could become the things you're most proud of overcoming.",
+  0.9
+ ],
+ [
+  "Failure isn't the end of your story.",
+  0.5,
+  0.88
+ ],
+ [
+  "It's how the next version of you is built.",
+  0.9,
+  0.88
+ ],
+ [
+  "The next version.",
+  2.0,
+  0.9
+ ]
 ]
