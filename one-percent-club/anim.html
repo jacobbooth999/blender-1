@@ -71,14 +71,20 @@ function ground(y,p=1,{op=.55,x1=-10,x2=W+10,dash=true}={}){if(p<=0)return;const
   add(`<clipPath id="${id}"><rect x="${x1}" y="${y-10}" width="${(x2-x1)*p}" height="20"/></clipPath><line x1="${x1}" y1="${y}" x2="${x2}" y2="${y}" stroke="#fff" stroke-opacity="${op}" stroke-width="2.5" ${dash?'stroke-dasharray="12 9"':''} clip-path="url(#${id})"/>`);}
 function spotlight(x,gy,s=1,op=1){const top=gy-620*s,wt=40*s,wb=135*s;
   add(`<g opacity="${op}"><g filter="url(#blur12)"><polygon points="${x-wt},${top} ${x+wt},${top} ${x+wb},${gy} ${x-wb},${gy}" fill="url(#cone)"/></g><ellipse cx="${x}" cy="${gy+4}" rx="${120*s}" ry="${22*s}" fill="url(#bk)" fill-opacity=".14"/></g>`);}
-function person(x,gy,s=1,{arm=null,op=1,ring=true,spot=false,bob=0}={}){
+function person(x,gy,s=1,{arm=null,arm2=null,arms=true,op=1,ring=true,spot=false,bob=0}={}){
   if(spot)spotlight(x,gy,s,typeof spot==='number'?spot:1);
   if(ring)add(`<ellipse cx="${x}" cy="${gy+4}" rx="${62*s}" ry="${13*s}" fill="none" stroke="#fff" stroke-opacity="${.35*op}" stroke-width="2" stroke-dasharray="7 6"/>`);
-  const by=gy-bob,bw=32*s,bh=78*s,r=30*s;
+  const by=gy-bob,bw=32*s,bh=78*s,r=30*s,shY=by-bh+22*s;
   let p=`<g ${s>.5?'filter="url(#glow)"':'filter="url(#glowS)"'} opacity="${op}">`;
   p+=`<path d="M${x-bw},${by} L${x-bw},${by-bh+r} Q${x-bw},${by-bh} ${x-bw+r},${by-bh} L${x+bw-r},${by-bh} Q${x+bw},${by-bh} ${x+bw},${by-bh+r} L${x+bw},${by} Z" fill="#efefef"/>`;
   p+=`<circle cx="${x}" cy="${by-bh-34*s}" r="${25*s}" fill="#efefef"/>`;
-  if(arm){const[ax,ay]=arm;p+=`<path d="M${x+bw*.4*Math.sign(ax||1)},${by-bh+22*s} L${x+ax*s},${by-bh+22*s+ay*s}" stroke="#efefef" stroke-width="${15*s}" stroke-linecap="round" fill="none"/>`;}
+  // two arms: a posed arm (arm=[dx,dy] from the shoulder line) and the other hanging at the side unless arm2 is given
+  const limb=(side,[ax,ay])=>{const sx=x+side*bw*.62,ex=x+ax*s,ey=shY+ay*s,mx=(sx+ex)/2+side*7*s,my=(shY+ey)/2;
+    const d=`M${sx.toFixed(1)},${shY.toFixed(1)} Q${mx.toFixed(1)},${my.toFixed(1)} ${ex.toFixed(1)},${ey.toFixed(1)}`;
+    return `<path d="${d}" stroke="#0b0b0b" stroke-width="${(13*s+5).toFixed(1)}" stroke-linecap="round" fill="none"/><path d="${d}" stroke="#efefef" stroke-width="${(13*s).toFixed(1)}" stroke-linecap="round" fill="none"/>`;};
+  if(arms){const side=arm?Math.sign(arm[0]||1):1;
+    p+=limb(side,arm||[40,58]);
+    p+=limb(-side,arm2||[-side*40,58]);}
   add(p+'</g>');}
 function orb(x,y,r=7,op=1){add(`<g opacity="${op}"><circle cx="${x}" cy="${y}" r="${r*6}" fill="url(#bk)" fill-opacity=".18"/><circle cx="${x}" cy="${y}" r="${r}" fill="#fff" filter="url(#glow)"/></g>`);}
 function bokeh(list,drift=0){list.forEach(([x,y,r,o],i)=>add(`<circle cx="${x+Math.sin(drift*.3+i)*20}" cy="${y+Math.cos(drift*.25+i*2)*16}" r="${r}" fill="url(#bk)" fill-opacity="${o}"/>`));}
