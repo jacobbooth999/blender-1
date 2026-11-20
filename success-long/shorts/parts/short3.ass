@@ -1,0 +1,78 @@
+[Script Info]
+ScriptType: v4.00+
+PlayResX: 1080
+PlayResY: 1920
+WrapStyle: 0
+[V4+ Styles]
+Format: Name, Fontname, Fontsize, PrimaryColour, SecondaryColour, OutlineColour, BackColour, Bold, Italic, Underline, StrikeOut, ScaleX, ScaleY, Spacing, Angle, BorderStyle, Outline, Shadow, Alignment, MarginL, MarginR, MarginV, Encoding
+Style: Head,Inter Black,120,&H00FFFFFF,&H00FFFFFF,&H00FFFFFF,&H00000000,0,0,0,0,100,100,3,0,1,0,0,2,40,40,0,1
+Style: Glow,Inter Black,120,&H00FFFFFF,&H00FFFFFF,&H00FFFFFF,&H00000000,0,0,0,0,100,100,3,0,1,10,0,2,40,40,0,1
+Style: Lab,Inter,30,&H00BBBBBB,&H00FFFFFF,&H00000000,&H00000000,1,0,0,0,100,100,7,0,1,0,0,8,40,40,0,1
+Style: Cap,Inter ExtraBold,66,&H00FFFFFF,&H00FFFFFF,&H00000000,&H00000000,0,0,0,0,100,100,1,0,1,4,0,8,70,70,0,1
+Style: Foot,Inter,26,&H00999999,&H00FFFFFF,&H00000000,&H00000000,1,0,0,0,100,100,6,0,1,0,0,8,40,40,0,1
+[Events]
+Format: Layer, Start, End, Style, Name, MarginL, MarginR, MarginV, Effect, Text
+Dialogue: 0,0:00:00.00,0:01:12.94,Lab,,0,0,0,,{\pos(540,232)}CHAPTER 3
+Dialogue: 0,0:00:00.00,0:01:12.94,Glow,,0,0,0,,{\pos(540,468)\fs140\blur14\alpha&HB0&}GET
+Dialogue: 1,0:00:00.00,0:01:12.94,Head,,0,0,0,,{\pos(540,468)\fs140\blur1}GET
+Dialogue: 0,0:00:00.00,0:01:12.94,Glow,,0,0,0,,{\pos(540,544)\fs91\blur14\alpha&HB0&}UNCOMFORTABLE
+Dialogue: 1,0:00:00.00,0:01:12.94,Head,,0,0,0,,{\pos(540,544)\fs91\blur1}UNCOMFORTABLE
+Dialogue: 2,0:00:00.25,0:00:01.39,Cap,,0,0,0,,{\pos(540,1300)\fad(60,60)}IF YOU WANT A DIFFERENT
+Dialogue: 2,0:00:01.39,0:00:02.68,Cap,,0,0,0,,{\pos(540,1300)\fad(60,60)}LIFE, YOU'RE GOING TO HAVE
+Dialogue: 2,0:00:02.68,0:00:03.93,Cap,,0,0,0,,{\pos(540,1300)\fad(60,60)}TO DO THINGS YOU'VE NEVER
+Dialogue: 2,0:00:03.93,0:00:04.52,Cap,,0,0,0,,{\pos(540,1300)\fad(60,60)}DONE BEFORE.
+Dialogue: 2,0:00:05.02,0:00:06.21,Cap,,0,0,0,,{\pos(540,1300)\fad(60,60)}AND THAT'S GOING TO FEEL
+Dialogue: 2,0:00:06.21,0:00:06.90,Cap,,0,0,0,,{\pos(540,1300)\fad(60,60)}UNCOMFORTABLE.
+Dialogue: 2,0:00:07.40,0:00:08.83,Cap,,0,0,0,,{\pos(540,1300)\fad(60,60)}YOU'RE GOING TO EXPERIENCE
+Dialogue: 2,0:00:08.83,0:00:09.38,Cap,,0,0,0,,{\pos(540,1300)\fad(60,60)}REJECTION.
+Dialogue: 2,0:00:09.88,0:00:10.93,Cap,,0,0,0,,{\pos(540,1300)\fad(60,60)}YOU'RE GOING TO MAKE
+Dialogue: 2,0:00:10.93,0:00:11.40,Cap,,0,0,0,,{\pos(540,1300)\fad(60,60)}MISTAKES.
+Dialogue: 2,0:00:11.90,0:00:13.10,Cap,,0,0,0,,{\pos(540,1300)\fad(60,60)}YOU'RE GOING TO TRY THINGS
+Dialogue: 2,0:00:13.10,0:00:13.84,Cap,,0,0,0,,{\pos(540,1300)\fad(60,60)}THAT DON'T WORK.
+Dialogue: 2,0:00:14.34,0:00:15.59,Cap,,0,0,0,,{\pos(540,1300)\fad(60,60)}AND SOMETIMES, DESPITE
+Dialogue: 2,0:00:15.59,0:00:16.78,Cap,,0,0,0,,{\pos(540,1300)\fad(60,60)}GIVING SOMETHING YOUR
+Dialogue: 2,0:00:16.78,0:00:17.98,Cap,,0,0,0,,{\pos(540,1300)\fad(60,60)}ABSOLUTE BEST EFFORT,
+Dialogue: 2,0:00:17.98,0:00:19.17,Cap,,0,0,0,,{\pos(540,1300)\fad(60,60)}YOU'RE STILL GOING TO
+Dialogue: 2,0:00:19.17,0:00:19.46,Cap,,0,0,0,,{\pos(540,1300)\fad(60,60)}FAIL.
+Dialogue: 2,0:00:19.96,0:00:20.83,Cap,,0,0,0,,{\pos(540,1300)\fad(60,60)}BUT FAILURE ISN'T
+Dialogue: 2,0:00:20.83,0:00:21.86,Cap,,0,0,0,,{\pos(540,1300)\fad(60,60)}SOMETHING YOU SHOULD
+Dialogue: 2,0:00:21.86,0:00:22.89,Cap,,0,0,0,,{\pos(540,1300)\fad(60,60)}AUTOMATICALLY AVOID.
+Dialogue: 2,0:00:23.39,0:00:24.73,Cap,,0,0,0,,{\pos(540,1300)\fad(60,60)}IN FACT, FAILURE IS OFTEN
+Dialogue: 2,0:00:24.73,0:00:26.12,Cap,,0,0,0,,{\pos(540,1300)\fad(60,60)}WHERE SOME OF YOUR BIGGEST
+Dialogue: 2,0:00:26.12,0:00:27.08,Cap,,0,0,0,,{\pos(540,1300)\fad(60,60)}LESSONS COME FROM.
+Dialogue: 2,0:00:27.58,0:00:28.72,Cap,,0,0,0,,{\pos(540,1300)\fad(60,60)}THINK ABOUT LEARNING TO
+Dialogue: 2,0:00:28.72,0:00:29.02,Cap,,0,0,0,,{\pos(540,1300)\fad(60,60)}DRIVE.
+Dialogue: 2,0:00:29.52,0:00:31.07,Cap,,0,0,0,,{\pos(540,1300)\fad(60,60)}YOUR FIRST LESSON PROBABLY
+Dialogue: 2,0:00:31.07,0:00:31.97,Cap,,0,0,0,,{\pos(540,1300)\fad(60,60)}WASN'T PERFECT.
+Dialogue: 2,0:00:32.47,0:00:33.50,Cap,,0,0,0,,{\pos(540,1300)\fad(60,60)}YOU MADE MISTAKES.
+Dialogue: 2,0:00:34.00,0:00:34.74,Cap,,0,0,0,,{\pos(540,1300)\fad(60,60)}YOU STALLED.
+Dialogue: 2,0:00:35.24,0:00:36.65,Cap,,0,0,0,,{\pos(540,1300)\fad(60,60)}YOU STRUGGLED WITH THINGS
+Dialogue: 2,0:00:36.65,0:00:37.90,Cap,,0,0,0,,{\pos(540,1300)\fad(60,60)}THAT EVENTUALLY BECAME
+Dialogue: 2,0:00:37.90,0:00:38.69,Cap,,0,0,0,,{\pos(540,1300)\fad(60,60)}SECOND NATURE.
+Dialogue: 2,0:00:39.19,0:00:40.51,Cap,,0,0,0,,{\pos(540,1300)\fad(60,60)}BUT YOU DIDN'T EXPECT TO
+Dialogue: 2,0:00:40.51,0:00:41.72,Cap,,0,0,0,,{\pos(540,1300)\fad(60,60)}BE AN EXPERT AFTER ONE
+Dialogue: 2,0:00:41.72,0:00:42.16,Cap,,0,0,0,,{\pos(540,1300)\fad(60,60)}ATTEMPT.
+Dialogue: 2,0:00:42.66,0:00:43.72,Cap,,0,0,0,,{\pos(540,1300)\fad(60,60)}SO WHY DO YOU EXPECT
+Dialogue: 2,0:00:43.72,0:00:45.11,Cap,,0,0,0,,{\pos(540,1300)\fad(60,60)}EVERYTHING ELSE IN LIFE TO
+Dialogue: 2,0:00:45.11,0:00:46.01,Cap,,0,0,0,,{\pos(540,1300)\fad(60,60)}WORK DIFFERENTLY?
+Dialogue: 2,0:00:46.61,0:00:47.79,Cap,,0,0,0,,{\pos(540,1300)\fad(60,60)}WHY DO YOU EXPECT TO
+Dialogue: 2,0:00:47.79,0:00:49.26,Cap,,0,0,0,,{\pos(540,1300)\fad(60,60)}BECOME SUCCESSFUL WITHOUT
+Dialogue: 2,0:00:49.26,0:00:50.56,Cap,,0,0,0,,{\pos(540,1300)\fad(60,60)}EXPERIENCING SETBACKS?
+Dialogue: 2,0:00:51.16,0:00:52.53,Cap,,0,0,0,,{\pos(540,1300)\fad(60,60)}EVERY MISTAKE GIVES YOU
+Dialogue: 2,0:00:52.53,0:00:53.24,Cap,,0,0,0,,{\pos(540,1300)\fad(60,60)}INFORMATION.
+Dialogue: 2,0:00:53.74,0:00:54.93,Cap,,0,0,0,,{\pos(540,1300)\fad(60,60)}EVERY REJECTION TEACHES
+Dialogue: 2,0:00:54.93,0:00:55.65,Cap,,0,0,0,,{\pos(540,1300)\fad(60,60)}YOU SOMETHING.
+Dialogue: 2,0:00:56.15,0:00:57.70,Cap,,0,0,0,,{\pos(540,1300)\fad(60,60)}EVERY DIFFICULT EXPERIENCE
+Dialogue: 2,0:00:57.70,0:00:59.13,Cap,,0,0,0,,{\pos(540,1300)\fad(60,60)}GIVES YOU AN OPPORTUNITY
+Dialogue: 2,0:00:59.13,0:00:59.78,Cap,,0,0,0,,{\pos(540,1300)\fad(60,60)}TO IMPROVE.
+Dialogue: 2,0:01:00.28,0:01:01.78,Cap,,0,0,0,,{\pos(540,1300)\fad(60,60)}THE IMPORTANT THING ISN'T
+Dialogue: 2,0:01:01.78,0:01:02.80,Cap,,0,0,0,,{\pos(540,1300)\fad(60,60)}AVOIDING FAILURE.
+Dialogue: 2,0:01:03.30,0:01:04.33,Cap,,0,0,0,,{\pos(540,1300)\fad(60,60)}IT'S LEARNING FROM IT.
+Dialogue: 2,0:01:04.83,0:01:05.79,Cap,,0,0,0,,{\pos(540,1300)\fad(60,60)}DON'T LET ONE BAD
+Dialogue: 2,0:01:05.79,0:01:07.09,Cap,,0,0,0,,{\pos(540,1300)\fad(60,60)}EXPERIENCE CONVINCE YOU
+Dialogue: 2,0:01:07.09,0:01:08.45,Cap,,0,0,0,,{\pos(540,1300)\fad(60,60)}THAT YOU'RE INCAPABLE OF
+Dialogue: 2,0:01:08.45,0:01:09.58,Cap,,0,0,0,,{\pos(540,1300)\fad(60,60)}ACHIEVING SOMETHING.
+Dialogue: 2,0:01:10.08,0:01:11.22,Cap,,0,0,0,,{\pos(540,1300)\fad(60,60)}YOU MIGHT JUST BE AT THE
+Dialogue: 2,0:01:11.22,0:01:12.41,Cap,,0,0,0,,{\pos(540,1300)\fad(60,60)}BEGINNING OF THE LEARNING
+Dialogue: 2,0:01:12.41,0:01:12.79,Cap,,0,0,0,,{\pos(540,1300)\fad(60,60)}PROCESS.
+Dialogue: 0,0:00:00.00,0:01:12.94,Foot,,0,0,0,,{\pos(540,1560)}FULL VIDEO ON MY CHANNEL  ·  PART 4/9

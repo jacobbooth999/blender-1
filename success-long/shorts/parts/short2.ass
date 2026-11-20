@@ -1,0 +1,87 @@
+[Script Info]
+ScriptType: v4.00+
+PlayResX: 1080
+PlayResY: 1920
+WrapStyle: 0
+[V4+ Styles]
+Format: Name, Fontname, Fontsize, PrimaryColour, SecondaryColour, OutlineColour, BackColour, Bold, Italic, Underline, StrikeOut, ScaleX, ScaleY, Spacing, Angle, BorderStyle, Outline, Shadow, Alignment, MarginL, MarginR, MarginV, Encoding
+Style: Head,Inter Black,120,&H00FFFFFF,&H00FFFFFF,&H00FFFFFF,&H00000000,0,0,0,0,100,100,3,0,1,0,0,2,40,40,0,1
+Style: Glow,Inter Black,120,&H00FFFFFF,&H00FFFFFF,&H00FFFFFF,&H00000000,0,0,0,0,100,100,3,0,1,10,0,2,40,40,0,1
+Style: Lab,Inter,30,&H00BBBBBB,&H00FFFFFF,&H00000000,&H00000000,1,0,0,0,100,100,7,0,1,0,0,8,40,40,0,1
+Style: Cap,Inter ExtraBold,66,&H00FFFFFF,&H00FFFFFF,&H00000000,&H00000000,0,0,0,0,100,100,1,0,1,4,0,8,70,70,0,1
+Style: Foot,Inter,26,&H00999999,&H00FFFFFF,&H00000000,&H00000000,1,0,0,0,100,100,6,0,1,0,0,8,40,40,0,1
+[Events]
+Format: Layer, Start, End, Style, Name, MarginL, MarginR, MarginV, Effect, Text
+Dialogue: 0,0:00:00.00,0:01:26.21,Lab,,0,0,0,,{\pos(540,232)}CHAPTER 2
+Dialogue: 0,0:00:00.00,0:01:26.21,Glow,,0,0,0,,{\pos(540,463)\fs118\blur14\alpha&HB0&}MOTIVATION
+Dialogue: 1,0:00:00.00,0:01:26.21,Head,,0,0,0,,{\pos(540,463)\fs118\blur1}MOTIVATION
+Dialogue: 0,0:00:00.00,0:01:26.21,Glow,,0,0,0,,{\pos(540,601)\fs140\blur14\alpha&HB0&}IS LYING
+Dialogue: 1,0:00:00.00,0:01:26.21,Head,,0,0,0,,{\pos(540,601)\fs140\blur1}IS LYING
+Dialogue: 2,0:00:00.25,0:00:01.16,Cap,,0,0,0,,{\pos(540,1300)\fad(60,60)}LET'S TALK ABOUT
+Dialogue: 2,0:00:01.16,0:00:01.79,Cap,,0,0,0,,{\pos(540,1300)\fad(60,60)}MOTIVATION.
+Dialogue: 2,0:00:02.29,0:00:03.29,Cap,,0,0,0,,{\pos(540,1300)\fad(60,60)}MOTIVATION FEELS
+Dialogue: 2,0:00:03.29,0:00:03.98,Cap,,0,0,0,,{\pos(540,1300)\fad(60,60)}INCREDIBLE.
+Dialogue: 2,0:00:04.48,0:00:06.10,Cap,,0,0,0,,{\pos(540,1300)\fad(60,60)}YOU WATCH AN INSPIRATIONAL
+Dialogue: 2,0:00:06.10,0:00:07.41,Cap,,0,0,0,,{\pos(540,1300)\fad(60,60)}VIDEO, LISTEN TO SOME
+Dialogue: 2,0:00:07.41,0:00:08.60,Cap,,0,0,0,,{\pos(540,1300)\fad(60,60)}POWERFUL MUSIC, AND
+Dialogue: 2,0:00:08.60,0:00:10.22,Cap,,0,0,0,,{\pos(540,1300)\fad(60,60)}SUDDENLY YOU FEEL LIKE YOU
+Dialogue: 2,0:00:10.22,0:00:11.59,Cap,,0,0,0,,{\pos(540,1300)\fad(60,60)}CAN CHANGE YOUR ENTIRE
+Dialogue: 2,0:00:11.59,0:00:11.90,Cap,,0,0,0,,{\pos(540,1300)\fad(60,60)}LIFE.
+Dialogue: 2,0:00:12.40,0:00:13.66,Cap,,0,0,0,,{\pos(540,1300)\fad(60,60)}YOU PROMISE YOURSELF THAT
+Dialogue: 2,0:00:13.66,0:00:14.46,Cap,,0,0,0,,{\pos(540,1300)\fad(60,60)}TOMORROW WILL BE
+Dialogue: 2,0:00:14.46,0:00:14.97,Cap,,0,0,0,,{\pos(540,1300)\fad(60,60)}DIFFERENT.
+Dialogue: 2,0:00:15.47,0:00:16.65,Cap,,0,0,0,,{\pos(540,1300)\fad(60,60)}YOU'LL WAKE UP EARLIER.
+Dialogue: 2,0:00:17.15,0:00:18.17,Cap,,0,0,0,,{\pos(540,1300)\fad(60,60)}YOU'LL TRAIN HARDER.
+Dialogue: 2,0:00:18.67,0:00:19.65,Cap,,0,0,0,,{\pos(540,1300)\fad(60,60)}YOU'LL WORK LONGER.
+Dialogue: 2,0:00:20.15,0:00:21.43,Cap,,0,0,0,,{\pos(540,1300)\fad(60,60)}YOU'LL FINALLY BECOME THE
+Dialogue: 2,0:00:21.43,0:00:22.46,Cap,,0,0,0,,{\pos(540,1300)\fad(60,60)}PERSON YOU'VE ALWAYS
+Dialogue: 2,0:00:22.46,0:00:23.13,Cap,,0,0,0,,{\pos(540,1300)\fad(60,60)}WANTED TO BE.
+Dialogue: 2,0:00:23.63,0:00:25.08,Cap,,0,0,0,,{\pos(540,1300)\fad(60,60)}BUT THEN TOMORROW ARRIVES.
+Dialogue: 2,0:00:25.58,0:00:26.41,Cap,,0,0,0,,{\pos(540,1300)\fad(60,60)}YOU'RE TIRED.
+Dialogue: 2,0:00:26.91,0:00:27.73,Cap,,0,0,0,,{\pos(540,1300)\fad(60,60)}YOU DON'T FEEL LIKE
+Dialogue: 2,0:00:27.73,0:00:28.56,Cap,,0,0,0,,{\pos(540,1300)\fad(60,60)}GETTING OUT OF BED.
+Dialogue: 2,0:00:29.06,0:00:29.91,Cap,,0,0,0,,{\pos(540,1300)\fad(60,60)}YOU DON'T FEEL LIKE
+Dialogue: 2,0:00:29.91,0:00:30.31,Cap,,0,0,0,,{\pos(540,1300)\fad(60,60)}TRAINING.
+Dialogue: 2,0:00:30.81,0:00:31.75,Cap,,0,0,0,,{\pos(540,1300)\fad(60,60)}YOU DON'T FEEL LIKE
+Dialogue: 2,0:00:31.75,0:00:32.98,Cap,,0,0,0,,{\pos(540,1300)\fad(60,60)}WORKING TOWARDS SOMETHING
+Dialogue: 2,0:00:32.98,0:00:34.17,Cap,,0,0,0,,{\pos(540,1300)\fad(60,60)}THAT MIGHT TAKE YEARS TO
+Dialogue: 2,0:00:34.17,0:00:34.56,Cap,,0,0,0,,{\pos(540,1300)\fad(60,60)}ACHIEVE.
+Dialogue: 2,0:00:35.06,0:00:36.22,Cap,,0,0,0,,{\pos(540,1300)\fad(60,60)}AND SUDDENLY, THAT
+Dialogue: 2,0:00:36.22,0:00:37.64,Cap,,0,0,0,,{\pos(540,1300)\fad(60,60)}MOTIVATION DISAPPEARS.
+Dialogue: 2,0:00:38.14,0:00:39.43,Cap,,0,0,0,,{\pos(540,1300)\fad(60,60)}THIS IS WHERE DISCIPLINE
+Dialogue: 2,0:00:39.43,0:00:39.91,Cap,,0,0,0,,{\pos(540,1300)\fad(60,60)}COMES IN.
+Dialogue: 2,0:00:40.41,0:00:41.74,Cap,,0,0,0,,{\pos(540,1300)\fad(60,60)}DISCIPLINE IS DOING WHAT
+Dialogue: 2,0:00:41.74,0:00:42.95,Cap,,0,0,0,,{\pos(540,1300)\fad(60,60)}NEEDS TO BE DONE, EVEN
+Dialogue: 2,0:00:42.95,0:00:44.27,Cap,,0,0,0,,{\pos(540,1300)\fad(60,60)}WHEN YOU DON'T FEEL LIKE
+Dialogue: 2,0:00:44.27,0:00:44.77,Cap,,0,0,0,,{\pos(540,1300)\fad(60,60)}DOING IT.
+Dialogue: 2,0:00:45.27,0:00:46.61,Cap,,0,0,0,,{\pos(540,1300)\fad(60,60)}IT'S KEEPING PROMISES TO
+Dialogue: 2,0:00:46.61,0:00:47.11,Cap,,0,0,0,,{\pos(540,1300)\fad(60,60)}YOURSELF.
+Dialogue: 2,0:00:47.61,0:00:48.94,Cap,,0,0,0,,{\pos(540,1300)\fad(60,60)}IT'S GOING TO THE GYM WHEN
+Dialogue: 2,0:00:48.94,0:00:50.28,Cap,,0,0,0,,{\pos(540,1300)\fad(60,60)}YOU'D RATHER STAY AT HOME.
+Dialogue: 2,0:00:50.78,0:00:51.85,Cap,,0,0,0,,{\pos(540,1300)\fad(60,60)}IT'S STUDYING WHEN YOUR
+Dialogue: 2,0:00:51.85,0:00:53.07,Cap,,0,0,0,,{\pos(540,1300)\fad(60,60)}FRIENDS ARE PLAYING GAMES.
+Dialogue: 2,0:00:53.57,0:00:54.98,Cap,,0,0,0,,{\pos(540,1300)\fad(60,60)}IT'S WORKING ON YOUR GOALS
+Dialogue: 2,0:00:54.98,0:00:56.28,Cap,,0,0,0,,{\pos(540,1300)\fad(60,60)}WHEN NOBODY IS WATCHING.
+Dialogue: 2,0:00:56.78,0:00:57.82,Cap,,0,0,0,,{\pos(540,1300)\fad(60,60)}AND HERE'S WHY THAT
+Dialogue: 2,0:00:57.82,0:00:58.26,Cap,,0,0,0,,{\pos(540,1300)\fad(60,60)}MATTERS.
+Dialogue: 2,0:00:58.76,0:00:59.82,Cap,,0,0,0,,{\pos(540,1300)\fad(60,60)}YOU CANNOT BUILD A
+Dialogue: 2,0:00:59.82,0:01:01.17,Cap,,0,0,0,,{\pos(540,1300)\fad(60,60)}SUCCESSFUL LIFE BY ONLY
+Dialogue: 2,0:01:01.17,0:01:02.70,Cap,,0,0,0,,{\pos(540,1300)\fad(60,60)}PUTTING EFFORT IN WHEN YOU
+Dialogue: 2,0:01:02.70,0:01:03.53,Cap,,0,0,0,,{\pos(540,1300)\fad(60,60)}FEEL INSPIRED.
+Dialogue: 2,0:01:04.03,0:01:05.39,Cap,,0,0,0,,{\pos(540,1300)\fad(60,60)}YOU NEED CONSISTENCY.
+Dialogue: 2,0:01:05.89,0:01:07.14,Cap,,0,0,0,,{\pos(540,1300)\fad(60,60)}YOU NEED TO BECOME SOMEONE
+Dialogue: 2,0:01:07.14,0:01:08.10,Cap,,0,0,0,,{\pos(540,1300)\fad(60,60)}WHO FOLLOWS THROUGH.
+Dialogue: 2,0:01:08.60,0:01:09.44,Cap,,0,0,0,,{\pos(540,1300)\fad(60,60)}START SMALL.
+Dialogue: 2,0:01:09.94,0:01:11.22,Cap,,0,0,0,,{\pos(540,1300)\fad(60,60)}SET A TIME TO WAKE UP.
+Dialogue: 2,0:01:11.72,0:01:13.12,Cap,,0,0,0,,{\pos(540,1300)\fad(60,60)}CREATE A DAILY ROUTINE.
+Dialogue: 2,0:01:13.62,0:01:14.99,Cap,,0,0,0,,{\pos(540,1300)\fad(60,60)}SET YOURSELF ACHIEVABLE
+Dialogue: 2,0:01:14.99,0:01:15.35,Cap,,0,0,0,,{\pos(540,1300)\fad(60,60)}GOALS.
+Dialogue: 2,0:01:15.85,0:01:17.51,Cap,,0,0,0,,{\pos(540,1300)\fad(60,60)}AND MOST IMPORTANTLY, STOP
+Dialogue: 2,0:01:17.51,0:01:19.10,Cap,,0,0,0,,{\pos(540,1300)\fad(60,60)}NEGOTIATING WITH YOURSELF
+Dialogue: 2,0:01:19.10,0:01:20.38,Cap,,0,0,0,,{\pos(540,1300)\fad(60,60)}EVERY TIME SOMETHING
+Dialogue: 2,0:01:20.38,0:01:21.53,Cap,,0,0,0,,{\pos(540,1300)\fad(60,60)}BECOMES DIFFICULT.
+Dialogue: 2,0:01:22.03,0:01:23.01,Cap,,0,0,0,,{\pos(540,1300)\fad(60,60)}YOU DON'T NEED TO BE
+Dialogue: 2,0:01:23.01,0:01:23.41,Cap,,0,0,0,,{\pos(540,1300)\fad(60,60)}PERFECT.
+Dialogue: 2,0:01:23.91,0:01:25.17,Cap,,0,0,0,,{\pos(540,1300)\fad(60,60)}YOU JUST NEED TO BECOME
+Dialogue: 2,0:01:25.17,0:01:26.06,Cap,,0,0,0,,{\pos(540,1300)\fad(60,60)}MORE CONSISTENT.
+Dialogue: 0,0:00:00.00,0:01:26.21,Foot,,0,0,0,,{\pos(540,1560)}FULL VIDEO ON MY CHANNEL  ·  PART 3/9

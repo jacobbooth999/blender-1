@@ -1,0 +1,101 @@
+[
+ {
+  "ch": 0,
+  "say": "In five years, you won't recognise yourself.",
+  "text": [
+   "5 YEARS",
+   "FROM NOW"
+  ],
+  "label": "THE REALITY OF SUCCESS",
+  "dur": 2.467,
+  "hookLen": 3.0170000000000003
+ },
+ {
+  "ch": 1,
+  "say": "The biggest mistake you're making? Waiting.",
+  "text": [
+   "STOP",
+   "WAITING"
+  ],
+  "label": "CHAPTER 1",
+  "dur": 2.16,
+  "hookLen": 2.71
+ },
+ {
+  "ch": 2,
+  "say": "Motivation is lying to you.",
+  "text": [
+   "MOTIVATION",
+   "IS LYING"
+  ],
+  "label": "CHAPTER 2",
+  "dur": 1.758,
+  "hookLen": 2.6
+ },
+ {
+  "ch": 3,
+  "say": "If it feels uncomfortable, you're doing it right.",
+  "text": [
+   "GET",
+   "UNCOMFORTABLE"
+  ],
+  "label": "CHAPTER 3",
+  "dur": 2.386,
+  "hookLen": 2.936
+ },
+ {
+  "ch": 4,
+  "say": "The people around you might be why you're stuck.",
+  "text": [
+   "YOUR CIRCLE",
+   "MATTERS"
+  ],
+  "label": "CHAPTER 4",
+  "dur": 2.24,
+  "hookLen": 2.79
+ },
+ {
+  "ch": 5,
+  "say": "Doing everything is why you're getting nowhere.",
+  "text": [
+   "STOP DOING",
+   "EVERYTHING"
+  ],
+  "label": "CHAPTER 5",
+  "dur": 2.285,
+  "hookLen": 2.835
+ },
+ {
+  "ch": 6,
+  "say": "Overnight success is a myth.",
+  "text": [
+   "OVERNIGHT",
+   "SUCCESS?"
+  ],
+  "label": "CHAPTER 6",
+  "dur": 1.558,
+  "hookLen": 2.6
+ },
+ {
+  "ch": 7,
+  "say": "Five things to start today that will change your life.",
+  "text": [
+   "5 THINGS",
+   "TO START TODAY"
+  ],
+  "label": "CHAPTER 7",
+  "dur": 2.875,
+  "hookLen": 3.425
+ },
+ {
+  "ch": 8,
+  "say": "Nobody is coming to save you.",
+  "text": [
+   "NOBODY IS",
+   "COMING"
+  ],
+  "label": "CONCLUSION",
+  "dur": 1.687,
+  "hookLen": 2.6
+ }
+]

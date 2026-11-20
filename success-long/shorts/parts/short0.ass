@@ -1,0 +1,63 @@
+[Script Info]
+ScriptType: v4.00+
+PlayResX: 1080
+PlayResY: 1920
+WrapStyle: 0
+[V4+ Styles]
+Format: Name, Fontname, Fontsize, PrimaryColour, SecondaryColour, OutlineColour, BackColour, Bold, Italic, Underline, StrikeOut, ScaleX, ScaleY, Spacing, Angle, BorderStyle, Outline, Shadow, Alignment, MarginL, MarginR, MarginV, Encoding
+Style: Head,Inter Black,120,&H00FFFFFF,&H00FFFFFF,&H00FFFFFF,&H00000000,0,0,0,0,100,100,3,0,1,0,0,2,40,40,0,1
+Style: Glow,Inter Black,120,&H00FFFFFF,&H00FFFFFF,&H00FFFFFF,&H00000000,0,0,0,0,100,100,3,0,1,10,0,2,40,40,0,1
+Style: Lab,Inter,30,&H00BBBBBB,&H00FFFFFF,&H00000000,&H00000000,1,0,0,0,100,100,7,0,1,0,0,8,40,40,0,1
+Style: Cap,Inter ExtraBold,66,&H00FFFFFF,&H00FFFFFF,&H00000000,&H00000000,0,0,0,0,100,100,1,0,1,4,0,8,70,70,0,1
+Style: Foot,Inter,26,&H00999999,&H00FFFFFF,&H00000000,&H00000000,1,0,0,0,100,100,6,0,1,0,0,8,40,40,0,1
+[Events]
+Format: Layer, Start, End, Style, Name, MarginL, MarginR, MarginV, Effect, Text
+Dialogue: 0,0:00:00.00,0:00:55.11,Lab,,0,0,0,,{\pos(540,232)}THE REALITY OF SUCCESS
+Dialogue: 0,0:00:00.00,0:00:55.11,Glow,,0,0,0,,{\pos(540,468)\fs140\blur14\alpha&HB0&}5 YEARS
+Dialogue: 1,0:00:00.00,0:00:55.11,Head,,0,0,0,,{\pos(540,468)\fs140\blur1}5 YEARS
+Dialogue: 0,0:00:00.00,0:00:55.11,Glow,,0,0,0,,{\pos(540,601)\fs140\blur14\alpha&HB0&}FROM NOW
+Dialogue: 1,0:00:00.00,0:00:55.11,Head,,0,0,0,,{\pos(540,601)\fs140\blur1}FROM NOW
+Dialogue: 2,0:00:00.50,0:00:01.68,Cap,,0,0,0,,{\pos(540,1300)\fad(60,60)}IMAGINE YOURSELF FIVE
+Dialogue: 2,0:00:01.68,0:00:02.63,Cap,,0,0,0,,{\pos(540,1300)\fad(60,60)}YEARS FROM TODAY.
+Dialogue: 2,0:00:03.13,0:00:04.42,Cap,,0,0,0,,{\pos(540,1300)\fad(60,60)}IMAGINE WAKING UP IN A
+Dialogue: 2,0:00:04.42,0:00:05.94,Cap,,0,0,0,,{\pos(540,1300)\fad(60,60)}LIFE YOU'VE ALWAYS WANTED.
+Dialogue: 2,0:00:06.44,0:00:07.25,Cap,,0,0,0,,{\pos(540,1300)\fad(60,60)}YOU'RE PHYSICALLY
+Dialogue: 2,0:00:07.25,0:00:07.68,Cap,,0,0,0,,{\pos(540,1300)\fad(60,60)}STRONGER.
+Dialogue: 2,0:00:08.00,0:00:09.03,Cap,,0,0,0,,{\pos(540,1300)\fad(60,60)}YOU'RE FINANCIALLY
+Dialogue: 2,0:00:09.03,0:00:09.71,Cap,,0,0,0,,{\pos(540,1300)\fad(60,60)}INDEPENDENT.
+Dialogue: 2,0:00:10.03,0:00:10.96,Cap,,0,0,0,,{\pos(540,1300)\fad(60,60)}YOU'RE CONFIDENT.
+Dialogue: 2,0:00:11.29,0:00:12.28,Cap,,0,0,0,,{\pos(540,1300)\fad(60,60)}YOU'VE BUILT SOMETHING
+Dialogue: 2,0:00:12.28,0:00:13.46,Cap,,0,0,0,,{\pos(540,1300)\fad(60,60)}YOU'RE GENUINELY PROUD OF.
+Dialogue: 2,0:00:13.96,0:00:15.14,Cap,,0,0,0,,{\pos(540,1300)\fad(60,60)}YOU LOOK BACK AT THE
+Dialogue: 2,0:00:15.14,0:00:16.62,Cap,,0,0,0,,{\pos(540,1300)\fad(60,60)}PERSON YOU USED TO BE AND
+Dialogue: 2,0:00:16.62,0:00:17.81,Cap,,0,0,0,,{\pos(540,1300)\fad(60,60)}REALISE JUST HOW FAR
+Dialogue: 2,0:00:17.81,0:00:18.52,Cap,,0,0,0,,{\pos(540,1300)\fad(60,60)}YOU'VE COME.
+Dialogue: 2,0:00:19.02,0:00:20.27,Cap,,0,0,0,,{\pos(540,1300)\fad(60,60)}NOW HERE'S THE QUESTION.
+Dialogue: 2,0:00:20.77,0:00:21.75,Cap,,0,0,0,,{\pos(540,1300)\fad(60,60)}WHAT SEPARATES THAT
+Dialogue: 2,0:00:21.75,0:00:22.93,Cap,,0,0,0,,{\pos(540,1300)\fad(60,60)}VERSION OF YOU FROM THE
+Dialogue: 2,0:00:22.93,0:00:24.01,Cap,,0,0,0,,{\pos(540,1300)\fad(60,60)}PERSON YOU ARE TODAY?
+Dialogue: 2,0:00:24.61,0:00:25.76,Cap,,0,0,0,,{\pos(540,1300)\fad(60,60)}IS IT INTELLIGENCE?
+Dialogue: 2,0:00:26.08,0:00:26.59,Cap,,0,0,0,,{\pos(540,1300)\fad(60,60)}LUCK?
+Dialogue: 2,0:00:26.91,0:00:27.46,Cap,,0,0,0,,{\pos(540,1300)\fad(60,60)}MONEY?
+Dialogue: 2,0:00:27.78,0:00:28.62,Cap,,0,0,0,,{\pos(540,1300)\fad(60,60)}HAVING THE RIGHT
+Dialogue: 2,0:00:28.62,0:00:29.25,Cap,,0,0,0,,{\pos(540,1300)\fad(60,60)}CONNECTIONS?
+Dialogue: 2,0:00:29.84,0:00:31.09,Cap,,0,0,0,,{\pos(540,1300)\fad(60,60)}MAYBE SOME OF THOSE THINGS
+Dialogue: 2,0:00:31.09,0:00:31.33,Cap,,0,0,0,,{\pos(540,1300)\fad(60,60)}HELP.
+Dialogue: 2,0:00:31.83,0:00:32.94,Cap,,0,0,0,,{\pos(540,1300)\fad(60,60)}BUT THERE'S SOMETHING MUCH
+Dialogue: 2,0:00:32.94,0:00:33.59,Cap,,0,0,0,,{\pos(540,1300)\fad(60,60)}MORE IMPORTANT.
+Dialogue: 2,0:00:34.09,0:00:35.36,Cap,,0,0,0,,{\pos(540,1300)\fad(60,60)}YOUR DAILY DECISIONS.
+Dialogue: 2,0:00:35.86,0:00:37.20,Cap,,0,0,0,,{\pos(540,1300)\fad(60,60)}BECAUSE SUCCESS ISN'T
+Dialogue: 2,0:00:37.20,0:00:38.60,Cap,,0,0,0,,{\pos(540,1300)\fad(60,60)}USUALLY CREATED IN ONE
+Dialogue: 2,0:00:38.60,0:00:39.94,Cap,,0,0,0,,{\pos(540,1300)\fad(60,60)}EXTRAORDINARY MOMENT.
+Dialogue: 2,0:00:40.44,0:00:41.54,Cap,,0,0,0,,{\pos(540,1300)\fad(60,60)}IT'S CREATED THROUGH
+Dialogue: 2,0:00:41.54,0:00:42.70,Cap,,0,0,0,,{\pos(540,1300)\fad(60,60)}THOUSANDS OF ORDINARY
+Dialogue: 2,0:00:42.70,0:00:44.14,Cap,,0,0,0,,{\pos(540,1300)\fad(60,60)}MOMENTS WHEN YOU CHOOSE TO
+Dialogue: 2,0:00:44.14,0:00:45.41,Cap,,0,0,0,,{\pos(540,1300)\fad(60,60)}DO SOMETHING THAT MOVES
+Dialogue: 2,0:00:45.41,0:00:46.79,Cap,,0,0,0,,{\pos(540,1300)\fad(60,60)}YOU CLOSER TO YOUR GOALS.
+Dialogue: 2,0:00:47.29,0:00:48.65,Cap,,0,0,0,,{\pos(540,1300)\fad(60,60)}AND IN THIS VIDEO, WE'RE
+Dialogue: 2,0:00:48.65,0:00:49.72,Cap,,0,0,0,,{\pos(540,1300)\fad(60,60)}GOING TO BREAK DOWN
+Dialogue: 2,0:00:49.72,0:00:51.13,Cap,,0,0,0,,{\pos(540,1300)\fad(60,60)}EXACTLY HOW YOU CAN START
+Dialogue: 2,0:00:51.13,0:00:52.20,Cap,,0,0,0,,{\pos(540,1300)\fad(60,60)}BUILDING THAT LIFE.
+Dialogue: 2,0:00:52.70,0:00:53.81,Cap,,0,0,0,,{\pos(540,1300)\fad(60,60)}EVEN IF YOU'RE STARTING
+Dialogue: 2,0:00:53.81,0:00:54.96,Cap,,0,0,0,,{\pos(540,1300)\fad(60,60)}WITH ABSOLUTELY NOTHING.
+Dialogue: 0,0:00:00.00,0:00:55.11,Foot,,0,0,0,,{\pos(540,1560)}FULL VIDEO ON MY CHANNEL  ·  PART 1/9

@@ -1,0 +1,70 @@
+[Script Info]
+ScriptType: v4.00+
+PlayResX: 1080
+PlayResY: 1920
+WrapStyle: 0
+[V4+ Styles]
+Format: Name, Fontname, Fontsize, PrimaryColour, SecondaryColour, OutlineColour, BackColour, Bold, Italic, Underline, StrikeOut, ScaleX, ScaleY, Spacing, Angle, BorderStyle, Outline, Shadow, Alignment, MarginL, MarginR, MarginV, Encoding
+Style: Head,Inter Black,120,&H00FFFFFF,&H00FFFFFF,&H00FFFFFF,&H00000000,0,0,0,0,100,100,3,0,1,0,0,2,40,40,0,1
+Style: Glow,Inter Black,120,&H00FFFFFF,&H00FFFFFF,&H00FFFFFF,&H00000000,0,0,0,0,100,100,3,0,1,10,0,2,40,40,0,1
+Style: Lab,Inter,30,&H00BBBBBB,&H00FFFFFF,&H00000000,&H00000000,1,0,0,0,100,100,7,0,1,0,0,8,40,40,0,1
+Style: Cap,Inter ExtraBold,66,&H00FFFFFF,&H00FFFFFF,&H00000000,&H00000000,0,0,0,0,100,100,1,0,1,4,0,8,70,70,0,1
+Style: Foot,Inter,26,&H00999999,&H00FFFFFF,&H00000000,&H00000000,1,0,0,0,100,100,6,0,1,0,0,8,40,40,0,1
+[Events]
+Format: Layer, Start, End, Style, Name, MarginL, MarginR, MarginV, Effect, Text
+Dialogue: 0,0:00:00.00,0:01:04.17,Lab,,0,0,0,,{\pos(540,232)}CHAPTER 5
+Dialogue: 0,0:00:00.00,0:01:04.17,Glow,,0,0,0,,{\pos(540,463)\fs118\blur14\alpha&HB0&}STOP DOING
+Dialogue: 1,0:00:00.00,0:01:04.17,Head,,0,0,0,,{\pos(540,463)\fs118\blur1}STOP DOING
+Dialogue: 0,0:00:00.00,0:01:04.17,Glow,,0,0,0,,{\pos(540,575)\fs118\blur14\alpha&HB0&}EVERYTHING
+Dialogue: 1,0:00:00.00,0:01:04.17,Head,,0,0,0,,{\pos(540,575)\fs118\blur1}EVERYTHING
+Dialogue: 2,0:00:00.25,0:00:01.52,Cap,,0,0,0,,{\pos(540,1300)\fad(60,60)}HERE'S ANOTHER MISTAKE
+Dialogue: 2,0:00:01.52,0:00:02.84,Cap,,0,0,0,,{\pos(540,1300)\fad(60,60)}THAT HOLDS PEOPLE BACK.
+Dialogue: 2,0:00:03.34,0:00:04.39,Cap,,0,0,0,,{\pos(540,1300)\fad(60,60)}TRYING TO BECOME
+Dialogue: 2,0:00:04.39,0:00:05.97,Cap,,0,0,0,,{\pos(540,1300)\fad(60,60)}SUCCESSFUL AT EVERYTHING
+Dialogue: 2,0:00:05.97,0:00:06.95,Cap,,0,0,0,,{\pos(540,1300)\fad(60,60)}SIMULTANEOUSLY.
+Dialogue: 2,0:00:07.45,0:00:08.55,Cap,,0,0,0,,{\pos(540,1300)\fad(60,60)}YOU WANT TO GET RICH.
+Dialogue: 2,0:00:09.05,0:00:10.11,Cap,,0,0,0,,{\pos(540,1300)\fad(60,60)}BUILD AN INCREDIBLE
+Dialogue: 2,0:00:10.11,0:00:10.61,Cap,,0,0,0,,{\pos(540,1300)\fad(60,60)}PHYSIQUE.
+Dialogue: 2,0:00:11.11,0:00:12.07,Cap,,0,0,0,,{\pos(540,1300)\fad(60,60)}START A BUSINESS.
+Dialogue: 2,0:00:12.57,0:00:13.51,Cap,,0,0,0,,{\pos(540,1300)\fad(60,60)}BECOME SMARTER.
+Dialogue: 2,0:00:14.01,0:00:15.06,Cap,,0,0,0,,{\pos(540,1300)\fad(60,60)}LEARN NEW SKILLS.
+Dialogue: 2,0:00:15.56,0:00:17.03,Cap,,0,0,0,,{\pos(540,1300)\fad(60,60)}IMPROVE YOUR SOCIAL LIFE.
+Dialogue: 2,0:00:17.53,0:00:18.74,Cap,,0,0,0,,{\pos(540,1300)\fad(60,60)}AND COMPLETELY TRANSFORM
+Dialogue: 2,0:00:18.74,0:00:19.56,Cap,,0,0,0,,{\pos(540,1300)\fad(60,60)}YOUR APPEARANCE.
+Dialogue: 2,0:00:20.06,0:00:20.90,Cap,,0,0,0,,{\pos(540,1300)\fad(60,60)}SO YOU TRY TO DO
+Dialogue: 2,0:00:20.90,0:00:21.49,Cap,,0,0,0,,{\pos(540,1300)\fad(60,60)}EVERYTHING.
+Dialogue: 2,0:00:21.99,0:00:23.51,Cap,,0,0,0,,{\pos(540,1300)\fad(60,60)}BUT EVENTUALLY, YOU BECOME
+Dialogue: 2,0:00:23.51,0:00:24.22,Cap,,0,0,0,,{\pos(540,1300)\fad(60,60)}OVERWHELMED.
+Dialogue: 2,0:00:24.72,0:00:26.09,Cap,,0,0,0,,{\pos(540,1300)\fad(60,60)}YOU SPREAD YOUR ATTENTION
+Dialogue: 2,0:00:26.09,0:00:27.42,Cap,,0,0,0,,{\pos(540,1300)\fad(60,60)}ACROSS SO MANY DIFFERENT
+Dialogue: 2,0:00:27.42,0:00:28.85,Cap,,0,0,0,,{\pos(540,1300)\fad(60,60)}THINGS THAT YOU NEVER MAKE
+Dialogue: 2,0:00:28.85,0:00:30.28,Cap,,0,0,0,,{\pos(540,1300)\fad(60,60)}MEANINGFUL PROGRESS IN ANY
+Dialogue: 2,0:00:30.28,0:00:30.72,Cap,,0,0,0,,{\pos(540,1300)\fad(60,60)}OF THEM.
+Dialogue: 2,0:00:31.22,0:00:32.54,Cap,,0,0,0,,{\pos(540,1300)\fad(60,60)}INSTEAD, CHOOSE A FEW
+Dialogue: 2,0:00:32.54,0:00:33.23,Cap,,0,0,0,,{\pos(540,1300)\fad(60,60)}PRIORITIES.
+Dialogue: 2,0:00:33.73,0:00:34.99,Cap,,0,0,0,,{\pos(540,1300)\fad(60,60)}DECIDE WHAT MATTERS MOST
+Dialogue: 2,0:00:34.99,0:00:35.88,Cap,,0,0,0,,{\pos(540,1300)\fad(60,60)}TO YOU RIGHT NOW.
+Dialogue: 2,0:00:36.38,0:00:37.33,Cap,,0,0,0,,{\pos(540,1300)\fad(60,60)}MAYBE IT'S GETTING
+Dialogue: 2,0:00:37.33,0:00:38.12,Cap,,0,0,0,,{\pos(540,1300)\fad(60,60)}PHYSICALLY FIT.
+Dialogue: 2,0:00:38.62,0:00:40.11,Cap,,0,0,0,,{\pos(540,1300)\fad(60,60)}MAYBE IT'S IMPROVING YOUR
+Dialogue: 2,0:00:40.11,0:00:40.70,Cap,,0,0,0,,{\pos(540,1300)\fad(60,60)}EDUCATION.
+Dialogue: 2,0:00:41.20,0:00:42.31,Cap,,0,0,0,,{\pos(540,1300)\fad(60,60)}MAYBE IT'S LEARNING A
+Dialogue: 2,0:00:42.31,0:00:43.63,Cap,,0,0,0,,{\pos(540,1300)\fad(60,60)}SKILL THAT COULD INCREASE
+Dialogue: 2,0:00:43.63,0:00:44.64,Cap,,0,0,0,,{\pos(540,1300)\fad(60,60)}YOUR FUTURE EARNING
+Dialogue: 2,0:00:44.64,0:00:45.17,Cap,,0,0,0,,{\pos(540,1300)\fad(60,60)}POTENTIAL.
+Dialogue: 2,0:00:45.67,0:00:46.87,Cap,,0,0,0,,{\pos(540,1300)\fad(60,60)}WHATEVER IT IS, GIVE IT
+Dialogue: 2,0:00:46.87,0:00:47.65,Cap,,0,0,0,,{\pos(540,1300)\fad(60,60)}YOUR ATTENTION.
+Dialogue: 2,0:00:48.15,0:00:49.49,Cap,,0,0,0,,{\pos(540,1300)\fad(60,60)}BREAK IT DOWN INTO SMALLER
+Dialogue: 2,0:00:49.49,0:00:49.80,Cap,,0,0,0,,{\pos(540,1300)\fad(60,60)}GOALS.
+Dialogue: 2,0:00:50.30,0:00:51.51,Cap,,0,0,0,,{\pos(540,1300)\fad(60,60)}AND WORK TOWARDS THOSE
+Dialogue: 2,0:00:51.51,0:00:52.55,Cap,,0,0,0,,{\pos(540,1300)\fad(60,60)}GOALS CONSISTENTLY.
+Dialogue: 2,0:00:53.05,0:00:53.94,Cap,,0,0,0,,{\pos(540,1300)\fad(60,60)}YOU DON'T NEED TO
+Dialogue: 2,0:00:53.94,0:00:55.31,Cap,,0,0,0,,{\pos(540,1300)\fad(60,60)}TRANSFORM YOUR ENTIRE LIFE
+Dialogue: 2,0:00:55.31,0:00:55.84,Cap,,0,0,0,,{\pos(540,1300)\fad(60,60)}IN A WEEK.
+Dialogue: 2,0:00:56.34,0:00:57.55,Cap,,0,0,0,,{\pos(540,1300)\fad(60,60)}YOU NEED TO MAKE PROGRESS
+Dialogue: 2,0:00:57.55,0:00:58.67,Cap,,0,0,0,,{\pos(540,1300)\fad(60,60)}IN THE RIGHT DIRECTION.
+Dialogue: 2,0:00:59.17,0:01:00.64,Cap,,0,0,0,,{\pos(540,1300)\fad(60,60)}REMEMBER, FOCUSED EFFORT
+Dialogue: 2,0:01:00.64,0:01:02.18,Cap,,0,0,0,,{\pos(540,1300)\fad(60,60)}IS FAR MORE VALUABLE THAN
+Dialogue: 2,0:01:02.18,0:01:03.59,Cap,,0,0,0,,{\pos(540,1300)\fad(60,60)}CONSTANTLY STARTING NEW
+Dialogue: 2,0:01:03.59,0:01:04.02,Cap,,0,0,0,,{\pos(540,1300)\fad(60,60)}THINGS.
+Dialogue: 0,0:00:00.00,0:01:04.17,Foot,,0,0,0,,{\pos(540,1560)}FULL VIDEO ON MY CHANNEL  ·  PART 6/9

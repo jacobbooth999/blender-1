@@ -1,0 +1,76 @@
+[Script Info]
+ScriptType: v4.00+
+PlayResX: 1080
+PlayResY: 1920
+WrapStyle: 0
+[V4+ Styles]
+Format: Name, Fontname, Fontsize, PrimaryColour, SecondaryColour, OutlineColour, BackColour, Bold, Italic, Underline, StrikeOut, ScaleX, ScaleY, Spacing, Angle, BorderStyle, Outline, Shadow, Alignment, MarginL, MarginR, MarginV, Encoding
+Style: Head,Inter Black,120,&H00FFFFFF,&H00FFFFFF,&H00FFFFFF,&H00000000,0,0,0,0,100,100,3,0,1,0,0,2,40,40,0,1
+Style: Glow,Inter Black,120,&H00FFFFFF,&H00FFFFFF,&H00FFFFFF,&H00000000,0,0,0,0,100,100,3,0,1,10,0,2,40,40,0,1
+Style: Lab,Inter,30,&H00BBBBBB,&H00FFFFFF,&H00000000,&H00000000,1,0,0,0,100,100,7,0,1,0,0,8,40,40,0,1
+Style: Cap,Inter ExtraBold,66,&H00FFFFFF,&H00FFFFFF,&H00000000,&H00000000,0,0,0,0,100,100,1,0,1,4,0,8,70,70,0,1
+Style: Foot,Inter,26,&H00999999,&H00FFFFFF,&H00000000,&H00000000,1,0,0,0,100,100,6,0,1,0,0,8,40,40,0,1
+[Events]
+Format: Layer, Start, End, Style, Name, MarginL, MarginR, MarginV, Effect, Text
+Dialogue: 0,0:00:00.00,0:01:09.73,Lab,,0,0,0,,{\pos(540,232)}CHAPTER 6
+Dialogue: 0,0:00:00.00,0:01:09.73,Glow,,0,0,0,,{\pos(540,466)\fs131\blur14\alpha&HB0&}OVERNIGHT
+Dialogue: 1,0:00:00.00,0:01:09.73,Head,,0,0,0,,{\pos(540,466)\fs131\blur1}OVERNIGHT
+Dialogue: 0,0:00:00.00,0:01:09.73,Glow,,0,0,0,,{\pos(540,601)\fs140\blur14\alpha&HB0&}SUCCESS?
+Dialogue: 1,0:00:00.00,0:01:09.73,Head,,0,0,0,,{\pos(540,601)\fs140\blur1}SUCCESS?
+Dialogue: 2,0:00:00.25,0:00:01.65,Cap,,0,0,0,,{\pos(540,1300)\fad(60,60)}WE LIVE IN A WORLD WHERE
+Dialogue: 2,0:00:01.65,0:00:02.93,Cap,,0,0,0,,{\pos(540,1300)\fad(60,60)}EVERYONE WANTS INSTANT
+Dialogue: 2,0:00:02.93,0:00:03.39,Cap,,0,0,0,,{\pos(540,1300)\fad(60,60)}RESULTS.
+Dialogue: 2,0:00:03.89,0:00:05.08,Cap,,0,0,0,,{\pos(540,1300)\fad(60,60)}WE WANT MONEY QUICKLY.
+Dialogue: 2,0:00:05.58,0:00:06.39,Cap,,0,0,0,,{\pos(540,1300)\fad(60,60)}WE WANT SUCCESS
+Dialogue: 2,0:00:06.39,0:00:07.04,Cap,,0,0,0,,{\pos(540,1300)\fad(60,60)}IMMEDIATELY.
+Dialogue: 2,0:00:07.54,0:00:08.89,Cap,,0,0,0,,{\pos(540,1300)\fad(60,60)}WE WANT TO LOOK COMPLETELY
+Dialogue: 2,0:00:08.89,0:00:09.99,Cap,,0,0,0,,{\pos(540,1300)\fad(60,60)}DIFFERENT AFTER A FEW
+Dialogue: 2,0:00:09.99,0:00:10.88,Cap,,0,0,0,,{\pos(540,1300)\fad(60,60)}WEEKS IN THE GYM.
+Dialogue: 2,0:00:11.38,0:00:12.60,Cap,,0,0,0,,{\pos(540,1300)\fad(60,60)}AND WHEN THOSE RESULTS
+Dialogue: 2,0:00:12.60,0:00:13.89,Cap,,0,0,0,,{\pos(540,1300)\fad(60,60)}DON'T HAPPEN, WE BECOME
+Dialogue: 2,0:00:13.89,0:00:14.50,Cap,,0,0,0,,{\pos(540,1300)\fad(60,60)}FRUSTRATED.
+Dialogue: 2,0:00:15.00,0:00:15.98,Cap,,0,0,0,,{\pos(540,1300)\fad(60,60)}BUT SOME OF THE MOST
+Dialogue: 2,0:00:15.98,0:00:17.10,Cap,,0,0,0,,{\pos(540,1300)\fad(60,60)}VALUABLE THINGS IN LIFE
+Dialogue: 2,0:00:17.10,0:00:17.59,Cap,,0,0,0,,{\pos(540,1300)\fad(60,60)}TAKE TIME.
+Dialogue: 2,0:00:18.09,0:00:19.24,Cap,,0,0,0,,{\pos(540,1300)\fad(60,60)}BUILDING A SUCCESSFUL
+Dialogue: 2,0:00:19.24,0:00:20.34,Cap,,0,0,0,,{\pos(540,1300)\fad(60,60)}BUSINESS TAKES TIME.
+Dialogue: 2,0:00:20.84,0:00:22.45,Cap,,0,0,0,,{\pos(540,1300)\fad(60,60)}DEVELOPING EXPERTISE TAKES
+Dialogue: 2,0:00:22.45,0:00:22.76,Cap,,0,0,0,,{\pos(540,1300)\fad(60,60)}TIME.
+Dialogue: 2,0:00:23.26,0:00:24.48,Cap,,0,0,0,,{\pos(540,1300)\fad(60,60)}BUILDING A STRONG BODY
+Dialogue: 2,0:00:24.48,0:00:25.09,Cap,,0,0,0,,{\pos(540,1300)\fad(60,60)}TAKES TIME.
+Dialogue: 2,0:00:25.59,0:00:26.74,Cap,,0,0,0,,{\pos(540,1300)\fad(60,60)}CREATING FINANCIAL
+Dialogue: 2,0:00:26.74,0:00:28.03,Cap,,0,0,0,,{\pos(540,1300)\fad(60,60)}SECURITY TAKES TIME.
+Dialogue: 2,0:00:28.53,0:00:29.57,Cap,,0,0,0,,{\pos(540,1300)\fad(60,60)}AND THAT'S SOMETHING YOU
+Dialogue: 2,0:00:29.57,0:00:30.21,Cap,,0,0,0,,{\pos(540,1300)\fad(60,60)}NEED TO ACCEPT.
+Dialogue: 2,0:00:30.71,0:00:31.99,Cap,,0,0,0,,{\pos(540,1300)\fad(60,60)}YOU MIGHT WORK TOWARDS A
+Dialogue: 2,0:00:31.99,0:00:33.21,Cap,,0,0,0,,{\pos(540,1300)\fad(60,60)}GOAL FOR MONTHS WITHOUT
+Dialogue: 2,0:00:33.21,0:00:34.39,Cap,,0,0,0,,{\pos(540,1300)\fad(60,60)}SEEING THE RESULTS YOU
+Dialogue: 2,0:00:34.39,0:00:34.87,Cap,,0,0,0,,{\pos(540,1300)\fad(60,60)}EXPECTED.
+Dialogue: 2,0:00:35.37,0:00:36.49,Cap,,0,0,0,,{\pos(540,1300)\fad(60,60)}THAT DOESN'T NECESSARILY
+Dialogue: 2,0:00:36.49,0:00:37.43,Cap,,0,0,0,,{\pos(540,1300)\fad(60,60)}MEAN YOU'RE FAILING.
+Dialogue: 2,0:00:37.93,0:00:39.19,Cap,,0,0,0,,{\pos(540,1300)\fad(60,60)}SOMETIMES PROGRESS IS
+Dialogue: 2,0:00:39.19,0:00:40.46,Cap,,0,0,0,,{\pos(540,1300)\fad(60,60)}HAPPENING IN WAYS YOU
+Dialogue: 2,0:00:40.46,0:00:41.84,Cap,,0,0,0,,{\pos(540,1300)\fad(60,60)}CANNOT IMMEDIATELY SEE.
+Dialogue: 2,0:00:42.34,0:00:43.47,Cap,,0,0,0,,{\pos(540,1300)\fad(60,60)}THINK ABOUT PLANTING A
+Dialogue: 2,0:00:43.47,0:00:43.73,Cap,,0,0,0,,{\pos(540,1300)\fad(60,60)}TREE.
+Dialogue: 2,0:00:44.23,0:00:45.59,Cap,,0,0,0,,{\pos(540,1300)\fad(60,60)}YOU DON'T PLANT A SEED IN
+Dialogue: 2,0:00:45.59,0:00:46.90,Cap,,0,0,0,,{\pos(540,1300)\fad(60,60)}THE GROUND AND EXPECT TO
+Dialogue: 2,0:00:46.90,0:00:48.32,Cap,,0,0,0,,{\pos(540,1300)\fad(60,60)}SEE A FULLY GROWN TREE THE
+Dialogue: 2,0:00:48.32,0:00:49.03,Cap,,0,0,0,,{\pos(540,1300)\fad(60,60)}NEXT MORNING.
+Dialogue: 2,0:00:49.53,0:00:50.33,Cap,,0,0,0,,{\pos(540,1300)\fad(60,60)}YOU WATER IT.
+Dialogue: 2,0:00:50.83,0:00:51.82,Cap,,0,0,0,,{\pos(540,1300)\fad(60,60)}YOU LOOK AFTER IT.
+Dialogue: 2,0:00:52.32,0:00:53.24,Cap,,0,0,0,,{\pos(540,1300)\fad(60,60)}YOU GIVE IT TIME.
+Dialogue: 2,0:00:53.74,0:00:55.23,Cap,,0,0,0,,{\pos(540,1300)\fad(60,60)}YOUR PERSONAL GROWTH WORKS
+Dialogue: 2,0:00:55.23,0:00:56.20,Cap,,0,0,0,,{\pos(540,1300)\fad(60,60)}IN A SIMILAR WAY.
+Dialogue: 2,0:00:56.70,0:00:58.05,Cap,,0,0,0,,{\pos(540,1300)\fad(60,60)}THE HABITS YOU'RE BUILDING
+Dialogue: 2,0:00:58.05,0:00:59.19,Cap,,0,0,0,,{\pos(540,1300)\fad(60,60)}TODAY MIGHT NOT CHANGE
+Dialogue: 2,0:00:59.19,0:01:00.17,Cap,,0,0,0,,{\pos(540,1300)\fad(60,60)}YOUR LIFE TOMORROW.
+Dialogue: 2,0:01:00.67,0:01:02.00,Cap,,0,0,0,,{\pos(540,1300)\fad(60,60)}BUT REPEATED OVER MONTHS
+Dialogue: 2,0:01:02.00,0:01:03.04,Cap,,0,0,0,,{\pos(540,1300)\fad(60,60)}AND YEARS, THEY CAN
+Dialogue: 2,0:01:03.04,0:01:04.26,Cap,,0,0,0,,{\pos(540,1300)\fad(60,60)}COMPLETELY CHANGE YOUR
+Dialogue: 2,0:01:04.26,0:01:04.81,Cap,,0,0,0,,{\pos(540,1300)\fad(60,60)}DIRECTION.
+Dialogue: 2,0:01:05.31,0:01:06.87,Cap,,0,0,0,,{\pos(540,1300)\fad(60,60)}STOP EXPECTING OVERNIGHT
+Dialogue: 2,0:01:06.87,0:01:07.39,Cap,,0,0,0,,{\pos(540,1300)\fad(60,60)}SUCCESS.
+Dialogue: 2,0:01:07.89,0:01:09.05,Cap,,0,0,0,,{\pos(540,1300)\fad(60,60)}START BUILDING SOMETHING
+Dialogue: 2,0:01:09.05,0:01:09.58,Cap,,0,0,0,,{\pos(540,1300)\fad(60,60)}THAT LASTS.
+Dialogue: 0,0:00:00.00,0:01:09.73,Foot,,0,0,0,,{\pos(540,1560)}FULL VIDEO ON MY CHANNEL  ·  PART 7/9

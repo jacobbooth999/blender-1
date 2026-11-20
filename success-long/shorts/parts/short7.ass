@@ -1,0 +1,79 @@
+[Script Info]
+ScriptType: v4.00+
+PlayResX: 1080
+PlayResY: 1920
+WrapStyle: 0
+[V4+ Styles]
+Format: Name, Fontname, Fontsize, PrimaryColour, SecondaryColour, OutlineColour, BackColour, Bold, Italic, Underline, StrikeOut, ScaleX, ScaleY, Spacing, Angle, BorderStyle, Outline, Shadow, Alignment, MarginL, MarginR, MarginV, Encoding
+Style: Head,Inter Black,120,&H00FFFFFF,&H00FFFFFF,&H00FFFFFF,&H00000000,0,0,0,0,100,100,3,0,1,0,0,2,40,40,0,1
+Style: Glow,Inter Black,120,&H00FFFFFF,&H00FFFFFF,&H00FFFFFF,&H00000000,0,0,0,0,100,100,3,0,1,10,0,2,40,40,0,1
+Style: Lab,Inter,30,&H00BBBBBB,&H00FFFFFF,&H00000000,&H00000000,1,0,0,0,100,100,7,0,1,0,0,8,40,40,0,1
+Style: Cap,Inter ExtraBold,66,&H00FFFFFF,&H00FFFFFF,&H00000000,&H00000000,0,0,0,0,100,100,1,0,1,4,0,8,70,70,0,1
+Style: Foot,Inter,26,&H00999999,&H00FFFFFF,&H00000000,&H00000000,1,0,0,0,100,100,6,0,1,0,0,8,40,40,0,1
+[Events]
+Format: Layer, Start, End, Style, Name, MarginL, MarginR, MarginV, Effect, Text
+Dialogue: 0,0:00:00.00,0:01:12.91,Lab,,0,0,0,,{\pos(540,232)}CHAPTER 7
+Dialogue: 0,0:00:00.00,0:01:12.91,Glow,,0,0,0,,{\pos(540,468)\fs140\blur14\alpha&HB0&}5 THINGS
+Dialogue: 1,0:00:00.00,0:01:12.91,Head,,0,0,0,,{\pos(540,468)\fs140\blur1}5 THINGS
+Dialogue: 0,0:00:00.00,0:01:12.91,Glow,,0,0,0,,{\pos(540,535)\fs84\blur14\alpha&HB0&}TO START TODAY
+Dialogue: 1,0:00:00.00,0:01:12.91,Head,,0,0,0,,{\pos(540,535)\fs84\blur1}TO START TODAY
+Dialogue: 2,0:00:00.25,0:00:01.58,Cap,,0,0,0,,{\pos(540,1300)\fad(60,60)}SO HOW DO YOU ACTUALLY PUT
+Dialogue: 2,0:00:01.58,0:00:02.92,Cap,,0,0,0,,{\pos(540,1300)\fad(60,60)}ALL OF THIS INTO PRACTICE?
+Dialogue: 2,0:00:03.52,0:00:04.77,Cap,,0,0,0,,{\pos(540,1300)\fad(60,60)}I WANT YOU TO START WITH
+Dialogue: 2,0:00:04.77,0:00:06.02,Cap,,0,0,0,,{\pos(540,1300)\fad(60,60)}FIVE SIMPLE COMMITMENTS.
+Dialogue: 2,0:00:06.52,0:00:07.89,Cap,,0,0,0,,{\pos(540,1300)\fad(60,60)}FIRST, CHOOSE ONE MAJOR
+Dialogue: 2,0:00:07.89,0:00:08.19,Cap,,0,0,0,,{\pos(540,1300)\fad(60,60)}GOAL.
+Dialogue: 2,0:00:08.69,0:00:09.93,Cap,,0,0,0,,{\pos(540,1300)\fad(60,60)}SOMETHING YOU GENUINELY
+Dialogue: 2,0:00:09.93,0:00:10.79,Cap,,0,0,0,,{\pos(540,1300)\fad(60,60)}WANT TO ACHIEVE.
+Dialogue: 2,0:00:11.29,0:00:12.61,Cap,,0,0,0,,{\pos(540,1300)\fad(60,60)}DON'T CHOOSE TEN THINGS.
+Dialogue: 2,0:00:13.11,0:00:14.35,Cap,,0,0,0,,{\pos(540,1300)\fad(60,60)}CHOOSE ONE PRIORITY AND
+Dialogue: 2,0:00:14.35,0:00:15.59,Cap,,0,0,0,,{\pos(540,1300)\fad(60,60)}GIVE IT YOUR ATTENTION.
+Dialogue: 2,0:00:16.09,0:00:17.41,Cap,,0,0,0,,{\pos(540,1300)\fad(60,60)}SECOND, CREATE A DAILY
+Dialogue: 2,0:00:17.41,0:00:18.62,Cap,,0,0,0,,{\pos(540,1300)\fad(60,60)}HABIT THAT MOVES YOU
+Dialogue: 2,0:00:18.62,0:00:19.28,Cap,,0,0,0,,{\pos(540,1300)\fad(60,60)}TOWARDS IT.
+Dialogue: 2,0:00:19.78,0:00:21.22,Cap,,0,0,0,,{\pos(540,1300)\fad(60,60)}IF YOU WANT TO GET FITTER,
+Dialogue: 2,0:00:21.22,0:00:22.27,Cap,,0,0,0,,{\pos(540,1300)\fad(60,60)}TRAIN CONSISTENTLY.
+Dialogue: 2,0:00:22.77,0:00:24.06,Cap,,0,0,0,,{\pos(540,1300)\fad(60,60)}IF YOU WANT TO IMPROVE
+Dialogue: 2,0:00:24.06,0:00:25.47,Cap,,0,0,0,,{\pos(540,1300)\fad(60,60)}YOUR EDUCATION, DEDICATE
+Dialogue: 2,0:00:25.47,0:00:26.46,Cap,,0,0,0,,{\pos(540,1300)\fad(60,60)}TIME TO STUDYING.
+Dialogue: 2,0:00:26.96,0:00:28.21,Cap,,0,0,0,,{\pos(540,1300)\fad(60,60)}IF YOU WANT TO BUILD A
+Dialogue: 2,0:00:28.21,0:00:29.34,Cap,,0,0,0,,{\pos(540,1300)\fad(60,60)}BUSINESS, SPEND TIME
+Dialogue: 2,0:00:29.34,0:00:30.52,Cap,,0,0,0,,{\pos(540,1300)\fad(60,60)}DEVELOPING THE SKILLS
+Dialogue: 2,0:00:30.52,0:00:31.03,Cap,,0,0,0,,{\pos(540,1300)\fad(60,60)}REQUIRED.
+Dialogue: 2,0:00:31.53,0:00:32.77,Cap,,0,0,0,,{\pos(540,1300)\fad(60,60)}THIRD, REMOVE ONE HABIT
+Dialogue: 2,0:00:32.77,0:00:34.05,Cap,,0,0,0,,{\pos(540,1300)\fad(60,60)}THAT'S HOLDING YOU BACK.
+Dialogue: 2,0:00:34.55,0:00:35.78,Cap,,0,0,0,,{\pos(540,1300)\fad(60,60)}MAYBE IT'S SPENDING HOURS
+Dialogue: 2,0:00:35.78,0:00:36.87,Cap,,0,0,0,,{\pos(540,1300)\fad(60,60)}SCROLLING THROUGH YOUR
+Dialogue: 2,0:00:36.87,0:00:37.16,Cap,,0,0,0,,{\pos(540,1300)\fad(60,60)}PHONE.
+Dialogue: 2,0:00:37.66,0:00:38.88,Cap,,0,0,0,,{\pos(540,1300)\fad(60,60)}MAYBE IT'S CONSTANTLY
+Dialogue: 2,0:00:38.88,0:00:39.80,Cap,,0,0,0,,{\pos(540,1300)\fad(60,60)}PROCRASTINATING.
+Dialogue: 2,0:00:40.30,0:00:41.58,Cap,,0,0,0,,{\pos(540,1300)\fad(60,60)}MAYBE IT'S STAYING UP SO
+Dialogue: 2,0:00:41.58,0:00:42.91,Cap,,0,0,0,,{\pos(540,1300)\fad(60,60)}LATE THAT YOU STRUGGLE TO
+Dialogue: 2,0:00:42.91,0:00:44.29,Cap,,0,0,0,,{\pos(540,1300)\fad(60,60)}GET ANYTHING DONE THE NEXT
+Dialogue: 2,0:00:44.29,0:00:44.50,Cap,,0,0,0,,{\pos(540,1300)\fad(60,60)}DAY.
+Dialogue: 2,0:00:45.00,0:00:46.37,Cap,,0,0,0,,{\pos(540,1300)\fad(60,60)}IDENTIFY WHAT'S WASTING
+Dialogue: 2,0:00:46.37,0:00:47.51,Cap,,0,0,0,,{\pos(540,1300)\fad(60,60)}YOUR TIME AND START
+Dialogue: 2,0:00:47.51,0:00:48.22,Cap,,0,0,0,,{\pos(540,1300)\fad(60,60)}CHANGING IT.
+Dialogue: 2,0:00:48.72,0:00:49.78,Cap,,0,0,0,,{\pos(540,1300)\fad(60,60)}FOURTH, TRACK YOUR
+Dialogue: 2,0:00:49.78,0:00:50.31,Cap,,0,0,0,,{\pos(540,1300)\fad(60,60)}PROGRESS.
+Dialogue: 2,0:00:50.81,0:00:51.89,Cap,,0,0,0,,{\pos(540,1300)\fad(60,60)}WRITE DOWN WHAT YOU'VE
+Dialogue: 2,0:00:51.89,0:00:52.32,Cap,,0,0,0,,{\pos(540,1300)\fad(60,60)}ACHIEVED.
+Dialogue: 2,0:00:52.82,0:00:53.75,Cap,,0,0,0,,{\pos(540,1300)\fad(60,60)}LOOK AT WHERE YOU'VE
+Dialogue: 2,0:00:53.75,0:00:54.16,Cap,,0,0,0,,{\pos(540,1300)\fad(60,60)}IMPROVED.
+Dialogue: 2,0:00:54.66,0:00:55.96,Cap,,0,0,0,,{\pos(540,1300)\fad(60,60)}AND WHEN SOMETHING DOESN'T
+Dialogue: 2,0:00:55.96,0:00:56.81,Cap,,0,0,0,,{\pos(540,1300)\fad(60,60)}WORK, ADJUST YOUR
+Dialogue: 2,0:00:56.81,0:00:57.26,Cap,,0,0,0,,{\pos(540,1300)\fad(60,60)}APPROACH.
+Dialogue: 2,0:00:57.76,0:00:59.12,Cap,,0,0,0,,{\pos(540,1300)\fad(60,60)}FINALLY, GIVE YOURSELF
+Dialogue: 2,0:00:59.12,0:00:59.43,Cap,,0,0,0,,{\pos(540,1300)\fad(60,60)}TIME.
+Dialogue: 2,0:00:59.93,0:01:01.01,Cap,,0,0,0,,{\pos(540,1300)\fad(60,60)}DON'T QUIT BECAUSE YOU
+Dialogue: 2,0:01:01.01,0:01:01.80,Cap,,0,0,0,,{\pos(540,1300)\fad(60,60)}HAVEN'T ACHIEVED
+Dialogue: 2,0:01:01.80,0:01:03.07,Cap,,0,0,0,,{\pos(540,1300)\fad(60,60)}EVERYTHING IN A FEW WEEKS.
+Dialogue: 2,0:01:03.57,0:01:05.08,Cap,,0,0,0,,{\pos(540,1300)\fad(60,60)}YOU ARE BUILDING A FUTURE,
+Dialogue: 2,0:01:05.08,0:01:06.40,Cap,,0,0,0,,{\pos(540,1300)\fad(60,60)}NOT CHASING A TEMPORARY
+Dialogue: 2,0:01:06.40,0:01:06.86,Cap,,0,0,0,,{\pos(540,1300)\fad(60,60)}FEELING.
+Dialogue: 2,0:01:07.36,0:01:08.60,Cap,,0,0,0,,{\pos(540,1300)\fad(60,60)}AND REMEMBER, YOU DON'T
+Dialogue: 2,0:01:08.60,0:01:09.89,Cap,,0,0,0,,{\pos(540,1300)\fad(60,60)}NEED TO FOLLOW THIS PLAN
+Dialogue: 2,0:01:09.89,0:01:10.43,Cap,,0,0,0,,{\pos(540,1300)\fad(60,60)}PERFECTLY.
+Dialogue: 2,0:01:10.93,0:01:12.00,Cap,,0,0,0,,{\pos(540,1300)\fad(60,60)}YOU JUST NEED TO KEEP
+Dialogue: 2,0:01:12.00,0:01:12.76,Cap,,0,0,0,,{\pos(540,1300)\fad(60,60)}MOVING FORWARD.
+Dialogue: 0,0:00:00.00,0:01:12.91,Foot,,0,0,0,,{\pos(540,1560)}FULL VIDEO ON MY CHANNEL  ·  PART 8/9
