@@ -2,7 +2,7 @@
 
 python3 thumb.py   -> out/thumbnail_A.png, _B.png, _C.png
 """
-import os, sys, random
+import os, sys, random, math
 import numpy as np
 from PIL import Image, ImageDraw, ImageFilter, ImageEnhance, ImageChops
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
@@ -188,9 +188,68 @@ def concept_HERO():
     put(c, sl, 330, 665, rot=-2)
     return c
 
+def rise_fall_line(c, pts, width=26, color=RED):
+    """Thick chart line with a white cut-paper outline, shadow and arrowhead."""
+    lay = Image.new("RGBA", (TW, TH), (0, 0, 0, 0))
+    d = ImageDraw.Draw(lay)
+    x1, y1 = pts[-1]
+    x0, y0 = pts[-2]
+    ang = math.atan2(y1 - y0, x1 - x0)
+    tip = (x1 + math.cos(ang) * 40, y1 + math.sin(ang) * 40)
+    head = [tip, (x1 + math.cos(ang + 2.4) * 46, y1 + math.sin(ang + 2.4) * 46), (x1 + math.cos(ang - 2.4) * 46, y1 + math.sin(ang - 2.4) * 46)]
+    for wdt, col in ((width + 22, WHITE), (width, color)):
+        d.line(pts, fill=col + (255,), width=wdt, joint="curve")
+        for p_ in pts:
+            r = wdt / 2
+            d.ellipse([p_[0] - r, p_[1] - r, p_[0] + r, p_[1] + r], fill=col + (255,))
+        g = 11 if col == WHITE else 0
+        hh = [(tip[0] + math.cos(ang) * g, tip[1] + math.sin(ang) * g),
+              (head[1][0] + math.cos(ang + 2.4) * g, head[1][1] + math.sin(ang + 2.4) * g),
+              (head[2][0] + math.cos(ang - 2.4) * g, head[2][1] + math.sin(ang - 2.4) * g)]
+        d.polygon(hh, fill=col + (255,))
+    lay = texture(lay, 1.2, 3)
+    sh = Image.new("RGBA", (TW, TH), (0, 0, 0, 0))
+    sh.putalpha(lay.getchannel("A").filter(ImageFilter.GaussianBlur(10)).point(lambda v: int(v * 0.6)))
+    c.alpha_composite(sh, (10, 14))
+    c.alpha_composite(lay)
+
+def concept_RISEFALL():
+    """'BLOCKBUSTER'S RISE AND FALL': then vs now, a chart that climbs then crashes into a '?'."""
+    c = bg("dark", 1)
+    c = vignette(c, 0.5)
+    then = photo("grand_opening.jpg", 640, crop=(0.08, 0.05, 1.0, 0.9), sat=1.0, contrast=1.25, seed=3)
+    a = np.asarray(then, np.float32)
+    lum = a[..., :3].mean(axis=2, keepdims=True)
+    a[..., :3] = lum * np.array([1.08, 0.96, 0.78])  # warm 80s sepia
+    then = Image.fromarray(np.clip(a, 0, 255).astype(np.uint8), "RGBA")
+    TL, _ = torn_split(then, seed=4, frac=0.9)
+    put(c, TL, 330, 380, rot=-5)
+    now = photo("closing_b.jpg", 640, crop=(0.25, 0.0, 1.0, 0.85), sat=1.45, contrast=1.2, seed=6)
+    _, NR = torn_split(now, seed=8, frac=0.1)
+    NR = Image.fromarray((np.asarray(NR, np.float32) * np.array([0.9, 0.9, 0.9, 1])).astype(np.uint8), "RGBA")
+    put(c, NR, 960, 395, rot=5)
+    s1 = slip("THE BOOM", 44, seed=1)
+    put(c, s1, 150, 180, rot=-7)
+    s2 = slip("THE BUST", 44, seed=2)
+    put(c, s2, 1150, 105, rot=6)
+    # the rise ... and the fall
+    rise_fall_line(c, [(70, 520), (260, 430), (420, 300), (560, 215), (640, 200), (700, 250), (760, 420), (820, 560)])
+    q = bold_text("?", 330, fill=RED, stroke=WHITE, sw=14)
+    glow(c, q, 1120, 470, color=(255, 40, 30), radius=40, op=0.8)
+    put(c, q, 1130, 470, rot=10, off=(12, 16), blur=12, op=0.8)
+    # caption
+    t1 = bold_text("BLOCKBUSTER'S", 118, fill=WHITE, sw=12)
+    put(c, t1, 470, 82, rot=-2, op=0.85)
+    t2 = bold_text("RISE AND FALL", 170, fill=(255, 214, 0), sw=16)
+    put(c, t2, 600, 635, rot=-2, off=(12, 16), blur=12, op=0.85)
+    return c
+
 if __name__ == "__main__":
     os.makedirs(OUT, exist_ok=True)
-    for name, fn in (("HERO", concept_HERO), ("B", concept_B), ("C", concept_C)):
+    which = sys.argv[1:] or ["HERO", "B", "C", "RISEFALL"]
+    for name, fn in (("HERO", concept_HERO), ("B", concept_B), ("C", concept_C), ("RISEFALL", concept_RISEFALL)):
+        if name not in which:
+            continue
         im = fn().convert("RGB")
         im.save(os.path.join(OUT, f"thumbnail_{name}.png"))
         print("saved", name)
