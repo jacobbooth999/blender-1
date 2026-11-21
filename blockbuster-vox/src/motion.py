@@ -80,7 +80,7 @@ def sync(scene, words, duration):
         lead = e.dur * 0.75 if e.anim in ("slide", "drop") else 0.04
         at = getattr(e, "at", None)
         mt = match_time(at, words) if at else match_time(getattr(e, "label", None), words)
-        if e.t <= 0.001 and mt is None:
+        if e.t <= 0.001:
             e.t = 0.0  # establishing piece: already arriving as the beat opens
         elif mt is not None:
             e.t = max(0.0, mt - lead)
@@ -146,7 +146,7 @@ class Highlight(El):
 
 class Banner:
     """Chapter title strip that slides in, holds, slides out (drawn over the camera)."""
-    def __init__(self, kicker, title, t_in=0.15, t_out=2.7):
+    def __init__(self, kicker, title, t_in=0.15, t_out=2.7, y=60):
         f1, f2 = font("label", 34), font("display", 92)
         w = max(text_size(f1, kicker)[0], text_size(f2, title)[0]) + 120
         h = 190
@@ -160,7 +160,7 @@ class Banner:
         ImageDraw.Draw(a).rectangle([4, 4, w - 4, h - 4], fill=255)
         im.putalpha(rough_alpha(a, 2.5, 3, 7, torn=True))
         self.img = shadowed(im, -1.5)
-        self.t_in, self.t_out = t_in, t_out
+        self.t_in, self.t_out, self.y = t_in, t_out, y
 
     def draw(self, frame, t):
         if t < self.t_in or t > self.t_out + 0.4:
@@ -174,7 +174,7 @@ class Banner:
             x = x_end - (self.img.width + x_end + 40) * p
         else:
             x = x_end
-        frame.paste(self.img, (int(x), 60), self.img)
+        frame.alpha_composite(self.img, (max(0, int(x)), self.y)) if x >= 0 else frame.alpha_composite(self.img.crop((int(-x), 0, self.img.width, self.img.height)), (0, self.y))
 
 @functools.lru_cache(maxsize=1)
 def mote_sprite():
@@ -335,15 +335,11 @@ def transition(kind, prev, cur, p):
         return hblur(a, k)
     if kind == "zoom":
         e = smooth(p)
-        z = 1 + 0.6 * e
-        a = np.asarray(Image.fromarray(prev).resize((int(W * z), int(H * z)), Image.BILINEAR))
-        y0, x0 = (a.shape[0] - H) // 2, (a.shape[1] - W) // 2
-        a = a[y0:y0 + H, x0:x0 + W].astype(np.float32)
-        zc = 0.9 + 0.1 * e
-        c = np.asarray(Image.fromarray(cur).resize((int(W * zc), int(H * zc)), Image.BILINEAR))
-        cc = np.zeros_like(cur)
-        yo, xo = (H - c.shape[0]) // 2, (W - c.shape[1]) // 2
-        cc[:] = (cur * 0.0).astype(np.uint8)
-        cc[yo:yo + c.shape[0], xo:xo + c.shape[1]] = c
-        return np.clip(a * (1 - e) + cc.astype(np.float32) * e, 0, 255).astype(np.uint8)
+        def zc(img, z):
+            a = np.asarray(Image.fromarray(img).resize((int(W * z), int(H * z)), Image.BILINEAR))
+            y0, x0 = (a.shape[0] - H) // 2, (a.shape[1] - W) // 2
+            return a[y0:y0 + H, x0:x0 + W].astype(np.float32)
+        a = zc(prev, 1 + 0.5 * e)
+        c = zc(cur, 1.12 - 0.12 * e)
+        return np.clip(a * (1 - e) + c * e, 0, 255).astype(np.uint8)
     return cur

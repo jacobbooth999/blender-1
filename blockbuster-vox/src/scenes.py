@@ -252,6 +252,7 @@ def b013(sc):  # opened stores at a pace the industry had never seen.
 
 def b014(sc):  # The formula was simple. Big stores. Wide selection. Long opening hours.
     sc.bg = "board"
+    HL(sc, "THE FORMULA", 960, 170, 0.0, size=84, rot=-1)
     for i, (ic, lab, kw) in enumerate([("store", "BIG STORES", {"sign": ""}), ("shelf", "WIDE SELECTION", {}), ("clock", "LONG HOURS", {})]):
         x = 380 + i * 580
         I(sc, ic, 380 if ic != "clock" else 300, x, 470, 0.2 + i * 0.6, anim="drop", rot=(-3, 2, -2)[i], **kw)
@@ -698,7 +699,7 @@ def direction(i, sc, dur):
     b = i + 1
     sc.overlay = []
     if b in CHAPTERS:
-        sc.overlay.append(Banner(*CHAPTERS[b], t_in=0.25, t_out=min(2.9, dur - 0.5)))
+        sc.overlay.append(Banner(*CHAPTERS[b], t_in=0.25, t_out=min(2.9, dur - 0.5), y=H - 270 if b in (58, 72) else 60))
     if b in HIGHLIGHT:
         box, word = HIGHLIGHT[b]
         h = Highlight(box, 1.0)
