@@ -1,6 +1,6 @@
-"""Render beats to video segments, or a contact sheet of final frames.
+"""Render beats to video segments, or a contact sheet of frames.
 
-python3 render.py sheet            # final frame of every beat -> build/sheet_*.jpg
+python3 render.py sheet [N ..]     # last frame of beats -> build/sheet_*.jpg
 python3 render.py beats 1 5 9      # render selected beats (1-based) to build/seg
 python3 render.py all              # render every beat in parallel
 """
@@ -9,11 +9,11 @@ from multiprocessing import Pool
 from PIL import Image
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 from lib import *
-import scenes
 
 BUILD = os.path.join(ROOT, "build")
 SEG = os.path.join(BUILD, "seg")
 os.makedirs(SEG, exist_ok=True)
+TRANS_N = 11  # transition length in frames
 
 def beats():
     return json.load(open(os.path.join(ROOT, "narration", "beats.json")))
@@ -24,40 +24,59 @@ def durations():
         return json.load(open(p))
     return [round(len(b["text"].split()) / 2.5, 2) for b in beats()]
 
-def render_beat(i):
+def words():
+    p = os.path.join(BUILD, "words.json")
+    return json.load(open(p)) if os.path.exists(p) else [[] for _ in beats()]
+
+def setup(i):
+    import scenes
     dur = durations()[i]
     sc = scenes.build(i)
-    frames, events = render_scene(sc, dur)
+    cam = scenes.direction(i, sc, dur)
+    return sc, cam, dur
+
+def render_beat(i):
+    import scenes, motion
+    sc, cam, dur = setup(i)
+    gen, events, n = motion.compose(sc, dur, words()[i], cam, beat=i)
+    kind = scenes.transition_kind(i)
+    prev = None
+    if kind != "cut":
+        psc, pcam, pdur = setup(i - 1)
+        prev = motion.last_frame(psc, pdur, words()[i - 1], pcam, beat=i - 1)
+        events.append((0.0, "whoosh" if kind != "zoom" else "riser"))
     out = os.path.join(SEG, f"B{i + 1:03d}.mp4")
     cmd = ["ffmpeg", "-y", "-loglevel", "error", "-f", "rawvideo", "-pix_fmt", "rgb24", "-s", f"{W}x{H}", "-r", str(FPS),
            "-i", "-", "-c:v", "libx264", "-preset", "medium", "-crf", "18", "-pix_fmt", "yuv420p", out]
     p = subprocess.Popen(cmd, stdin=subprocess.PIPE)
-    for k, f in enumerate(frames):
-        p.stdin.write(finalize(f, k, i).tobytes())
+    for k, f in enumerate(gen):
+        if prev is not None and k < TRANS_N:
+            f = motion.transition(kind, prev, f, (k + 1) / (TRANS_N + 1))
+        p.stdin.write(f.tobytes())
     p.stdin.close()
     p.wait()
     json.dump(events, open(os.path.join(SEG, f"B{i + 1:03d}.sfx.json"), "w"))
-    return i, len(frames)
+    return i, n
 
-def final_frame(i):
-    dur = durations()[i]
+def sheet_frame(i):
+    import motion
     try:
-        sc = scenes.build(i)
-        frames, _ = render_scene(sc, dur)
+        sc, cam, dur = setup(i)
+        a = motion.last_frame(sc, dur, words()[i], cam, beat=i)
+        return Image.fromarray(a).resize((480, 270), Image.LANCZOS)
     except Exception as e:
-        import traceback; print(f"B{i+1:03d} FAILED", repr(e)); traceback.print_exc()
-        z = Image.new("RGB", (480, 270), (255, 0, 0)); return z, z
-    return frames[-1].resize((480, 270), Image.LANCZOS), frames[len(frames) // 4].resize((480, 270), Image.LANCZOS)
+        import traceback; print(f"B{i + 1:03d} FAILED", repr(e)); traceback.print_exc()
+        return Image.new("RGB", (480, 270), (255, 0, 0))
 
 def sheet(idx):
     with Pool(4) as pool:
-        res = pool.map(final_frame, idx)
+        res = pool.map(sheet_frame, idx)
     per = 20
     for s in range(0, len(idx), per):
         chunk = res[s:s + per]
         sh = Image.new("RGB", (4 * 480, 5 * 270), (0, 0, 0))
-        for k, (fin, _) in enumerate(chunk):
-            sh.paste(fin, ((k % 4) * 480, (k // 4) * 270))
+        for k, im in enumerate(chunk):
+            sh.paste(im, ((k % 4) * 480, (k // 4) * 270))
         sh.save(os.path.join(BUILD, f"sheet_{s // per + 1}.jpg"), quality=85)
 
 if __name__ == "__main__":

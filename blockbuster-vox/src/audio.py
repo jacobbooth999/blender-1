@@ -65,6 +65,19 @@ def sfx(kind):
             x[k:k + 200] += rng.normal(0, 1, 200) * np.exp(-np.arange(200) / 40)
         x = band(x, 500, 8000) * env(n, 0.05, 0.2)
         return 0.3 * x / np.abs(x).max()
+    if kind == "whoosh":
+        n = int(0.5 * SR)
+        x = rng.normal(0, 1, n)
+        parts = [band(x, lo, hi) * np.exp(-((np.arange(n) / SR - c) / 0.09) ** 2) for lo, hi, c in ((300, 1200, 0.12), (800, 3000, 0.22), (2000, 7000, 0.32))]
+        x = sum(parts)
+        return 0.28 * x / np.abs(x).max()
+    if kind == "riser":  # chapter impact: low boom + airy tail
+        n = int(1.2 * SR)
+        t = np.arange(n) / SR
+        boom = np.sin(2 * np.pi * (40 + 30 * np.exp(-t * 8)) * t) * np.exp(-t * 3.5)
+        air = band(rng.normal(0, 1, n), 2000, 9000) * np.exp(-t * 4) * 0.25
+        x = boom + air
+        return 0.5 * x / np.abs(x).max()
     return np.zeros(10)
 
 def read_wav(p):
@@ -102,7 +115,29 @@ def main():
         t0 += d
     room = band(rng.normal(0, 1, len(mix_v)), 60, 900)
     room = room / np.abs(room).max() * 0.004
-    out = mix_v * 1.0 + mix_s * 0.55 + room
+    music = np.zeros_like(mix_v)
+    if "--no-music" not in sys.argv:
+        import score
+        starts = np.concatenate([[0], np.cumsum(durs)])
+        marks = [(1, "open"), (8, "p1"), (28, "p2"), (48, "p3"), (58, "p4"), (72, "epi")]
+        bounds = [(k, starts[b - 1], starts[marks[j + 1][0] - 1] if j + 1 < len(marks) else total) for j, (b, k) in enumerate(marks)]
+        m = score.build(total, bounds)[: len(mix_v)]
+        music[: len(m)] = m
+        # duck under the voice
+        hop = 480
+        e = np.sqrt(np.convolve(mix_v ** 2, np.ones(hop * 5) / (hop * 5), mode="same"))
+        e = np.clip(e / (e.max() + 1e-9) * 4, 0, 1)
+        sm = np.zeros_like(e)
+        a_, r_ = 1 - np.exp(-1 / (0.05 * SR)), 1 - np.exp(-1 / (0.4 * SR))
+        # one-pole follower on a decimated envelope for speed
+        ed = e[::hop]
+        sd = np.zeros_like(ed)
+        for k in range(1, len(ed)):
+            c = 0.5 if ed[k] > sd[k - 1] else 0.08
+            sd[k] = sd[k - 1] + (ed[k] - sd[k - 1]) * c
+        sm = np.interp(np.arange(len(e)), np.arange(len(sd)) * hop, sd)
+        music = music * (1 - 0.5 * sm) * 0.3
+    out = mix_v * 1.0 + mix_s * 0.55 + room + music
     out = out / max(1.0, np.abs(out).max() / 0.95)
     pcm = (np.clip(out, -1, 1) * 32767).astype(np.int16)
     wp = os.path.join(BUILD, "mix.wav")

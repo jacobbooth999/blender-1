@@ -11,21 +11,30 @@ def P(sc, name, w, cx, cy, t, frm="left", rot=0, crop=None, mode="ht", anim="sli
     s = seed if seed is not None else (hash(name) + int(cx)) % 997
     return sc.add(El(photo_piece(name, w, crop, cell=cell, seed=s, mode=mode, contrast=contrast), cx, cy, t, anim, frm, rot=rot))
 
+def _L(el, label):
+    el.label = label
+    return el
+
 def I(sc, name, w, cx, cy, t, anim="drop", rot=0, frm=None, seed=None, dist=None, **kw):
     s = seed if seed is not None else int(cx + cy) % 991
-    return sc.add(El(icon(name, w, seed=s, **kw), cx, cy, t, anim, frm, rot=rot, dist=dist))
+    lab = kw.get("label") or kw.get("text") or kw.get("title") or {"vhs": "tape", "dvd": "DVD", "envelope": "mail", "money": "dollars",
+          "calendar": "dates", "truck": "waste", "dish": "satellite", "gavel": "auction", "scissors": "cut", "kiosk": "kiosks",
+          "plane": "flew", "table": "meetings", "warning": "warning", "family": "families", "clock": "hours", "shelf": "selection",
+          "store": "stores", "building": "Viacom", "magnifier": "reports", "ring": "rescue", "chair": "left", "box": "left",
+          "book": "account", "ticket": "Blockbuster", "check": "answer", "scale": "past", "coin": "dollar", "qmark": "?"}.get(name)
+    return _L(sc.add(El(icon(name, w, seed=s, **kw), cx, cy, t, anim, frm, rot=rot, dist=dist)), lab)
 
 def S(sc, text, cx, cy, t, size=44, rot=0, frm="bottom", bg=WHITE, fg=INK, anim="slide"):
-    return sc.add(El(slip(text, size, bg=bg, fg=fg, seed=len(text) + int(cx) % 50), cx, cy, t, anim, frm, rot=rot, sfx="slide"))
+    return _L(sc.add(El(slip(text, size, bg=bg, fg=fg, seed=len(text) + int(cx) % 50), cx, cy, t, anim, frm, rot=rot, sfx="slide")), text)
 
 def HL(sc, text, cx, cy, t, size=90, rot=0, frm="top", bg=NEWS, fg=INK, anim="slide"):
-    return sc.add(El(headline(text, size, bg=bg, fg=fg, seed=len(text)), cx, cy, t, anim, frm, rot=rot))
+    return _L(sc.add(El(headline(text, size, bg=bg, fg=fg, seed=len(text)), cx, cy, t, anim, frm, rot=rot)), text)
 
 def ST(sc, text, cx, cy, t, size=62, rot=-8, color=RED, box=True):
-    return sc.add(El(stamp(text, size, color, seed=len(text) * 3, box=box), cx, cy, t, "stamp", rot=rot, shadow=False))
+    return _L(sc.add(El(stamp(text, size, color, seed=len(text) * 3, box=box), cx, cy, t, "stamp", rot=rot, shadow=False)), text)
 
 def BT(sc, text, cx, cy, t, size=180, color=RED, rot=0, anim="stamp", frm=None):
-    return sc.add(El(big_text(text, size, color, seed=len(text)), cx, cy, t, anim, frm, rot=rot))
+    return _L(sc.add(El(big_text(text, size, color, seed=len(text)), cx, cy, t, anim, frm, rot=rot)), text)
 
 def TP(sc, cx, cy, t, rot=0, L=170):
     return sc.add(El(tape(L, 50, seed=int(cx) % 31), cx, cy, t, "drop", rot=rot, shadow=False, sfx="tape", dist=60))
@@ -38,6 +47,49 @@ def TH(sc, pts, t, **kw):
 
 def DOC(sc, w, cx, cy, t, title="", rot=0, frm="bottom", lines=9, seal=False, anim="slide", bg=WHITE):
     return sc.add(El(ic_document(w, seed=int(cx) % 97, title=title, lines=lines, seal=seal, bg=bg), cx, cy, t, anim, frm, rot=rot))
+
+def dossier_piece(name, role, w=520, seed=0):
+    h = int(w * 1.2)
+    S = 2
+    im = Image.new("RGBA", (w * S, h * S), (0, 0, 0, 0))
+    d = ImageDraw.Draw(im)
+    W_, H_ = w * S, h * S
+    kraft = (205, 172, 118)
+    d.rounded_rectangle([W_ * .06, 0, W_ * .42, H_ * .1], radius=10 * S, fill=kraft + (255,))
+    d.rectangle([0, H_ * .06, W_, H_], fill=kraft + (255,))
+    d.rectangle([W_ * .06, H_ * .1, W_ * .94, H_ * .96], fill=WHITE + (255,))
+    ft = font("label", int(W_ * .05))
+    d.text((W_ * .1, H_ * .015), "CASE FILE", font=ft, fill=INK + (255,))
+    # photo slot with a faceless figure
+    x0, y0, x1, y1 = W_ * .14, H_ * .15, W_ * .52, H_ * .52
+    d.rectangle([x0, y0, x1, y1], fill=(150, 144, 132, 255), outline=INK + (255,), width=3 * S)
+    sw, sh = int(x1 - x0) - 6 * S, int(y1 - y0) - 6 * S
+    fig = ic_person(int(sw * 0.55 / S), border=0, tie=RED)
+    fig = fig.resize((int(sw * 0.55), int(sw * 0.55 * fig.height / fig.width)))
+    slot = Image.new("RGBA", (sw, sh), (150, 144, 132, 255))
+    slot.alpha_composite(fig, (int(sw / 2 - fig.width / 2), int(sh * 0.16)))
+    im.alpha_composite(slot, (int(x0) + 3 * S, int(y0) + 3 * S))
+    fl = font("type", int(W_ * .045))
+    fv = font("type", int(W_ * .06))
+    y = H_ * .58
+    for lab, val in (("SUBJECT", name), ("ROLE", role)):
+        d.text((W_ * .14, y), lab + ":", font=fl, fill=GREY + (255,))
+        tw = text_size(fv, val)[0]
+        f2 = fv if tw < W_ * .72 else font("type", int(W_ * .06 * W_ * .72 / tw))
+        d.text((W_ * .14, y + H_ * .04), val, font=f2, fill=INK + (255,))
+        y += H_ * .14
+    for k in range(3):
+        d.line([(W_ * .58, H_ * (.2 + k * .07)), (W_ * .86, H_ * (.2 + k * .07))], fill=LGREY + (255,), width=3 * S)
+    # paper clip
+    d.rounded_rectangle([W_ * .38, H_ * .08, W_ * .46, H_ * .26], radius=12 * S, outline=(120, 120, 124, 255), width=4 * S)
+    im = im.resize((w, h), Image.LANCZOS)
+    im = texture(im, 1.3, seed)
+    st = stamp("CONFIDENTIAL", int(w * .085), RED, seed=seed + 3).rotate(-12, Image.BICUBIC, expand=True)
+    im.alpha_composite(st, (int(w * .48), int(h * .9) - st.height // 2))
+    return scissor(im, seed)
+
+def DOS(sc, name, role, cx, cy, t, w=520, rot=-2, frm="left"):
+    return _L(sc.add(El(dossier_piece(name, role, w, seed=len(name)), cx, cy, t, "slide", frm, rot=rot)), name)
 
 class MapRef:
     def __init__(self, el, pr):
@@ -167,10 +219,9 @@ def b008(sc):  # that happened we have to go back to the man
 
 def b009(sc):  # who built the empire. In 1987 businessman Wayne Huizenga
     sc.bg = "tan"
-    I(sc, "person", 300, 760, 560, 0.0, tie=RED)
-    S(sc, "WAYNE HUIZENGA", 1250, 500, 0.6, size=56, rot=-2, frm="right")
-    ST(sc, "1987", 1250, 660, 1.1, size=90, rot=7)
-    S(sc, "BUSINESSMAN", 1250, 800, 1.4, size=34, rot=1, frm="right", bg=PAPER)
+    HL(sc, "THE EMPIRE BUILDER", 1300, 300, 0.2, size=76, rot=2, frm="right")
+    ST(sc, "1987", 1320, 620, 0.6, size=110, rot=7)
+    DOS(sc, "WAYNE HUIZENGA", "BUSINESSMAN", 700, 560, 1.0)
 
 def b010(sc):  # and his partners invested in the young company and took control.
     sc.bg = "board"
@@ -341,9 +392,10 @@ def b035(sc):  # they proposed selling Netflix to Blockbuster for fifty million 
 
 def b036(sc):  # Blockbuster's chief executive John Antioco reportedly turned them down.
     sc.bg = "tan"
-    I(sc, "tag", 640, 820, 420, 0.0, rot=4, text="$50 MILLION")
-    ST(sc, "DECLINED", 1080, 700, 0.7, size=120, rot=-10)
-    S(sc, "CEO JOHN ANTIOCO", 1460, 860, 1.2, size=44, rot=2, frm="right")
+    I(sc, "tag", 600, 1260, 400, 0.0, rot=4, text="$50 MILLION")
+    DOS(sc, "JOHN ANTIOCO", "CHIEF EXECUTIVE", 560, 560, 0.3, w=480)
+    ST(sc, "DECLINED", 1300, 720, 0.7, size=120, rot=-10)
+    sc.els[-1].at = "down"
 
 def b037(sc):  # At the time Netflix was losing money. The offer looked like
     sc.add(El(ic_chart(900, seed=37, kind="down", color=RED), 860, 540, 0.0, "drop", rot=1))
@@ -431,9 +483,7 @@ def b049(sc):  # The program was expensive. Antioco clashed with his board
 
 def b050(sc):  # and with activist investor Carl Icahn over costs and his own pay.
     sc.bg = "tan"
-    I(sc, "person", 230, 560, 560, 0.0)
-    S(sc, "ACTIVIST INVESTOR", 560, 900, 0.4, size=40, rot=-2)
-    S(sc, "CARL ICAHN", 560, 970, 0.6, size=40, rot=1, bg=PAPER)
+    DOS(sc, "CARL ICAHN", "ACTIVIST INVESTOR", 560, 560, 0.0, w=500)
     sc.add(El(ic_receipt(300, seed=50, title="COSTS", amount="$$$"), 1180, 520, 0.8, "slide", "right", rot=-5))
     sc.add(El(ic_receipt(300, seed=51, title="CEO PAY", amount="$$$"), 1530, 560, 1.1, "slide", "right", rot=6))
     I(sc, "bolt", 130, 850, 420, 1.5, anim="stamp")
@@ -447,9 +497,7 @@ def b051(sc):  # In 2007 Antioco left the company.
 
 def b052(sc):  # His replacement Jim Keyes shifted focus back toward the
     sc.bg = "tan"
-    I(sc, "person", 230, 620, 560, 0.0, anim="slide", frm="left", pose="walk", tie=MUSTARD)
-    S(sc, "JIM KEYES", 620, 920, 0.5, size=50, rot=-2)
-    S(sc, "NEW CEO", 620, 990, 0.7, size=36, rot=1, bg=PAPER)
+    DOS(sc, "JIM KEYES", "NEW CEO", 600, 560, 0.0, w=500)
     I(sc, "store", 500, 1350, 520, 0.9, anim="slide", frm="right", sign="")
     MK(sc, "arrow", (860, 400, 1080, 440), 1.4, width=10)
 
@@ -556,6 +604,7 @@ def b067(sc):  # to the latest reports just one Blockbuster store remains open.
     x, y = m.xy(-121.31, 44.06)
     DOT(sc, x, y, 0.4, r=18)
     MK(sc, "circle", (x - 70, y - 60, x + 70, y + 60), 0.8)
+    sc.punch = (x + 120, y + 60, 1.35, 0.55)
     BT(sc, "1", 1740, 760, 1.1, size=240)
     S(sc, "STORE LEFT", 1700, 950, 1.5, size=46, rot=3)
 
@@ -632,6 +681,49 @@ def b078(sc):  # It lost because the future paid less than the past.
     I(sc, "coin", 110, 1320, 380, 1.1, anim="drop", sym="$")
 
 BEATS = [globals()[f"b{i:03d}"] for i in range(1, 79)]
+
+CHAPTERS = {8: ("PART ONE", "THE EMPIRE"), 28: ("PART TWO", "THE CHALLENGER"), 48: ("PART THREE", "THE STUMBLE"),
+            58: ("PART FOUR", "THE FALL"), 72: ("EPILOGUE", "THE LESSON")}
+# (x, y, zoom, start fraction): camera pushes in on a detail during the beat
+PUNCH = {3: (1180, 380, 1.3, 0.5), 41: (520, 480, 1.55, 0.45), 42: (900, 400, 1.25, 0.5), 44: (1000, 320, 1.35, 0.5),
+         54: (620, 360, 1.45, 0.45), 55: (640, 450, 1.5, 0.45), 59: (730, 470, 1.4, 0.5), 64: (1100, 260, 1.4, 0.45),
+         2: (1380, 470, 1.2, 0.55), 29: (900, 470, 1.15, 0.5), 16: (900, 520, 1.15, 0.5)}
+# highlighter sweeps over document headlines: (box, word to land on)
+HIGHLIGHT = {23: ((490, 236, 1090, 318), "reports"), 60: ((560, 228, 1080, 286), "bankruptcy"), 48: ((600, 254, 1040, 300), "strange"),
+             58: ((400, 190, 1100, 280), "crisis"), 10: ((500, 228, 1020, 286), "invested")}
+
+def direction(i, sc, dur):
+    """Camera + overlays for beat index i (0-based)."""
+    from motion import Camera, Banner, Highlight
+    b = i + 1
+    sc.overlay = []
+    if b in CHAPTERS:
+        sc.overlay.append(Banner(*CHAPTERS[b], t_in=0.25, t_out=min(2.9, dur - 0.5)))
+    if b in HIGHLIGHT:
+        box, word = HIGHLIGHT[b]
+        h = Highlight(box, 1.0)
+        h.at = word
+        sc.els.append(h)
+    big = [e for e in sc.els if hasattr(e, "raw")]
+    hero = max(big, key=lambda e: e.raw.width * e.raw.height) if big else None
+    focus = (hero.cx, hero.cy) if hero is not None else (W / 2, H / 2)
+    r = random.Random(b)
+    punch = getattr(sc, "punch", None) or PUNCH.get(b)
+    z1 = 1.12 if b == 1 else r.uniform(1.05, 1.09)
+    drift = (r.choice([-1, 1]) * r.uniform(20, 60), r.uniform(-20, 20))
+    return Camera(dur, focus, 1.0, z1, drift, punch, seed=b)
+
+def transition_kind(i):
+    b = i + 1
+    if b == 1:
+        return "cut"
+    if b in CHAPTERS:
+        return "zoom"
+    from render import beats
+    prev = beats()[i - 1]["text"].rstrip()
+    if not prev.endswith((".", "?")):
+        return "cut"
+    return ["slide", "cut", "whip", "cut", "slide", "whip"][b % 6]
 
 def build(i):
     """Return Scene for beat index i (0-based)."""
