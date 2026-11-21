@@ -98,9 +98,13 @@ def main():
     t0 = 0.0
     vdir = os.path.join(ROOT, "narration", "voice")
     cache = {}
+    full_vp = os.path.join(vdir, "full.wav")
+    if os.path.exists(full_vp):  # continuous sentence-level narration
+        v = read_wav(full_vp)
+        mix_v[:min(len(v), len(mix_v))] += v[:len(mix_v)]
     for i, d in enumerate(durs):
         vp = os.path.join(vdir, f"B{i + 1:03d}.wav")
-        if os.path.exists(vp):
+        if os.path.exists(vp) and not os.path.exists(full_vp):
             v = read_wav(vp)
             k = int((t0 + 0.08) * SR)
             mix_v[k:k + len(v)] += v[:len(mix_v) - k]
