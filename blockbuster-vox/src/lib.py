@@ -66,159 +66,137 @@ def texture(im_rgb, strength=1.0, seed=0):
     return Image.fromarray(out.astype(np.uint8), im_rgb.mode)
 
 # ---------------------------------------------------------------- backgrounds
+def _spiral(d, cx, cy, a, turns, sign, ang0, width, col, S, offs=(0,)):
+    """Engraved volute: a log spiral drawn with parallel lines."""
+    for o in offs:
+        pts = []
+        for k in range(int(70 * turns)):
+            th = k / 70 * turns * 2 * math.pi
+            r = (a + o) * math.exp(-0.22 * th)
+            pts.append((cx + sign * r * math.cos(th + ang0) * S, cy + r * math.sin(th + ang0) * S))
+        d.line(pts, fill=col, width=width, joint="curve")
+
+def _leaf(d, x0, y0, x1, y1, bulge, col, S, hatch=6, width=2):
+    """Acanthus-like leaf: two curved edges plus hatching."""
+    def edge(sgn):
+        pts = []
+        for k in range(25):
+            t = k / 24
+            mx, my = x0 + (x1 - x0) * t, y0 + (y1 - y0) * t
+            nx, ny = -(y1 - y0), (x1 - x0)
+            L = math.hypot(nx, ny) or 1
+            b = math.sin(t * math.pi) * bulge * sgn * (1 - 0.3 * t)
+            pts.append(((mx + nx / L * b) * S, (my + ny / L * b) * S))
+        return pts
+    e1, e2 = edge(1), edge(-1)
+    d.line(e1, fill=col, width=width * S)
+    d.line(e2, fill=col, width=width * S)
+    for h in range(1, hatch):
+        i = int(h / hatch * 24)
+        d.line([e1[i], ((e1[i][0] + e2[i][0]) / 2, (e1[i][1] + e2[i][1]) / 2)], fill=col, width=max(1, S))
+
+@functools.lru_cache(maxsize=2)
+def scroll_band(seed=0):
+    """Baroque engraved scrollwork band (L mask), W wide, tiled from mirrored motifs."""
+    S = 2
+    bw, bh = W, 250
+    im = Image.new("L", (bw * S, bh * S), 0)
+    d = ImageDraw.Draw(im)
+    unit = 420
+    for u in range(-1, bw // unit + 2):
+        ux = u * unit + unit / 2
+        for side in (-1, 1):
+            # large C-scroll volute with engraved parallel lines
+            _spiral(d, ux + side * 120, 112, 74, 1.7, side, -0.5, 3 * S, 255, S, offs=(0, -6, -12, -18))
+            # counter volute
+            _spiral(d, ux + side * 200, 60, 40, 1.5, -side, 2.4, 2 * S, 255, S, offs=(0, -5, -10))
+            # small curl near centre bottom
+            _spiral(d, ux + side * 45, 190, 26, 1.3, side, 0.8, 2 * S, 255, S, offs=(0, -5))
+            # acanthus leaves
+            _leaf(d, ux + side * 135, 40, ux + side * 230, 8, 24, 255, S, hatch=9, width=3)
+            _leaf(d, ux + side * 110, 186, ux + side * 230, 210, 20, 255, S, hatch=8, width=3)
+            _leaf(d, ux + side * 20, 96, ux + side * 92, 160, 17, 255, S, hatch=6)
+            # sweeping tendril connecting to the next motif
+        for k, (h, wdt) in enumerate([(140, 30), (100, 21), (64, 12)]):
+            _leaf(d, ux, 22 + k * 6, ux, 22 + h, wdt, 255, S, hatch=6, width=3 if k == 0 else 2)
+        d.ellipse([(ux - 12) * S, 176 * S, (ux + 12) * S, 200 * S], outline=255, width=3 * S)
+        d.ellipse([(ux - 5) * S, 183 * S, (ux + 5) * S, 193 * S], fill=255)
+    im = im.resize((bw, bh), Image.LANCZOS).filter(ImageFilter.GaussianBlur(0.6))
+    return im
+
 @functools.lru_cache(maxsize=16)
 def background(kind="news", variant=0):
-    """An old scrapbook page: thick fibrous paper with torn deckled edges, ripped and
-    dog-eared corners, foxing and age burn, mounted on a dark album board."""
+    """Aged golden parchment: mottled stains, fibrous grain, scratches, burnt edges,
+    faint engraved scrollwork bands top and bottom."""
     seed = {"news": 1, "tan": 2, "map": 3, "board": 4, "dark": 5}[kind] * 10 + variant
     rng = np.random.default_rng(seed)
     pr = random.Random(seed)
-    base = {"news": (232, 222, 196), "tan": (222, 202, 162), "map": (226, 212, 178), "board": (196, 168, 122), "dark": (54, 50, 46)}[kind]
-    # --- album board behind the page (worn dark cardboard / leather)
-    board = np.ones((H, W, 3), np.float32) * np.array((58, 44, 33), np.float32)
-    board *= (0.82 + 0.3 * lowfreq(W, H, 40, rng))[..., None]
-    board *= (0.9 + 0.2 * lowfreq(W, H, 3, rng))[..., None]
-    # --- page mask with deckled, torn edges
-    m = 30
-    mask = Image.new("L", (W, H), 0)
-    ImageDraw.Draw(mask).polygon(jitter_poly(W - 2 * m, H - 2 * m, 0, 6, 26, pr), fill=255)
-    mask = ImageChops.offset(mask, m, m)
-    d = ImageDraw.Draw(mask)
-    corners = {"tl": (m, m, 1, 1), "tr": (W - m, m, -1, 1), "br": (W - m, H - m, -1, -1), "bl": (m, H - m, 1, -1)}
-    names = list(corners)
-    pr.shuffle(names)
-    rip, dog = names[:2], names[2]
-    for nm in rip:  # ripped-off corner chunks
-        cx, cy, sx, sy = corners[nm]
-        a, b = pr.uniform(150, 250), pr.uniform(110, 190)
-        pts = [(cx - sx * 40, cy - sy * 40), (cx + sx * a, cy - sy * 40)]
-        n = 9
-        for k in range(n + 1):
-            t = k / n
-            bow = math.sin(t * math.pi) * pr.uniform(10, 45)
-            x = cx + sx * (a * (1 - t) + bow) + pr.uniform(-16, 16)
-            y = cy + sy * (b * t + bow) + pr.uniform(-16, 16)
-            pts.append((x, y))
-        pts.append((cx - sx * 40, cy + sy * b))
-        d.polygon(pts, fill=0)
-    cx, cy, sx, sy = corners[dog]  # dog-eared corner
-    s = pr.uniform(90, 130)
-    A, B = (cx + sx * s, cy), (cx, cy + sy * s)
-    d.polygon([(cx - sx * 40, cy - sy * 40), (A[0], cy - sy * 40), A, B, (cx - sx * 40, B[1])], fill=0)
-    mask = rough_alpha(mask, 1.5, 2.5, seed, torn=True)
-    marr = np.asarray(mask, np.float32) / 255
-    # --- page paper
-    pg = np.ones((H, W, 3), np.float32) * np.array(base, np.float32)
-    mott = lowfreq(W, H, 140, rng) - 0.5
-    fib = lowfreq(W, H, 2.5, rng) - 0.5
-    fib2 = lowfreq(W, H, 7, rng) - 0.5
-    pg *= (1 + mott * 0.11 + fib * 0.08 + fib2 * 0.07)[..., None]
     dk = kind == "dark"
-    # visible fibres: short random strokes
+    light = {"news": (238, 222, 178), "tan": (236, 210, 140), "map": (232, 214, 160), "board": (222, 196, 140), "dark": (92, 76, 56)}[kind]
+    edge = {"news": (166, 120, 62), "tan": (176, 112, 38), "map": (170, 118, 52), "board": (150, 100, 46), "dark": (34, 26, 18)}[kind]
+    yv, xv = np.mgrid[0:H, 0:W].astype(np.float32)
+    # radial falloff from a slightly off-centre hot spot + lumpy edge burn
+    cx, cy = W * pr.uniform(0.42, 0.58), H * pr.uniform(0.42, 0.58)
+    r = np.sqrt(((xv - cx) / (W * 0.62)) ** 2 + ((yv - cy) / (H * 0.62)) ** 2)
+    r = r + (lowfreq(W, H, 160, rng) - 0.5) * 0.35
+    t = np.clip((r - 0.35) / 0.75, 0, 1) ** 1.6
+    a = np.array(light, np.float32) * (1 - t[..., None]) + np.array(edge, np.float32) * t[..., None]
+    # multi-scale mottling (cloudy blotches)
+    m = (lowfreq(W, H, 220, rng) - 0.5) * 0.5 + (lowfreq(W, H, 70, rng) - 0.5) * 0.35 + (lowfreq(W, H, 22, rng) - 0.5) * 0.2
+    warm = np.array((0.95, 0.86, 0.66), np.float32)  # darkening that shifts toward orange-brown
+    dark_amt = np.clip(-m * 1.4, 0, 1)
+    a = a * (1 + np.clip(m, 0, 1)[..., None] * 0.18)
+    a = a * (1 - dark_amt[..., None] * (1 - warm) * 1.1)
+    bl = lowfreq(W, H, 110, rng)
+    a = a * (1 - (np.clip(bl - 0.6, 0, 1) * 1.6)[..., None] * (1 - warm))
+    # fibrous diagonal grain (canvas-like streaks)
+    for ang, amp in ((28, 0.06), (-55, 0.035)):
+        D = int(math.hypot(W, H)) + 8
+        n = rng.normal(0, 1, (D // 2, D // 12)).astype(np.float32)
+        st = Image.fromarray(np.clip(n * 40 + 128, 0, 255).astype(np.uint8)).resize((D, D), Image.BICUBIC)
+        st = st.rotate(ang, Image.BICUBIC).crop(((D - W) // 2, (D - H) // 2, (D - W) // 2 + W, (D - H) // 2 + H))
+        st = np.asarray(st, np.float32) / 255 - 0.5
+        fine = np.asarray(Image.fromarray(np.clip(rng.normal(128, 40, (H, W)), 0, 255).astype(np.uint8)).filter(ImageFilter.GaussianBlur(0.7)), np.float32) / 255 - 0.5
+        a = a * (1 + (st * amp + fine * 0.05)[..., None])
+    # light scratches and creases
+    sc = Image.new("L", (W, H), 0)
+    sd = ImageDraw.Draw(sc)
+    for _ in range(46):
+        x, y = rng.random() * W, rng.random() * H
+        ang = rng.uniform(-0.6, 0.6) + (math.pi / 2 if rng.random() < 0.3 else 0)
+        L = 40 + rng.random() * 260
+        pts = [(x + math.cos(ang) * L * u + math.sin(u * 7 + x) * 4, y + math.sin(ang) * L * u + math.cos(u * 5 + y) * 4) for u in np.linspace(0, 1, 12)]
+        sd.line(pts, fill=int(90 + rng.random() * 120), width=1 if rng.random() < 0.7 else 2)
+    sc = np.asarray(sc.filter(ImageFilter.GaussianBlur(0.8)), np.float32) / 255
+    a = a + sc[..., None] * (np.array((255, 245, 220), np.float32) - a) * 0.28
+    # rust flecks and dark specks
     fl = Image.new("L", (W, H), 0)
     fd = ImageDraw.Draw(fl)
-    for _ in range(1400):
+    for _ in range(int(14 + rng.random() * 12)):
         x, y = rng.random() * W, rng.random() * H
-        ang, L = rng.random() * math.pi, 6 + rng.random() * 22
-        fd.line([(x, y), (x + math.cos(ang) * L, y + math.sin(ang) * L)], fill=int(60 + rng.random() * 90), width=1)
-    fl = np.asarray(fl.filter(ImageFilter.GaussianBlur(0.6)), np.float32) / 255
-    pg += (fl * (14 if dk else -16))[..., None] * (np.array((1, 1, 1)) if dk else np.array((1.0, 1.1, 1.4)))
-    if kind == "news":
-        ghost = Image.new("L", (W, H), 0)
-        gd = ImageDraw.Draw(ghost)
-        x = 90
-        while x < W - 120:
-            y = 110
-            while y < H - 110:
-                if rng.random() > 0.07:
-                    ln = 220 * (0.5 + 0.5 * rng.random()) if rng.random() < 0.15 else 220
-                    gd.line([(x, y), (x + ln, y)], fill=255, width=4)
-                y += 13
-            x += 256
-        g = np.asarray(ghost.filter(ImageFilter.GaussianBlur(1.2)), np.float32) / 255
-        g *= np.clip(lowfreq(W, H, 300, rng) * 1.6 - 0.3, 0, 1)
-        pg -= (g * 16)[..., None]
-    if kind == "map":
-        gm = Image.new("L", (W, H), 0)
-        gd = ImageDraw.Draw(gm)
-        for gx in range(90, W, 120):
-            gd.line([(gx, 0), (gx, H)], fill=255, width=2)
-        for gy in range(60, H, 120):
-            gd.line([(0, gy), (W, gy)], fill=255, width=2)
-        pg -= (np.asarray(gm, np.float32) / 255 * 18)[..., None]
-    if kind == "board":
-        for _ in range(90):
-            x, y = rng.random() * W, rng.random() * H
-            r = 1.5 + rng.random() * 2
-            yy0, yy1, xx0, xx1 = int(max(0, y - r)), int(min(H, y + r + 1)), int(max(0, x - r)), int(min(W, x + r + 1))
-            pass
-    # foxing: small rusty age spots
-    fox = Image.new("L", (W, H), 0)
-    fx = ImageDraw.Draw(fox)
-    for _ in range(int(70 + rng.random() * 50)):
+        rw, rh = 1 + rng.random() ** 3 * 6, 1 + rng.random() ** 2 * 10
+        fd.ellipse([x - rw, y - rh, x + rw, y + rh], fill=int(100 + rng.random() * 155))
+    for _ in range(300):
         x, y = rng.random() * W, rng.random() * H
-        r = 1 + rng.random() ** 3 * 9
-        fx.ellipse([x - r, y - r, x + r, y + r], fill=int(80 + rng.random() * 140))
-    fox = np.asarray(fox.filter(ImageFilter.GaussianBlur(1.6)), np.float32) / 255
-    pg -= fox[..., None] * np.array((30, 48, 70), np.float32) * (0.4 if dk else 1)
-    # one faded coffee/glue ring
-    rx, ry, rr = pr.uniform(300, W - 300), pr.uniform(250, H - 250), pr.uniform(90, 150)
-    ring = Image.new("L", (W, H), 0)
-    ImageDraw.Draw(ring).ellipse([rx - rr, ry - rr, rx + rr, ry + rr], outline=255, width=7)
-    ring = np.asarray(ring.filter(ImageFilter.GaussianBlur(4)), np.float32) / 255 * (0.5 + 0.5 * lowfreq(W, H, 30, rng))
-    pg -= ring[..., None] * np.array((14, 22, 34), np.float32) * (0.3 if dk else 1)
-    # a soft fold crease across the page
-    yv, xv = np.mgrid[0:H, 0:W].astype(np.float32)
-    x0 = pr.uniform(0.3, 0.7) * W
-    slope = pr.uniform(-0.12, 0.12)
-    dist = (xv - (x0 + slope * (yv - H / 2)))
-    crease = np.exp(-(dist / 3.0) ** 2) * 0.5 - np.exp(-((dist - 5) / 7.0) ** 2) * 0.35
-    pg *= (1 + crease * 0.09)[..., None]
-    # age burn toward the edges
-    inner = np.asarray(mask.filter(ImageFilter.GaussianBlur(60)), np.float32) / 255
-    burn = np.clip(1 - inner * 1.25, 0, 1) ** 1.3
-    pg = pg * (1 - burn[..., None] * 0.42) + burn[..., None] * np.array((92, 58, 26), np.float32) * 0.18
-    # dog-ear flap: the back of the page folded over
-    flap = Image.new("L", (W, H), 0)
-    C2 = (cx + sx * s, cy + sy * s)
-    ImageDraw.Draw(flap).polygon([A, B, C2], fill=255)
-    flap = rough_alpha(flap, 1.0, 3, seed + 9)
-    farr = np.asarray(flap, np.float32) / 255
-    fshadow = np.asarray(flap.filter(ImageFilter.GaussianBlur(10)), np.float32) / 255
-    fshadow = np.roll(np.roll(fshadow, 6 * -sx, 1), 6 * -sy, 0)
-    # --- page shadow on board
-    sh = np.asarray(mask.filter(ImageFilter.GaussianBlur(14)), np.float32) / 255
-    sh = np.roll(np.roll(sh, 8, 1), 10, 0)
-    out = board * (1 - sh[..., None] * 0.55)
-    # torn edge shows a lighter fibrous core
-    er = np.asarray(mask.filter(ImageFilter.MinFilter(5)), np.float32) / 255
-    fringe = np.clip(marr - er, 0, 1)
-    core = np.array((236, 228, 210) if not dk else (110, 104, 96), np.float32)
-    page = pg * (1 - fringe[..., None] * 0.7) + core * fringe[..., None] * 0.7
-    out = out * (1 - marr[..., None]) + page * marr[..., None]
-    out *= (1 - fshadow[..., None] * 0.35 * marr[..., None])
-    back = np.minimum(np.array(base, np.float32) * (1.1 if not dk else 1.45) + 8, 250)
-    flap_col = back * (0.92 + 0.12 * lowfreq(W, H, 20, rng))[..., None] * (1 + fib[..., None] * 0.06)
-    shade = np.clip(np.abs(dist) * 0, 0, 1)
-    # shade the flap from the crease outwards and draw the crease line
-    t_ = np.clip(((xv - A[0]) * (C2[0] - A[0]) + (yv - A[1]) * (C2[1] - A[1])) / (s * s), 0, 1)
-    flap_col = flap_col * (0.9 + 0.16 * t_)[..., None]
-    out = out * (1 - farr[..., None]) + flap_col * farr[..., None]
-    cl = Image.new("L", (W, H), 0)
-    ImageDraw.Draw(cl).line([A, B], fill=255, width=3)
-    cl = np.asarray(cl.filter(ImageFilter.GaussianBlur(1.2)), np.float32) / 255
-    out *= (1 - cl[..., None] * 0.35)
-    # a strip of old tape holding the page down
-    out = np.clip(out, 0, 255)
-    img = Image.fromarray(out.astype(np.uint8))
-    tcorner = [c for c in names if c not in rip and c != dog][0]
-    tx, ty, tsx, tsy = corners[tcorner]
-    tp = tape(150, 46, seed=seed).rotate(45 * tsx * tsy, Image.BICUBIC, expand=True)
-    img.paste(tp, (int(tx + tsx * 30 - tp.width / 2), int(ty + tsy * 30 - tp.height / 2)), tp)
-    # gentle overall vignette
-    a = np.asarray(img, np.float32)
-    v = ((xv - W / 2) / (W * 0.7)) ** 2 + ((yv - H / 2) / (H * 0.7)) ** 2
-    a *= (1 - np.clip(v - 0.3, 0, 1) * 0.3)[..., None]
+        fd.point((x, y), fill=int(120 + rng.random() * 120))
+    fl = np.asarray(fl.filter(ImageFilter.GaussianBlur(1.1)), np.float32) / 255
+    a = a * (1 - fl[..., None] * np.array((0.25, 0.42, 0.62), np.float32))
+    # engraved scrollwork bands, worn and faded
+    band = np.asarray(scroll_band(0), np.float32) / 255
+    wear = (0.55 + 0.45 * lowfreq(W, band.shape[0], 3, rng)) * np.clip(lowfreq(W, band.shape[0], 90, rng) * 1.4, 0.35, 1)
+    ink = np.array((96, 58, 20) if not dk else (150, 120, 80), np.float32)
+    op = (0.42 if not dk else 0.3) * (1.0 if kind in ("tan", "board") else 0.75)
+    bh = band.shape[0]
+    off = pr.randint(-200, 200)
+    top = np.roll(band * wear, off, axis=1)
+    bot = np.roll((band * wear)[::-1], -off, axis=1)
+    for arr, y0 in ((top, -18), (bot, H - bh + 18)):
+        ys, ye = max(0, y0), min(H, y0 + bh)
+        seg = arr[ys - y0: ye - y0][..., None] * op
+        a[ys:ye] = a[ys:ye] * (1 - seg) + ink * seg
+    # final edge darkening
+    v = ((xv - W / 2) / (W * 0.58)) ** 2 + ((yv - H / 2) / (H * 0.58)) ** 2
+    a *= (1 - np.clip(v - 0.45, 0, 1.2) * 0.32)[..., None]
     return Image.fromarray(np.clip(a, 0, 255).astype(np.uint8))
 
 # ---------------------------------------------------------------- edges
