@@ -17,6 +17,31 @@ from render import beats, BUILD, ROOT
 from kokoro_onnx import Kokoro
 
 LEAD = 0.35   # silence before the first sentence
+MAX_GAP = 0.12  # longest silence allowed inside a sentence
+
+def squeeze_gaps(a, sr, thresh=0.012, min_len=0.14):
+    """Shorten breaths/pauses inside a sentence to MAX_GAP (with short fades)."""
+    hop = int(0.01 * sr)
+    e = np.array([np.sqrt(np.mean(a[i:i + hop] ** 2)) for i in range(0, len(a) - hop, hop)])
+    quiet = e < thresh
+    out, last, k = [], 0, 0
+    while k < len(quiet):
+        if quiet[k]:
+            j = k
+            while j < len(quiet) and quiet[j]:
+                j += 1
+            if (j - k) * 0.01 >= min_len and k > 0 and j < len(quiet):
+                s0, s1 = k * hop, j * hop
+                keep = int(MAX_GAP * sr)
+                out.append(a[last:s0 + keep // 2])
+                tail = a[s1 - keep // 2:s1]
+                out.append(tail)
+                last = s1
+            k = j
+        else:
+            k += 1
+    out.append(a[last:])
+    return np.concatenate(out)
 TAIL = 1.2    # hold after the last sentence
 
 def main():
@@ -33,7 +58,7 @@ def main():
             a = np.asarray(a, np.float32)
             nz = np.nonzero(np.abs(a) > 0.01)[0]
             a = a[max(0, nz[0] - int(0.02 * sr)): nz[-1] + int(0.05 * sr)] if len(nz) else a
-            cache[text] = (a, sr)
+            cache[text] = (squeeze_gaps(a, sr), sr)
         return cache[text]
 
     # global word list with the beat each word belongs to
