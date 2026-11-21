@@ -33,7 +33,7 @@ def render_beat(i):
            "-i", "-", "-c:v", "libx264", "-preset", "medium", "-crf", "18", "-pix_fmt", "yuv420p", out]
     p = subprocess.Popen(cmd, stdin=subprocess.PIPE)
     for k, f in enumerate(frames):
-        p.stdin.write(finalize(f, k).tobytes())
+        p.stdin.write(finalize(f, k, i).tobytes())
     p.stdin.close()
     p.wait()
     json.dump(events, open(os.path.join(SEG, f"B{i + 1:03d}.sfx.json"), "w"))

@@ -637,5 +637,6 @@ def build(i):
     """Return Scene for beat index i (0-based)."""
     random.seed(1000 + i)
     sc = Scene("news")
+    sc.variant = i % 3
     BEATS[i](sc)
     return sc
