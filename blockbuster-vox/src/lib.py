@@ -124,80 +124,51 @@ def scroll_band(seed=0):
     im = im.resize((bw, bh), Image.LANCZOS).filter(ImageFilter.GaussianBlur(0.6))
     return im
 
+def _tri_height(rng, n, amp):
+    """Piecewise-planar height field from a random triangle mesh (crisp facets)."""
+    from scipy.spatial import Delaunay
+    from scipy.interpolate import LinearNDInterpolator
+    pad = 80
+    pts = np.column_stack([rng.uniform(-pad, W + pad, n), rng.uniform(-pad, H + pad, n)])
+    corners = np.array([[-pad * 2, -pad * 2], [W + pad * 2, -pad * 2], [-pad * 2, H + pad * 2], [W + pad * 2, H + pad * 2]])
+    pts = np.vstack([pts, corners])
+    z = rng.normal(0, amp, len(pts))
+    f = LinearNDInterpolator(Delaunay(pts), z)
+    yy, xx = np.mgrid[0:H, 0:W]
+    return f(xx, yy).astype(np.float32)
+
 @functools.lru_cache(maxsize=16)
 def background(kind="news", variant=0):
-    """Aged golden parchment: mottled stains, fibrous grain, scratches, burnt edges,
-    faint engraved scrollwork bands top and bottom."""
+    """Crumpled paper: big folds + small wrinkles, sharp creases, side lighting.
+    Cached to build/bg/ because the fold field is slow to compute."""
+    cache = os.path.join(ROOT, "build", "bg", f"{kind}_{variant}.png")
+    if os.path.exists(cache):
+        return Image.open(cache).convert("RGB")
     seed = {"news": 1, "tan": 2, "map": 3, "board": 4, "dark": 5}[kind] * 10 + variant
     rng = np.random.default_rng(seed)
-    pr = random.Random(seed)
-    dk = kind == "dark"
-    light = {"news": (238, 222, 178), "tan": (236, 210, 140), "map": (232, 214, 160), "board": (222, 196, 140), "dark": (92, 76, 56)}[kind]
-    edge = {"news": (166, 120, 62), "tan": (176, 112, 38), "map": (170, 118, 52), "board": (150, 100, 46), "dark": (34, 26, 18)}[kind]
+    base = {"news": (238, 236, 233), "tan": (240, 234, 224), "map": (230, 230, 229), "board": (198, 168, 126), "dark": (70, 68, 68)}[kind]
+    hf = _tri_height(rng, 300, 30) + _tri_height(rng, 2600, 6.5) + _tri_height(rng, 14000, 1.6)
+    gy, gx = np.gradient(hf)
+    L = np.array([-0.5, -0.65, 0.58]); L /= np.linalg.norm(L)
+    nz = 1 / np.sqrt(gx * gx + gy * gy + 1)
+    shade = (-gx * L[0] - gy * L[1] + L[2]) * nz
+    shade = (shade - np.median(shade)) / (shade.std() + 1e-6)
+    from scipy.ndimage import gaussian_filter
+    shade = gaussian_filter(shade.astype(np.float32), 0.7)
+    shade = np.tanh(shade / 2.2) * 2.2
+    lum = 0.97 + shade * (0.075 if kind != "dark" else 0.1)
+    lum *= 1 + (lowfreq(W, H, 300, rng) - 0.5) * 0.10  # soft overall light falloff
+    a = np.array(base, np.float32)[None, None, :] * lum[..., None]
+    sm = np.clip(lowfreq(W, H, 110, rng) - 0.62, 0, 1) * 0.22
+    a *= (1 - sm[..., None] * np.array((0.55, 0.65, 0.85), np.float32))
+    a += (rng.normal(0, 1, (H, W)).astype(np.float32) * 2.0)[..., None]
     yv, xv = np.mgrid[0:H, 0:W].astype(np.float32)
-    # radial falloff from a slightly off-centre hot spot + lumpy edge burn
-    cx, cy = W * pr.uniform(0.42, 0.58), H * pr.uniform(0.42, 0.58)
-    r = np.sqrt(((xv - cx) / (W * 0.62)) ** 2 + ((yv - cy) / (H * 0.62)) ** 2)
-    r = r + (lowfreq(W, H, 160, rng) - 0.5) * 0.35
-    t = np.clip((r - 0.35) / 0.75, 0, 1) ** 1.6
-    a = np.array(light, np.float32) * (1 - t[..., None]) + np.array(edge, np.float32) * t[..., None]
-    # multi-scale mottling (cloudy blotches)
-    m = (lowfreq(W, H, 220, rng) - 0.5) * 0.5 + (lowfreq(W, H, 70, rng) - 0.5) * 0.35 + (lowfreq(W, H, 22, rng) - 0.5) * 0.2
-    warm = np.array((0.95, 0.86, 0.66), np.float32)  # darkening that shifts toward orange-brown
-    dark_amt = np.clip(-m * 1.4, 0, 1)
-    a = a * (1 + np.clip(m, 0, 1)[..., None] * 0.18)
-    a = a * (1 - dark_amt[..., None] * (1 - warm) * 1.1)
-    bl = lowfreq(W, H, 110, rng)
-    a = a * (1 - (np.clip(bl - 0.6, 0, 1) * 1.6)[..., None] * (1 - warm))
-    # fibrous diagonal grain (canvas-like streaks)
-    for ang, amp in ((28, 0.06), (-55, 0.035)):
-        D = int(math.hypot(W, H)) + 8
-        n = rng.normal(0, 1, (D // 2, D // 12)).astype(np.float32)
-        st = Image.fromarray(np.clip(n * 40 + 128, 0, 255).astype(np.uint8)).resize((D, D), Image.BICUBIC)
-        st = st.rotate(ang, Image.BICUBIC).crop(((D - W) // 2, (D - H) // 2, (D - W) // 2 + W, (D - H) // 2 + H))
-        st = np.asarray(st, np.float32) / 255 - 0.5
-        fine = np.asarray(Image.fromarray(np.clip(rng.normal(128, 40, (H, W)), 0, 255).astype(np.uint8)).filter(ImageFilter.GaussianBlur(0.7)), np.float32) / 255 - 0.5
-        a = a * (1 + (st * amp + fine * 0.05)[..., None])
-    # light scratches and creases
-    sc = Image.new("L", (W, H), 0)
-    sd = ImageDraw.Draw(sc)
-    for _ in range(46):
-        x, y = rng.random() * W, rng.random() * H
-        ang = rng.uniform(-0.6, 0.6) + (math.pi / 2 if rng.random() < 0.3 else 0)
-        L = 40 + rng.random() * 260
-        pts = [(x + math.cos(ang) * L * u + math.sin(u * 7 + x) * 4, y + math.sin(ang) * L * u + math.cos(u * 5 + y) * 4) for u in np.linspace(0, 1, 12)]
-        sd.line(pts, fill=int(90 + rng.random() * 120), width=1 if rng.random() < 0.7 else 2)
-    sc = np.asarray(sc.filter(ImageFilter.GaussianBlur(0.8)), np.float32) / 255
-    a = a + sc[..., None] * (np.array((255, 245, 220), np.float32) - a) * 0.28
-    # rust flecks and dark specks
-    fl = Image.new("L", (W, H), 0)
-    fd = ImageDraw.Draw(fl)
-    for _ in range(int(14 + rng.random() * 12)):
-        x, y = rng.random() * W, rng.random() * H
-        rw, rh = 1 + rng.random() ** 3 * 6, 1 + rng.random() ** 2 * 10
-        fd.ellipse([x - rw, y - rh, x + rw, y + rh], fill=int(100 + rng.random() * 155))
-    for _ in range(300):
-        x, y = rng.random() * W, rng.random() * H
-        fd.point((x, y), fill=int(120 + rng.random() * 120))
-    fl = np.asarray(fl.filter(ImageFilter.GaussianBlur(1.1)), np.float32) / 255
-    a = a * (1 - fl[..., None] * np.array((0.25, 0.42, 0.62), np.float32))
-    # engraved scrollwork bands, worn and faded
-    band = np.asarray(scroll_band(0), np.float32) / 255
-    wear = (0.55 + 0.45 * lowfreq(W, band.shape[0], 3, rng)) * np.clip(lowfreq(W, band.shape[0], 90, rng) * 1.4, 0.35, 1)
-    ink = np.array((96, 58, 20) if not dk else (150, 120, 80), np.float32)
-    op = (0.42 if not dk else 0.3) * (1.0 if kind in ("tan", "board") else 0.75)
-    bh = band.shape[0]
-    off = pr.randint(-200, 200)
-    top = np.roll(band * wear, off, axis=1)
-    bot = np.roll((band * wear)[::-1], -off, axis=1)
-    for arr, y0 in ((top, -18), (bot, H - bh + 18)):
-        ys, ye = max(0, y0), min(H, y0 + bh)
-        seg = arr[ys - y0: ye - y0][..., None] * op
-        a[ys:ye] = a[ys:ye] * (1 - seg) + ink * seg
-    # final edge darkening
-    v = ((xv - W / 2) / (W * 0.58)) ** 2 + ((yv - H / 2) / (H * 0.58)) ** 2
-    a *= (1 - np.clip(v - 0.45, 0, 1.2) * 0.32)[..., None]
-    return Image.fromarray(np.clip(a, 0, 255).astype(np.uint8))
+    v = ((xv - W / 2) / (W * 0.62)) ** 2 + ((yv - H / 2) / (H * 0.62)) ** 2
+    a *= (1 - np.clip(v - 0.45, 0, 1.2) * 0.2)[..., None]
+    img = Image.fromarray(np.clip(a, 0, 255).astype(np.uint8))
+    os.makedirs(os.path.dirname(cache), exist_ok=True)
+    img.save(cache)
+    return img
 
 # ---------------------------------------------------------------- edges
 def jitter_poly(w, h, inset, amp, seg, rng):
