@@ -174,7 +174,7 @@ class Banner:
             x = x_end - (self.img.width + x_end + 40) * p
         else:
             x = x_end
-        frame.alpha_composite(self.img, (max(0, int(x)), self.y)) if x >= 0 else frame.alpha_composite(self.img.crop((int(-x), 0, self.img.width, self.img.height)), (0, self.y))
+        ac(frame, self.img, int(x), self.y)
 
 @functools.lru_cache(maxsize=1)
 def mote_sprite():
