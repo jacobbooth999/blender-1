@@ -1,0 +1,4 @@
+build/
+out/
+narration/voice/
+__pycache__/
