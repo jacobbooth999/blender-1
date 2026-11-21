@@ -11,24 +11,39 @@ function tileFig(cx,gy,sc=1){const out=[],s=30*sc,hy=gy-410*sc,hr=78*sc,bx0=cx-1
 const TOP=tileFig(540,880,.95),BOT=tileFig(540,1560,.95),FIN=tileFig(540,1460,1.25);
 function tileAt(x,y,sz,fill,op=1,rot=0){add(`<rect x="${x-sz/2}" y="${y-sz/2}" width="${sz}" height="${sz}" rx="${sz*.18}" fill="${fill?'#f2f2f2':'#0b0b0b'}" stroke="#fff" stroke-width="2" opacity="${op}" transform="rotate(${rot},${x},${y})"/>`);}
 
-/* A — HOOK: building vs destroying (L0, L1) */
+/* A — HOOK: scroll -> collapse -> rewind -> rebuilt; then half destroyed (L0, L1) */
+const HF=tileFig(540,1500,1.55).map((t,k)=>{let sd=k*7919%233280;const r=()=>{sd=(sd*9301+49297)%233280;return sd/233280;};
+  return {...t,px:540+(r()-.5)*760,py:1500-12-r()*70-Math.max(0,90-Math.abs(r()-.5)*180),rot:(r()-.5)*90,dl:r()};});
+const HTOP=Math.min(...HF.map(t=>t.y)),HBOT=Math.max(...HF.map(t=>t.y));
 scene(0,l(2)-.25,()=>{
+  const t=T,G=1500,TS=44;
+  const crash=P(t,1.55,.35),amp=crash>0&&crash<1?(1-crash)*22:0;
+  g(`transform="translate(${(Math.sin(t*95)*amp).toFixed(1)},${(Math.cos(t*83)*amp).toFixed(1)})"`,()=>{
   bokeh(BV,T);
-  // text hook from frame one
-  title(540,165,'YOUR HABITS',{size:112});
-  label(540,232,'ARE EITHER…',{size:24,op:.75});
-  // top: a figure assembling
-  const bt=clamp((T+.4)/2.8);
-  TOP.forEach(t=>{const q=clamp((bt-t.d*.7)/.3);const side=t.sx<.5?-1:1;const x=lerp(540+side*(380+t.sy*160),t.x,eio(q)),y=lerp(380+t.d*480,t.y,eio(q));tileAt(x,y,26,q>=1,q>0?1:.25);});
-  if(bt>.9)add(`<ellipse cx="540" cy="700" rx="200" ry="260" fill="url(#bk)" fill-opacity=".10"/>`);
-  pop(l(0)+1.2,540,935,()=>pillShape(540,935,'BUILDING WHO YOU WANT TO BE',{size:20}),{snd:'pop'});
-  add(`<line x1="60" y1="985" x2="1020" y2="985" stroke="#fff" stroke-opacity=".25" stroke-width="2" stroke-dasharray="10 8"/>`);
-  // bottom: a figure crumbling
-  const ct=P(T,l(1)-.1,2.0);
-  BOT.forEach(t=>{const q=clamp((ct-(1-t.y/1600)*.0-t.d*.6)/.4);const fall=q*q;const x=t.x+(t.sx-.5)*160*q,y=t.y+fall*420;tileAt(x,y,26,q<.2,(1-q*.7)*.85,q*(t.sx-.5)*160);});
-  if(ct>0)cue('drop',l(1)-.1,.7);
-  pop(l(1)+.3,540,1640,()=>pillShape(540,1640,'OR DESTROYING YOUR POTENTIAL',{size:20,dark:true}),{snd:'nope',vol:.5});
-  for(let k=0;k<10;k++)cue('brick',.05+k*.22,.3);
+  title(540,165,'YOUR HABITS',{size:112});label(540,232,'ARE EITHER…',{size:24,op:.75});
+  ground(G,1,{op:.5});
+  // phone + racing screen-time counter
+  const ph=P(t,1.1,.45);const phx=lerp(760,880,ph),phy=lerp(1120,G-40,ph*ph);
+  if(t<1.6||true){g(`transform="rotate(${ph*80},${phx},${phy})" opacity="${t>1.7?.45:1}"`,()=>{add(`<circle cx="${phx}" cy="${phy}" r="${90*(1-ph)}" fill="url(#bk)" fill-opacity=".25"/>`);icon('phone',phx,phy,1.5);});}
+  if(t<1.5){const m=Math.floor(eio(clamp(t/1.3))*462);fadeIn(-1,()=>{pillShape(540,420,'SCREEN TIME: '+Math.floor(m/60)+'H '+String(m%60).padStart(2,'0')+'M',{size:28,dark:true});},{outAt:1.25,d:.01});}
+  // tiles: collapse 0.4-1.6, rewind 1.7-3.0, right half crumbles at L1
+  const rw=t>=1.7;
+  HF.forEach(q=>{const h=(HBOT-q.y)/(HBOT-HTOP);const fs=.35+h*.0+(1-h)*.0+q.dl*.35+(h)*.55;const f=clamp((t-fs)/.45);
+    let x=q.x,y=q.y,rot=0,fill=true,op=1;
+    if(!rw){if(f>0){const e=f*f;x=lerp(q.x,q.px,e);y=lerp(q.y,q.py,e);rot=q.rot*e;fill=f<.6;}}
+    else{const rs=1.75+(1-h)*.0+h*.0+(1-q.dl)*.55+(h)*.5;const r=eio(clamp((t-rs)/.45));x=lerp(q.px,q.x,r);y=lerp(q.py,q.y,r)-Math.sin(Math.PI*r)*60;rot=q.rot*(1-r);fill=r>.5;
+      const hb=P(t,l(1)+.1,1.6);if(q.x>540&&hb>0){const d=clamp((hb-q.dl*.5)/.5);const e=d*d;x=lerp(q.x,q.px+180,e);y=lerp(q.y,q.py,e);rot=q.rot*e;fill=d<.3;op=1-.55*d;}}
+    tileAt(x,y,TS,fill,op,rot);});
+  // rewind effect
+  if(t>1.68&&t<3.0){const ro=1-P(t,2.75,.25);add(`<g opacity="${ro}">`);for(let k=0;k<6;k++){const yy=((t*900+k*330)%1920);add(`<rect x="0" y="${yy}" width="1080" height="${3+k%3}" fill="#fff" opacity=".08"/>`);}
+    label(70,330,'◀◀ REWIND',{size:30,op:.9,anchor:'start',weight:900,glow:true});add('</g>');}
+  if(t>=3.0&&t<l(1)+.3){add(`<ellipse cx="540" cy="1180" rx="320" ry="420" fill="url(#bk)" fill-opacity="${.14*P(t,3,.4)}"/>`);}
+  ring(540,1150,3.0,{r0:200,r1:640});
+  pop(2.35,540,1640,()=>pillShape(540,1640,'BUILDING WHO YOU WANT TO BE',{size:22}),{snd:'pop',outAt:l(1)+.1});
+  pop(l(1)+.35,540,1640,()=>pillShape(540,1640,'OR DESTROYING YOUR POTENTIAL',{size:22,dark:true}),{snd:'nope',vol:.5});
+  });
+  // sound
+  for(let k=0;k<9;k++)cue('tick',.05+k*.13,.35);cue('drop',.45,.8);for(let k=0;k<10;k++)cue('brick',.5+k*.11,.45);cue('thud',1.55,1);cue('rise',1.7,.8);for(let k=0;k<8;k++)cue('brick',1.9+k*.13,.3);cue('win',3.0,.7);cue('drop',l(1)+.2,.6);for(let k=0;k<6;k++)cue('brick',l(1)+.3+k*.15,.35);
 },{zoom:.03});
 
 /* B — think about it (L2) */

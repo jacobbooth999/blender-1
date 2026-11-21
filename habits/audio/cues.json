@@ -2,53 +2,118 @@
  "end": 69.056,
  "cues": [
   {
-   "type": "brick",
+   "type": "tick",
    "t": 0.05,
-   "vol": 0.3
+   "vol": 0.35
+  },
+  {
+   "type": "tick",
+   "t": 0.18,
+   "vol": 0.35
+  },
+  {
+   "type": "tick",
+   "t": 0.31,
+   "vol": 0.35
+  },
+  {
+   "type": "tick",
+   "t": 0.44,
+   "vol": 0.35
+  },
+  {
+   "type": "drop",
+   "t": 0.45,
+   "vol": 0.8
   },
   {
    "type": "brick",
-   "t": 0.27,
-   "vol": 0.3
+   "t": 0.5,
+   "vol": 0.45
+  },
+  {
+   "type": "tick",
+   "t": 0.57,
+   "vol": 0.35
   },
   {
    "type": "brick",
-   "t": 0.49,
-   "vol": 0.3
+   "t": 0.61,
+   "vol": 0.45
+  },
+  {
+   "type": "tick",
+   "t": 0.7,
+   "vol": 0.35
   },
   {
    "type": "brick",
-   "t": 0.71,
-   "vol": 0.3
+   "t": 0.72,
+   "vol": 0.45
+  },
+  {
+   "type": "tick",
+   "t": 0.83,
+   "vol": 0.35
   },
   {
    "type": "brick",
-   "t": 0.93,
-   "vol": 0.3
+   "t": 0.83,
+   "vol": 0.45
   },
   {
    "type": "brick",
-   "t": 1.15,
-   "vol": 0.3
+   "t": 0.94,
+   "vol": 0.45
   },
   {
-   "type": "pop",
-   "t": 1.3,
+   "type": "tick",
+   "t": 0.96,
+   "vol": 0.35
+  },
+  {
+   "type": "brick",
+   "t": 1.05,
+   "vol": 0.45
+  },
+  {
+   "type": "tick",
+   "t": 1.09,
+   "vol": 0.35
+  },
+  {
+   "type": "brick",
+   "t": 1.16,
+   "vol": 0.45
+  },
+  {
+   "type": "brick",
+   "t": 1.27,
+   "vol": 0.45
+  },
+  {
+   "type": "brick",
+   "t": 1.38,
+   "vol": 0.45
+  },
+  {
+   "type": "brick",
+   "t": 1.49,
+   "vol": 0.45
+  },
+  {
+   "type": "thud",
+   "t": 1.55,
    "vol": 1
   },
   {
-   "type": "brick",
-   "t": 1.37,
-   "vol": 0.3
+   "type": "rise",
+   "t": 1.7,
+   "vol": 0.8
   },
   {
    "type": "brick",
-   "t": 1.59,
-   "vol": 0.3
-  },
-  {
-   "type": "brick",
-   "t": 1.81,
+   "t": 1.9,
    "vol": 0.3
   },
   {
@@ -57,14 +122,84 @@
    "vol": 0.3
   },
   {
-   "type": "drop",
-   "t": 3.301,
+   "type": "brick",
+   "t": 2.16,
+   "vol": 0.3
+  },
+  {
+   "type": "brick",
+   "t": 2.29,
+   "vol": 0.3
+  },
+  {
+   "type": "pop",
+   "t": 2.35,
+   "vol": 1
+  },
+  {
+   "type": "brick",
+   "t": 2.42,
+   "vol": 0.3
+  },
+  {
+   "type": "brick",
+   "t": 2.55,
+   "vol": 0.3
+  },
+  {
+   "type": "brick",
+   "t": 2.68,
+   "vol": 0.3
+  },
+  {
+   "type": "brick",
+   "t": 2.81,
+   "vol": 0.3
+  },
+  {
+   "type": "win",
+   "t": 3,
    "vol": 0.7
   },
   {
-   "type": "nope",
+   "type": "drop",
+   "t": 3.601,
+   "vol": 0.6
+  },
+  {
+   "type": "brick",
    "t": 3.701,
+   "vol": 0.35
+  },
+  {
+   "type": "nope",
+   "t": 3.751,
    "vol": 0.5
+  },
+  {
+   "type": "brick",
+   "t": 3.851,
+   "vol": 0.35
+  },
+  {
+   "type": "brick",
+   "t": 4.001,
+   "vol": 0.35
+  },
+  {
+   "type": "brick",
+   "t": 4.151,
+   "vol": 0.35
+  },
+  {
+   "type": "brick",
+   "t": 4.301,
+   "vol": 0.35
+  },
+  {
+   "type": "brick",
+   "t": 4.451,
+   "vol": 0.35
   },
   {
    "type": "whoosh",
