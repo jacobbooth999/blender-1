@@ -1,0 +1,96 @@
+{
+ "duration": 30.025,
+ "voice": "af_heart",
+ "lines": [
+  {
+   "i": 0,
+   "text": "Gamers already have the secret to success.",
+   "start": 0.05,
+   "end": 2.304
+  },
+  {
+   "i": 1,
+   "text": "Think about it.",
+   "start": 2.454,
+   "end": 3.183
+  },
+  {
+   "i": 2,
+   "text": "You lose a match, and instantly queue again.",
+   "start": 3.383,
+   "end": 5.399
+  },
+  {
+   "i": 3,
+   "text": "You fail the same boss fifty times.",
+   "start": 5.549,
+   "end": 7.418
+  },
+  {
+   "i": 4,
+   "text": "And you keep going until you beat it.",
+   "start": 7.538,
+   "end": 9.175
+  },
+  {
+   "i": 5,
+   "text": "Hours of practice, just to get one level better.",
+   "start": 9.425,
+   "end": 11.719
+  },
+  {
+   "i": 6,
+   "text": "That's not luck. That's discipline.",
+   "start": 11.869,
+   "end": 13.584
+  },
+  {
+   "i": 7,
+   "text": "Now imagine putting those same hours into a business.",
+   "start": 13.934,
+   "end": 16.636
+  },
+  {
+   "i": 8,
+   "text": "Every failed launch is just a lost round.",
+   "start": 16.836,
+   "end": 18.986
+  },
+  {
+   "i": 9,
+   "text": "Every rejection is just a respawn.",
+   "start": 19.106,
+   "end": 21.061
+  },
+  {
+   "i": 10,
+   "text": "Level one. Level ten. Level fifty.",
+   "start": 21.261,
+   "end": 23.645
+  },
+  {
+   "i": 11,
+   "text": "The grind is exactly the same.",
+   "start": 23.795,
+   "end": 25.48
+  },
+  {
+   "i": 12,
+   "text": "Only this time, the reward is real.",
+   "start": 25.63,
+   "end": 27.584
+  },
+  {
+   "i": 13,
+   "text": "You already know how to grind.",
+   "start": 27.884,
+   "end": 29.271
+  },
+  {
+   "i": 14,
+   "text": "That's why",
+   "start": 29.391,
+   "end": 30.025
+  }
+ ]
+}
