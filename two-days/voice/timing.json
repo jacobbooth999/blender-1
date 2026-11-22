@@ -1,0 +1,96 @@
+{
+ "duration": 31.039,
+ "voice": "af_heart",
+ "lines": [
+  {
+   "i": 0,
+   "text": "Same twenty four hours.",
+   "start": 0.05,
+   "end": 1.397
+  },
+  {
+   "i": 1,
+   "text": "Two completely different lives.",
+   "start": 1.517,
+   "end": 3.039
+  },
+  {
+   "i": 2,
+   "text": "Six A M. The grinder is already training.",
+   "start": 3.339,
+   "end": 5.778
+  },
+  {
+   "i": 3,
+   "text": "The dreamer hits snooze, and dreams of being rich.",
+   "start": 5.928,
+   "end": 8.429
+  },
+  {
+   "i": 4,
+   "text": "Nine A M. One is learning a new skill.",
+   "start": 8.729,
+   "end": 10.767
+  },
+  {
+   "i": 5,
+   "text": "The other is scrolling through someone else's success.",
+   "start": 10.917,
+   "end": 13.281
+  },
+  {
+   "i": 6,
+   "text": "One P M. The grinder fails, adjusts, and tries again.",
+   "start": 13.581,
+   "end": 16.925
+  },
+  {
+   "i": 7,
+   "text": "The dreamer says, one day.",
+   "start": 17.075,
+   "end": 18.324
+  },
+  {
+   "i": 8,
+   "text": "Ten P M. One is exhausted, but closer.",
+   "start": 18.624,
+   "end": 21.144
+  },
+  {
+   "i": 9,
+   "text": "The other is comfortable, and exactly where they started.",
+   "start": 21.294,
+   "end": 24.007
+  },
+  {
+   "i": 10,
+   "text": "One year later.",
+   "start": 24.407,
+   "end": 25.265
+  },
+  {
+   "i": 11,
+   "text": "One is living the dream.",
+   "start": 25.565,
+   "end": 26.759
+  },
+  {
+   "i": 12,
+   "text": "The other is still dreaming it.",
+   "start": 26.879,
+   "end": 28.313
+  },
+  {
+   "i": 13,
+   "text": "So which one are you today?",
+   "start": 28.663,
+   "end": 29.788
+  },
+  {
+   "i": 14,
+   "text": "Because you both get the",
+   "start": 29.938,
+   "end": 31.039
+  }
+ ]
+}

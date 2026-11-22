@@ -1,0 +1,17 @@
+[
+ ["Same twenty four hours.", 0.12, 1.1],
+ ["Two completely different lives.", 0.3, 1.1],
+ ["Six A M. The grinder is already training.", 0.15, 1.12],
+ ["The dreamer hits snooze, and dreams of being rich.", 0.3, 1.12],
+ ["Nine A M. One is learning a new skill.", 0.15, 1.12],
+ ["The other is scrolling through someone else's success.", 0.3, 1.12],
+ ["One P M. The grinder fails, adjusts, and tries again.", 0.15, 1.12],
+ ["The dreamer says, one day.", 0.3, 1.12],
+ ["Ten P M. One is exhausted, but closer.", 0.15, 1.12],
+ ["The other is comfortable, and exactly where they started.", 0.4, 1.12],
+ ["One year later.", 0.3, 1.05],
+ ["One is living the dream.", 0.12, 1.1],
+ ["The other is still dreaming it.", 0.35, 1.1],
+ ["So which one are you today?", 0.15, 1.1],
+ ["Because you both get the", 0.0, 1.12]
+]
