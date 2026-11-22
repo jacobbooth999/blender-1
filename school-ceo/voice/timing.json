@@ -1,0 +1,96 @@
+{
+ "duration": 30.471,
+ "voice": "af_heart",
+ "lines": [
+  {
+   "i": 0,
+   "text": "School taught you how to get a job. Not how to create one.",
+   "start": 0.05,
+   "end": 3.065
+  },
+  {
+   "i": 1,
+   "text": "Think about it.",
+   "start": 3.215,
+   "end": 3.944
+  },
+  {
+   "i": 2,
+   "text": "Sit down. Raise your hand. Wait for the bell.",
+   "start": 4.094,
+   "end": 6.552
+  },
+  {
+   "i": 3,
+   "text": "Follow instructions, and you get a gold star.",
+   "start": 6.702,
+   "end": 8.977
+  },
+  {
+   "i": 4,
+   "text": "Make a mistake? You lose marks.",
+   "start": 9.077,
+   "end": 10.733
+  },
+  {
+   "i": 5,
+   "text": "That's perfect training for an employee.",
+   "start": 10.883,
+   "end": 12.596
+  },
+  {
+   "i": 6,
+   "text": "But a C E O needs the opposite.",
+   "start": 12.796,
+   "end": 14.516
+  },
+  {
+   "i": 7,
+   "text": "They take risks.",
+   "start": 14.716,
+   "end": 15.695
+  },
+  {
+   "i": 8,
+   "text": "They fail fast, and learn from it.",
+   "start": 15.775,
+   "end": 17.409
+  },
+  {
+   "i": 9,
+   "text": "They ask why, instead of waiting for instructions.",
+   "start": 17.489,
+   "end": 20.048
+  },
+  {
+   "i": 10,
+   "text": "And nobody hands them a timetable.",
+   "start": 20.148,
+   "end": 21.952
+  },
+  {
+   "i": 11,
+   "text": "School isn't useless. It just isn't the whole picture.",
+   "start": 22.202,
+   "end": 25.084
+  },
+  {
+   "i": 12,
+   "text": "So teach yourself what school never did.",
+   "start": 25.284,
+   "end": 27.127
+  },
+  {
+   "i": 13,
+   "text": "Learn money. Learn to sell. Learn to build.",
+   "start": 27.247,
+   "end": 29.388
+  },
+  {
+   "i": 14,
+   "text": "Because remember,",
+   "start": 29.638,
+   "end": 30.471
+  }
+ ]
+}
