@@ -1,0 +1,78 @@
+{
+ "duration": 25.287,
+ "voice": "af_heart",
+ "lines": [
+  {
+   "i": 0,
+   "text": "Life will humble you, unless you humble yourself first.",
+   "start": 0.05,
+   "end": 2.895
+  },
+  {
+   "i": 1,
+   "text": "Here's what nobody tells you.",
+   "start": 3.045,
+   "end": 4.496
+  },
+  {
+   "i": 2,
+   "text": "The loudest person in the room is rarely the best.",
+   "start": 4.646,
+   "end": 7.195
+  },
+  {
+   "i": 3,
+   "text": "The quiet one? They're too busy learning.",
+   "start": 7.315,
+   "end": 9.326
+  },
+  {
+   "i": 4,
+   "text": "Ego says, I already know.",
+   "start": 9.576,
+   "end": 11.051
+  },
+  {
+   "i": 5,
+   "text": "Humility says, teach me.",
+   "start": 11.171,
+   "end": 12.548
+  },
+  {
+   "i": 6,
+   "text": "Ego stops growing the moment it thinks it's made it.",
+   "start": 12.798,
+   "end": 15.194
+  },
+  {
+   "i": 7,
+   "text": "Humility keeps climbing, because there's always more.",
+   "start": 15.314,
+   "end": 17.932
+  },
+  {
+   "i": 8,
+   "text": "Even the greatest never stop being students.",
+   "start": 18.182,
+   "end": 20.412
+  },
+  {
+   "i": 9,
+   "text": "So let your work be loud.",
+   "start": 20.712,
+   "end": 21.89
+  },
+  {
+   "i": 10,
+   "text": "And keep your ego quiet.",
+   "start": 22.01,
+   "end": 23.325
+  },
+  {
+   "i": 11,
+   "text": "Because if you won't humble yourself,",
+   "start": 23.625,
+   "end": 25.287
+  }
+ ]
+}
