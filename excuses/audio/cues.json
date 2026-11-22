@@ -1,0 +1,210 @@
+{
+ "end": 31.709,
+ "cues": [
+  {
+   "type": "hit",
+   "t": 0,
+   "vol": 0.7
+  },
+  {
+   "type": "step",
+   "t": 0.05,
+   "vol": 0.7
+  },
+  {
+   "type": "step",
+   "t": 0.19,
+   "vol": 0.7
+  },
+  {
+   "type": "step",
+   "t": 0.33,
+   "vol": 0.7
+  },
+  {
+   "type": "impact",
+   "t": 0.45,
+   "vol": 0.9
+  },
+  {
+   "type": "ting",
+   "t": 0.46,
+   "vol": 0.6
+  },
+  {
+   "type": "thud",
+   "t": 0.55,
+   "vol": 1
+  },
+  {
+   "type": "thud",
+   "t": 1.75,
+   "vol": 0.6
+  },
+  {
+   "type": "whoosh",
+   "t": 2.845,
+   "vol": 0.4
+  },
+  {
+   "type": "whoosh",
+   "t": 4.793,
+   "vol": 0.4
+  },
+  {
+   "type": "thunk",
+   "t": 5.193,
+   "vol": 0.6
+  },
+  {
+   "type": "whoosh",
+   "t": 5.761,
+   "vol": 0.4
+  },
+  {
+   "type": "thunk",
+   "t": 6.161,
+   "vol": 0.6
+  },
+  {
+   "type": "whoosh",
+   "t": 6.791,
+   "vol": 0.4
+  },
+  {
+   "type": "thunk",
+   "t": 7.191,
+   "vol": 0.6
+  },
+  {
+   "type": "whoosh",
+   "t": 7.983,
+   "vol": 0.4
+  },
+  {
+   "type": "pop",
+   "t": 8.383,
+   "vol": 1
+  },
+  {
+   "type": "whoosh",
+   "t": 9.715,
+   "vol": 0.4
+  },
+  {
+   "type": "hit",
+   "t": 10.315,
+   "vol": 0.6
+  },
+  {
+   "type": "pop",
+   "t": 10.515,
+   "vol": 1
+  },
+  {
+   "type": "whoosh",
+   "t": 11.763,
+   "vol": 0.4
+  },
+  {
+   "type": "ting",
+   "t": 12.463,
+   "vol": 0.4
+  },
+  {
+   "type": "ting",
+   "t": 12.963,
+   "vol": 0.4
+  },
+  {
+   "type": "ting",
+   "t": 13.463,
+   "vol": 0.4
+  },
+  {
+   "type": "whoosh",
+   "t": 14.303,
+   "vol": 0.4
+  },
+  {
+   "type": "whoosh",
+   "t": 17.081,
+   "vol": 0.4
+  },
+  {
+   "type": "pop",
+   "t": 17.481,
+   "vol": 0.35
+  },
+  {
+   "type": "pop",
+   "t": 18.481,
+   "vol": 0.35
+  },
+  {
+   "type": "pop",
+   "t": 19.681,
+   "vol": 0.35
+  },
+  {
+   "type": "whoosh",
+   "t": 21.648,
+   "vol": 0.4
+  },
+  {
+   "type": "nope",
+   "t": 22.248,
+   "vol": 0.4
+  },
+  {
+   "type": "whoosh",
+   "t": 23.002,
+   "vol": 0.4
+  },
+  {
+   "type": "whoosh",
+   "t": 24.584,
+   "vol": 0.4
+  },
+  {
+   "type": "pop",
+   "t": 24.984,
+   "vol": 0.4
+  },
+  {
+   "type": "whoosh",
+   "t": 27.273,
+   "vol": 0.4
+  },
+  {
+   "type": "impact",
+   "t": 27.373,
+   "vol": 0.6
+  },
+  {
+   "type": "whoosh",
+   "t": 28.24,
+   "vol": 0.4
+  },
+  {
+   "type": "ting",
+   "t": 28.64,
+   "vol": 0.8
+  },
+  {
+   "type": "impact",
+   "t": 28.64,
+   "vol": 0.4
+  },
+  {
+   "type": "whoosh",
+   "t": 30.476,
+   "vol": 0.4
+  },
+  {
+   "type": "whoosh",
+   "t": 30.976,
+   "vol": 0.4
+  }
+ ]
+}
