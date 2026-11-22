@@ -8,7 +8,10 @@ lead=float(os.environ.get('LEAD','.6')); parts=[]; t=lead; timing=[]; SR=24000
 parts.append(np.zeros(int(lead*SR)))
 for i,ln in enumerate(lines):
     txt,gap=ln[0],ln[1]; sp=ln[2] if len(ln)>2 else speed
-    a,SR=k.create(txt,voice=voice,speed=sp,lang='en-us')
+    ph=k.tokenizer.phonemize(txt,'en-us')
+    fixed=ph.replace('ɐ ˈɛm','ˈeɪ ˈɛm')          # 'A M' was read as 'uh em' -> 'ay em'
+    if fixed!=ph: a,SR=k.create(fixed,voice=voice,speed=sp,lang='en-us',is_phonemes=True)
+    else: a,SR=k.create(txt,voice=voice,speed=sp,lang='en-us')
     nz=np.where(np.abs(a)>.01)[0]; a=a[max(0,nz[0]-240):nz[-1]+1200]
     d=len(a)/SR; timing.append({'i':i,'text':txt,'start':round(t,3),'end':round(t+d,3)})
     parts+=[a,np.zeros(int(gap*SR))]; t+=d+gap

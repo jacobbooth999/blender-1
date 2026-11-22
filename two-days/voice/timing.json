@@ -1,5 +1,5 @@
 {
- "duration": 31.039,
+ "duration": 31.366,
  "voice": "af_heart",
  "lines": [
   {
@@ -18,79 +18,79 @@
    "i": 2,
    "text": "Six A M. The grinder is already training.",
    "start": 3.339,
-   "end": 5.778
+   "end": 5.931
   },
   {
    "i": 3,
    "text": "The dreamer hits snooze, and dreams of being rich.",
-   "start": 5.928,
-   "end": 8.429
+   "start": 6.081,
+   "end": 8.583
   },
   {
    "i": 4,
    "text": "Nine A M. One is learning a new skill.",
-   "start": 8.729,
-   "end": 10.767
+   "start": 8.883,
+   "end": 11.093
   },
   {
    "i": 5,
    "text": "The other is scrolling through someone else's success.",
-   "start": 10.917,
-   "end": 13.281
+   "start": 11.243,
+   "end": 13.608
   },
   {
    "i": 6,
    "text": "One P M. The grinder fails, adjusts, and tries again.",
-   "start": 13.581,
-   "end": 16.925
+   "start": 13.908,
+   "end": 17.251
   },
   {
    "i": 7,
    "text": "The dreamer says, one day.",
-   "start": 17.075,
-   "end": 18.324
+   "start": 17.401,
+   "end": 18.651
   },
   {
    "i": 8,
    "text": "Ten P M. One is exhausted, but closer.",
-   "start": 18.624,
-   "end": 21.144
+   "start": 18.951,
+   "end": 21.471
   },
   {
    "i": 9,
    "text": "The other is comfortable, and exactly where they started.",
-   "start": 21.294,
-   "end": 24.007
+   "start": 21.621,
+   "end": 24.334
   },
   {
    "i": 10,
    "text": "One year later.",
-   "start": 24.407,
-   "end": 25.265
+   "start": 24.734,
+   "end": 25.592
   },
   {
    "i": 11,
    "text": "One is living the dream.",
-   "start": 25.565,
-   "end": 26.759
+   "start": 25.892,
+   "end": 27.086
   },
   {
    "i": 12,
    "text": "The other is still dreaming it.",
-   "start": 26.879,
-   "end": 28.313
+   "start": 27.206,
+   "end": 28.639
   },
   {
    "i": 13,
    "text": "So which one are you today?",
-   "start": 28.663,
-   "end": 29.788
+   "start": 28.989,
+   "end": 30.115
   },
   {
    "i": 14,
    "text": "Because you both get the",
-   "start": 29.938,
-   "end": 31.039
+   "start": 30.265,
+   "end": 31.366
   }
  ]
 }

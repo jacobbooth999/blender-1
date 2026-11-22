@@ -223,7 +223,7 @@ function segAt(t){for(let i=SEG.length-2;i>=0;i--)if(t>=SEG[i])return i;return 0
 const resetAt=l(14)+.1;                      // the last line resets the scene to the opening composition (loop)
 
 /* ---------- word-by-word captions ---------- */
-const CAP=[];TIMING.lines.forEach((ln,i)=>{if(i<2)return;const w=ln.text.replace(/[.,]/g,m=>m).split(' ');const tot=w.reduce((a,x)=>a+x.length+2,0);let t=ln.start;
+const CAP=[];TIMING.lines.forEach((ln,i)=>{if(i<2)return;const w=ln.text.replace('Six A M.','6 AM.').replace('Nine A M.','9 AM.').replace('One P M.','1 PM.').replace('Ten P M.','10 PM.').split(' ');const tot=w.reduce((a,x)=>a+x.length+2,0);let t=ln.start;
   const words=w.map(x=>{const d=(ln.end-ln.start)*(x.length+2)/tot;const o={w:x.toUpperCase(),s:t,e:t+d};t+=d;return o;});
   let ch=[];words.forEach(o=>{const len=ch.reduce((a,x)=>a+x.w.length+1,0);if(ch.length>=3||len+o.w.length>15){CAP.push(ch);ch=[];}ch.push(o);});if(ch.length)CAP.push(ch);});
 function captions(t){const ch=CAP.find(c=>t>=c[0].s-.02&&t<c[c.length-1].e+.08);if(!ch)return;
