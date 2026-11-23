@@ -1,0 +1,261 @@
+<!doctype html>
+<html><head><meta charset="utf-8">
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,700;0,900;1,400&family=Old+Standard+TT:ital,wght@0,400;0,700;1,400&family=UnifrakturMaguntia&family=Special+Elite&family=Oswald:wght@500;700&family=Permanent+Marker&display=block" rel="stylesheet">
+<script src="timeline.js"></script>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{width:1080px;height:1920px;overflow:hidden;background:#111}
+#stage{position:absolute;inset:0;overflow:hidden;perspective:2400px;perspective-origin:50% 50%}
+#desk{position:absolute;left:-1200px;top:-1200px;width:3480px;height:4320px;background:#262a33 url(desk.jpg);background-size:1200px}
+#world{position:absolute;left:540px;top:960px;width:0;height:0;transform-style:preserve-3d}
+#deskwrap{position:absolute;left:-1740px;top:-2160px;width:3480px;height:4320px}
+.paper{position:absolute;transform-origin:50% 50%;filter:drop-shadow(0 18px 22px rgba(0,0,0,.55));will-change:transform}
+.sheet{position:relative;background:#eee6d4 url(paper.jpg);background-size:900px;color:#161412;padding:42px 46px 50px;
+  font-family:'Old Standard TT',serif;}
+.sheet::after{content:"";position:absolute;inset:0;background:radial-gradient(ellipse at 30% 20%,rgba(255,255,255,.15),rgba(90,70,40,.18) 95%);pointer-events:none;mix-blend-mode:multiply}
+.torn{clip-path:polygon(0 1.5%,6% 0,13% 1.2%,21% .2%,29% 1.4%,37% .3%,45% 1.1%,53% 0,61% 1.3%,69% .2%,77% 1%,85% 0,93% 1.2%,100% .4%,
+  99.2% 12%,100% 25%,99.4% 38%,100% 52%,99.3% 66%,100% 80%,99.5% 92%,100% 99%,92% 100%,84% 98.8%,76% 100%,68% 98.9%,60% 99.8%,52% 98.7%,44% 100%,36% 98.9%,28% 99.9%,20% 98.8%,12% 100%,5% 99%,0 100%,.6% 88%,0 74%,.7% 60%,0 46%,.5% 32%,0 18%)}
+.dimmable{transition:none}
+.txt{color:rgba(22,20,18,var(--ink,1))}
+.mast{font-family:'UnifrakturMaguntia',serif;font-size:64px;text-align:center;line-height:1}
+.rule{border-top:3px double #1a1714;border-bottom:1px solid #1a1714;height:7px;margin:12px 0 8px}
+.dateline{display:flex;justify-content:space-between;font-size:17px;letter-spacing:1px;text-transform:uppercase;font-family:'Old Standard TT'}
+.hed{font-family:'Playfair Display',serif;font-weight:900;line-height:.98;letter-spacing:-1px}
+.dek{font-family:'Playfair Display',serif;font-style:italic;font-weight:400;font-size:30px;line-height:1.2;margin:14px 0 18px}
+.body{font-size:25px;line-height:1.38;text-align:justify;hyphens:auto}
+.cols{column-count:2;column-gap:30px;column-rule:1px solid #9a8f7c}
+.body p{margin-bottom:10px;text-indent:1.2em}
+.kicker{font-family:'Oswald';font-weight:700;letter-spacing:3px;font-size:22px;text-transform:uppercase;color:#a3221b}
+.hl{--p:0;color:#111!important;background-image:linear-gradient(100deg,rgba(255,226,60,0) 0,rgba(255,222,40,.95) 1%,rgba(255,214,30,.92) 99%,rgba(255,226,60,0) 100%);
+  background-repeat:no-repeat;background-size:calc(var(--p)*100%) 78%;background-position:0 65%;-webkit-box-decoration-break:clone;box-decoration-break:clone;padding:0 3px}
+.photo{height:300px;margin:6px 0 16px;background:#3a3631;position:relative;overflow:hidden}
+.halftone{position:absolute;inset:0;background-image:radial-gradient(circle,#0d0c0b 38%,transparent 42%);background-size:9px 9px;opacity:.9}
+.stamp{font-family:'Special Elite';color:#b0201a;border:5px solid #b0201a;padding:6px 18px;display:inline-block;font-size:44px;letter-spacing:4px;transform:rotate(-6deg);opacity:.85}
+.typed{font-family:'Special Elite';font-size:30px;line-height:1.5}
+.card-row{display:flex;gap:18px;align-items:baseline;border-bottom:1px dashed #8d826d;padding:14px 0}
+.card-row .yr{font-family:'Oswald';font-weight:700;font-size:34px;color:#2b2723;min-width:120px}
+.scrap{position:absolute;font-family:'Playfair Display';font-weight:900;padding:4px 14px 10px;filter:drop-shadow(0 10px 10px rgba(0,0,0,.5))}
+.marker{font-family:'Permanent Marker',cursive;color:#c8231b}
+#grain{position:absolute;inset:0;background-size:1080px 1920px;mix-blend-mode:overlay;opacity:.22;pointer-events:none;image-rendering:pixelated}
+#vig{position:absolute;inset:0;background:radial-gradient(ellipse at 50% 48%,rgba(0,0,0,0) 45%,rgba(0,0,0,.55) 100%);pointer-events:none}
+#flicker{position:absolute;inset:0;background:#fff3d8;mix-blend-mode:soft-light;pointer-events:none;opacity:0}
+#lightleak{position:absolute;inset:0;background:radial-gradient(circle at 15% 10%,rgba(255,200,120,.20),transparent 45%);pointer-events:none;mix-blend-mode:screen}
+.handle{position:absolute;left:0;top:0;width:100%;height:100%;pointer-events:none}
+svg.draw path{fill:none;stroke:#c8231b;stroke-linecap:round;stroke-linejoin:round}
+</style></head>
+<body>
+<div id="stage">
+ <div id="world">
+  <div id="deskwrap"><div id="desk" style="left:0;top:0"></div></div>
+
+  <!-- A: headline -->
+  <div class="paper" id="pA" data-x="0" data-y="-760" data-r="-2.5" data-w="860">
+   <div class="sheet torn txt" style="width:860px">
+    <div class="mast">The Matchday Chronicle</div>
+    <div class="rule"></div>
+    <div class="dateline"><span>Friday, November 13, 2026</span><span>Sport</span><span>Late Edition</span></div>
+    <div class="rule"></div>
+    <div class="kicker" style="margin-top:14px">Old Trafford</div>
+    <div class="hed" style="font-size:96px;margin-top:6px">UNITED TURN TO POCHETTINO</div>
+    <div class="dek">Club appoints new head coach with the team <span class="hl" id="a0">third from bottom</span> of the Premier League</div>
+    <div class="photo" style="background:url(photo.png) center/cover;mix-blend-mode:multiply"></div><div style="font-size:16px;font-style:italic;margin:-8px 0 14px;color:#4a443c">Illustration: a new man in the Old Trafford dugout.</div>
+    <div class="body cols">
+     <p>Manchester United have appointed <span class="hl" id="a1">Mauricio Pochettino</span> as head coach, a day after dismissing Michael Carrick with the season already in crisis.</p>
+     <p>The Argentine, who has led Tottenham, Paris Saint-Germain, Chelsea and the United States national team, signs a deal running for two and a half years and takes charge from November 18.</p>
+     <p>He inherits a squad short of confidence and a fixture list that offers little respite before the winter.</p>
+    </div>
+   </div>
+  </div>
+
+  <!-- B: Carrick -->
+  <div class="paper" id="pB" data-x="430" data-y="230" data-r="4" data-w="660">
+   <div class="sheet torn txt" style="width:660px">
+    <div class="kicker">Breaking</div>
+    <div class="hed" style="font-size:84px;margin:6px 0 4px">CARRICK SACKED</div>
+    <div class="rule"></div>
+    <div class="body" style="margin-top:14px">
+     <p style="text-indent:0">Michael Carrick has left Manchester United after presiding over the club's <span class="hl" id="b0">worst-ever Premier League start</span>.</p>
+     <p>The decision comes <span class="hl" id="b1">less than six months into a two-year deal</span>, with United third from bottom and the board unwilling to wait.</p>
+     <p>Results on the pitch and difficulties in the transfer market left the former midfielder with few allies by the time the international break arrived.</p>
+    </div>
+   </div>
+  </div>
+
+  <!-- C: case for -->
+  <div class="paper" id="pC" data-x="-410" data-y="880" data-r="-4.5" data-w="720">
+   <div class="sheet txt" style="width:720px;padding-top:36px">
+    <div style="display:flex;justify-content:space-between;align-items:center"><div class="hed" style="font-size:66px">The Case <i>For</i></div><div class="stamp" style="color:#1d6b33;border-color:#1d6b33;font-size:34px">PRO</div></div>
+    <div class="rule"></div>
+    <div class="typed">
+     <div class="card-row"><span class="yr">2019</span><span>Took Tottenham to a <span class="hl" id="c0">Champions League final</span></span></div>
+     <div class="card-row"><span class="yr">STYLE</span><span>Teams <span class="hl" id="c1">press high</span> and play with intensity</span></div>
+     <div class="card-row" style="border:0"><span class="yr">YOUTH</span><span>Track record of trusting young players</span></div>
+    </div>
+   </div>
+  </div>
+
+  <!-- D: case against -->
+  <div class="paper" id="pD" data-x="400" data-y="1430" data-r="3.5" data-w="720">
+   <div class="sheet txt" style="width:720px;padding-top:36px">
+    <div style="display:flex;justify-content:space-between;align-items:center"><div class="hed" style="font-size:66px">The Case <i>Against</i></div><div class="stamp" style="font-size:34px">CON</div></div>
+    <div class="rule"></div>
+    <div class="typed">
+     <div class="card-row"><span class="yr">TITLES</span><span>Over 15 years in management: <span class="hl" id="d0">one league title</span> &mdash; Ligue 1 with PSG, 2022</span></div>
+     <div class="card-row"><span class="yr">SPURS</span><span>Five-plus years, no trophy</span></div>
+     <div class="card-row" style="border:0"><span class="yr">CHELSEA</span><span>Finished sixth and lasted a <span class="hl" id="d1">single season</span></span></div>
+    </div>
+   </div>
+  </div>
+
+  <!-- E: survival -->
+  <div class="paper" id="pE" data-x="-60" data-y="-120" data-r="-1.5" data-w="900">
+   <div class="sheet torn txt" style="width:900px;padding-top:50px;padding-bottom:70px">
+    <div class="kicker" style="text-align:center">Job description</div>
+    <div class="hed" style="font-size:80px;text-align:center;margin-top:8px"><span class="hl" id="e0">FIRST JOB:</span></div>
+    <div style="text-align:center;margin-top:18px"><span id="trophy" style="position:relative;display:inline-block;font-family:'Playfair Display';font-style:italic;font-size:76px;color:#3b352e">a trophy<svg class="draw" id="strike" style="position:absolute;left:-14px;top:18px;width:calc(100% + 28px);height:70px;overflow:visible" viewBox="0 0 300 70" preserveAspectRatio="none"><path d="M4 44 C 80 30, 180 40, 296 22" stroke-width="9"/></svg></span></div>
+    <div id="scraps" style="position:relative;height:250px;margin-top:6px">
+     <div class="scrap" data-i="0" style="left:20px;top:40px;background:#f3ecdb;font-size:120px">S</div>
+     <div class="scrap" data-i="1" style="left:120px;top:20px;background:#111;color:#f1e9d6;font-family:'Oswald';font-size:126px">U</div>
+     <div class="scrap" data-i="2" style="left:222px;top:52px;background:#c8231b;color:#fff;font-size:112px">R</div>
+     <div class="scrap" data-i="3" style="left:318px;top:24px;background:#efe2b8;font-family:'UnifrakturMaguntia';font-size:124px">V</div>
+     <div class="scrap" data-i="4" style="left:420px;top:48px;background:#f3ecdb;font-family:'Special Elite';font-size:118px">I</div>
+     <div class="scrap" data-i="5" style="left:500px;top:18px;background:#1c3f78;color:#fff;font-family:'Oswald';font-size:126px">V</div>
+     <div class="scrap" data-i="6" style="left:600px;top:50px;background:#f8f2e2;font-size:120px">A</div>
+     <div class="scrap" data-i="7" style="left:706px;top:26px;background:#ffde28;font-family:'Oswald';font-size:122px">L</div>
+    </div>
+   </div>
+  </div>
+
+  <!-- F: final question -->
+  <div class="paper" id="pF" data-x="0" data-y="330" data-r="-1" data-w="820">
+   <div class="sheet torn txt" style="width:820px;padding:60px 56px 70px;text-align:center">
+    <div class="mast" style="font-size:44px">The Matchday Chronicle</div>
+    <div class="rule"></div>
+    <div class="hed" style="font-size:118px;margin-top:20px">WILL HE<br>SUCCEED<span id="qmark" style="position:relative;display:inline-block">?
+      <svg class="draw" id="circ" style="position:absolute;left:-40px;top:-22px;width:150px;height:170px;overflow:visible" viewBox="0 0 150 170"><path d="M80 12 C 20 8, 2 70, 22 122 C 40 168, 126 166, 140 104 C 152 50, 110 6, 58 20" stroke-width="7"/></svg></span></div>
+    <div style="display:flex;justify-content:center;gap:90px;margin-top:40px;font-family:'Oswald';font-weight:700;font-size:58px">
+     <span>YES <span style="display:inline-block;width:56px;height:56px;border:5px solid #161412;vertical-align:-6px"></span></span>
+     <span>NO <span style="display:inline-block;width:56px;height:56px;border:5px solid #161412;vertical-align:-6px"></span></span>
+    </div>
+    <div class="marker" id="cta" style="font-size:52px;margin-top:40px;transform:rotate(-3deg)"><span class="hl" id="f1" style="color:#c8231b!important">Tell me in the comments</span></div>
+   </div>
+  </div>
+ </div>
+ <div id="lightleak"></div>
+ <div id="flicker"></div>
+ <div id="vig"></div>
+ <div id="grain"></div>
+</div>
+
+<script>
+const TL=window.TL, S=TL.scenes;
+const clamp=(v,a=0,b=1)=>Math.max(a,Math.min(b,v));
+const ease=x=>{x=clamp(x);return x<.5?4*x*x*x:1-Math.pow(-2*x+2,3)/2};
+const easeOut=x=>1-Math.pow(1-clamp(x),3);
+const back=x=>{x=clamp(x);const c=1.9;return 1+(c+1)*Math.pow(x-1,3)+c*Math.pow(x-1,2)};
+const lerp=(a,b,t)=>a+(b-a)*t;
+const papers={}; ['A','B','C','D','E','F'].forEach((k,i)=>{const el=document.getElementById('p'+k);
+  papers[k]={el,i,x:+el.dataset.x,y:+el.dataset.y,r:+el.dataset.r,w:el.offsetWidth,h:el.offsetHeight}; el.style.zIndex=10+i;});
+const order=['A','B','C','D','E','F'];
+// world point of an element's center inside a paper
+const M={};
+function measure(){const ids=['a0','a1','b0','b1','c0','c1','d0','d1','scraps','trophy'];
+ for(const id of ids){const el=document.getElementById(id);const p=el.closest('.paper');const pr=p.getBoundingClientRect();
+  const rs=[...el.getClientRects()];let l=1e9,t=1e9,r=-1e9,b=-1e9;for(const q of rs){l=Math.min(l,q.left);t=Math.min(t,q.top);r=Math.max(r,q.right);b=Math.max(b,q.bottom);}
+  M[id]={k:p.id.slice(1),cx:(l+r)/2-pr.left,cy:(t+b)/2-pr.top,w:r-l,h:b-t};}}
+function pt(id){const m=M[id];const P=papers[m.k];const lx=m.cx-P.w/2,ly=m.cy-P.h/2,a=P.r*Math.PI/180;
+  return {x:P.x+lx*Math.cos(a)-ly*Math.sin(a), y:P.y+lx*Math.sin(a)+ly*Math.cos(a), w:m.w, z:Math.min(1.7,820/m.w)};}
+function layout(){for(const k of order){const P=papers[k];P.el.style.left=(P.x-P.w/2)+'px';P.el.style.top=(P.y-P.h/2)+'px';}}
+layout();
+// Camera keys: {t, x,y,z,r, d}  move to pose starting at t over d
+let keys=[];
+function buildKeys(){
+ const c=id=>pt(id), sc=i=>S[i];
+ const fit=k=>({x:papers[k].x,y:papers[k].y,z:Math.min(1000/papers[k].w,1700/papers[k].h)});
+ keys=[];
+ const A=fit('A'); keys.push({t:-1,...A,z:A.z*1.0,r:2,d:.01});
+ let p=c('a0'); keys.push({t:sc(0).cues.a0-0.5,x:p.x,y:p.y,z:p.z,r:1.5,d:.9});
+ p=c('a1'); keys.push({t:sc(0).cues.a1-0.5,x:p.x,y:p.y,z:p.z,r:-1,d:.7});
+ let B=fit('B'); keys.push({t:sc(1).start,...B,z:B.z*.95,r:-3,d:.75});
+ p=c('b0'); keys.push({t:sc(1).cues.b0-0.5,x:p.x,y:p.y,z:p.z,r:-4,d:.8});
+ p=c('b1'); keys.push({t:sc(1).cues.b1-0.25,x:p.x,y:p.y,z:p.z,r:-3,d:.6});
+ let C=fit('C'); keys.push({t:sc(2).start,...C,z:C.z*.92,r:3,d:.75});
+ p=c('c0'); keys.push({t:sc(2).cues.c0-0.5,x:p.x,y:p.y,z:p.z,r:4,d:.8});
+ p=c('c1'); keys.push({t:sc(2).cues.c1-0.45,x:p.x,y:p.y,z:p.z,r:3,d:.6});
+ let D=fit('D'); keys.push({t:sc(3).start,...D,z:D.z*.92,r:-2,d:.75});
+ p=c('d0'); keys.push({t:sc(3).cues.d0-0.55,x:p.x,y:p.y,z:p.z,r:-3.5,d:.8});
+ p=c('d1'); keys.push({t:sc(3).cues.d1-0.5,x:p.x,y:p.y,z:p.z,r:-2.5,d:.7});
+ let E=fit('E'); keys.push({t:sc(4).start,...E,z:E.z*.98,r:1,d:.7});
+ p=c('scraps'); keys.push({t:sc(4).cues.e2-0.4,x:p.x,y:p.y-60,z:1.15,r:1.5,d:.6});
+ let F=fit('F'); keys.push({t:sc(5).start,...F,z:F.z*1.0,r:0,d:.75});
+ keys.push({t:sc(5).cues.f1+0.2,x:F.x,y:F.y+120,z:0.62,r:-1.5,d:1.4}); // pull back to reveal pile
+}
+function camAt(t){
+ let prev=keys[0], cur=keys[0];
+ let pose={x:keys[0].x,y:keys[0].y,z:keys[0].z,r:keys[0].r};
+ for(let i=1;i<keys.length;i++){const k=keys[i]; if(t<k.t) break;
+   const u=ease((t-k.t)/k.d); pose={x:lerp(pose.x,k.x,u),y:lerp(pose.y,k.y,u),z:lerp(pose.z,k.z,u),r:lerp(pose.r,k.r,u),since:t-k.t,u};
+   if(u<1) { // movement in progress; also keep blending from pose computed so far
+   } }
+ return pose;
+}
+// Accurate: compute pose sequentially (each move starts from pose at its start time)
+function camPose(t){
+ let pose={x:keys[0].x,y:keys[0].y,z:keys[0].z,r:keys[0].r}; let lastT=keys[0].t;
+ for(let i=1;i<keys.length;i++){const k=keys[i]; const nt=(i+1<keys.length)?keys[i+1].t:1e9;
+   if(t<k.t) break;
+   const from={...pose}; const te=Math.min(t,nt); const u=ease((te-k.t)/k.d);
+   pose={x:lerp(from.x,k.x,u),y:lerp(from.y,k.y,u),z:lerp(from.z,k.z,u),r:lerp(from.r,k.r,u)}; lastT=k.t;
+   if(t<nt){ // hold drift
+     const hold=Math.max(0,t-k.t-k.d*0.6); pose.z*=1+0.018*hold; pose.r+=0.25*hold; }
+   else { const hold=Math.max(0,nt-k.t-k.d*0.6); pose.z*=1+0.018*hold; pose.r+=0.25*hold; }
+ }
+ return pose;
+}
+const drops={A:-10,B:S[1].start,C:S[2].start,D:S[3].start,E:S[4].start,F:S[5].start};
+const grainEl=document.getElementById('grain');
+function cueP(t,id,sc){const s=S[sc].cues[id], e=S[sc].cues[id+'_end']; const dur=Math.max(.35,Math.min(.8,(e-s)*1.05)); return easeOut((t-s+0.05)/dur);}
+window.render=function(t,frame){
+ // papers drop-in
+ for(const k of order){const P=papers[k]; const t0=drops[k]; const u=clamp((t-t0)/0.55);
+   if(t<t0){P.el.style.visibility='hidden';continue;} P.el.style.visibility='visible';
+   const e=easeOut(u), z=lerp(900,0,e), rr=P.r+lerp(k.charCodeAt(0)%2?-14:12,0,e), dx=lerp((k.charCodeAt(0)%2?1:-1)*260,0,e);
+   const sh=lerp(70,18,e), so=lerp(.25,.55,e);
+   P.el.style.transform=`translate3d(${dx}px,${lerp(-120,0,e)}px,${z+P.i*0.5}px) rotate(${rr}deg)`;
+   P.el.style.filter=`drop-shadow(0 ${sh}px ${sh*1.2}px rgba(0,0,0,${so}))`;
+   // dim the older papers
+   const nextK=order[P.i+1]; let dim=0; if(nextK && t>drops[nextK]) dim=clamp((t-drops[nextK])/0.6)*0.45;
+   P.el.firstElementChild.style.filter=dim?`brightness(${1-dim})`:'';
+ }
+ // highlights
+ const hls=[['a0',0],['a1',0],['b0',1],['b1',1],['c0',2],['c1',2],['d0',3],['d1',3],['e0',4],['f1',5]];
+ for(const [id,sc] of hls){document.getElementById(id).style.setProperty('--p',cueP(t,id,sc).toFixed(4));}
+ // ink dimming (focus pull) per paper
+ const dimSpec={A:[S[0].cues.a0,S[1].start],B:[S[1].cues.b0,S[2].start],C:[S[2].cues.c0,S[3].start],D:[S[3].cues.d0,S[4].start]};
+ for(const k in dimSpec){const [a,b]=dimSpec[k]; const u=clamp((t-a+.1)/.5)*(1-clamp((t-b)/.4)); papers[k].el.firstElementChild.style.setProperty('--ink',(1-0.62*u).toFixed(3));}
+ // survival scraps pop
+ document.querySelectorAll('.scrap').forEach(s=>{const i=+s.dataset.i; const st=S[4].cues.e1-0.15+i*0.075; const u=clamp((t-st)/0.32);
+   s.style.opacity=u>0?1:0; const sc=lerp(2.2,1,back(u)); const rot=((i*37)%13-6)*(1+ (1-u)*2);
+   s.style.transform=`scale(${sc}) rotate(${rot}deg)`;});
+ // circle draw
+ const path=document.querySelector('#circ path'); const L=path.getTotalLength(); const cu=easeOut((t-(S[5].cues.f0_end-0.1))/0.6);
+ path.style.strokeDasharray=L; path.style.strokeDashoffset=L*(1-cu); path.style.opacity=cu>0?1:0;
+ const sp=document.querySelector('#strike path'); const SL=sp.getTotalLength(); const su=easeOut((t-(S[4].cues.e2+0.1))/0.35);
+ sp.style.strokeDasharray=SL; sp.style.strokeDashoffset=SL*(1-su); sp.style.opacity=su>0?1:0;
+ document.getElementById('trophy').style.opacity=t>S[4].cues.e0_end?1:0;
+ // camera
+ const c=camPose(t); const sh=Math.sin(t*1.7)*3+Math.sin(t*2.9)*2, sv=Math.cos(t*1.3)*3;
+ const tiltX=6+Math.sin(t*0.4)*2, tiltY=Math.sin(t*0.33)*3;
+ document.getElementById('world').style.transform=`rotateX(${tiltX}deg) rotateY(${tiltY}deg) scale(${c.z}) rotate(${c.r}deg) translate(${-c.x+sh}px,${-c.y+sv}px)`;
+ // finishing
+ grainEl.style.backgroundImage=`url(grain${frame%6}.png)`;
+ document.getElementById('flicker').style.opacity=(0.06+0.05*Math.sin(frame*1.9)*Math.sin(frame*0.71)).toFixed(3);
+ // fade in/out
+ document.getElementById('stage').style.opacity=Math.min(clamp(t/0.25),clamp((TL.total-t)/0.35)).toFixed(3);
+};
+window.ready=(async()=>{await document.fonts.ready;
+  // preload grain
+  await Promise.all([0,1,2,3,4,5].map(i=>new Promise(r=>{const im=new Image();im.onload=r;im.onerror=r;im.src=`grain${i}.png`;})));
+  layout(); for(const k of order){papers[k].w=papers[k].el.offsetWidth;papers[k].h=papers[k].el.offsetHeight;} layout(); for(const k of order){papers[k].el.style.transform='none';} measure(); buildKeys(); return true;})();
+</script>
+</body></html>
