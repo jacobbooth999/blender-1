@@ -1,0 +1,582 @@
+<!doctype html>
+<html><head><meta charset="utf-8">
+<style>html,body{margin:0;background:#050505;overflow:hidden}svg{display:block}text{font-family:Inter,sans-serif}</style>
+</head><body>
+<svg id="s" xmlns="http://www.w3.org/2000/svg" width="1920" height="1080" viewBox="0 0 1920 1080"></svg>
+<script>
+/* ============ "THE 1% CLUB" — glowing monochrome line-art short ============ */
+const W=1920,H=1080;
+const TIMING=window.TIMING||{duration:40.85,lines:[]};
+const L=TIMING.lines.map(l=>({s:l.start,e:l.end}));
+const END=L[L.length-1].e+6.0;
+window.VIDEO_END=END;
+
+/* ---------- math ---------- */
+const clamp=(x,a=0,b=1)=>Math.min(b,Math.max(a,x));
+const P=(t,a,d)=>clamp((t-a)/d);
+const eo=x=>1-Math.pow(1-x,3);
+const eio=x=>x<.5?4*x*x*x:1-Math.pow(-2*x+2,3)/2;
+const back=x=>{const c=1.9;return x<=0?0:1+(c+1)*Math.pow(x-1,3)+c*Math.pow(x-1,2)};
+const lerp=(a,b,u)=>a+(b-a)*u;
+
+/* ---------- output + cues ---------- */
+let out='',uid=0,T=0;
+const add=s=>{out+=s};
+const CUES=new Map();
+function cue(type,t0,vol=1){const k=type+'@'+t0.toFixed(3);if(!CUES.has(k))CUES.set(k,{type,t:+t0.toFixed(3),vol});}
+
+/* ---------- static defs ---------- */
+function grainURL(seed){const c=document.createElement('canvas');c.width=960;c.height=540;const g=c.getContext('2d');const im=g.createImageData(960,540);
+  let s=seed*9301+49297;for(let i=0;i<im.data.length;i+=4){s=(s*9301+49297)%233280;const v=s/233280*255;im.data[i]=im.data[i+1]=im.data[i+2]=v;im.data[i+3]=255;}
+  g.putImageData(im,0,0);return c.toDataURL('image/png');}
+const GRAINS=[1,2,3,4].map(grainURL);
+const DEFS=`<defs>
+<radialGradient id="vig" cx="50%" cy="46%" r="72%"><stop offset="0" stop-color="#1b1b1b"/><stop offset=".55" stop-color="#0c0c0c"/><stop offset="1" stop-color="#030303"/></radialGradient>
+<radialGradient id="edge" cx="50%" cy="50%" r="72%"><stop offset=".62" stop-color="#000" stop-opacity="0"/><stop offset="1" stop-color="#000" stop-opacity=".75"/></radialGradient>
+<radialGradient id="bk"><stop offset="0" stop-color="#fff" stop-opacity="1"/><stop offset=".55" stop-color="#fff" stop-opacity=".5"/><stop offset="1" stop-color="#fff" stop-opacity="0"/></radialGradient>
+<pattern id="dots" width="30" height="30" patternUnits="userSpaceOnUse"><circle cx="15" cy="15" r="1.4" fill="#fff" fill-opacity=".075"/></pattern>
+<linearGradient id="cone" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#fff" stop-opacity="0"/><stop offset=".4" stop-color="#fff" stop-opacity=".09"/><stop offset="1" stop-color="#fff" stop-opacity=".22"/></linearGradient>
+<linearGradient id="fog" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#0d0d0d" stop-opacity="1"/><stop offset=".75" stop-color="#0d0d0d" stop-opacity=".97"/><stop offset="1" stop-color="#0d0d0d" stop-opacity="0"/></linearGradient>
+<filter id="glow" x="-50%" y="-50%" width="200%" height="200%"><feGaussianBlur stdDeviation="5" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+<filter id="glowS" x="-50%" y="-50%" width="200%" height="200%"><feGaussianBlur stdDeviation="2.5" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+<filter id="glowL" x="-50%" y="-80%" width="200%" height="260%"><feGaussianBlur stdDeviation="16" result="b1"/><feGaussianBlur in="SourceGraphic" stdDeviation="4" result="b2"/><feMerge><feMergeNode in="b1"/><feMergeNode in="b2"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+<filter id="blur12" x="-50%" y="-50%" width="200%" height="200%"><feGaussianBlur stdDeviation="12"/></filter>
+</defs>`;
+
+/* ---------- primitives ---------- */
+const esc=s=>String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;');
+function g(attrs,fn){add(`<g ${attrs}>`);fn();add('</g>');}
+function label(x,y,t,{size=22,op=.72,anchor='middle',weight=700,sp=.24,fill='#fff',glow=false}={}){
+  add(`<text x="${x}" y="${y}" font-size="${size}" font-weight="${weight}" letter-spacing="${size*sp}" fill="${fill}" fill-opacity="${op}" text-anchor="${anchor}" ${glow?'filter="url(#glowS)"':''}>${esc(t)}</text>`);}
+function title(x,y,t,{size=120,sp=.05,op=1,anchor='middle'}={}){
+  add(`<text x="${x}" y="${y}" font-size="${size}" font-weight="800" letter-spacing="${size*sp}" fill="#fff" fill-opacity="${op}" text-anchor="${anchor}" filter="url(#glowL)">${esc(t)}</text>`);}
+function pillShape(x,y,t,{size=22,dark=false,pad=28}={}){
+  const w=t.length*size*0.92+pad*2,h=size*2.1;
+  if(dark){add(`<g filter="url(#glowS)"><rect x="${x-w/2}" y="${y-h/2}" width="${w}" height="${h}" rx="${h/2}" fill="#0a0a0a" stroke="#fff" stroke-opacity=".8" stroke-width="2"/></g>`);label(x,y+size*.36,t,{size,op:.95,weight:800,sp:.2});}
+  else{add(`<g filter="url(#glow)"><rect x="${x-w/2}" y="${y-h/2}" width="${w}" height="${h}" rx="${h/2}" fill="#f4f4f4"/></g>`);label(x,y+size*.36,t,{size,op:1,weight:800,sp:.2,fill:'#0b0b0b'});}
+  return w;}
+/* animated wrappers */
+function fadeIn(t0,fn,{d=.45,dy=22,outAt=null,outD=.3}={}){let p=eo(P(T,t0,d));if(outAt!=null)p*=1-P(T,outAt,outD);if(p<=0.001)return;g(`opacity="${p.toFixed(3)}" transform="translate(0,${((1-p)*dy).toFixed(2)})"`,fn);}
+function pop(t0,x,y,fn,{d=.42,snd='pop',vol=1,outAt=null}={}){if(snd)cue(snd,t0,vol);const q=P(T,t0,d);if(q<=0)return;let o=Math.min(1,q*3);if(outAt!=null)o*=1-P(T,outAt,.25);if(o<=0.001)return;const s=back(q);
+  g(`opacity="${o.toFixed(3)}" transform="translate(${x},${y}) scale(${s.toFixed(4)}) translate(${-x},${-y})"`,fn);}
+function pill(t0,x,y,txt,o={}){pop(t0,x,y,()=>pillShape(x,y,txt,o),{outAt:o.outAt});}
+function drawPath(d,p,{sw=4,op=1,glow='glow',dash=null,fill='none',cap='round'}={}){if(p<=0)return;
+  if(dash){const id='c'+(uid++);const bb=pathBox(d);add(`<clipPath id="${id}"><rect x="${bb[0]-20}" y="-50" width="${(bb[2]-bb[0]+40)*p}" height="${H+100}"/></clipPath>`);
+    add(`<path d="${d}" stroke="#fff" stroke-opacity="${op}" stroke-width="${sw}" fill="none" stroke-dasharray="${dash}" stroke-linecap="${cap}" clip-path="url(#${id})" ${glow?`filter="url(#${glow})"`:''}/>`);return;}
+  if(glow){const n=d.match(/-?\d+(\.\d+)?/g).map(Number);let xs=[],ys=[];for(let i=0;i+1<n.length;i+=2){xs.push(n[i]);ys.push(n[i+1]);}
+    if(Math.max(...xs)-Math.min(...xs)<1||Math.max(...ys)-Math.min(...ys)<1){add(`<path d="${d}" pathLength="1" stroke-dasharray="1 2" stroke-dashoffset="${(1-p).toFixed(4)}" stroke="#fff" stroke-opacity="${op*.35}" stroke-width="${sw*3}" fill="none" stroke-linecap="${cap}"/>`);glow=null;}}
+  add(`<path d="${d}" pathLength="1" stroke-dasharray="1 2" stroke-dashoffset="${(1-p).toFixed(4)}" stroke="#fff" stroke-opacity="${op}" stroke-width="${sw}" fill="${fill}" stroke-linecap="${cap}" stroke-linejoin="round" ${glow?`filter="url(#${glow})"`:''}/>`);}
+function pathBox(d){const n=d.match(/-?\d+(\.\d+)?/g).map(Number);let xs=[];for(let i=0;i<n.length;i+=2)xs.push(n[i]);return[Math.min(...xs),0,Math.max(...xs),0];}
+function ground(y,p=1,{op=.55,x1=-10,x2=W+10,dash=true}={}){if(p<=0)return;const id='c'+(uid++);
+  add(`<clipPath id="${id}"><rect x="${x1}" y="${y-10}" width="${(x2-x1)*p}" height="20"/></clipPath><line x1="${x1}" y1="${y}" x2="${x2}" y2="${y}" stroke="#fff" stroke-opacity="${op}" stroke-width="2.5" ${dash?'stroke-dasharray="12 9"':''} clip-path="url(#${id})"/>`);}
+function spotlight(x,gy,s=1,op=1){const top=gy-620*s,wt=40*s,wb=135*s;
+  add(`<g opacity="${op}"><g filter="url(#blur12)"><polygon points="${x-wt},${top} ${x+wt},${top} ${x+wb},${gy} ${x-wb},${gy}" fill="url(#cone)"/></g><ellipse cx="${x}" cy="${gy+4}" rx="${120*s}" ry="${22*s}" fill="url(#bk)" fill-opacity=".14"/></g>`);}
+function person(x,gy,s=1,{arm=null,arm2=null,arms=true,op=1,ring=true,spot=false,bob=0}={}){
+  if(spot)spotlight(x,gy,s,typeof spot==='number'?spot:1);
+  if(ring)add(`<ellipse cx="${x}" cy="${gy+4}" rx="${62*s}" ry="${13*s}" fill="none" stroke="#fff" stroke-opacity="${.35*op}" stroke-width="2" stroke-dasharray="7 6"/>`);
+  const by=gy-bob,bw=32*s,bh=78*s,r=30*s,shY=by-bh+22*s;
+  let p=`<g ${s>.5?'filter="url(#glow)"':'filter="url(#glowS)"'} opacity="${op}">`;
+  p+=`<path d="M${x-bw},${by} L${x-bw},${by-bh+r} Q${x-bw},${by-bh} ${x-bw+r},${by-bh} L${x+bw-r},${by-bh} Q${x+bw},${by-bh} ${x+bw},${by-bh+r} L${x+bw},${by} Z" fill="#efefef"/>`;
+  p+=`<circle cx="${x}" cy="${by-bh-34*s}" r="${25*s}" fill="#efefef"/>`;
+  // two arms: a posed arm (arm=[dx,dy] from the shoulder line) and the other hanging at the side unless arm2 is given
+  const limb=(side,[ax,ay])=>{const sx=x+side*bw*.62,ex=x+ax*s,ey=shY+ay*s,mx=(sx+ex)/2+side*7*s,my=(shY+ey)/2;
+    const d=`M${sx.toFixed(1)},${shY.toFixed(1)} Q${mx.toFixed(1)},${my.toFixed(1)} ${ex.toFixed(1)},${ey.toFixed(1)}`;
+    return `<path d="${d}" stroke="#0b0b0b" stroke-width="${(13*s+5).toFixed(1)}" stroke-linecap="round" fill="none"/><path d="${d}" stroke="#efefef" stroke-width="${(13*s).toFixed(1)}" stroke-linecap="round" fill="none"/>`;};
+  if(arms){const side=arm?Math.sign(arm[0]||1):1;
+    p+=limb(side,arm||[40,58]);
+    p+=limb(-side,arm2||[-side*40,58]);}
+  add(p+'</g>');}
+function orb(x,y,r=7,op=1){add(`<g opacity="${op}"><circle cx="${x}" cy="${y}" r="${r*6}" fill="url(#bk)" fill-opacity=".18"/><circle cx="${x}" cy="${y}" r="${r}" fill="#fff" filter="url(#glow)"/></g>`);}
+function bokeh(list,drift=0){list.forEach(([x,y,r,o],i)=>add(`<circle cx="${x+Math.sin(drift*.3+i)*20}" cy="${y+Math.cos(drift*.25+i*2)*16}" r="${r}" fill="url(#bk)" fill-opacity="${o}"/>`));}
+function box(x,y,w,h,{r=18,op=.85,sw=2.5,fill='#0a0a0a',dash=false,glow=true}={}){
+  add(`<rect x="${x}" y="${y}" width="${w}" height="${h}" rx="${r}" fill="${fill}" stroke="#fff" stroke-opacity="${op}" stroke-width="${sw}" ${dash?'stroke-dasharray="10 8"':''} ${glow?'filter="url(#glowS)"':''}/>`);}
+function cross(x,y,s=1,op=.9,p=1){if(p<=0)return;const a=clamp(p*2),b=clamp(p*2-1);
+  add(`<g stroke="#fff" stroke-opacity="${op}" stroke-width="${5*s}" stroke-linecap="round" filter="url(#glowS)"><line x1="${x-s*20}" y1="${y-s*20}" x2="${x-s*20+40*s*a}" y2="${y-s*20+40*s*a}"/>${b>0?`<line x1="${x+s*20}" y1="${y-s*20}" x2="${x+s*20-40*s*b}" y2="${y-s*20+40*s*b}"/>`:''}</g>`);}
+function qmark(x,y,size=56,op=1){add(`<text x="${x}" y="${y}" font-size="${size}" font-weight="800" fill="#fff" fill-opacity="${op}" text-anchor="middle" filter="url(#glowL)">?</text>`);}
+
+/* ============ LIBRARY — landscape long-form helpers ============ */
+const S=[];
+const CX=1130, G=870, FX=330;          // stage centre (right of the figure), ground line, figure x
+const at=(i,o=0)=>L[i].s+o, atE=(i,o=0)=>L[i].e+o;
+const BK=[[260,240,170,.05],[1680,820,210,.045],[1500,180,110,.04],[180,900,140,.035]];
+
+/* ---------- small primitives ---------- */
+function check(x,y,s=1,op=1){add(`<g filter="url(#glowS)" opacity="${op}"><circle cx="${x}" cy="${y}" r="${18*s}" fill="#f4f4f4"/><path d="M${x-8*s},${y} l${6*s},${6*s} l${10*s},${-12*s}" stroke="#0a0a0a" stroke-width="${4*s}" fill="none" stroke-linecap="round" stroke-linejoin="round"/></g>`);}
+function personOutline(x,gy,s=1,op=1){const bw=32*s,bh=78*s,r=30*s;
+  add(`<g opacity="${op}" filter="url(#glow)" fill="none" stroke="#fff" stroke-width="3.5" stroke-dasharray="9 7"><path d="M${x-bw},${gy} L${x-bw},${gy-bh+r} Q${x-bw},${gy-bh} ${x-bw+r},${gy-bh} L${x+bw-r},${gy-bh} Q${x+bw},${gy-bh} ${x+bw},${gy-bh+r} L${x+bw},${gy}"/><circle cx="${x}" cy="${gy-bh-34*s}" r="${25*s}"/></g>`);}
+function strike(x1,x2,y,p){if(p>0)add(`<line x1="${x1}" y1="${y}" x2="${lerp(x1,x2,eo(Math.min(1,p)))}" y2="${y}" stroke="#fff" stroke-width="4" stroke-linecap="round"/>`);}
+function spinner(x,y,r=14,op=.8){const a=T*6;add(`<path d="M${x+r*Math.cos(a)},${y+r*Math.sin(a)} A${r},${r} 0 1 1 ${x+r*Math.cos(a+4.4)},${y+r*Math.sin(a+4.4)}" stroke="#fff" stroke-opacity="${op}" stroke-width="3.5" fill="none" stroke-linecap="round"/>`);}
+function zzz(x,y,op=.7){[0,1,2].forEach(i=>{const ph=((T*.8+i/3)%1);add(`<text x="${x+i*16+ph*10}" y="${y-i*26-ph*20}" font-size="${22+i*6}" font-weight="800" fill="#fff" fill-opacity="${op*Math.sin(ph*Math.PI)}">Z</text>`);});}
+function bubble(x,y,w,txt,{size=18,dark=true,tail='left'}={}){const tx=tail==='left'?x-w/2+30:x+w/2-30,d=tail==='left'?1:-1;
+  add(`<g filter="url(#glowS)" fill="#0b0b0b" stroke="#fff" stroke-width="3"><circle cx="${tx-d*18}" cy="${y+66}" r="7"/><circle cx="${tx}" cy="${y+44}" r="10"/><rect x="${x-w/2}" y="${y-40}" width="${w}" height="76" rx="38"/></g>`);label(x,y+5,txt,{size,op:.92,weight:800,sp:.14});}
+function ring(x,y,t0,{r0=60,r1=260,d=.8,op=.6}={}){const p=P(T,t0,d);if(p>0&&p<1)add(`<circle cx="${x}" cy="${y}" r="${r0+(r1-r0)*eo(p)}" fill="none" stroke="#fff" stroke-opacity="${op*(1-p)}" stroke-width="3" filter="url(#glowS)"/>`);}
+function arrowR(x1,y,x2,p,op=.7){if(p<=0)return;const x=lerp(x1,x2,eo(p));add(`<line x1="${x1}" y1="${y}" x2="${x}" y2="${y}" stroke="#fff" stroke-opacity="${op}" stroke-width="4" stroke-dasharray="10 9"/>`);if(p>.9)add(`<path d="M${x-16},${y-14} L${x},${y} L${x-16},${y+14}" stroke="#fff" stroke-opacity="${op}" stroke-width="4" fill="none" stroke-linecap="round" stroke-linejoin="round"/>`);}
+function xTile(x,y,s=60,op=.9){add(`<g opacity="${op}"><rect x="${x-s/2}" y="${y-s/2}" width="${s}" height="${s}" rx="${s*.18}" fill="#0b0b0b" stroke="#fff" stroke-width="3" filter="url(#glowS)"/></g>`);cross(x,y,s/80,op,1);}
+
+/* ---------- icons (≈ ±40 units at s=1) ---------- */
+function icon(n,x,y,s=1,op=1){const k=s;let d='';const st=`stroke="#fff" stroke-width="${4*k}" fill="#0b0b0b" stroke-linecap="round" stroke-linejoin="round"`;
+  switch(n){
+  case 'dumbbell':d=`<line x1="${x-30*k}" y1="${y}" x2="${x+30*k}" y2="${y}"/><rect x="${x-42*k}" y="${y-22*k}" width="${13*k}" height="${44*k}" rx="${4*k}"/><rect x="${x+29*k}" y="${y-22*k}" width="${13*k}" height="${44*k}" rx="${4*k}"/><rect x="${x-53*k}" y="${y-13*k}" width="${11*k}" height="${26*k}" rx="${4*k}"/><rect x="${x+42*k}" y="${y-13*k}" width="${11*k}" height="${26*k}" rx="${4*k}"/>`;break;
+  case 'book':d=`<path d="M${x},${y-22*k} C ${x-14*k},${y-32*k} ${x-36*k},${y-32*k} ${x-46*k},${y-26*k} L${x-46*k},${y+28*k} C ${x-36*k},${y+22*k} ${x-14*k},${y+22*k} ${x},${y+32*k} Z"/><path d="M${x},${y-22*k} C ${x+14*k},${y-32*k} ${x+36*k},${y-32*k} ${x+46*k},${y-26*k} L${x+46*k},${y+28*k} C ${x+36*k},${y+22*k} ${x+14*k},${y+22*k} ${x},${y+32*k} Z"/>`;break;
+  case 'phone':d=`<rect x="${x-24*k}" y="${y-40*k}" width="${48*k}" height="${80*k}" rx="${9*k}"/><line x1="${x-12*k}" y1="${y-22*k}" x2="${x+12*k}" y2="${y-22*k}"/><line x1="${x-12*k}" y1="${y-8*k}" x2="${x+6*k}" y2="${y-8*k}"/><line x1="${x-12*k}" y1="${y+6*k}" x2="${x+12*k}" y2="${y+6*k}"/>`;break;
+  case 'dollar':d=`<circle cx="${x}" cy="${y}" r="${38*k}"/><text x="${x}" y="${y+18*k}" font-size="${52*k}" font-weight="800" fill="#fff" stroke="none" text-anchor="middle">$</text>`;break;
+  case 'pound':d=`<circle cx="${x}" cy="${y}" r="${38*k}"/><text x="${x}" y="${y+18*k}" font-size="${50*k}" font-weight="800" fill="#fff" stroke="none" text-anchor="middle">£</text>`;break;
+  case 'trophy':d=`<path d="M${x-26*k},${y-36*k} L${x+26*k},${y-36*k} L${x+22*k},${y} Q${x},${y+16*k} ${x-22*k},${y} Z"/><path d="M${x-26*k},${y-28*k} Q${x-46*k},${y-26*k} ${x-38*k},${y-8*k} Q${x-32*k},${y} ${x-20*k},${y-4*k}" fill="none"/><path d="M${x+26*k},${y-28*k} Q${x+46*k},${y-26*k} ${x+38*k},${y-8*k} Q${x+32*k},${y} ${x+20*k},${y-4*k}" fill="none"/><line x1="${x}" y1="${y+10*k}" x2="${x}" y2="${y+26*k}"/><rect x="${x-20*k}" y="${y+26*k}" width="${40*k}" height="${12*k}" rx="${3*k}"/>`;break;
+  case 'clock':d=`<circle cx="${x}" cy="${y+4*k}" r="${34*k}"/><line x1="${x}" y1="${y+4*k}" x2="${x}" y2="${y-16*k}"/><line x1="${x}" y1="${y+4*k}" x2="${x+14*k}" y2="${y+12*k}"/><path d="M${x-34*k},${y-26*k} l${14*k},${-12*k} M${x+34*k},${y-26*k} l${-14*k},${-12*k}"/>`;break;
+  case 'calendar':d=`<rect x="${x-38*k}" y="${y-32*k}" width="${76*k}" height="${70*k}" rx="${8*k}"/><line x1="${x-38*k}" y1="${y-12*k}" x2="${x+38*k}" y2="${y-12*k}"/><line x1="${x-20*k}" y1="${y-42*k}" x2="${x-20*k}" y2="${y-24*k}"/><line x1="${x+20*k}" y1="${y-42*k}" x2="${x+20*k}" y2="${y-24*k}"/>`+[0,1,2].map(i=>[0,1].map(j=>`<rect x="${x-26*k+i*20*k}" y="${y+k*(0+j*16)}" width="${10*k}" height="${8*k}" rx="${2*k}" fill="#fff" stroke="none"/>`).join('')).join('');break;
+  case 'target':d=`<circle cx="${x}" cy="${y}" r="${38*k}"/><circle cx="${x}" cy="${y}" r="${24*k}"/><circle cx="${x}" cy="${y}" r="${9*k}" fill="#fff"/>`;break;
+  case 'gear':{let p='';for(let i=0;i<16;i++){const a=i*Math.PI/8,r=i%2?26*k:36*k;p+=(i?'L':'M')+(x+r*Math.cos(a)).toFixed(1)+','+(y+r*Math.sin(a)).toFixed(1);}d=`<path d="${p}Z"/><circle cx="${x}" cy="${y}" r="${10*k}"/>`;break;}
+  case 'bulb':d=`<path d="M${x-20*k},${y+16*k} C ${x-44*k},${y-4*k} ${x-36*k},${y-52*k} ${x},${y-54*k} C ${x+36*k},${y-52*k} ${x+44*k},${y-4*k} ${x+20*k},${y+16*k} L${x+18*k},${y+30*k} L${x-18*k},${y+30*k} Z"/><line x1="${x-14*k}" y1="${y+42*k}" x2="${x+14*k}" y2="${y+42*k}"/>`;break;
+  case 'play':d=`<rect x="${x-42*k}" y="${y-30*k}" width="${84*k}" height="${60*k}" rx="${10*k}"/><path d="M${x-10*k},${y-14*k} L${x+16*k},${y} L${x-10*k},${y+14*k} Z" fill="#fff"/>`;break;
+  case 'note':d=`<path d="M${x-14*k},${y+24*k} L${x-14*k},${y-30*k} L${x+24*k},${y-38*k} L${x+24*k},${y+16*k}" fill="none"/><ellipse cx="${x-24*k}" cy="${y+24*k}" rx="${11*k}" ry="${8*k}" fill="#fff"/><ellipse cx="${x+14*k}" cy="${y+16*k}" rx="${11*k}" ry="${8*k}" fill="#fff"/>`;break;
+  case 'people':d=[-26,26,0].map((o,i)=>`<circle cx="${x+o*k}" cy="${y-(i==2?16:8)*k}" r="${(i==2?12:10)*k}"/><path d="M${x+o*k-(i==2?20:16)*k},${y+(i==2?32:30)*k} L${x+o*k-(i==2?20:16)*k},${y+(i==2?14:12)*k} Q${x+o*k},${y-(i==2?0:-2)*k} ${x+o*k+(i==2?20:16)*k},${y+(i==2?14:12)*k} L${x+o*k+(i==2?20:16)*k},${y+(i==2?32:30)*k}"/>`).join('');break;
+  case 'star':{let p='';for(let i=0;i<10;i++){const a=-Math.PI/2+i*Math.PI/5,r=i%2?17*k:40*k;p+=(i?'L':'M')+(x+r*Math.cos(a)).toFixed(1)+','+(y+r*Math.sin(a)).toFixed(1);}d=`<path d="${p}Z"/>`;break;}
+  case 'moon':d=`<path d="M${x+10*k},${y-36*k} A${36*k},${36*k} 0 1 0 ${x+30*k},${y+20*k} A${28*k},${28*k} 0 1 1 ${x+10*k},${y-36*k} Z"/>`;break;
+  case 'envelope':d=`<rect x="${x-40*k}" y="${y-28*k}" width="${80*k}" height="${56*k}" rx="${6*k}"/><path d="M${x-40*k},${y-26*k} L${x},${y+6*k} L${x+40*k},${y-26*k}" fill="none"/>`;break;
+  case 'dice':d=`<rect x="${x-34*k}" y="${y-34*k}" width="${68*k}" height="${68*k}" rx="${12*k}"/>`+[[-14,-14],[14,14],[0,0],[14,-14],[-14,14]].map(([a,b])=>`<circle cx="${x+a*k}" cy="${y+b*k}" r="${5*k}" fill="#fff" stroke="none"/>`).join('');break;
+  case 'network':{const pts=[[0,-30],[-32,14],[32,14],[0,34]];d=`<path d="M${x},${y-30*k} L${x-32*k},${y+14*k} L${x+32*k},${y+14*k} Z M${x},${y-30*k} L${x},${y+34*k} M${x-32*k},${y+14*k} L${x},${y+34*k} L${x+32*k},${y+14*k}" fill="none"/>`+pts.map(([a,b])=>`<circle cx="${x+a*k}" cy="${y+b*k}" r="${8*k}"/>`).join('');break;}
+  case 'briefcase':d=`<rect x="${x-40*k}" y="${y-20*k}" width="${80*k}" height="${54*k}" rx="${8*k}"/><path d="M${x-14*k},${y-20*k} L${x-14*k},${y-32*k} L${x+14*k},${y-32*k} L${x+14*k},${y-20*k}" fill="none"/><line x1="${x-40*k}" y1="${y}" x2="${x+40*k}" y2="${y}"/>`;break;
+  case 'chart':d=`<path d="M${x-38*k},${y-36*k} L${x-38*k},${y+34*k} L${x+40*k},${y+34*k}" fill="none"/><path d="M${x-28*k},${y+18*k} L${x-8*k},${y} L${x+8*k},${y+8*k} L${x+32*k},${y-24*k}" fill="none"/>`;break;
+  case 'notebook':d=`<rect x="${x-32*k}" y="${y-40*k}" width="${64*k}" height="${80*k}" rx="${6*k}"/>`+[0,1,2,3].map(i=>`<line x1="${x-18*k}" y1="${y-22*k+i*16*k}" x2="${x+20*k}" y2="${y-22*k+i*16*k}"/>`).join('');break;
+  case 'hourglass':d=`<line x1="${x-30*k}" y1="${y-40*k}" x2="${x+30*k}" y2="${y-40*k}"/><line x1="${x-30*k}" y1="${y+40*k}" x2="${x+30*k}" y2="${y+40*k}"/><path d="M${x-22*k},${y-40*k} Q${x-22*k},${y-8*k} ${x},${y} Q${x-22*k},${y+8*k} ${x-22*k},${y+40*k} L${x+22*k},${y+40*k} Q${x+22*k},${y+8*k} ${x},${y} Q${x+22*k},${y-8*k} ${x+22*k},${y-40*k} Z"/><path d="M${x-14*k},${y+36*k} L${x+14*k},${y+36*k} L${x},${y+18*k} Z" fill="#fff"/>`;break;
+  case 'house':d=`<path d="M${x-38*k},${y-4*k} L${x},${y-38*k} L${x+38*k},${y-4*k} L${x+30*k},${y-4*k} L${x+30*k},${y+34*k} L${x-30*k},${y+34*k} L${x-30*k},${y-4*k} Z"/><rect x="${x-9*k}" y="${y+10*k}" width="${18*k}" height="${24*k}"/>`;break;
+  case 'eye':d=`<path d="M${x-42*k},${y} Q${x},${y-36*k} ${x+42*k},${y} Q${x},${y+36*k} ${x-42*k},${y} Z"/><circle cx="${x}" cy="${y}" r="${12*k}" fill="#fff"/>`;break;
+  case 'flag':d=`<line x1="${x-24*k}" y1="${y+40*k}" x2="${x-24*k}" y2="${y-40*k}"/><path d="M${x-24*k},${y-40*k} L${x+34*k},${y-26*k} L${x-24*k},${y-10*k} Z" fill="#fff"/>`;break;
+  case 'brain':d=`<path d="M${x},${y-34*k} C ${x-30*k},${y-44*k} ${x-50*k},${y-10*k} ${x-34*k},${y+8*k} C ${x-44*k},${y+30*k} ${x-12*k},${y+42*k} ${x},${y+30*k} C ${x+12*k},${y+42*k} ${x+44*k},${y+30*k} ${x+34*k},${y+8*k} C ${x+50*k},${y-10*k} ${x+30*k},${y-44*k} ${x},${y-34*k} Z"/><line x1="${x}" y1="${y-34*k}" x2="${x}" y2="${y+30*k}"/>`;break;
+  case 'clover':d=[[0,-18],[-18,0],[18,0],[0,18]].map(([a,b])=>`<circle cx="${x+a*k}" cy="${y+b*k-6*k}" r="${15*k}"/>`).join('')+`<path d="M${x},${y+6*k} Q${x+6*k},${y+30*k} ${x+18*k},${y+40*k}" fill="none"/>`;break;
+  case 'smile':d=`<circle cx="${x}" cy="${y}" r="${38*k}"/><circle cx="${x-13*k}" cy="${y-8*k}" r="${4*k}" fill="#fff"/><circle cx="${x+13*k}" cy="${y-8*k}" r="${4*k}" fill="#fff"/><path d="M${x-18*k},${y+10*k} Q${x},${y+28*k} ${x+18*k},${y+10*k}" fill="none"/>`;break;
+  case 'shield':d=`<path d="M${x},${y-40*k} L${x+34*k},${y-26*k} L${x+30*k},${y+12*k} Q${x+20*k},${y+32*k} ${x},${y+42*k} Q${x-20*k},${y+32*k} ${x-30*k},${y+12*k} L${x-34*k},${y-26*k} Z"/><path d="M${x-12*k},${y} l${9*k},${10*k} l${16*k},${-20*k}" fill="none"/>`;break;
+  case 'game':d=`<rect x="${x-44*k}" y="${y-22*k}" width="${88*k}" height="${46*k}" rx="${22*k}"/><line x1="${x-24*k}" y1="${y}" x2="${x-10*k}" y2="${y}"/><line x1="${x-17*k}" y1="${y-7*k}" x2="${x-17*k}" y2="${y+7*k}"/><circle cx="${x+18*k}" cy="${y-4*k}" r="${4*k}" fill="#fff"/><circle cx="${x+27*k}" cy="${y+5*k}" r="${4*k}" fill="#fff"/>`;break;
+  case 'couch':d=`<rect x="${x-44*k}" y="${y-6*k}" width="${88*k}" height="${30*k}" rx="${8*k}"/><rect x="${x-34*k}" y="${y-28*k}" width="${68*k}" height="${24*k}" rx="${6*k}"/><line x1="${x-36*k}" y1="${y+24*k}" x2="${x-36*k}" y2="${y+34*k}"/><line x1="${x+36*k}" y1="${y+24*k}" x2="${x+36*k}" y2="${y+34*k}"/>`;break;
+  case 'seed':d=`<ellipse cx="${x}" cy="${y}" rx="${16*k}" ry="${24*k}" transform="rotate(25,${x},${y})"/>`;break;
+  case 'handshake':d=`<path d="M${x-44*k},${y-6*k} L${x-20*k},${y-18*k} L${x+4*k},${y-8*k} L${x+20*k},${y-18*k} L${x+44*k},${y-6*k} M${x-30*k},${y-12*k} L${x-6*k},${y+16*k} Q${x+4*k},${y+24*k} ${x+12*k},${y+14*k} L${x+30*k},${y-8*k}" fill="none"/>`;break;
+  case 'key':d=`<circle cx="${x-18*k}" cy="${y}" r="${16*k}"/><path d="M${x-2*k},${y} L${x+40*k},${y} M${x+28*k},${y} L${x+28*k},${y+14*k} M${x+38*k},${y} L${x+38*k},${y+10*k}" fill="none"/>`;break;
+  case 'mountain':d=`<path d="M${x-46*k},${y+30*k} L${x-10*k},${y-26*k} L${x+6*k},${y-4*k} L${x+18*k},${y-20*k} L${x+46*k},${y+30*k} Z"/>`;break;
+  case 'x':d=`<rect x="${x-34*k}" y="${y-34*k}" width="${68*k}" height="${68*k}" rx="${12*k}"/><path d="M${x-14*k},${y-14*k} L${x+14*k},${y+14*k} M${x+14*k},${y-14*k} L${x-14*k},${y+14*k}"/>`;break;
+  default:d=`<circle cx="${x}" cy="${y}" r="${30*k}"/>`;}
+  add(`<g opacity="${op}" filter="url(#glowS)" ${st}>${d}</g>`);}
+
+/* ---------- composite helpers ---------- */
+function head(t0,txt,{y=150,size=26,outAt=null,x=960}={}){fadeIn(t0,()=>label(x,y,txt,{size,op:.75}),{outAt});}
+function big(t0,txt,{y=255,size=92,outAt=null,x=960,snd='hit',vol=.6}={}){pop(t0,x,y-30,()=>title(x,y,txt,{size}),{snd,vol,outAt});}
+function you(t0=-9,{x=FX,g=G,arm=null,arm2=null,spot=true,lbl=true,op=1,s=1,ground_=true,x1=null,x2=null}={}){
+  if(ground_)ground(g,1,{x1:x1==null?-10:x1,x2:x2==null?W+10:x2,op:.5});
+  fadeIn(t0,()=>{person(x,g,s,{arm,arm2,spot,op});if(lbl)label(x,g+56,'YOU',{size:20,op:.6});},{dy:14});}
+function card(x,y,w,h,{icon:ic=null,text='',text2=null,sub=null,hi=true,num=null,iconS=1}={}){
+  box(x-w/2,y-h/2,w,h,{r:22,op:hi?.9:.45,glow:hi});
+  if(num!=null)label(x-w/2+26,y-h/2+38,String(num).padStart(2,'0'),{size:16,op:.5,anchor:'start'});
+  const iy=ic?y-h*.16:y;if(ic)icon(ic,x,iy,iconS,hi?1:.5);
+  const ty=ic?y+h*.2:y-(text2?14:-10);
+  if(text)label(x,ty,text,{size:22,op:hi?1:.5,weight:800,sp:.1});
+  if(text2)label(x,ty+30,text2,{size:22,op:hi?1:.5,weight:800,sp:.1});
+  if(sub)label(x,y+h/2-22,sub,{size:14,op:hi?.6:.35});}
+/* row of cards; items: [{t,icon,text,text2,sub,num}] */
+function cardRow(items,{cx=CX,y=500,w=240,h=280,gap=28,crossAt=null,checkAt=null,dimAt=null,outAt=null,hiOne=null,hiAt=null}={}){
+  const n=items.length,tw=n*w+(n-1)*gap,x0=cx-tw/2+w/2;
+  items.forEach((it,k)=>{const x=x0+k*(w+gap);
+    const dim=dimAt!=null?lerp(1,.35,P(T,dimAt,.4)):1;const hi=hiAt!=null&&T>=hiAt?(k===hiOne):true;
+    pop(it.t,x,y,()=>{g(`opacity="${hiAt!=null&&T>=hiAt&&k!==hiOne?lerp(1,.3,P(T,hiAt,.4)):dim}"`,()=>card(x,y,w,h,{...it,hi:hi}));
+      const ca=it.crossAt!=null?it.crossAt:crossAt;if(ca!=null)cross(x,y,1.7,.9,P(T,ca+k*.08,.25));
+      const ch=it.checkAt!=null?it.checkAt:checkAt;if(ch!=null){const c=P(T,ch+k*.08,.3);if(c>0)check(x+w/2-18,y-h/2+18,1.3*back(c));}},{snd:'pop',vol:.5,outAt});
+    const ca=it.crossAt!=null?it.crossAt:crossAt;if(ca!=null)cue('nope',ca+k*.08,.35);});}
+/* vertical checklist; rows: [{t,text,ok,mark}] */
+function checklist(rows,{x=760,y=330,w=900,rowH=110,headTxt=null,t0=null}={}){
+  if(t0!=null)fadeIn(t0,()=>box(x,y-70,w,rows.length*rowH+60,{r:24,op:.45}));
+  rows.forEach((r,k)=>{const yy=y+k*rowH;fadeIn(r.t,()=>{
+    const m=r.mark!=null?P(T,r.mark,.3):0;
+    if(r.ok){if(m>0)check(x+60,yy,1.4*back(m));else add(`<circle cx="${x+60}" cy="${yy}" r="24" fill="none" stroke="#fff" stroke-opacity=".6" stroke-width="3"/>`);
+      label(x+110,yy+12,r.text,{size:32,op:1,weight:800,sp:.05,anchor:'start',glow:m>0});}
+    else{add(`<circle cx="${x+60}" cy="${yy}" r="24" fill="none" stroke="#fff" stroke-opacity=".5" stroke-width="3"/>`);
+      label(x+110,yy+12,r.text,{size:32,op:lerp(1,.4,m),weight:800,sp:.05,anchor:'start'});
+      if(m>0){strike(x+104,x+104+r.text.length*25,yy,m);cross(x+60,yy,.7,.8,m);}}
+    if(k<rows.length-1)add(`<line x1="${x+30}" y1="${yy+rowH/2}" x2="${x+w-30}" y2="${yy+rowH/2}" stroke="#fff" stroke-opacity=".12" stroke-width="2"/>`);});
+    if(r.mark!=null)cue(r.ok?'win':'nope',r.mark,r.ok?.5:.3);});}
+function bar(x,y,w,p,{lab=null,right=null,h=30,glow=true}={}){
+  if(lab)label(x,y-20,lab,{size:16,op:.6,anchor:'start'});if(right)label(x+w,y-20,right,{size:16,op:.9,anchor:'end'});
+  add(`<rect x="${x}" y="${y}" width="${w}" height="${h}" rx="${h/2}" fill="none" stroke="#fff" stroke-opacity=".75" stroke-width="2.5" ${glow?'filter="url(#glowS)"':''}/>`);
+  if(p>0)add(`<rect x="${x+5}" y="${y+5}" width="${Math.max(h-10,(w-10)*p)}" height="${h-10}" rx="${(h-10)/2}" fill="#fff" fill-opacity=".85"/>`);}
+function polyline(pts,u,{sw=5,op=1,glow='glow'}={}){if(u<=0)return null;const n=pts.length-1,k=Math.min(n-1,Math.floor(u*n)),f=u*n-k;
+  const sh=pts.slice(0,k+1).concat([[lerp(pts[k][0],pts[k+1][0],f),lerp(pts[k][1],pts[k+1][1],f)]]);
+  add(`<polyline points="${sh.map(p=>p[0].toFixed(1)+','+p[1].toFixed(1)).join(' ')}" fill="none" stroke="#fff" stroke-opacity="${op}" stroke-width="${sw}" stroke-linejoin="round" stroke-linecap="round" ${glow?`filter="url(#${glow})"`:''}/>`);return sh[sh.length-1];}
+function curve(fn,x0,y0,w,h,u,o={}){const pts=[];for(let i=0;i<=80;i++){const v=i/80;pts.push([x0+w*v,y0-h*fn(v)]);}return polyline(pts,u,o);}
+function axes(x,y,w,h,{xl='TIME',yl=null}={}){add(`<g stroke="#fff" stroke-opacity=".45" stroke-width="2.5"><line x1="${x}" y1="${y}" x2="${x+w}" y2="${y}"/><line x1="${x}" y1="${y}" x2="${x}" y2="${y-h}"/></g>`);if(xl)label(x+w,y+36,xl,{size:15,op:.5,anchor:'end'});if(yl)label(x+8,y-h-12,yl,{size:15,op:.5,anchor:'start'});}
+function stairsPath(x0,y0,n,w,h){let d=`M${x0-80},${y0} L${x0},${y0}`;for(let i=0;i<n;i++)d+=` L${x0+i*w},${y0-(i+1)*h} L${x0+(i+1)*w},${y0-(i+1)*h}`;return d+` L${x0+n*w+60},${y0-n*h}`;}
+function hopTo(ax,ay,bx,by,p,hh=40){return[lerp(ax,bx,p),lerp(ay,by,p)-Math.sin(Math.PI*p)*hh];}
+
+/* ---------- chapter title card ---------- */
+function chapterCard(tag,ttl,t0){
+  bokeh([[960,560,380,.06],[300,260,140,.04],[1650,860,160,.04]],T);
+  fadeIn(t0+.15,()=>label(960,360,tag,{size:30,op:.75}));
+  const words=ttl.split(' ');let l1=ttl,l2=null;if(ttl.length>22){let acc='';for(let i=0;i<words.length;i++){if((acc+' '+words[i]).trim().length>ttl.length/2+2){l1=acc.trim();l2=words.slice(i).join(' ');break;}acc+=' '+words[i];}}
+  pop(t0+.35,960,480,()=>{title(960,l2?500:540,l1,{size:84});if(l2)title(960,600,l2,{size:84});},{snd:'impact',vol:.45,d:.5});
+  const ly=l2?680:640;drawPath(`M560,${ly} L1360,${ly}`,eo(P(T,t0+.6,.9)),{sw:3,glow:'glowS',op:.7});
+  const wp=P(T,t0+.7,3.2);person(lerp(560,1360,wp),ly,.45,{ring:false,bob:Math.abs(Math.sin(T*12))*4,op:clamp(P(T,t0+.7,.3))});}
+
+window.__G=g;
+/* ============ "BECOME SO DISCIPLINED THAT MOTIVATION DOESN'T MATTER" — ~5 min documentary ============ */
+const BEATS=[];function B(s,e,fn,cam={}){BEATS.push({s,e,fn,cam});}
+const GG=800, AMBER='#FFB547';
+const dark=[[300,250,170,.035],[1650,780,200,.03],[1500,160,110,.03]];
+
+/* ---------- subtitles: bold white, key words in amber ---------- */
+const KEY=new Set('MOTIVATION DISCIPLINE EASY FAIL FAILS TEMPORARY START DECISION DECISIONS TRUST SMALL SMALLER CONSISTENCY INTENSITY DISTRACTED DISTRACTIONS ENVIRONMENT WILLPOWER PROGRESS MOMENTUM CHOICE COMFORT VERSION PROMISES PROMISED FUTURE DO HABIT NEGOTIATING ONCE TRACK EXCUSE EXCUSES PERFECT FEELINGS DIFFERENT UNSTOPPABLE TIRED ENOUGH READY BUILD BECAME NOBODY ACTUALLY NOW'.split(' '));
+const SUB=[];TIMING.lines.forEach(ln=>{const w=ln.text.split(' ');const chunks=[];let c=[];w.forEach(x=>{const len=c.join(' ').length;if(c.length>=7||len+x.length>40){chunks.push(c);c=[];}c.push(x);});if(c.length)chunks.push(c);
+  const tot=w.join(' ').length;let t=ln.start;chunks.forEach(ch=>{const d=(ln.end-ln.start)*ch.join(' ').length/tot;SUB.push({s:t,e:t+d,w:ch});t+=d;});});
+function subtitles(t){const s=SUB.find(x=>t>=x.s-.05&&t<x.e+.12);if(!s)return;const size=46;let html='';
+  s.w.forEach((x,k)=>{const k2=x.replace(/[^A-Za-z']/g,'').toUpperCase().replace(/'S$|’S$/,'');html+=`<tspan fill="${KEY.has(k2)?AMBER:'#fff'}">${esc(x.toUpperCase())}${k<s.w.length-1?' ':''}</tspan>`;});
+  add(`<text x="960" y="1020" font-size="${size}" font-weight="900" letter-spacing="2" text-anchor="middle" stroke="#000" stroke-width="7" paint-order="stroke">${html}</text>`);}
+
+/* ---------- props ---------- */
+function bed(x,g,s=1){add(`<g filter="url(#glowS)" stroke="#fff" stroke-width="4" fill="#0b0b0b"><rect x="${x-260*s}" y="${g-70*s}" width="${520*s}" height="${56*s}" rx="12"/><rect x="${x-260*s}" y="${g-170*s}" width="${28*s}" height="${170*s}" rx="8"/><rect x="${x+232*s}" y="${g-120*s}" width="${28*s}" height="${120*s}" rx="8"/></g>`);}
+function sleeper(x,g,s=1,arm=null){g_(`transform="rotate(-90,${x-140*s},${g-70*s})"`,()=>person(x-140*s,g-70*s,.8*s,{ring:false,arm}));
+  add(`<path d="M${x-110*s},${g-100*s} Q${x+60*s},${g-136*s} ${x+230*s},${g-104*s} L${x+230*s},${g-70*s} L${x-110*s},${g-70*s} Z" fill="#0b0b0b" stroke="#fff" stroke-width="3.5" filter="url(#glowS)"/>`);}
+const g_=(a,f)=>window.__G(a,f);
+function alarm(x,y,s,ringing){const sh=ringing?Math.sin(T*60)*5*s:0;icon('clock',x+sh,y,s);if(ringing)add(`<g stroke="#fff" stroke-width="3" opacity=".7" fill="none">${[0,1].map(i=>`<path d="M${x+48*s+i*14},${y-40*s} q12,10 0,22"/><path d="M${x-48*s-i*14},${y-40*s} q-12,10 0,22"/>`).join('')}</g>`);}
+function phoneGlow(x,y,s=1){add(`<circle cx="${x}" cy="${y}" r="${90*s}" fill="url(#bk)" fill-opacity=".22"/>`);icon('phone',x,y,s);}
+function deskL(x,g,lamp=true){add(`<g filter="url(#glowS)" stroke="#fff" stroke-width="4" fill="#0b0b0b"><rect x="${x-190}" y="${g-160}" width="380" height="20" rx="6"/><line x1="${x-170}" y1="${g-140}" x2="${x-170}" y2="${g}"/><line x1="${x+170}" y1="${g-140}" x2="${x+170}" y2="${g}"/></g>`);
+  if(lamp){add(`<path d="M${x+130},${g-160} L${x+130},${g-280} L${x+80},${g-320}" stroke="#fff" stroke-width="4" fill="none"/><path d="M${x+40},${g-330} L${x+120},${g-310} L${x+90},${g-270} Z" fill="#fff"/><polygon points="${x+60},${g-290} ${x+100},${g-280} ${x+20},${g-160} ${x-120},${g-160}" fill="url(#cone)" opacity=".7"/>`);}}
+function door(x,g,open=0,label_=null){add(`<rect x="${x-90}" y="${g-300}" width="180" height="300" fill="#141414" stroke="#fff" stroke-width="4" filter="url(#glowS)"/>`);if(open>0)add(`<rect x="${x-90}" y="${g-300}" width="${180*open}" height="300" fill="#fff" fill-opacity="${.55*open}"/>`);else add(`<circle cx="${x+60}" cy="${g-150}" r="7" fill="#fff"/>`);if(label_)label(x,g-320,label_,{size:16,op:.7});}
+function rain(op=1){let d='';for(let k=0;k<90;k++){const x=((k*97+T*90)%2100)-80,y=((k*233+T*900)%1200)-60;d+=`<line x1="${x}" y1="${y}" x2="${x-10}" y2="${y+34}"/>`;}add(`<g stroke="#fff" stroke-opacity="${.28*op}" stroke-width="2">${d}</g>`);}
+function windowNight(x,y,warm=0){add(`<rect x="${x-120}" y="${y-90}" width="240" height="180" rx="8" fill="${warm>0?'#2a1c0c':'#0a0a0a'}" stroke="#fff" stroke-width="4" filter="url(#glowS)"/><line x1="${x}" y1="${y-90}" x2="${x}" y2="${y+90}" stroke="#fff" stroke-width="3"/><line x1="${x-120}" y1="${y}" x2="${x+120}" y2="${y}" stroke="#fff" stroke-width="3"/>`);
+  if(warm<=0){icon('moon',x-60,y-45,.45,.7);}else add(`<circle cx="${x+40}" cy="${y+60}" r="${50*warm}" fill="${AMBER}" opacity="${.6*warm}" filter="url(#blur12)"/>`);}
+function shoe(x,y,s=1){add(`<path d="M${x-40*s},${y} L${x-40*s},${y-26*s} Q${x-10*s},${y-30*s} ${x},${y-18*s} L${x+40*s},${y-10*s} Q${x+50*s},${y-4*s} ${x+48*s},${y} Z" fill="#0b0b0b" stroke="#fff" stroke-width="3.5" filter="url(#glowS)"/>`);}
+function barbell(x,y,s=1){add(`<g filter="url(#glowS)" stroke="#fff" stroke-width="5" fill="#0b0b0b"><line x1="${x-130*s}" y1="${y}" x2="${x+130*s}" y2="${y}"/><rect x="${x-120*s}" y="${y-40*s}" width="${22*s}" height="${80*s}" rx="5"/><rect x="${x+98*s}" y="${y-40*s}" width="${22*s}" height="${80*s}" rx="5"/></g>`);}
+function wave(x0,y0,w,h,u,fn,o={}){return curve(fn,x0,y0,w,h,u,o);}
+function stepCard(n,title,t0){const p=P(T,t0,.35),o=1-P(T,t0+2.0,.4);if(p<=0||o<=0)return;add(`<g opacity="${Math.min(p,o)}">`);
+  add(`<rect x="0" y="80" width="1920" height="130" fill="#000" opacity=".6"/>`);label(960,128,`STEP ${n}`,{size:24,op:.7});title_(960,190,title,{size:52});add('</g>');cue('impact',t0,.35);}
+function title_(x,y,t,o){title(x,y,t,o);}
+function onText(t0,t1,lines,{y=420,size=74}={}){const p=P(T,t0,.5)*(1-P(T,t1-.4,.4));if(p<=0)return;add(`<g opacity="${p}"><rect x="0" y="${y-size*1.2}" width="1920" height="${lines.length*size*1.15+size*.8}" fill="#000" opacity=".55"/>`);lines.forEach((l2,i)=>title(960,y+i*size*1.15,l2,{size}));add('</g>');}
+function promiseRow(x,y,txt,done){box(x-190,y-45,380,90,{r:16,op:.85});label(x-20,y+8,txt,{size:20,op:1,weight:900});if(done>0)check(x+160,y,1*back(done));}
+function meter(x,y,w,v,lab){label(x,y-16,lab,{size:16,op:.75,anchor:'start',weight:900});add(`<rect x="${x}" y="${y}" width="${w}" height="26" rx="13" fill="none" stroke="#fff" stroke-width="2.5"/><rect x="${x+5}" y="${y+5}" width="${Math.max(16,(w-10)*clamp(v))}" height="16" rx="8" fill="#fff"/>`);}
+function timeTag(x,y,txt){label(x,y,txt,{size:30,op:.9,weight:900,sp:.12});}
+
+/* ================= V2: shot-based cinematography ================= */
+/* ---------- camera ---------- */
+function camAt(k){if(T<=k[0][0])return k[0].slice(1);for(let i=0;i<k.length-1;i++){const a=k[i],b=k[i+1];if(T<=b[0]){const u=(b[5]==='lin'?(x=>x):eio)((T-a[0])/Math.max(.001,b[0]-a[0]));return[lerp(a[1],b[1],u),lerp(a[2],b[2],u),lerp(a[3],b[3],u),lerp(a[4]||0,b[4]||0,u)];}}return k[k.length-1].slice(1);}
+const FXD=`<filter id="mb" x="-20%" y="-5%" width="140%" height="110%"><feGaussianBlur stdDeviation="34 0"/></filter><filter id="dof" x="-10%" y="-10%" width="120%" height="120%"><feGaussianBlur stdDeviation="7"/></filter><filter id="dof2" x="-20%" y="-20%" width="140%" height="140%"><feGaussianBlur stdDeviation="16"/></filter><filter id="sil"><feColorMatrix values="0 0 0 0 0  0 0 0 0 0  0 0 0 0 0  0 0 0 1 0"/></filter>`;
+let INSHOT=false,OVER=[];function TXT(f){if(INSHOT)OVER.push(f);else f();}
+for(const nm of ['big','head','onText','timeTag']){const orig=window[nm];window[nm]=function(...a){if(INSHOT){OVER.push(()=>orig(...a));return;}orig(...a);};}
+function SHOT(a,b,keys,fn,o={}){if(T<a||T>=b)return;add(FXD);const[fx,fy,z,r]=camAt(keys);const wb=o.whip&&T<a+.2?1:0;
+  const shake=o.shake?o.shake*(Math.sin(T*71)*.6+Math.sin(T*43)*.4):0;
+  INSHOT=true;OVER=[];g_(`transform="translate(${960+shake},${540+shake*.6}) rotate(${r}) scale(${z}) translate(${-fx},${-fy})" ${wb?'filter="url(#mb)"':''}`,fn);INSHOT=false;const ov=OVER;OVER=[];ov.forEach(f=>f());
+  if(T<a+.06)add(`<rect width="1920" height="1080" fill="#fff" opacity="${(1-P(T,a,.06))*.08}"/>`);
+  cue('whoosh',a,o.whip?.5:.12);}
+/* ---------- character animation ---------- */
+function actor(x,g,s,pose='idle',o={}){const t=T+(o.ph||0);let arm=null,arm2=null,bob=0,rot=0,sy=1;
+  switch(pose){
+    case 'idle':bob=Math.sin(t*2.2)*2.5*s;arm=[40,58+Math.sin(t*2.2)*2];break;
+    case 'walk':{const c=Math.sin(t*7);bob=Math.abs(Math.cos(t*7))*7*s;arm=[38+c*24,46-Math.abs(c)*12];arm2=[-38+c*24,46-Math.abs(c)*12];rot=3;break;}
+    case 'run':{const c=Math.sin(t*11);bob=Math.abs(Math.cos(t*11))*14*s;arm=[58+c*26,-18+c*32];arm2=[-34-c*26,-8-c*32];rot=9;break;}
+    case 'type':arm=[96,-38+Math.sin(t*22)*6];arm2=[82,-30+Math.cos(t*19)*6];bob=Math.sin(t*2)*1.5;break;
+    case 'lift':{const u=(Math.sin(t*2.6)+1)/2;arm=[105,lerp(-30,-125,u)];arm2=[-105,lerp(-30,-125,u)];bob=-u*5;break;}
+    case 'slump':arm=[26,62];arm2=[-26,62];sy=.92;rot=-5;bob=Math.sin(t*1.3)*2;break;
+    case 'cheer':arm=[44,-90+Math.sin(t*9)*8];arm2=[-44,-90+Math.cos(t*9)*8];bob=Math.abs(Math.sin(t*6))*10*s;break;
+    case 'point':arm=[85,-28];bob=Math.sin(t*2)*2;break;
+    case 'think':arm=[14,-34];bob=Math.sin(t*1.6)*1.5;break;
+    case 'stretch':{const u=(Math.sin(t*1.8)+1)/2;arm=[lerp(44,95,u),lerp(-92,-40,u)];arm2=[lerp(-44,-95,u),lerp(-92,-40,u)];break;}
+    case 'crouch':sy=.76;arm=[60,36];arm2=[-46,40];rot=12;break;
+    case 'write':arm=[90,-36+Math.sin(t*14)*4];bob=Math.sin(t*2)*1.5;rot=6;break;}
+  if(o.arm)arm=o.arm;if(o.arm2)arm2=o.arm2;if(o.flip)rot=-rot;
+  g_(`transform="translate(${x},${g}) rotate(${rot}) scale(1,${sy}) translate(${-x},${-g})" ${o.sil?'filter="url(#sil)"':''}`,()=>person(x,g-bob*0,s,{arm,arm2,bob,op:o.op??1,ring:false,spot:o.spot||false}));}
+function hand(x1,y1,x2,y2,w=40){const d=`M${x1},${y1} L${x2},${y2}`;add(`<path d="${d}" stroke="#0b0b0b" stroke-width="${w+10}" stroke-linecap="round"/><path d="${d}" stroke="#efefef" stroke-width="${w}" stroke-linecap="round" filter="url(#glowS)"/>`);}
+function fgShoulder(x,y,s=1){add(`<g filter="url(#dof2)" opacity=".95"><circle cx="${x}" cy="${y-260*s}" r="${130*s}" fill="#050505"/><path d="M${x-260*s},${y+200} L${x-260*s},${y-60*s} Q${x-260*s},${y-150*s} ${x-150*s},${y-150*s} L${x+150*s},${y-150*s} Q${x+260*s},${y-150*s} ${x+260*s},${y-60*s} L${x+260*s},${y+200} Z" fill="#050505"/></g>`);
+  add(`<g filter="url(#dof)" opacity=".5" fill="none" stroke="#fff" stroke-width="3"><circle cx="${x}" cy="${y-260*s}" r="${130*s}"/></g>`);}
+function fgEdge(side,op=.9){const x=side<0?-40:1960;add(`<g filter="url(#dof2)" opacity="${op}"><rect x="${x-140}" y="-50" width="280" height="1200" fill="#030303"/></g>`);}
+function bigClock(cx,cy,s,ring,txt='6:00'){const sh=ring?Math.sin(T*60)*6*s:0;add(`<circle cx="${cx+sh}" cy="${cy}" r="${200*s}" fill="url(#bk)" fill-opacity="${ring?.18:.08}"/>`);icon('clock',cx+sh,cy,5*s);
+  if(ring)add(`<g stroke="#fff" stroke-width="${6*s}" fill="none" opacity=".8">${[0,1,2].map(i=>`<path d="M${cx+240*s+i*30*s},${cy-170*s} q${30*s},${30*s} 0,${60*s}"/><path d="M${cx-240*s-i*30*s},${cy-170*s} q${-30*s},${30*s} 0,${60*s}"/>`).join('')}</g>`);
+  if(txt)label(cx+sh,cy+280*s,txt,{size:60*s,op:.95,weight:900,sp:.08});}
+function bigPhone(cx,cy,s,scroll,o={}){const w=380*s,h=720*s;add(`<circle cx="${cx}" cy="${cy}" r="${520*s}" fill="url(#bk)" fill-opacity=".14"/><rect x="${cx-w/2}" y="${cy-h/2}" width="${w}" height="${h}" rx="${46*s}" fill="#0b0b0b" stroke="#fff" stroke-width="${6*s}" filter="url(#glowS)"/>`);
+  const id='c'+(uid++);add(`<clipPath id="${id}"><rect x="${cx-w/2+16*s}" y="${cy-h/2+40*s}" width="${w-32*s}" height="${h-80*s}" rx="${20*s}"/></clipPath><g clip-path="url(#${id})">`);
+  const ics=o.icons||['trophy','house','dollar','star','dumbbell','smile'];for(let k=0;k<8;k++){const yy=cy-h/2+40*s+(((k*190*s-scroll*600*s)%(8*190*s))+8*190*s)%(8*190*s)-60*s;
+    add(`<rect x="${cx-w/2+34*s}" y="${yy}" width="${w-68*s}" height="${160*s}" rx="${14*s}" fill="none" stroke="#fff" stroke-opacity=".45" stroke-width="${3*s}"/>`);icon(ics[k%ics.length],cx-w/2+100*s,yy+80*s,.7*s,.85);
+    add(`<rect x="${cx-w/2+160*s}" y="${yy+50*s}" width="${150*s}" height="${14*s}" rx="${7*s}" fill="#fff" fill-opacity=".5"/><rect x="${cx-w/2+160*s}" y="${yy+86*s}" width="${100*s}" height="${12*s}" rx="${6*s}" fill="#fff" fill-opacity=".3"/>`);}
+  add('</g>');if(o.badge){add(`<circle cx="${cx+w/2-20*s}" cy="${cy-h/2+20*s}" r="${34*s}" fill="#fff"/>`);label(cx+w/2-20*s,cy-h/2+34*s,String(o.badge),{size:34*s,op:1,fill:'#000',weight:900,sp:0});}}
+function streetLight(x,g,h=420){add(`<line x1="${x}" y1="${g}" x2="${x}" y2="${g-h}" stroke="#fff" stroke-opacity=".5" stroke-width="4"/><path d="M${x},${g-h} q40,0 50,30" stroke="#fff" stroke-opacity=".5" stroke-width="4" fill="none"/><polygon points="${x+30},${g-h+32} ${x+70},${g-h+32} ${x+150},${g} ${x-50},${g}" fill="url(#cone)" opacity=".5"/>`);}
+function sunrise(cx,cy,r,p){add(`<circle cx="${cx}" cy="${cy}" r="${r*2.6}" fill="${AMBER}" opacity="${.16*p}" filter="url(#blur30)"/><circle cx="${cx}" cy="${cy}" r="${r}" fill="#fff" opacity="${.5+.45*p}" filter="url(#glow)"/>`);for(let k=0;k<14;k++){const a=k*Math.PI/7+T*.05;add(`<line x1="${cx+r*1.25*Math.cos(a)}" y1="${cy+r*1.25*Math.sin(a)}" x2="${cx+r*(1.7+.2*p)*Math.cos(a)}" y2="${cy+r*(1.7+.2*p)*Math.sin(a)}" stroke="#fff" stroke-opacity="${.3*p}" stroke-width="5"/>`);}}
+function warm(op){add(`<rect width="1920" height="1080" fill="${AMBER}" opacity="${.10*op}" style="mix-blend-mode:overlay"/>`);}
+function room(g,win=true,warmW=0){ground(g,1,{op:.35});if(win)windowNight(1500,330,warmW);}
+
+/* ================= SCENE 1 — THE HOOK ================= */
+B(0,3,()=>{const g=GG;
+  // ECU: the alarm fills the frame
+  SHOT(0,at(0,1.25),[[0,960,520,1.0,0],[at(0,1.25),960,520,1.12,0]],()=>{bigClock(960,470,1,true);for(let k=0;k<6;k++)cue('tick',.05+k*.18,.6);},{shake:3});
+  // CU: a hand slams it off
+  SHOT(at(0,1.25),at(1),[[at(0,1.25),1100,560,1.6,0],[at(1),1080,560,1.7,0]],()=>{const p=eo(P(T,at(0,1.3),.35));bigClock(1300,520,.55,p<1);hand(lerp(300,700,p)*0+300,1200,lerp(600,1180,p),lerp(900,560,p),70);cue('thud',at(0,1.62),.8);});
+  // MS: lying in bed scrolling — slow dolly right; easy dreams float up
+  SHOT(at(1),at(2,1.0),[[at(1),620,620,1.35,0],[at(2,1.0),760,600,1.45,0]],()=>{room(g);bed(760,g);sleeper(760,g,1,[46,-30]);phoneGlow(700,g-200,.6);
+    [[1,'NEW GOALS','target',520],[2,'TOMORROW = DIFFERENT','calendar',860]].forEach(([i,tx,ic,x])=>pop(at(i,.2),x,420,()=>{icon(ic,x,400,.9);pillShape(x,480,tx,{size:16,dark:true});},{snd:'pop',vol:.3}));});
+  // ECU: the phone screen — the new me
+  SHOT(at(2,1.0),at(3),[[at(2,1.0),960,560,1.0,-2],[at(3),960,540,1.08,0]],()=>{bigPhone(960,560,1,(T-at(2))*1.2,{icons:['star','trophy','dumbbell','house']});hand(1500,1250,1090,860,90);});
+  // WIDE high angle pull-back: tiny in a dark room, a faint future self in the window
+  SHOT(at(3),1e9,[[at(3),900,560,1.5,0],[at(3)+3.5,960,520,.95,0]],()=>{room(g,true);bed(760,g);sleeper(760,g,1,[46,-30]);phoneGlow(700,g-200,.5);
+    const fp=P(T,at(3,.6),1.2);add(`<g opacity="${.5*fp}">`);personOutline(1500,400,.7,1);add('</g>');label(960,150,'MOTIVATION IS EASY',{size:26,op:.7});});
+});
+B(4,8,()=>{const g=GG;
+  SHOT(at(4,-.35),at(5),[[at(4,-.35),760,620,1.6,-3],[at(5),740,620,1.7,-3]],()=>{room(g);bed(760,g);const tn=P(T,at(4,.6),.8);sleeper(760,g,1,tn>.5?null:[30,-50]);zzz(560,g-220,.6);qmark(980,g-260,70,.8);});
+  SHOT(at(5),at(6),[[at(5),1300,700,2.0,0],[at(6),1340,700,2.2,0]],()=>{ground(g,1,{op:.35});shoe(1250,g-6,1.4);shoe(1380,g-6,1.4);barbell(1320,g-120,.8);label(1320,g+50,'UNTOUCHED',{size:16,op:.55});for(let k=0;k<20;k++)add(`<circle cx="${1200+(k*53)%260}" cy="${g-200+((k*37+T*8)%200)}" r="2" fill="#fff" opacity=".4"/>`);});
+  SHOT(at(6),at(7),[[at(6),960,600,1.8,2],[at(7),960,580,2.0,2]],()=>{ground(g,1,{op:.35});for(let k=0;k<6;k++)add(`<rect x="${860+(k%2)*10}" y="${g-40-k*38}" width="200" height="34" rx="5" fill="#0b0b0b" stroke="#fff" stroke-width="3"/>`);qmark(1120,g-300,70,.8);label(960,g+50,'IMPOSSIBLE?',{size:16,op:.55});});
+  // Dutch wide: where most people fail
+  SHOT(at(7),at(8),[[at(7),960,540,1.0,-7],[at(8),960,540,1.06,-8]],()=>{room(g);bed(760,g);sleeper(760,g,1);add(`<rect width="1920" height="1080" fill="#000" opacity=".35"/>`);});
+  // split screen: motivation stays, discipline goes — camera tracks the right side
+  SHOT(at(8),1e9,[[at(8),960,540,1,0]],()=>{const g2=GG;add(`<line x1="960" y1="140" x2="960" y2="940" stroke="#fff" stroke-opacity=".3" stroke-width="2"/>`);
+    g_(`transform="translate(-240,40) scale(.9)"`,()=>{bed(760,g2,.9);sleeper(760,g2,.9,[46,-30]);phoneGlow(700,g2-180,.5);});
+    const u=P(T,at(8),3.2);const px=lerp(1150,1800,eio(clamp((u-.35)/.65)));const pose=u<.18?'stretch':(u<.35?'crouch':'run');actor(px,g2,1,pose,{spot:.6});shoe(1140,g2-6,.9);if(u>.2)door(1780,g2,P(T,at(8,1.6),.5));
+    pillShape(480,240,'MOTIVATION',{size:22,dark:true});pillShape(1440,240,'DISCIPLINE',{size:22});onText(at(8,.2),at(8)+4.8,['ONE RELIES ON MOTIVATION.','THE OTHER RELIES ON DISCIPLINE.'],{y:560,size:58});});
+});
+
+/* ================= SCENE 2 — THE PROBLEM WITH MOTIVATION ================= */
+B(9,12,()=>{const g=GG;
+  // OTS: the motivational video
+  SHOT(at(9,-.35),at(11),[[at(9,-.35),960,500,1.25,0],[at(11),980,500,1.4,0]],()=>{timeTag(320,190,'11:48 PM');add(`<rect x="640" y="250" width="640" height="380" rx="20" fill="#0b0b0b" stroke="#fff" stroke-width="5" filter="url(#glowS)"/><circle cx="960" cy="440" r="260" fill="url(#bk)" fill-opacity=".22"/>`);icon('play',960,440,2.2);
+    fadeIn(at(10),()=>{wave(700,610,520,120,P(T,at(10),2.5),v=>.5+.42*Math.sin(v*Math.PI*4),{sw:5});label(720,600,'MOTIVATION',{size:14,op:.7,anchor:'start'});});fgShoulder(380,1180,1.6);});
+  // LOW angle push-in: jumps up, unstoppable
+  SHOT(at(11),at(12),[[at(11),960,640,1.2,0],[at(12),960,620,1.5,0]],()=>{room(g,false);add(`<circle cx="960" cy="420" r="320" fill="url(#bk)" fill-opacity=".14"/>`);actor(960,g,1.3,'cheer',{spot:true});TXT(()=>pill(at(11,.3),960,240,'UNSTOPPABLE',{size:26}));});
+  // CU: writing the new routine, then imagining it
+  SHOT(at(12),1e9,[[at(12),960,560,1.5,0],[at(12,2.6),960,520,1.0,0]],()=>{add(`<rect x="660" y="330" width="600" height="440" rx="18" fill="#0b0b0b" stroke="#fff" stroke-width="4" filter="url(#glowS)"/>`);label(960,385,'MY NEW ROUTINE',{size:22,op:.75,weight:900});
+    for(let k=0;k<6;k++){const p=P(T,at(12,.3)+k*.35,.3);if(p>0)add(`<line x1="720" y1="${450+k*50}" x2="${720+460*p}" y2="${450+k*50}" stroke="#fff" stroke-width="5" stroke-linecap="round"/>`);}
+    const k=Math.min(5,Math.floor((T-at(12,.3))/.35));const py=450+Math.max(0,k)*50;hand(1500,1150,720+460*clamp(((T-at(12,.3))%.35)/.3),py-10,46);
+    const im=P(T,at(12,2.8),.8);if(im>0){add(`<g opacity="${im}"><circle cx="960" cy="540" r="${500*im}" fill="#000" opacity=".8"/></g>`);add(`<g opacity="${im}">`);personOutline(960,760,1.8,1);label(960,850,'EVERYTHING CHANGES',{size:26,op:.9,weight:900});add('</g>');}});
+});
+B(13,17,()=>{const g=GG;
+  // match cut: the same alarm, next day
+  SHOT(at(13,-.35),at(14),[[at(13,-.35),960,520,1.1,0],[at(14),960,520,1.0,0]],()=>{bigClock(960,470,1,true,'6:00 — THE NEXT DAY');},{shake:2});
+  // pan: bed -> gym clothes -> back; turns over
+  SHOT(at(14),at(16),[[at(14),760,600,1.6,0],[at(15),1350,640,1.7,0],[at(16),780,600,1.6,0]],()=>{room(g);bed(760,g);sleeper(760,g,1,T<at(15,.5)?[40,-40]:null);shoe(1300,g-6,1.2);barbell(1420,g-60,.6);
+    pill(at(14,.1),560,330,'TIRED',{size:22,dark:true});zzz(560,g-220,.7);});
+  SHOT(at(15),at(16),[[at(15),960,560,1.0,3],[at(16),960,560,1.06,3]],()=>{bigPhone(960,560,.9,(T-at(15))*2,{badge:1+Math.floor((T-at(15))*6)%9});pill(at(15,.1),960,140,'DISTRACTED',{size:24,dark:true});},{whip:true});
+  SHOT(at(16),at(17),[[at(16),760,600,1.7,-4],[at(17),760,610,1.8,-4]],()=>{room(g);bed(760,g);sleeper(760,g,1);add(`<path d="M600,${g-110} q160,-40 330,-10" stroke="#fff" stroke-width="5" fill="none"/>`);pill(at(16,.1),760,330,'NOT INSPIRED',{size:22,dark:true});});
+  // ECU: promises crack
+  SHOT(at(17),1e9,[[at(17),960,540,1.2,0],[at(17)+4,960,540,1.35,0]],()=>{['TRAIN','STUDY','BUILD'].forEach((tx,j)=>{const x=560+j*400;const c=P(T,at(17,.6)+j*.5,.35);add(`<g opacity="${1-.6*c}" transform="rotate(${c*(j-1)*6},${x},540)">`);box(x-160,460,320,160,{r:18,op:.9});label(x,520,'PROMISE',{size:16,op:.6});label(x,575,tx,{size:40,op:1,weight:900});
+    if(c>0)add(`<path d="M${x-8},460 L${x+18},500 L${x-14},545 L${x+10},620" stroke="#fff" stroke-width="6" fill="none"/>`);add('</g>');cue('ting',at(17,.6)+j*.5,.35);});});
+});
+B(18,20,()=>{const g=GG;
+  // time-lapse: calendar flips, light sweeps, he never moves
+  SHOT(at(18,-.35),at(19,1.2),[[at(18,-.35),760,560,1.3,0],[at(19,1.2),760,560,1.4,0]],()=>{const day=Math.min(30,1+Math.floor(P(T,at(18),4.5)*29));const dayPhase=(T*2.2)%1;room(g,true,dayPhase<.5?dayPhase*2:0);
+    add(`<rect x="0" y="0" width="1920" height="1080" fill="#000" opacity="${.3+.25*Math.sin(T*13.8)}"/>`);bed(760,g);sleeper(760,g,1,[46,-30]);phoneGlow(700,g-200,.5);
+    box(300,220,220,240,{r:14,op:.9});add(`<rect x="300" y="220" width="220" height="56" rx="14" fill="#fff" fill-opacity=".9"/>`);label(410,258,'DAY',{size:20,op:1,fill:'#000',weight:900});label(410,410,String(day),{size:90,op:1,weight:900,sp:0});for(let k=0;k<8;k++)cue('tick',at(18)+k*.5,.2);});
+  // push to the rain on the window
+  SHOT(at(19,1.2),1e9,[[at(19,1.2),1500,360,1.6,0],[at(20)+2.5,1500,380,2.4,0]],()=>{room(g,true);rain(1);add(`<rect width="1920" height="1080" fill="#000" opacity=".25"/>`);cue('wind',at(19,1.2),.6);
+    onText(at(20,-.2),at(20)+2.6,['MOTIVATION IS TEMPORARY.'],{y:560,size:66});});
+});
+
+/* ================= SCENE 3 — WHAT DISCIPLINE MEANS ================= */
+B(21,22,()=>{const g=GG+40;
+  // tracking shot: running in the rain, parallax street lights, low angle
+  SHOT(at(21,-.35),1e9,[[at(21,-.35),960,620,1.15,-2],[at(22)+5,980,600,1.25,1]],()=>{rain(1);const off=(T*420)%600;for(let k=-1;k<5;k++)streetLight(k*600-off+300,g,460);
+    for(let k=0;k<6;k++){const ph=(T*2.4+k/6)%1;add(`<ellipse cx="${960-80-ph*260}" cy="${g+4}" rx="${10+ph*30}" ry="${4+ph*6}" fill="none" stroke="#fff" stroke-opacity="${.5*(1-ph)}" stroke-width="2"/>`);}
+    ground(g,1,{op:.5});actor(960,g,1.25,'run',{spot:.5});big(at(21,-.1),'DISCIPLINE',{y:250,size:120,vol:.6});
+    TXT(()=>fadeIn(at(22,.2),()=>label(960,345,"DOING WHAT NEEDS TO BE DONE — EVEN WHEN YOU DON'T FEEL LIKE IT",{size:22,op:.9,weight:800})));});
+});
+B(23,25,()=>{const g=GG;const a=at(23,-.35),b=at(24,-.2),c=at(25,-.2);
+  // wide silhouette: an empty gym
+  SHOT(a,at(23,1.6),[[a,960,560,1.0,0],[at(23,1.6),960,560,1.08,0]],()=>{add(`<rect x="0" y="0" width="1920" height="1080" fill="#fff" opacity=".04"/>`);for(let k=0;k<5;k++)add(`<rect x="${160+k*360}" y="${g-300}" width="140" height="300" rx="8" fill="none" stroke="#fff" stroke-opacity=".15" stroke-width="2"/>`);ground(g,1,{op:.4});timeTag(330,180,'GYM · 9:42 PM');
+    actor(960,g,1.1,'lift',{spot:true});const u=(Math.sin((T)*2.6)+1)/2;barbell(960,g-78*1.1+22*1.1+lerp(-30,-125,u)*1.1,1.2);});
+  // CU slow-mo: hands on the bar
+  SHOT(at(23,1.6),b,[[at(23,1.6),960,520,2.6,0],[b,960,500,2.9,0]],()=>{const u=(Math.sin(T*1.2)+1)/2;const y=lerp(620,420,u);barbell(960,y,1.6);hand(700,900,780,y,60);hand(1220,900,1140,y,60);pill(at(23,1.8),960,240,"WHEN YOU'D RATHER STAY HOME",{size:16,dark:true});});
+  // OTS from behind the lamp: studying alone
+  SHOT(b,at(24,1.6),[[b,880,560,1.3,0],[at(24,1.6),900,560,1.4,0]],()=>{room(g);timeTag(330,180,'1:13 AM');deskL(860,g);icon('book',820,g-190,.9);actor(620,g,1,'write',{spot:.6});[0,1].forEach(j=>{const ph=(T*.7+j/2)%1;add(`<text x="${1480+j*60}" y="${330-ph*30}" font-size="26" fill="#fff" opacity="${(1-ph)*.6}">♪</text>`);});label(1500,450,'FRIENDS OUT',{size:14,op:.55});fgEdge(1);});
+  // CU: pencil moving on the page
+  SHOT(at(24,1.6),c,[[at(24,1.6),960,560,1.0,0],[c,960,560,1.08,0]],()=>{add(`<rect x="560" y="300" width="800" height="520" rx="10" fill="#0b0b0b" stroke="#fff" stroke-width="4"/>`);for(let k=0;k<7;k++){const p=P(T,at(24,1.7)+k*.25,.25);if(p>0)add(`<line x1="620" y1="${370+k*60}" x2="${620+620*p*(k%3?1:.7)}" y2="${370+k*60}" stroke="#fff" stroke-width="4" opacity=".75"/>`);}
+    const k=Math.min(6,Math.floor((T-at(24,1.7))/.25));hand(1500,1200,620+620*clamp(((T-at(24,1.7))%.25)/.25),370+Math.max(0,k)*60,44);});
+  // ECU: the phone goes into the drawer — slam — back to work
+  SHOT(c,at(25,2.4),[[c,960,620,1.6,0],[at(25,2.4),960,640,1.7,0]],()=>{add(`<rect x="560" y="640" width="800" height="260" rx="14" fill="#0b0b0b" stroke="#fff" stroke-width="5"/>`);const d=eio(P(T,at(25,.4),.9));const dr=1-eio(P(T,at(25,1.4),.3));
+    add(`<rect x="${600}" y="640" width="720" height="${40+120*dr}" fill="#141414" stroke="#fff" stroke-width="4"/>`);if(d<1){icon('phone',lerp(960,960,d),lerp(380,700,d),2.2);hand(1500,200,1060,lerp(330,650,d),60);}cue('thud',at(25,1.7),.7);});
+  SHOT(at(25,2.4),1e9,[[at(25,2.4),1000,560,1.3,0],[at(25)+5,1020,560,1.4,0]],()=>{room(g);deskL(1050,g);add(`<rect x="950" y="${g-250}" width="200" height="90" rx="8" fill="#0b0b0b" stroke="#fff" stroke-width="3"/>`);actor(820,g,1,'type',{spot:.7});pill(at(25,2.6),1050,300,'BACK TO WORK',{size:20});});
+});
+B(26,30,()=>{const g=GG;
+  // CU: an imperfect streak
+  SHOT(at(26,-.35),at(28,-.2),[[at(26,-.35),960,520,1.0,0],[at(28,-.2),960,520,1.15,0]],()=>{head(at(26,-.2),"HERE'S SOMETHING IMPORTANT",{y:200});if(T<at(27,-.1))actor(960,760,1.6,'think',{spot:.8});const miss=[5,13,19];for(let d=0;d<21;d++){const c=d%7,r=Math.floor(d/7),x=630+c*110,y=380+r*120;fadeIn(at(27,-.1)+d*.05,()=>{box(x-44,y-44,88,88,{r:12,op:miss.includes(d)?.3:.8,glow:false});if(miss.includes(d))cross(x,y,.5,.4,1);else check(x,y,.85);},{d:.2,dy:6});}pill(at(27,.8),960,770,'NOT PERFECT — CONSISTENT',{size:22,dark:true});});
+  // graph push-in
+  SHOT(at(28,-.2),at(29,-.15),[[at(28,-.2),960,470,1.0,0],[at(29,-.15),1300,420,1.5,0]],()=>{box(260,250,1400,440,{r:20,op:.45});axes(320,640,1280,340,{xl:'TIME'});wave(320,640,1280,340,P(T,at(28,.1),2.4),v=>.5+.3*Math.sin(v*31)*Math.sin(v*7),{sw:3,op:.5,glow:null});label(420,300,'TEMPORARY FEELINGS',{size:18,op:.55,anchor:'start'});
+    const tip=wave(320,640,1280,340,P(T,at(28,.5),2.2),v=>.18+.7*v,{sw:7});if(tip)orb(tip[0],tip[1],9);label(1560,320,'LONG-TERM DECISIONS',{size:20,op:1,anchor:'end',weight:900});});
+  // LOW CU: the start line — crouch, then explode forward (speed ramp + whip)
+  SHOT(at(29,-.15),at(30,.5),[[at(29,-.15),820,700,2.0,0],[at(30,.5),840,700,2.2,0]],()=>{ground(g,1,{op:.5});add(`<rect x="880" y="${g-6}" width="16" height="12" fill="#fff"/>`);for(let k=0;k<6;k++)add(`<rect x="${700+k*40}" y="${g-3}" width="22" height="6" fill="#fff" opacity=".7"/>`);label(890,g+50,'START',{size:20,op:.8,weight:900});actor(800,g,1,'crouch',{spot:.8});});
+  SHOT(at(30,.5),1e9,[[at(30,.5),900,600,1.3,0],[at(30)+4,1500,600,1.1,0,'lin']],()=>{ground(g,1,{op:.5});const u=P(T,at(30,.5),3.5);const x=lerp(820,1700,u*u*.3+u*.7);for(let k=0;k<5;k++)add(`<line x1="${x-120-k*40}" y1="${g-60-k*25}" x2="${x-260-k*60}" y2="${g-60-k*25}" stroke="#fff" stroke-opacity="${.4-k*.07}" stroke-width="3"/>`);
+    actor(x,g,1.1,'run',{spot:.6});onText(at(30,.8),at(30)+3.8,["DO IT EVEN WHEN YOU DON'T FEEL LIKE IT."],{y:300,size:60});},{whip:true});
+});
+
+/* ================= SCENE 4 — HOW TO BUILD DISCIPLINE ================= */
+B(31,36,()=>{const g=GG;stepCard(1,'STOP NEGOTIATING WITH YOURSELF',at(31,-.2));
+  // ECU: finger hovering over snooze, trembling
+  SHOT(at(31,-.35),at(33,-.2),[[at(31,-.35),960,600,1.0,0],[at(33,-.2),960,620,1.25,0]],()=>{add(`<rect x="640" y="520" width="640" height="260" rx="40" fill="#0b0b0b" stroke="#fff" stroke-width="6" filter="url(#glowS)"/>`);label(960,680,'SNOOZE',{size:72,op:.95,weight:900});
+    const tr=Math.sin(T*30)*6;hand(1300,1150,1000+tr,560+Math.sin(T*2)*20,70);[['5 MORE MINUTES?',520,330],['DO I FEEL LIKE IT?',1400,300]].forEach(([tx,x,y],j)=>{if(T>at(32,.2+j*.9)){bubble(x,y,360,tx,{size:20});cross(x,y,1.5,.9,P(T,at(33,-.4)+j*.12,.25));}});cue('nope',at(33,-.4),.4);});
+  // MS: sits up and stands — decided
+  SHOT(at(33,-.2),at(34,-.2),[[at(33,-.2),900,600,1.5,0],[at(34,-.2),960,580,1.4,0]],()=>{room(g);bed(760,g);const up=P(T,at(33,.1),.8);if(up<.5)sleeper(760,g,1);else actor(lerp(800,1000,eio(up)),g,1.05,up>=1?'cheer':'idle',{spot:.8});timeTag(330,180,'6:00 AM');pill(at(33,.9),1000,330,'ALREADY DECIDED',{size:24});});
+  // quick cuts: study / exercise / goals
+  [[34,'book','STUDYING'],[34.33,'dumbbell','EXERCISING'],[34.66,'target','YOUR GOALS']].forEach(([f,ic,tx],j)=>{const a=lerp(at(34,-.2),at(35,-.2),j/3),b2=lerp(at(34,-.2),at(35,-.2),(j+1)/3);SHOT(a,b2,[[a,960,520,1.0,0],[b2,960,520,1.08,0]],()=>{icon(ic,960,460,3.2);label(960,690,tx,{size:44,op:1,weight:900});},{whip:j>0});});
+  // stamp
+  SHOT(at(35,-.2),at(36,-.2),[[at(35,-.2),960,540,1.1,0],[at(36,-.2),960,540,1.0,0]],()=>{const st=back(P(T,at(35,.1),.35));g_(`transform="translate(960,540) rotate(-5) scale(${st}) translate(-960,-540)"`,()=>{add(`<rect x="560" y="440" width="800" height="200" rx="18" fill="none" stroke="#fff" stroke-width="10" filter="url(#glow)"/>`);title(960,580,'DECIDE ONCE.',{size:100});});cue('impact',at(35,.1),.6);},{shake:0});
+  // promises kept + trust building
+  SHOT(at(36,-.2),1e9,[[at(36,-.2),960,560,1.05,0],[at(36)+5,960,540,1.15,0]],()=>{['WAKE UP AT SIX','TRAIN TODAY','STUDY 20 MIN'].forEach((tx,j)=>{const x=560+j*400;promiseRow(x,500,tx,P(T,at(36,.5)+j*.6,.3));cue('win',at(36,.5)+j*.6,.25);});meter(660,640,600,P(T,at(36,.5),3),'SELF-TRUST');actor(960,GG+60,.7,'idle',{spot:.5});});
+});
+B(37,45,()=>{const g=GG;stepCard(2,'MAKE YOUR GOALS SMALLER',at(37,-.2));
+  // LOW angle tilt-up along a looming tower of books
+  SHOT(at(37,-.35),at(39),[[at(37,-.35),960,760,1.6,0],[at(39),960,320,1.15,0]],()=>{ground(g,1,{op:.4});for(let k=0;k<16;k++)add(`<rect x="${820+(k%2)*16}" y="${g-48-k*44}" width="300" height="40" rx="5" fill="#0b0b0b" stroke="#fff" stroke-width="3" transform="rotate(${(k%3-1)*2},960,${g-28-k*44})"/>`);actor(620,g,.9,'think',{spot:.5});label(980,g-760,'CHANGE EVERYTHING OVERNIGHT',{size:18,op:.65});});
+  // Dutch: burnout collapse
+  SHOT(at(39),at(40,-.2),[[at(39),960,560,1.3,-6],[at(40,-.2),960,580,1.45,-8]],()=>{room(g,false);const burn=P(T,at(39,1.2),1.0);g_(`transform="rotate(${-80*eio(burn)},960,${g})"`,()=>actor(960,g,1.1,burn>0?'slump':'idle'));box(1250,300,420,300,{r:16,op:.6});label(1460,335,'MY NEW ROUTINE',{size:16,op:.6});for(let k=0;k<7;k++)add(`<line x1="1280" y1="${370+k*32}" x2="${1640}" y2="${370+k*32}" stroke="#fff" stroke-width="3" stroke-opacity=".7"/>`);meter(1270,650,380,1-burn,'ENERGY');pill(at(39,2),960,240,'BURNOUT',{size:24,dark:true});});
+  // CU: one book opens; pages turn; small wins cut
+  SHOT(at(40,-.2),at(41,-.15),[[at(40,-.2),960,540,1.0,0],[at(41,-.15),960,540,1.08,0]],()=>{big(at(40,-.1),'START SMALL.',{y:540,size:130,vol:.5});});
+  [[41,'book','5 PAGES'],[42,'dumbbell','10 MINUTES'],[43,'clock','20 MINUTES']].forEach(([i,ic,tx],j)=>{SHOT(at(i,-.15),at(i+1,-.15),[[at(i,-.15),960,520,1.15,0],[at(i+1,-.15),960,520,1.0,0]],()=>{icon(ic,960,450,3.4);label(960,700,tx,{size:56,op:1,weight:900});if(i===42){actor(1500,GG,.8,'lift',{spot:.4});}},{whip:true});});
+  // graph
+  SHOT(at(44,-.15),at(45,-.15),[[at(44,-.15),960,470,1.0,0],[at(45,-.15),1250,430,1.35,0]],()=>{box(260,250,1400,440,{r:20,op:.45});axes(320,640,1280,340,{xl:'TIME',yl:'PROGRESS'});const spikes=v=>Math.min(.95,(Math.floor(v*4)%2===0?(v%.25)*3.2:.05));wave(320,640,1280,340,P(T,at(44,.1),2),spikes,{sw:3,op:.45,glow:null});label(420,300,'INTENSITY',{size:18,op:.55,anchor:'start'});
+    const tip=wave(320,640,1280,340,P(T,at(44,.5),2),v=>.1+.75*v,{sw:7});if(tip)orb(tip[0],tip[1],9);label(1560,330,'CONSISTENCY',{size:22,op:1,anchor:'end',weight:900});});
+  // tracking shot up the habit staircase
+  SHOT(at(45,-.15),1e9,[[at(45,-.15),520,760,1.5,0],[at(45)+3.6,1300,460,1.3,0]],()=>{add(`<path d="${stairsPath(420,g,6,180,70)}" stroke="#fff" stroke-width="4" fill="none" filter="url(#glow)"/>`);label(560,g-110,'HABIT FIRST',{size:20,op:.9,weight:900});label(1420,g-480,'DIFFICULTY LATER',{size:20,op:.9,weight:900});
+    const c=clamp((T-at(45,.2))/3)*6,i=Math.floor(c),f=c-i;const sp=k=>k<0?[340,g]:[420+(k+.5)*180,g-(k+1)*70];const[ax,ay]=sp(i-1),[bx,by]=sp(Math.min(5,i));const[px,py]=c<=0?[340,g]:(i>=6?sp(5):hopTo(ax,ay,bx,by,f,34));actor(px,py,.85,i>=6?'cheer':'walk',{spot:.6});});
+});
+B(46,52,()=>{const g=GG;stepCard(3,'REMOVE THE DISTRACTIONS',at(46,-.2));
+  // rack focus: phone sharp in foreground, him blurred behind -> focus pulls to him
+  SHOT(at(46,-.35),at(48,-.15),[[at(46,-.35),960,560,1.2,0],[at(48,-.15),980,560,1.3,0]],()=>{const rf=P(T,at(47,.4),.6);g_(`filter="url(${rf<.5?'#dof':'#glowS'})"`,()=>{room(g);deskL(1100,g);icon('book',1060,g-190,.9);actor(860,g,1,'type');});
+    g_(`filter="url(${rf<.5?'#glowS':'#dof2'})"`,()=>{bigPhone(520,640,.7,(T*1.5),{badge:1+Math.floor(T*3)%9});});pill(at(47,.6),1100,260,'CONSTANTLY DEMANDING ATTENTION',{size:18,dark:true});});
+  // tracking: carry it to another room; door shuts -> black
+  SHOT(at(48,-.15),at(49,-.1),[[at(48,-.15),700,560,1.3,0],[at(49,-.1),1450,560,1.3,0]],()=>{room(g,false);door(1650,g,1-P(T,at(48,1.1),.3),'ANOTHER ROOM');const u=clamp((T-at(48))/1.1);actor(lerp(600,1550,u),g,1,u<1?'walk':'idle',{arm:[70,-40]});if(u<1)icon('phone',lerp(600,1550,u)+70,g-200,.6);cue('thud',at(48,1.3),.6);
+    const bl=P(T,at(48,1.3),.15);if(bl>0)add(`<rect x="0" y="0" width="1920" height="1080" fill="#000" opacity="${bl}"/>`);});
+  // ECU: apps deleted with a thumb
+  SHOT(at(49,-.1),at(50,-.15),[[at(49,-.1),960,540,1.0,0],[at(50,-.15),960,540,1.06,0]],()=>{add(`<rect x="760" y="140" width="400" height="800" rx="50" fill="#0b0b0b" stroke="#fff" stroke-width="6" filter="url(#glowS)"/>`);['play','game','people','note','chart','star','smile','gear'].forEach((a,k)=>{const x=860+(k%2)*200,y=280+Math.floor(k/2)*170;const del=k<5;const dq=del?P(T,at(49,.2)+k*.16,.2):0;if(dq<1){add(`<g opacity="${1-dq}" transform="translate(${x},${y}) scale(${1-dq*.7}) translate(${-x},${-y})"><rect x="${x-60}" y="${y-60}" width="120" height="120" rx="28" fill="#0b0b0b" stroke="#fff" stroke-width="3"/>`);icon(a,x,y,.7);add('</g>');}if(del)cue('pop',at(49,.2)+k*.16,.3);});
+    const k=Math.min(4,Math.floor((T-at(49,.2))/.16));hand(1500,1250,860+(Math.max(0,k)%2)*200,280+Math.floor(Math.max(0,k)/2)*170+40,60);});
+  // overhead-ish CU: a clean workspace, lamp clicks on
+  SHOT(at(50,-.15),at(51,-.15),[[at(50,-.15),960,560,1.5,0],[at(51,-.15),960,560,1.3,0]],()=>{room(g,false);const on=T>at(50,.4);deskL(960,g,on);icon('book',900,g-190,.9);icon('notebook',1020,g-196,.6);actor(720,g,1,on?'write':'idle',{spot:on?.8:false});cue('tick',at(50,.4),.7);pill(at(50,.6),960,300,'WORKSPACE READY',{size:22});});
+  // easy vs hard to reach
+  SHOT(at(51,-.15),at(52,-.15),[[at(51,-.15),760,560,1.2,0],[at(52,-.15),1160,560,1.2,0]],()=>{room(g,false);actor(960,g,1,'reach',{arm:[-90,-30]});[['book',-260],['dumbbell',-420],['notebook',-580]].forEach(([ic,d])=>icon(ic,960+d+100,g-130,.85));[['phone',300],['game',470],['couch',650]].forEach(([ic,d])=>icon(ic,960+d+100,g-130,.85,.45));
+    label(560,g-260,'EASY TO REACH',{size:18,op:.9,weight:900});label(1490,g-260,'HARD TO REACH',{size:18,op:.6,weight:900});add(`<rect x="1300" y="${g-230}" width="380" height="200" rx="14" fill="none" stroke="#fff" stroke-width="3" stroke-dasharray="10 8"/>`);});
+  SHOT(at(52,-.15),1e9,[[at(52,-.15),960,500,1.0,0],[at(52)+4,960,480,1.1,0]],()=>{meter(380,420,400,.22,'WILLPOWER');label(960,450,'<',{size:70,op:1,weight:900,sp:0});box(1140,320,400,260,{r:20,op:1});icon('house',1340,420,1.5);label(1340,535,'ENVIRONMENT',{size:24,op:1,weight:900});});
+});
+B(53,57,()=>{const g=GG;stepCard(4,'TRACK YOUR PROGRESS',at(53,-.2));
+  // ECU: a marker crossing off days
+  SHOT(at(53,-.35),at(55,-.15),[[at(53,-.35),900,520,1.3,0],[at(55,-.15),900,520,1.1,0]],()=>{label(760,250,'THIS MONTH',{size:20,op:.7,weight:900});const n=Math.floor(clamp((T-at(53,.6))/3.6)*20);for(let d=0;d<28;d++){const c=d%7,r=Math.floor(d/7),x=460+c*100,y=320+r*100;box(x-40,y-40,80,80,{r:10,op:.5,glow:false});if(d<n)cross(x,y,.65,.95,1);}
+    const c=n%7,r=Math.floor(n/7);hand(1400,1150,460+c*100+20,320+r*100+20,46);add(`<rect x="${460+c*100+10}" y="${320+r*100-10}" width="16" height="50" rx="6" fill="#fff" transform="rotate(35,${460+c*100+18},${320+r*100+15})"/>`);for(let k=0;k<10;k++)cue('tick',at(53,.6)+k*.36,.2);});
+  // the log fills: quick pops
+  SHOT(at(55,-.15),at(56,-.15),[[at(55,-.15),960,520,1.0,0],[at(56,-.15),960,520,1.08,0]],()=>{[['WORKOUT','dumbbell'],['STUDY SESSION','book'],['PRODUCTIVE MORNING','clock']].forEach(([tx,ic],j)=>{const y=330+j*150;pop(at(55,.05)+j*.75,960,y,()=>{box(620,y-55,680,110,{r:16,op:.95});icon(ic,700,y,.7);label(780,y+10,tx,{size:28,op:1,weight:900,anchor:'start'});check(1250,y,1.1);},{snd:'win',vol:.3});});});
+  // tracking: the momentum ball grows as it rolls (camera follows)
+  SHOT(at(56,-.15),1e9,[[at(56,-.15),500,620,1.3,0],[L[57].e+.5,1450,560,1.0,0]],()=>{ground(g,1,{op:.45});const u=clamp((T-at(56))/(L[57].e-at(56)));const r=30+90*u,x=lerp(300,1500,u);add(`<circle cx="${x}" cy="${g-r}" r="${r}" fill="#0b0b0b" stroke="#fff" stroke-width="5" filter="url(#glowS)"/><line x1="${x}" y1="${g-r}" x2="${x+r*Math.cos(u*24)}" y2="${g-r+r*Math.sin(u*24)}" stroke="#fff" stroke-width="4"/>`);for(let k=0;k<4;k++)add(`<line x1="${x-r-30-k*30}" y1="${g-r+(k-1.5)*r*.4}" x2="${x-r-130-k*40}" y2="${g-r+(k-1.5)*r*.4}" stroke="#fff" stroke-opacity="${.4-k*.08}" stroke-width="3"/>`);
+    label(x,g-2*r-30,'MOMENTUM',{size:20,op:.85,weight:900});actor(x-r-150,g,.85,'run',{op:.9});if(T>at(57))pill(at(57,.3),x,g-2*r-100,"HOW FAR YOU'VE COME",{size:20});});
+});
+
+/* ================= SCENE 5 — THE MOMENT THAT DEFINES YOU ================= */
+B(58,63,()=>{const g=GG;
+  // slow push-in: alone, exhausted, breathing
+  SHOT(at(58,-.35),at(60),[[at(58,-.35),900,580,1.1,0],[at(60),760,600,1.6,0]],()=>{add(`<rect width="1920" height="1080" fill="#000" opacity=".4"/>`);ground(g,1,{op:.3});add(`<rect x="560" y="${g-120}" width="260" height="30" rx="8" fill="#0b0b0b" stroke="#fff" stroke-width="3"/><line x1="580" y1="${g-90}" x2="580" y2="${g}" stroke="#fff" stroke-width="3"/><line x1="800" y1="${g-90}" x2="800" y2="${g}" stroke="#fff" stroke-width="3"/>`);
+    actor(690,g-120,.85,'slump');phoneGlow(880,g-150,.45);shoe(380,g-6,.8);shoe(450,g-6,.8);deskL(1250,g,false);head(at(58,-.2),'THE MOMENT THAT DEFINES YOU',{y:200});if(T>at(59))TXT(()=>pill(at(59,.2),960,240,'A CHOICE',{size:30,dark:true}));});
+  // flashes: hard cuts with shake
+  [[60,'clock','THE EASY OPTION'],[61,'notebook','ANOTHER EXCUSE'],[62,'phone','"TOMORROW"']].forEach(([i,ic,tx],j)=>{SHOT(at(i),at(i+1),[[at(i),960,500,1.25,(j-1)*4],[at(i+1),960,500,1.1,(j-1)*4]],()=>{add(`<rect width="1920" height="1080" fill="#000" opacity=".5"/>`);icon(ic,960,450,4);label(960,700,tx,{size:44,op:1,weight:900});},{shake:4,whip:true});});
+  // SLOW-MO: stands, puts the phone face down, walks out into the light
+  SHOT(at(63),1e9,[[at(63),760,600,1.6,0],[at(63,2.2),1000,580,1.2,0],[at(64),1300,560,1.1,0]],()=>{add(`<rect width="1920" height="1080" fill="#000" opacity=".35"/>`);ground(g,1,{op:.3});const stand=P(T,at(63,.2),1.6),walk=clamp((T-at(63,1.9))/1.6);const op=P(T,at(63,2.9),.5);
+    add(`<rect x="560" y="${g-120}" width="260" height="30" rx="8" fill="#0b0b0b" stroke="#fff" stroke-width="3"/>`);door(1650,g,op);if(op>0)add(`<polygon points="1560,${g-300} 1740,${g-300} 1900,${g} 1400,${g}" fill="#fff" opacity="${.12*op}"/>`);
+    if(stand<1)actor(690,lerp(g-120,g,eio(stand)),.85+.15*eio(stand),'slump');else actor(lerp(690,1580,eio(walk)),g,1,walk>0&&walk<1?'walk':'idle',{spot:.5});
+    add(`<rect x="830" y="${g-150}" width="70" height="30" rx="6" fill="#0b0b0b" stroke="#fff" stroke-width="3"/>`);});
+});
+B(64,68,()=>{const g=GG;
+  // crane up over empty stands at dawn: a lone backlit runner
+  SHOT(at(64,-.35),at(67,-.2),[[at(64,-.35),960,700,1.3,0],[at(67,-.2),960,480,1.0,0]],()=>{add(`<rect x="0" y="0" width="1920" height="${g}" fill="#fff" opacity=".035"/>`);sunrise(1500,g-20,110,.4);for(let r=0;r<3;r++)for(let c=0;c<14;c++)add(`<rect x="${120+c*125}" y="${300+r*70}" width="95" height="40" rx="8" fill="none" stroke="#fff" stroke-opacity=".16" stroke-width="2"/>`);ground(g,1,{op:.45});
+    const x=lerp(200,1700,((T-at(64))/7)%1);actor(x,g,1.1,'run',{spot:.6});
+    [[64,'NOBODY NEEDS TO SEE IT'],[65,'NO APPLAUSE'],[66,'NOBODY KNOWS HOW HARD IT WAS']].forEach(([i,tx],j)=>TXT(()=>pill(at(i,.05),960,220,tx,{size:24,dark:true,outAt:j<2?at(i+1,-.05):at(67,-.3)})));});
+  // CU: the scale tips
+  SHOT(at(67,-.2),at(68,-.2),[[at(67,-.2),960,440,1.2,0],[at(68,-.2),960,440,1.35,0]],()=>{const tilt=eio(P(T,at(67,.6),1.2))*14;add(`<line x1="960" y1="${g}" x2="960" y2="420" stroke="#fff" stroke-width="5"/>`);g_(`transform="rotate(${tilt},960,420)"`,()=>{add(`<rect x="560" y="417" width="800" height="7" rx="3" fill="#fff" filter="url(#glowS)"/>`);icon('couch',600,360,1.2);label(600,290,'COMFORT',{size:24,op:.7,weight:900});icon('target',1320,360,1.2);label(1320,290,'DISCIPLINE',{size:24,op:1,weight:900});});cue('thud',at(67,1.6),.4);});
+  // orbit-ish: tiles assemble a new self
+  SHOT(at(68,-.2),1e9,[[at(68,-.2),960,560,1.3,-4],[at(68)+3,960,560,1.1,3]],()=>{ground(g,1,{op:.4});head(at(68,-.1),'ONE DECISION AT A TIME',{y:200});const n=70;for(let k=0;k<n;k++){const c=k%7,r=Math.floor(k/7);const tx_=888+c*24,ty_=g-30-r*24;const q=P(T,at(68)+k*.03,.3);if(q>0)add(`<rect x="${lerp(200+((k*137)%1500),tx_,eio(q))-10}" y="${lerp(260+((k*71)%380),ty_,eio(q))-10}" width="20" height="20" rx="3" fill="#f2f2f2"/>`);}for(let k=0;k<10;k++)cue('brick',at(68)+k*.2,.25);});
+});
+
+/* ================= SCENE 6 — THE PAYOFF (warm) ================= */
+B(69,73,()=>{const g=GG;const a=at(69,-.35),seg=(L[70].s-a)/3;
+  // silhouette against the sunrise window
+  SHOT(a,a+seg,[[a,1300,480,1.6,0],[a+seg,1260,480,1.7,0]],()=>{add(`<rect x="1080" y="180" width="440" height="460" rx="10" fill="#2a1a08" stroke="#fff" stroke-width="5"/>`);sunrise(1300,560,90,1);add(`<line x1="1300" y1="180" x2="1300" y2="640" stroke="#000" stroke-width="10"/><line x1="1080" y1="410" x2="1520" y2="410" stroke="#000" stroke-width="10"/>`);actor(1300,700,1.4,'stretch',{sil:true});timeTag(400,200,'5:30 AM');ground(700,1,{op:.3});});
+  // CU low: push-ups
+  SHOT(a+seg,a+2*seg,[[a+seg,960,620,1.6,0],[a+2*seg,960,620,1.75,0]],()=>{ground(g,1,{op:.45});const u=(Math.sin(T*4)+1)/2;g_(`transform="rotate(-78,1060,${g})"`,()=>actor(1060,g-lerp(0,40,u)*0,1.1,'idle',{arm:[-20,lerp(120,90,u)],arm2:[20,lerp(120,90,u)]}));label(960,240,'TRAINING',{size:26,op:.85,weight:900});});
+  // OTS: focused at the desk
+  SHOT(a+2*seg,L[70].s-.15,[[a+2*seg,1000,560,1.3,0],[L[70].s-.15,1020,560,1.4,0]],()=>{room(g,true,1);deskL(1060,g);icon('book',1020,g-190,.9);actor(820,g,1,'write',{spot:.8});fgShoulder(420,1060,1.0);});
+  // CU: the goal chart rising
+  SHOT(L[70].s-.15,at(71,-.15),[[L[70].s-.15,1200,480,1.3,0],[at(71,-.15),1250,450,1.5,0]],()=>{add(`<rect x="980" y="280" width="520" height="340" rx="16" fill="#0b0b0b" stroke="#fff" stroke-width="5" filter="url(#glowS)"/>`);const tip=polyline([[1020,580],[1130,540],[1230,555],[1330,460],[1460,320]],P(T,L[70].s,1.8),{sw:6});if(tip)orb(tip[0],tip[1],9);actor(800,GG,1,'point',{spot:.8});});
+  // two-shot with the mirror: who you became
+  SHOT(at(71,-.15),1e9,[[at(71,-.15),1000,520,1.2,0],[at(73)+3,1050,520,1.4,0]],()=>{room(g,false);add(`<ellipse cx="1220" cy="520" rx="190" ry="280" fill="#0d0d0d" stroke="#fff" stroke-width="7" filter="url(#glow)"/>`);const id='c'+(uid++);add(`<clipPath id="${id}"><ellipse cx="1220" cy="520" rx="182" ry="272"/></clipPath><g clip-path="url(#${id})">`);add(`<circle cx="1220" cy="520" r="230" fill="url(#bk)" fill-opacity=".25"/>`);actor(1220,770,1.2,'cheer');add('</g>');actor(800,g,1.1,'idle',{spot:.8});
+    [[71,"STOPPED MAKING EXCUSES"],[72,'KEPT GOING'],[73,'TRUSTS THEIR OWN PROMISES']].forEach(([i,tx],j)=>TXT(()=>pop(at(i,.1),420,330+j*90,()=>pillShape(420,330+j*90,tx,{size:20}),{snd:'win',vol:.3})));});
+  warm(1);
+});
+B(74,79,()=>{const g=GG+40;
+  // low-angle tracking walk toward the sunrise (silhouette, long shadow) -> crane up wide reveal
+  SHOT(at(74,-.35),at(76,-.2),[[at(74,-.35),960,700,1.8,0],[at(76,-.2),960,640,1.6,0]],()=>{sunrise(960,g-30,150,eio(P(T,at(74),6)));add(`<rect x="0" y="${g}" width="1920" height="300" fill="#000"/>`);ground(g,1,{op:.6});
+    actor(960,g,1.3,'walk',{sil:true});add(`<ellipse cx="960" cy="${g+90}" rx="40" ry="140" fill="#000" opacity=".6" transform="rotate(0)"/>`);
+    big(at(74,0),'STOP WAITING FOR MOTIVATION.',{y:260,size:58,outAt:at(76,-.3),vol:.4});big(at(75,0),'BUILD DISCIPLINE.',{y:350,size:76,outAt:at(76,-.3),vol:.6});});
+  SHOT(at(76,-.2),1e9,[[at(76,-.2),960,640,1.4,0],[at(78),960,520,1.0,0]],()=>{const sr=eio(P(T,at(74),10));sunrise(960,g-60*sr,200+60*sr,sr);add(`<rect x="0" y="${g}" width="1920" height="${1080-g}" fill="#000"/>`);ground(g,1,{op:.6});add(`<path d="M760,1080 L930,${g} L990,${g} L1160,1080" fill="none" stroke="#fff" stroke-opacity=".35" stroke-width="3"/>`);
+    const u=clamp((T-at(76))/10);actor(960,lerp(1000,g+20,u),lerp(1.1,.5,u),'walk',{sil:true});
+    TXT(()=>fadeIn(at(76,0),()=>{label(960,200,"YOUR FUTURE ISN'T DECIDED BY WHAT YOU FEEL LIKE DOING",{size:26,op:.9,weight:800});},{outAt:at(78,-.3)}));
+    big(at(77,.3),"IT'S DECIDED BY WHAT YOU DO.",{y:300,size:66,outAt:at(78,-.3),vol:.5});TXT(()=>{pop(at(78),960,250,()=>title(960,280,'THE NEXT VERSION.',{size:110}),{snd:'impact',d:.5});fadeIn(at(79),()=>label(960,360,'YOUR NEXT CHAPTER STARTS NOW',{size:26,op:.9,weight:900}));});
+    TXT(()=>{const fin=P(T,L[79].e+.5,.6);if(fin>0){add(`<rect width="1920" height="1080" fill="#000" opacity="${.85*fin}"/>`);add(`<g opacity="${fin}">`);title(960,470,'DISCIPLINE BUILDS THE PERSON',{size:70});title(960,560,'MOTIVATION ONLY DREAMS ABOUT.',{size:70});label(960,680,'THE NEXT VERSION',{size:28,op:.8,weight:900});add('</g>');}});});
+  warm(1);
+});
+
+/* ---------- assemble ---------- */
+(function(){const list=BEATS.map((b,k)=>({s:k===0?0:L[b.s].s-.35,draw:b.fn,cam:b.cam}));list.forEach((x,k)=>{const e=k<list.length-1?list[k+1].s:END;S.push({s:x.s,e,draw:x.draw,cam:{zoom:0}});});})();
+// cinematic letterbox + subtitles drawn on top
+window.AFTER=t=>{add(`<rect x="0" y="0" width="1920" height="118" fill="#000"/><rect x="0" y="962" width="1920" height="118" fill="#000"/>`);subtitles(t);};
+
+/* three thumbnail designs rendered at t=0.5 / 1.5 / 2.5 */
+S.length=0;window.AFTER=null;
+function T_(x,y,t,size,{anchor='start',fill='#fff',sp=.01,rot=0}={}){add(`<text x="${x}" y="${y}" font-size="${size}" font-weight="900" letter-spacing="${size*sp}" fill="${fill}" text-anchor="${anchor}" stroke="#000" stroke-width="${size*.06}" paint-order="stroke" ${rot?`transform="rotate(${rot},${x},${y})"`:''} filter="url(#glowS)">${t}</text>`);}
+function beam(x,top,w0,w1,g,op=.55){add(`<polygon points="${x-w0},${top} ${x+w0},${top} ${x+w1},${g} ${x-w1},${g}" fill="url(#cone)" opacity="${op}"/>`);}
+// A — MOTIVATION IS A LIE: struck word + figure training alone at 5 AM
+S.push({s:0,e:1,cam:{zoom:0},draw:()=>{
+  T_(70,330,'MOTIVATION',178,{sp:.0});
+  add(`<path d="M50,280 L1050,215" stroke="${AMBER}" stroke-width="30" stroke-linecap="round" filter="url(#glowS)"/>`);
+  T_(70,560,'IS A',200,{fill:'#fff'});T_(500,560,'LIE.',200,{fill:AMBER});
+  add(`<rect x="76" y="640" width="380" height="74" rx="37" fill="none" stroke="#fff" stroke-width="5"/>`);label(266,692,'5:00 AM',{size:46,op:1,weight:900,sp:.12});
+  label(500,692,'DO IT ANYWAY',{size:40,op:.7,weight:800,sp:.18,anchor:'start'});
+  const x=1500,g=960;add(`<circle cx="${x}" cy="560" r="520" fill="url(#bk)" fill-opacity=".2"/>`);beam(x,0,90,330,g,.75);
+  ground(g,1,{op:.5});
+  add(`<ellipse cx="${x}" cy="${g}" rx="300" ry="34" fill="#fff" opacity=".12"/>`);
+  person(x,g,2.6,{ring:false,arm:[62,-70],arm2:[-62,-70]});
+  barbell(x,g-2.6*150,1.7);
+  for(let i=0;i<6;i++)add(`<circle cx="${x-160+i*64}" cy="${g-560-((i*37)%60)}" r="5" fill="#fff" opacity=".5"/>`);
+}});
+// B — DON'T: giant SNOOZE button, finger hovering
+S.push({s:1,e:2,cam:{zoom:0},draw:()=>{
+  const cx=1490,cy=560;add(`<circle cx="${cx}" cy="${cy}" r="560" fill="url(#bk)" fill-opacity=".2"/>`);
+  add(`<g transform="rotate(-8,${cx},${cy})"><rect x="${cx-330}" y="${cy-470}" width="660" height="1100" rx="70" fill="#0b0b0b" stroke="#fff" stroke-width="10" filter="url(#glowS)"/>`);
+  label(cx,cy-230,'5:00',{size:210,op:1,weight:900,sp:.02});label(cx,cy-140,'WAKE UP',{size:40,op:.7,weight:800,sp:.3});
+  add(`<rect x="${cx-250}" y="${cy-50}" width="500" height="170" rx="85" fill="none" stroke="#fff" stroke-width="9" filter="url(#glowS)"/>`);label(cx,cy+60,'SNOOZE',{size:84,op:1,weight:900,sp:.14});
+  add(`<rect x="${cx-250}" y="${cy+170}" width="500" height="130" rx="65" fill="none" stroke="#fff" stroke-opacity=".35" stroke-width="5"/>`);label(cx,cy+255,'GET UP',{size:56,op:.45,weight:900,sp:.14});add('</g>');
+  hand(cx+620,1180,cx+120,cy+120,78);
+  T_(70,420,"DON'T.",250,{fill:AMBER,sp:.0});
+  T_(78,580,'HIT SNOOZE',120,{sp:.02});
+  label(80,690,'MOTIVATION WON\'T SAVE YOU',{size:42,op:.75,weight:800,sp:.16,anchor:'start'});
+}});
+// C — DISCIPLINE > MOTIVATION: silhouette walking into the sunrise
+S.push({s:2,e:3,cam:{zoom:0},draw:()=>{
+  const g=900;sunrise(1380,g-40,190,1);
+  add(`<rect x="0" y="${g}" width="1920" height="200" fill="#050505"/>`);ground(g,1,{op:.5});
+  {const x=1300;add(`<g fill="#030303" stroke="#030303" stroke-linecap="round"><line x1="${x-20}" y1="${g-150}" x2="${x-90}" y2="${g-40}" stroke-width="34"/><line x1="${x+20}" y1="${g-150}" x2="${x+85}" y2="${g-50}" stroke-width="34"/><rect x="${x-62}" y="${g-290}" width="124" height="290" rx="62"/><circle cx="${x+6}" cy="${g-350}" r="56"/></g>`);}
+  T_(70,290,'DISCIPLINE',190,{sp:.0});
+  add(`<text x="80" y="470" font-size="190" font-weight="900" fill="${AMBER}" filter="url(#glowS)">&gt;</text>`);
+  T_(250,465,'MOTIVATION',118,{fill:'#fff',sp:0});add(`<path d="M240,425 L1000,425" stroke="#fff" stroke-opacity=".9" stroke-width="12" stroke-linecap="round"/>`);
+  label(84,580,'THE TRUTH NOBODY TELLS YOU',{size:42,op:.75,weight:800,sp:.16,anchor:'start'});
+}});
+
+/* ============ RENDER ============ */
+function render(t,dry=false){
+  T=t;out='';uid=0;
+  add(`<rect width="${W}" height="${H}" fill="url(#vig)"/><rect width="${W}" height="${H}" fill="url(#dots)"/>`);
+  const X=.03;
+  for(const sc of S){
+    if(t<sc.s-X||t>sc.e+X)continue;
+    let o=1;const first=sc===S[0],last=sc===S[S.length-1];
+    if(!first)o=Math.min(o,P(t,sc.s-X,2*X));
+    if(!last)o=Math.min(o,1-P(t,sc.e-X,2*X));
+    if(o<=0)continue;
+    if(!first)cue('whoosh',sc.s-X,.8);
+    const u=clamp((t-sc.s)/(sc.e-sc.s+.001));
+    const enter=first?0:(1-eo(P(t,sc.s-X,.7)));
+    const z=1+(sc.cam.zoom||.03)*eio(u)+.035*enter;
+    const fx=sc.cam.fx||960,fy=sc.cam.fy||540;
+    add(`<g opacity="${o.toFixed(3)}" transform="translate(${fx},${fy}) scale(${z.toFixed(5)}) translate(${-fx},${-fy})">`);
+    sc.draw(t-sc.s);add('</g>');
+  }
+  if(window.AFTER)window.AFTER(t);
+  add(`<image href="${GRAINS[Math.floor(t*15)%4]}" width="${W}" height="${H}" opacity=".055" style="mix-blend-mode:screen" preserveAspectRatio="none"/>`);
+  add(`<rect width="${W}" height="${H}" fill="url(#edge)"/>`);
+  const fin=P(t,END-.6,.6);if(fin>0)add(`<rect width="${W}" height="${H}" fill="#000" opacity="${fin}"/>`);
+  const fin0=0;if(fin0>0)add(`<rect width="${W}" height="${H}" fill="#000" opacity="${fin0}"/>`);
+  if(!dry)document.getElementById('s').innerHTML=DEFS+out;
+}
+window.render=render;
+window.collectCues=(fps=30)=>{CUES.clear();for(let f=0;f<=END*fps;f++)render(f/fps,true);return[...CUES.values()].sort((a,b)=>a.t-b.t);};
+render(+(location.hash.slice(1)||1.5));
+</script></body></html>
