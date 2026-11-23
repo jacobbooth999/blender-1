@@ -41,6 +41,15 @@ html,body{width:1080px;height:1920px;overflow:hidden;background:#111}
 #flicker{position:absolute;inset:0;background:#fff3d8;mix-blend-mode:soft-light;pointer-events:none;opacity:0}
 #lightleak{position:absolute;inset:0;background:radial-gradient(circle at 15% 10%,rgba(255,200,120,.20),transparent 45%);pointer-events:none;mix-blend-mode:screen}
 .handle{position:absolute;left:0;top:0;width:100%;height:100%;pointer-events:none}
+.real{background-size:cover;background-repeat:no-repeat;filter:grayscale(1) contrast(1.22) brightness(1.04) sepia(.18);position:relative}
+.real::after{content:"";position:absolute;inset:0;background-image:radial-gradient(circle,rgba(20,18,16,.55) 30%,transparent 34%);background-size:5px 5px;mix-blend-mode:multiply;opacity:.35}
+.cap{font-size:15px;font-style:italic;margin:-8px 0 14px;color:#4a443c;line-height:1.3}
+.cap b{font-style:normal;font-weight:700;letter-spacing:.5px}
+.polaroid{position:absolute;background:#f7f4ec;padding:16px 16px 64px;box-shadow:0 14px 26px rgba(0,0,0,.55);z-index:5}
+.polaroid .img{width:100%;height:100%;background-size:cover;filter:contrast(1.08) saturate(.85) sepia(.12)}
+.polaroid .pc{position:absolute;left:0;right:0;bottom:12px;text-align:center;font-family:'Permanent Marker';font-size:30px;color:#222}
+.polaroid .cr{position:absolute;right:10px;bottom:2px;font-family:'Old Standard TT';font-size:11px;color:#777}
+.tape{position:absolute;width:130px;height:38px;background:rgba(235,225,190,.75);box-shadow:0 1px 3px rgba(0,0,0,.2)}
 svg.draw path{fill:none;stroke:#c8231b;stroke-linecap:round;stroke-linejoin:round}
 </style></head>
 <body>
@@ -58,7 +67,7 @@ svg.draw path{fill:none;stroke:#c8231b;stroke-linecap:round;stroke-linejoin:roun
     <div class="kicker" style="margin-top:14px">Old Trafford</div>
     <div class="hed" style="font-size:96px;margin-top:6px">UNITED TURN TO POCHETTINO</div>
     <div class="dek">Club appoints new head coach with the team <span class="hl" id="a0">third from bottom</span> of the Premier League</div>
-    <div class="photo" style="background:url(photo.png) center/cover;mix-blend-mode:multiply"></div><div style="font-size:16px;font-style:italic;margin:-8px 0 14px;color:#4a443c">Illustration: a new man in the Old Trafford dugout.</div>
+    <div class="photo real" style="height:340px;background-image:url(img/poch_port.jpg);background-size:100% auto;background-position:50% 24%"></div><div class="cap"><b>NEW MAN IN CHARGE</b> Mauricio Pochettino, pictured with the USA in March 2026. Photo: Bryan Berlin / CC BY-SA 4.0</div>
     <div class="body cols">
      <p>Manchester United have appointed <span class="hl" id="a1">Mauricio Pochettino</span> as head coach, a day after dismissing Michael Carrick with the season already in crisis.</p>
      <p>The Argentine, who has led Tottenham, Paris Saint-Germain, Chelsea and the United States national team, signs a deal running for two and a half years and takes charge from November 18.</p>
@@ -73,6 +82,7 @@ svg.draw path{fill:none;stroke:#c8231b;stroke-linecap:round;stroke-linejoin:roun
     <div class="kicker">Breaking</div>
     <div class="hed" style="font-size:84px;margin:6px 0 4px">CARRICK SACKED</div>
     <div class="rule"></div>
+    <div class="photo real" style="height:330px;margin-top:14px;background-image:url(img/carrick.jpg);background-size:100% auto;background-position:50% 12%"></div><div class="cap" style="margin-top:-6px">Michael Carrick, pictured during his playing days at United. Photo: Gordon Flood / CC BY 2.0</div>
     <div class="body" style="margin-top:14px">
      <p style="text-indent:0">Michael Carrick has left Manchester United after presiding over the club's <span class="hl" id="b0">worst-ever Premier League start</span>.</p>
      <p>The decision comes <span class="hl" id="b1">less than six months into a two-year deal</span>, with United third from bottom and the board unwilling to wait.</p>
@@ -83,6 +93,7 @@ svg.draw path{fill:none;stroke:#c8231b;stroke-linecap:round;stroke-linejoin:roun
 
   <!-- C: case for -->
   <div class="paper" id="pC" data-x="-410" data-y="880" data-r="-4.5" data-w="720">
+   <div class="polaroid" style="width:300px;height:380px;right:-70px;top:-250px;transform:rotate(9deg)"><div class="img" style="background-image:url(img/poch_spurs.jpg);background-position:50% 15%"></div><div class="pc">Spurs, 2016</div><div class="cr">Photo: D. Golubovich / CC BY-SA 3.0</div><div class="tape" style="left:85px;top:-18px;transform:rotate(-4deg)"></div></div>
    <div class="sheet txt" style="width:720px;padding-top:36px">
     <div style="display:flex;justify-content:space-between;align-items:center"><div class="hed" style="font-size:66px">The Case <i>For</i></div><div class="stamp" style="color:#1d6b33;border-color:#1d6b33;font-size:34px">PRO</div></div>
     <div class="rule"></div>
@@ -110,6 +121,7 @@ svg.draw path{fill:none;stroke:#c8231b;stroke-linecap:round;stroke-linejoin:roun
   <!-- E: survival -->
   <div class="paper" id="pE" data-x="-60" data-y="-120" data-r="-1.5" data-w="900">
    <div class="sheet torn txt" style="width:900px;padding-top:50px;padding-bottom:70px">
+    <div class="photo real" style="height:230px;margin:-10px 0 10px;background-image:url(img/oldtrafford.jpg);background-size:130% auto;background-position:60% 50%"></div><div class="cap">Old Trafford. Photo: Arne Müseler / CC BY-SA 3.0 DE</div>
     <div class="kicker" style="text-align:center">Job description</div>
     <div class="hed" style="font-size:80px;text-align:center;margin-top:8px"><span class="hl" id="e0">FIRST JOB:</span></div>
     <div style="text-align:center;margin-top:18px"><span id="trophy" style="position:relative;display:inline-block;font-family:'Playfair Display';font-style:italic;font-size:76px;color:#3b352e">a trophy<svg class="draw" id="strike" style="position:absolute;left:-14px;top:18px;width:calc(100% + 28px);height:70px;overflow:visible" viewBox="0 0 300 70" preserveAspectRatio="none"><path d="M4 44 C 80 30, 180 40, 296 22" stroke-width="9"/></svg></span></div>
@@ -128,6 +140,7 @@ svg.draw path{fill:none;stroke:#c8231b;stroke-linecap:round;stroke-linejoin:roun
 
   <!-- F: final question -->
   <div class="paper" id="pF" data-x="0" data-y="330" data-r="-1" data-w="820">
+   <div class="polaroid" id="fpol" style="width:330px;height:420px;left:-60px;top:-330px;transform:rotate(-8deg)"><div class="img" style="background-image:url(img/poch_wc.jpg);background-size:330% auto;background-position:11% 48%"></div><div class="pc">World Cup, 2026</div><div class="cr">Photo: Bryan Berlin / CC BY-SA 4.0</div><div class="tape" style="left:100px;top:-18px;transform:rotate(5deg)"></div></div>
    <div class="sheet torn txt" style="width:820px;padding:60px 56px 70px;text-align:center">
     <div class="mast" style="font-size:44px">The Matchday Chronicle</div>
     <div class="rule"></div>
@@ -222,17 +235,18 @@ window.render=function(t,frame){
    const e=easeOut(u), z=lerp(900,0,e), rr=P.r+lerp(k.charCodeAt(0)%2?-14:12,0,e), dx=lerp((k.charCodeAt(0)%2?1:-1)*260,0,e);
    const sh=lerp(70,18,e), so=lerp(.25,.55,e);
    P.el.style.transform=`translate3d(${dx}px,${lerp(-120,0,e)}px,${z+P.i*0.5}px) rotate(${rr}deg)`;
-   P.el.style.filter=`drop-shadow(0 ${sh}px ${sh*1.2}px rgba(0,0,0,${so}))`;
    // dim the older papers
    const nextK=order[P.i+1]; let dim=0; if(nextK && t>drops[nextK]) dim=clamp((t-drops[nextK])/0.6)*0.45;
-   P.el.firstElementChild.style.filter=dim?`brightness(${1-dim})`:'';
+   P.el.style.filter=`drop-shadow(0 ${sh}px ${sh*1.2}px rgba(0,0,0,${so}))`+(dim?` brightness(${(1-dim).toFixed(3)})`:'');
  }
+ document.querySelectorAll('.polaroid').forEach(pl=>{const k=pl.closest('.paper').id.slice(1); const t0=drops[k]+0.5; const u=easeOut((t-t0)/0.45);
+   const base=pl.dataset.rot||(pl.dataset.rot=pl.style.transform); pl.style.opacity=u>0?1:0; pl.style.transform=base+` translate(${lerp(120,0,u)}px,${lerp(-160,0,u)}px) scale(${lerp(1.25,1,u)})`;});
  // highlights
  const hls=[['a0',0],['a1',0],['b0',1],['b1',1],['c0',2],['c1',2],['d0',3],['d1',3],['e0',4],['f1',5]];
  for(const [id,sc] of hls){document.getElementById(id).style.setProperty('--p',cueP(t,id,sc).toFixed(4));}
  // ink dimming (focus pull) per paper
  const dimSpec={A:[S[0].cues.a0,S[1].start],B:[S[1].cues.b0,S[2].start],C:[S[2].cues.c0,S[3].start],D:[S[3].cues.d0,S[4].start]};
- for(const k in dimSpec){const [a,b]=dimSpec[k]; const u=clamp((t-a+.1)/.5)*(1-clamp((t-b)/.4)); papers[k].el.firstElementChild.style.setProperty('--ink',(1-0.62*u).toFixed(3));}
+ for(const k in dimSpec){const [a,b]=dimSpec[k]; const u=clamp((t-a+.1)/.5)*(1-clamp((t-b)/.4)); papers[k].el.querySelector('.sheet').style.setProperty('--ink',(1-0.62*u).toFixed(3));}
  // survival scraps pop
  document.querySelectorAll('.scrap').forEach(s=>{const i=+s.dataset.i; const st=S[4].cues.e1-0.15+i*0.075; const u=clamp((t-st)/0.32);
    s.style.opacity=u>0?1:0; const sc=lerp(2.2,1,back(u)); const rot=((i*37)%13-6)*(1+ (1-u)*2);

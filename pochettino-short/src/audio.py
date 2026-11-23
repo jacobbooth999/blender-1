@@ -91,6 +91,7 @@ add(sfx,S[0]['cues']['a0']-0.4,np.zeros(1))
 for i in range(8): add(sfx,S[4]['cues']['e1']-0.15+i*0.075,pop(),0.9,pan=(i-3.5)/6)
 add(sfx,S[4]['cues']['e1']-0.1,boom(),0.9)
 add(sfx,S[5]['start']+0.4,boom(),0.6)
+for j in (2,5): add(sfx,S[j]['start']+0.5,whoosh(0.3),0.6); add(sfx,S[j]['start']+0.9,slap(),0.55,pan=0.3)
 # circle marker
 add(sfx,S[5]['cues']['f0_end']-0.1,marker(0.6),0.9)
 # room tone / paper crackle
