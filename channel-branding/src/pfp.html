@@ -1,0 +1,43 @@
+<!doctype html><html><head><meta charset="utf-8">
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,900;1,700&family=UnifrakturMaguntia&family=Oswald:wght@600;700&family=Permanent+Marker&display=block" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{width:800px;height:800px;overflow:hidden}
+.v{position:absolute;inset:0;display:none;overflow:hidden}
+.paper{background:#eee6d4 url(paper.jpg);background-size:700px}
+.desk{background:#262a33 url(desk.jpg);background-size:900px}
+.grain::after{content:"";position:absolute;inset:0;background:radial-gradient(circle at 50% 45%,transparent 55%,rgba(60,40,20,.25));pointer-events:none}
+.c{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);text-align:center}
+.hl{background:linear-gradient(100deg,transparent 0,#ffd61e 2%,#ffdc2a 98%,transparent 100%);padding:0 18px}
+svg text{font-family:'Oswald';font-weight:700}
+</style></head><body>
+<!-- A: monogram MC on newsprint with highlight + ring text -->
+<div class="v paper grain" id="A">
+ <svg width="800" height="800" style="position:absolute;inset:0"><defs><path id="ring" d="M400,400 m-300,0 a300,300 0 1,1 600,0 a300,300 0 1,1 -600,0"/></defs>
+  <circle cx="400" cy="400" r="352" fill="none" stroke="#161412" stroke-width="10"/>
+  <circle cx="400" cy="400" r="252" fill="none" stroke="#161412" stroke-width="3"/>
+  <text font-size="50" fill="#161412"><textPath href="#ring" textLength="1860" lengthAdjust="spacing">THE MATCHDAY CHRONICLE  •  FOOTBALL  •  EST. 2026  •</textPath></text></svg>
+ <div class="c" style="font-family:'Playfair Display';font-weight:900;font-size:290px;line-height:1;color:#161412;letter-spacing:-12px;margin-top:-6px"><span style="background:linear-gradient(100deg,transparent 0,#ffd61e 3%,#ffdc2a 97%,transparent 100%) no-repeat 0 72%/100% 46%;padding:0 26px 0 12px">MC</span></div>
+</div>
+<!-- B: torn newspaper disc on dark desk, blackletter M, yellow highlight under -->
+<div class="v desk" id="B">
+ <div class="c paper" style="width:640px;height:640px;border-radius:50%;box-shadow:0 30px 50px rgba(0,0,0,.6);clip-path:polygon(99.48% 50.00%,99.65% 53.47%,98.65% 56.84%,98.57% 60.32%,97.92% 63.74%,96.15% 66.80%,93.83% 69.52%,92.59% 72.65%,90.97% 75.60%,90.06% 79.10%,87.40% 81.38%,85.53% 84.31%,83.20% 86.87%,80.64% 89.22%,77.70% 91.06%,73.98% 91.53%,71.12% 93.30%,68.07% 94.71%,64.91% 95.88%,61.99% 98.10%,58.56% 98.57%,55.08% 98.35%,51.69% 98.36%,48.32% 98.09%,44.98% 97.80%,41.35% 99.05%,38.23% 97.22%,35.01% 96.15%,31.69% 95.33%,28.25% 94.59%,25.52% 92.40%,22.15% 91.29%,20.48% 87.78%,17.82% 85.74%,14.90% 83.90%,12.20% 81.71%,11.17% 78.21%,8.67% 75.83%,7.57% 72.56%,6.03% 69.58%,4.07% 66.72%,2.81% 63.53%,2.38% 60.12%,1.43% 56.83%,0.48% 53.46%,0.67% 50.00%,1.91% 46.64%,0.58% 43.05%,1.19% 39.63%,3.26% 36.60%,3.60% 33.11%,5.40% 30.14%,6.77% 27.01%,8.24% 23.90%,11.32% 21.90%,12.03% 18.14%,14.69% 15.90%,16.84% 13.17%,20.07% 11.70%,22.38% 9.05%,25.39% 7.38%,28.80% 6.54%,31.53% 4.29%,34.93% 3.62%,38.39% 3.42%,41.36% 0.98%,44.79% 0.41%,48.27% 0.53%,51.69% 1.71%,55.08% 1.62%,58.59% 1.27%,61.92% 2.19%,65.33% 2.82%,68.35% 4.58%,71.88% 5.14%,74.23% 8.03%,76.86% 10.18%,79.49% 12.25%,82.37% 14.04%,84.45% 16.73%,88.27% 17.89%,89.94% 20.98%,90.60% 24.63%,92.64% 27.33%,94.85% 30.03%,95.03% 33.61%,96.75% 36.59%,97.15% 39.98%,98.87% 43.13%,99.46% 46.54%)">
+  <div style="position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center">
+   <div style="font-family:'UnifrakturMaguntia';font-size:330px;line-height:.9;color:#161412">M</div>
+   <div style="font-family:'Oswald';font-weight:700;font-size:62px;letter-spacing:6px;margin-top:6px"><span class="hl" style="padding:0 16px">MATCHDAY</span></div>
+  </div>
+ </div>
+</div>
+<!-- C: yellow highlighter background, halftone football, red marker circle -->
+<div class="v" id="C" style="background:#ffd61e">
+ <svg width="800" height="800" style="position:absolute;inset:0">
+  <defs><pattern id="dots" width="13" height="13" patternUnits="userSpaceOnUse"><circle cx="6.5" cy="6.5" r="4.3" fill="#161412"/></pattern>
+   <clipPath id="ball"><circle cx="400" cy="350" r="205"/></clipPath></defs>
+  <circle cx="400" cy="350" r="205" fill="#f4eddc"/>
+  <g clip-path="url(#ball)"><polygon points="400.0,288.0 459.0,330.8 436.4,400.2 363.6,400.2 341.0,330.8" fill="#161412"/><polygon points="533.4,166.4 556.0,235.7 497.0,278.5 438.0,235.7 460.5,166.4" fill="url(#dots)" stroke="#161412" stroke-width="6"/><polygon points="615.9,420.1 556.9,463.0 498.0,420.1 520.5,350.8 593.4,350.8" fill="url(#dots)" stroke="#161412" stroke-width="6"/><polygon points="400.0,577.0 341.0,534.2 363.6,464.8 436.4,464.8 459.0,534.2" fill="url(#dots)" stroke="#161412" stroke-width="6"/><polygon points="184.1,420.1 206.6,350.8 279.5,350.8 302.0,420.1 243.1,463.0" fill="url(#dots)" stroke="#161412" stroke-width="6"/><polygon points="266.6,166.4 339.5,166.4 362.0,235.7 303.0,278.5 244.0,235.7" fill="url(#dots)" stroke="#161412" stroke-width="6"/><g stroke="#161412" stroke-width="7" fill="none"><path d="M400.0 288.0 L400.0 238.0"/><path d="M459.0 330.8 L506.5 315.4"/><path d="M436.4 400.2 L465.8 440.6"/><path d="M363.6 400.2 L334.2 440.6"/><path d="M341.0 330.8 L293.5 315.4"/></g></g>
+  <circle cx="400" cy="350" r="205" fill="none" stroke="#161412" stroke-width="11"/>
+  <path d="M420 118 C 240 110, 150 240, 170 370 C 192 520, 320 590, 460 572 C 620 548, 680 390, 628 262 C 590 170, 500 124, 360 140" fill="none" stroke="#c8231b" stroke-width="15" stroke-linecap="round"/>
+ </svg>
+ <div style="position:absolute;left:0;right:0;bottom:92px;text-align:center;font-family:'Playfair Display';font-weight:900;font-size:76px;color:#161412;letter-spacing:-1px">MATCHDAY</div>
+</div>
+</body></html>
