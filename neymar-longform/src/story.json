@@ -1,0 +1,711 @@
+{
+ "title": "The Prince Who Never Became King",
+ "scenes": [
+  {
+   "type": "stat",
+   "chapter": "",
+   "vo": "He cost two hundred and twenty two million euros. The most expensive footballer in history.",
+   "kicker": "Paris, August 2017",
+   "photo": {
+    "src": "psg",
+    "pos": "50% 20%",
+    "slot": "psg"
+   },
+   "rows": [
+    {
+     "id": "n0",
+     "prefix": "€",
+     "num": 222,
+     "label": "WORLD-RECORD FEE",
+     "cue": "two hundred",
+     "suffix": "M"
+    }
+   ],
+   "cues": {
+    "h0": "most expensive footballer"
+   },
+   "foot": "The [[h0|most expensive footballer]] in history."
+  },
+  {
+   "type": "stat",
+   "vo": "He scored eighty goals for Brazil. More than Pelé.",
+   "kicker": "Seleção, 2010 to 2026",
+   "photo": {
+    "src": "brazil18b",
+    "pos": "50% 20%",
+    "slot": "brazil"
+   },
+   "rows": [
+    {
+     "id": "n1",
+     "num": 80,
+     "label": "GOALS FOR BRAZIL",
+     "cue": "eighty goals"
+    }
+   ],
+   "cues": {
+    "h1": "More than Pelé"
+   },
+   "foot": "[[h1|More than Pelé.]]"
+  },
+  {
+   "type": "clip",
+   "vo": "He won the Champions League, and Olympic gold.",
+   "kicker": "The honours",
+   "hed": "EUROPE. OLYMPUS.",
+   "photo": {
+    "src": "barca",
+    "pos": "50% 20%",
+    "cap": "Neymar at Barcelona.",
+    "slot": "barca"
+   },
+   "body": [
+    "Neymar won the [[h2|Champions League]] with Barcelona in 2015, and captained Brazil to [[h3|Olympic gold]] in Rio a year later."
+   ],
+   "cues": {
+    "h2": "Champions League",
+    "h3": "Olympic gold"
+   }
+  },
+  {
+   "type": "quote",
+   "vo": "And yet, he never won the Ballon Dor. He never won the World Cup. And when it ended, in tears, in July 2026, he said just two words. I tried.",
+   "pre": "He never won the [[q0|Ballon d'Or]]. He never won the [[q1|World Cup]].",
+   "text": "“I tried.”",
+   "by": "Neymar, July 5, 2026",
+   "cues": {
+    "q0": "Ballon Dor",
+    "q1": "World Cup",
+    "qt": "I tried"
+   }
+  },
+  {
+   "type": "title",
+   "vo": "This is the story of the prince who never became king.",
+   "line1": "THE PRINCE",
+   "line2": "WHO NEVER BECAME",
+   "line3": "KING",
+   "cues": {
+    "cross": "never became king"
+   }
+  },
+  {
+   "type": "chapter",
+   "num": "I",
+   "title": "The Boy from Mogi",
+   "vo": "Chapter one. The boy from Mogi."
+  },
+  {
+   "type": "front",
+   "vo": "Neymar da Silva Santos Júnior was born on the fifth of February, 1992, in Mogi das Cruzes, near São Paulo. His father, Neymar senior, was a footballer whose own career never took off.",
+   "date": "Wednesday, February 5, 1992",
+   "place": "Mogi das Cruzes",
+   "kicker": "São Paulo state",
+   "hed": "A SON NAMED NEYMAR",
+   "dek": "A footballer's boy is born in [[f0|Mogi das Cruzes]]",
+   "photo": {
+    "src": "santos11",
+    "pos": "50% 20%",
+    "cap": "Neymar as a Santos teenager.",
+    "slot": "santos11"
+   },
+   "body": [
+    "Neymar da Silva Santos Júnior was born on February 5, 1992, near São Paulo.",
+    "His father, Neymar Sr., played professionally, but his [[f1|own career never took off]]. He would pour everything into his son."
+   ],
+   "cues": {
+    "f0": "Mogi das Cruzes",
+    "f1": "career never took off"
+   }
+  },
+  {
+   "type": "file",
+   "vo": "Brazil has always crowned its kings. Ronaldo, Rivaldo, Ronaldinho and Kaká all won the Ballon Dor. But after Kaká, in 2007, the crown was waiting for someone new.",
+   "title": "Brazil's kings",
+   "stamp": "BALLON D'OR",
+   "rows": [
+    [
+     "1997",
+     "Ronaldo"
+    ],
+    [
+     "1999",
+     "Rivaldo"
+    ],
+    [
+     "2005",
+     "Ronaldinho"
+    ],
+    [
+     "2007",
+     "[[r0|Kaká]], the last Brazilian winner"
+    ]
+   ],
+   "cues": {
+    "r0": "after Kaká"
+   }
+  },
+  {
+   "type": "map",
+   "vo": "The family moved to the coast, and at eleven, the boy joined Santos. The club of Pelé.",
+   "legs": [
+    [
+     "mogi",
+     "santos",
+     "joined Santos"
+    ]
+   ],
+   "note": "Age 11: joins [[m0|the club of Pelé]]",
+   "cues": {
+    "m0": "club of Pelé"
+   }
+  },
+  {
+   "type": "clip",
+   "vo": "He made his debut at seventeen. At nineteen, he led Santos to their first Copa Libertadores in nearly fifty years, and won FIFA's Puskás Award for goal of the year.",
+   "kicker": "Santos, 2011",
+   "hed": "SANTOS END 48-YEAR WAIT",
+   "photo": {
+    "src": "santos11",
+    "pos": "50% 25%",
+    "cap": "Neymar in Santos colours.",
+    "slot": "santos11"
+   },
+   "body": [
+    "A teenage Neymar inspires Santos to their [[c0|first Copa Libertadores]] since the days of Pelé.",
+    "He also wins FIFA the [[c1|Puskás Award]] for the goal of the year."
+   ],
+   "cues": {
+    "c0": "first Copa Libertadores",
+    "c1": "Puskás Award"
+   }
+  },
+  {
+   "type": "quote",
+   "vo": "And he played with joy. The step-overs, the flicks, the celebrations. To millions of children, he was football.",
+   "pre": "The step-overs. The flicks. [[q0|The joy]].",
+   "text": "To millions of children, he was football.",
+   "by": "",
+   "cues": {
+    "q0": "played with joy",
+    "qt": "millions of children"
+   }
+  },
+  {
+   "type": "quote",
+   "vo": "Brazil had found its heir. The next Pelé. The crown prince of Brazilian football.",
+   "pre": "Brazil had found [[q0|its heir]].",
+   "text": "The next Pelé.",
+   "by": "",
+   "cues": {
+    "q0": "its heir",
+    "qt": "The next Pelé"
+   }
+  },
+  {
+   "type": "chapter",
+   "num": "II",
+   "title": "The Heir",
+   "vo": "Chapter two. The heir."
+  },
+  {
+   "type": "map",
+   "vo": "In 2013, Barcelona signed him. That summer, he won the Golden Ball, as Brazil lifted the Confederations Cup.",
+   "legs": [
+    [
+     "santos",
+     "barcelona",
+     "Barcelona signed him"
+    ]
+   ],
+   "note": "2013: [[m0|Golden Ball]] at the Confederations Cup",
+   "cues": {
+    "m0": "Golden Ball"
+   }
+  },
+  {
+   "type": "clip",
+   "vo": "The transfer would follow him for years. A Brazilian company claimed the true fee had been hidden. In 2022, a Spanish court cleared him of fraud and corruption.",
+   "kicker": "Barcelona, December 2022",
+   "hed": "NEYMAR CLEARED",
+   "photo": {
+    "src": "barca",
+    "pos": "50% 22%",
+    "cap": "Neymar at Barcelona.",
+    "slot": "barca2"
+   },
+   "body": [
+    "A Brazilian firm claimed the [[c0|true fee was hidden]].",
+    "A Spanish court [[c1|clears Neymar]] of fraud and corruption over his 2013 transfer."
+   ],
+   "cues": {
+    "c0": "true fee had been hidden",
+    "c1": "cleared him"
+   }
+  },
+  {
+   "type": "clip",
+   "vo": "Alongside Lionel Messi and Luis Suárez, he formed the most feared attack in the world. M. S. N.",
+   "kicker": "Barcelona, 2014",
+   "hed": "M · S · N",
+   "photo": {
+    "src": "barca",
+    "pos": "50% 25%",
+    "cap": "Barcelona's front three.",
+    "slot": "msn"
+   },
+   "body": [
+    "Messi, Suárez and Neymar: [[c0|the most feared attack]] in world football."
+   ],
+   "cues": {
+    "c0": "most feared attack"
+   }
+  },
+  {
+   "type": "stat",
+   "vo": "In 2015, they won the treble. Neymar scored in the Champions League final.",
+   "kicker": "Berlin, June 2015",
+   "rows": [
+    {
+     "id": "n2",
+     "num": 3,
+     "label": "TROPHIES · THE TREBLE",
+     "cue": "won the treble"
+    }
+   ],
+   "foot": "Neymar [[h0|scored in the final]] as Barcelona beat Juventus 3–1.",
+   "cues": {
+    "h0": "scored in the Champions League final"
+   }
+  },
+  {
+   "type": "clip",
+   "vo": "In 2017, Barcelona trailed Paris Saint-Germain four nil from the first leg. Neymar scored twice, and set up the winner, in a six one comeback.",
+   "kicker": "Camp Nou, March 2017",
+   "hed": "THE REMONTADA",
+   "photo": {
+    "src": "barca",
+    "pos": "50% 20%",
+    "cap": "Neymar at the Camp Nou.",
+    "slot": "barca2"
+   },
+   "body": [
+    "Trailing [[c0|4–0 from the first leg]], Barcelona win 6–1.",
+    "Neymar [[c1|scores twice and sets up the winner]] in the final minutes."
+   ],
+   "cues": {
+    "c0": "four nil",
+    "c1": "scored twice"
+   }
+  },
+  {
+   "type": "file",
+   "vo": "But there was a problem. He was playing beside Messi. Twice, he finished third for the Ballon Dor. As long as he stayed, he would always be the prince.",
+   "title": "Ballon d'Or file",
+   "stamp": "3RD",
+   "rows": [
+    [
+     "2015",
+     "Third, behind Messi and Ronaldo"
+    ],
+    [
+     "2017",
+     "Third, behind Ronaldo and Messi"
+    ],
+    [
+     "VERDICT",
+     "[[r0|Always the prince]]"
+    ]
+   ],
+   "cues": {
+    "r0": "always be the prince"
+   }
+  },
+  {
+   "type": "chapter",
+   "num": "III",
+   "title": "The Weight of a Nation",
+   "vo": "Chapter three. The weight of a nation."
+  },
+  {
+   "type": "clip",
+   "vo": "In 2014, Brazil hosted the World Cup. Neymar carried the nation, until a knee to the back in the quarter-final broke a vertebra.",
+   "kicker": "Fortaleza, July 2014",
+   "hed": "NEYMAR OUT OF WORLD CUP",
+   "photo": {
+    "src": "brazil18",
+    "pos": "50% 20%",
+    "cap": "Neymar in Brazil's yellow.",
+    "slot": "brazil14"
+   },
+   "body": [
+    "Brazil's talisman is carried off against Colombia with a [[c0|broken vertebra]]. His tournament is over."
+   ],
+   "cues": {
+    "c0": "broke a vertebra"
+   }
+  },
+  {
+   "type": "stat",
+   "vo": "Without him, Brazil lost seven one to Germany. The most humiliating night in their history.",
+   "kicker": "Belo Horizonte, July 2014",
+   "rows": [
+    {
+     "id": "n3",
+     "num": 7,
+     "suffix": "–1",
+     "label": "GERMANY 7, BRAZIL 1",
+     "cue": "seven one"
+    }
+   ],
+   "foot": "[[h0|The most humiliating night]] in Brazil's history.",
+   "cues": {
+    "h0": "most humiliating night"
+   }
+  },
+  {
+   "type": "clip",
+   "vo": "Two years later, at the Rio Olympics, he scored the winning penalty, to give Brazil its first ever Olympic gold in men's football.",
+   "kicker": "Maracanã, August 2016",
+   "hed": "GOLD AT LAST",
+   "photo": {
+    "src": "olympics",
+    "pos": "50% 25%",
+    "cap": "Neymar at the 2016 Olympics.",
+    "slot": "olympics"
+   },
+   "body": [
+    "Captain Neymar scores the [[c0|winning penalty]] against Germany: Brazil's [[c1|first Olympic gold]] in men's football."
+   ],
+   "cues": {
+    "c0": "winning penalty",
+    "c1": "first ever Olympic gold"
+   }
+  },
+  {
+   "type": "chapter",
+   "num": "IV",
+   "title": "The €222 Million Gamble",
+   "vo": "Chapter four. The two hundred and twenty two million euro gamble."
+  },
+  {
+   "type": "map",
+   "vo": "In August 2017, Paris Saint-Germain paid his release clause. Two hundred and twenty two million euros. More than double the previous world record.",
+   "legs": [
+    [
+     "barcelona",
+     "paris",
+     "Paris Saint-Germain"
+    ]
+   ],
+   "note": "[[m0|More than double]] the old world record",
+   "cues": {
+    "m0": "More than double"
+   }
+  },
+  {
+   "type": "quote",
+   "vo": "The plan was simple. Leave Messi's shadow. Win the Champions League. Win the Ballon Dor.",
+   "pre": "The plan: leave [[q0|Messi's shadow]].",
+   "text": "Win it all.",
+   "by": "",
+   "cues": {
+    "q0": "Messi's shadow",
+    "qt": "Win the Champions League"
+   }
+  },
+  {
+   "type": "file",
+   "vo": "Then, his body began to break. A broken metatarsal in 2018. Another in 2019. An ankle injury cost him the Copa América, which Brazil won without him.",
+   "title": "Medical file: Neymar Jr.",
+   "stamp": "INJURED",
+   "rows": [
+    [
+     "2018",
+     "[[r0|Broken metatarsal]], right foot"
+    ],
+    [
+     "2019",
+     "[[r1|Metatarsal again]]"
+    ],
+    [
+     "2019",
+     "Ankle: misses Copa América. [[r2|Brazil win it without him]]"
+    ]
+   ],
+   "cues": {
+    "r0": "broken metatarsal",
+    "r1": "Another in 2019",
+    "r2": "Brazil won without him"
+   }
+  },
+  {
+   "type": "clip",
+   "vo": "At the 2018 World Cup, he became a meme, mocked around the world for rolling on the floor. Brazil went out to Belgium in the quarter-finals.",
+   "kicker": "Kazan, July 2018",
+   "hed": "BELGIUM SEND BRAZIL HOME",
+   "photo": {
+    "src": "brazil18",
+    "pos": "50% 20%",
+    "cap": "Neymar with Brazil.",
+    "slot": "brazil18"
+   },
+   "body": [
+    "Neymar's theatrics turn him into [[c0|a global meme]].",
+    "Brazil fall to Belgium in the [[c1|quarter-finals]]."
+   ],
+   "cues": {
+    "c0": "became a meme",
+    "c1": "quarter-finals"
+   }
+  },
+  {
+   "type": "file",
+   "vo": "In 2019, he tried to go back to Barcelona. The deal never happened, and some PSG fans turned against him.",
+   "title": "Transfer file: summer 2019",
+   "stamp": "REJECTED",
+   "rows": [
+    [
+     "WANT",
+     "[[r0|Return to Barcelona]]"
+    ],
+    [
+     "RESULT",
+     "Deal collapses"
+    ],
+    [
+     "PARIS",
+     "[[r1|Fans turn on him]]"
+    ]
+   ],
+   "cues": {
+    "r0": "go back to Barcelona",
+    "r1": "fans turned against him"
+   }
+  },
+  {
+   "type": "clip",
+   "vo": "In 2020, he finally reached the Champions League final. PSG lost one nil, to Bayern Munich.",
+   "kicker": "Lisbon, August 2020",
+   "hed": "SO NEAR",
+   "photo": {
+    "src": "psg",
+    "pos": "50% 20%",
+    "cap": "Neymar in PSG colours.",
+    "slot": "psg2"
+   },
+   "body": [
+    "PSG reach their [[c0|first Champions League final]], but Bayern Munich win [[c1|1–0]]."
+   ],
+   "cues": {
+    "c0": "Champions League final",
+    "c1": "one nil"
+   }
+  },
+  {
+   "type": "chapter",
+   "num": "V",
+   "title": "So Close",
+   "vo": "Chapter five. So close."
+  },
+  {
+   "type": "clip",
+   "vo": "At the 2022 World Cup, against Croatia, he scored a stunning goal in extra time. His seventy seventh for Brazil. Level with Pelé.",
+   "kicker": "Qatar, December 2022",
+   "hed": "NEYMAR EQUALS PELÉ",
+   "photo": {
+    "src": "brazil18b",
+    "pos": "50% 20%",
+    "cap": "Neymar with Brazil.",
+    "slot": "brazil22"
+   },
+   "body": [
+    "A brilliant [[c0|extra-time goal]] against Croatia: Neymar's 77th for Brazil, [[c1|level with Pelé]]."
+   ],
+   "cues": {
+    "c0": "extra time",
+    "c1": "Level with Pelé"
+   }
+  },
+  {
+   "type": "quote",
+   "vo": "Minutes later, Croatia equalised. Brazil lost on penalties. Neymar was due to take the fifth. He never kicked a ball.",
+   "pre": "Brazil lost [[q0|on penalties]].",
+   "text": "He never got to kick.",
+   "by": "",
+   "cues": {
+    "q0": "lost on penalties",
+    "qt": "never kicked a ball"
+   }
+  },
+  {
+   "type": "stat",
+   "vo": "In 2023, he passed Pelé, to become Brazil's all-time top scorer.",
+   "kicker": "Belém, September 2023",
+   "rows": [
+    {
+     "id": "n4",
+     "num": 79,
+     "label": "BRAZIL'S ALL-TIME TOP SCORER",
+     "cue": "passed Pelé"
+    }
+   ],
+   "foot": "Neymar [[h0|passes Pelé]] on FIFA's official count.",
+   "cues": {
+    "h0": "passed Pelé"
+   }
+  },
+  {
+   "type": "chapter",
+   "num": "VI",
+   "title": "The Road Home",
+   "vo": "Chapter six. The road home."
+  },
+  {
+   "type": "map",
+   "vo": "That summer, he joined Al-Hilal in Saudi Arabia, for a reported ninety million euros. Two months later, playing for Brazil, he tore his ACL.",
+   "legs": [
+    [
+     "paris",
+     "riyadh",
+     "joined Al-Hilal"
+    ]
+   ],
+   "note": "Oct 2023: [[m0|torn ACL]] playing for Brazil",
+   "cues": {
+    "m0": "tore his ACL"
+   },
+   "photo": {
+    "src": "alhilal",
+    "pos": "50% 25%",
+    "pc": "Al-Hilal, 2023",
+    "slot": "alhilal"
+   }
+  },
+  {
+   "type": "map",
+   "vo": "In January 2025, he went home to Santos. Injuries followed him there too. But he helped his old club avoid relegation.",
+   "legs": [
+    [
+     "riyadh",
+     "santos",
+     "went home to Santos"
+    ]
+   ],
+   "note": "2025: helps Santos [[m0|avoid relegation]]",
+   "cues": {
+    "m0": "avoid relegation"
+   },
+   "photo": {
+    "src": "santos25",
+    "pos": "50% 20%",
+    "pc": "Santos, 2025",
+    "slot": "santos25"
+   }
+  },
+  {
+   "type": "clip",
+   "vo": "Then came one final chance. Carlo Ancelotti named him in Brazil's 2026 World Cup squad. A calf injury limited him to two games. In the round of sixteen, Erling Haaland scored twice, and Norway knocked Brazil out.",
+   "kicker": "New Jersey, July 2026",
+   "hed": "NORWAY STUN BRAZIL",
+   "photo": {
+    "src": "brazil26",
+    "pos": "50% 20%",
+    "cap": "Neymar at the 2026 World Cup.",
+    "slot": "brazil26"
+   },
+   "body": [
+    "Picked by Ancelotti despite fitness doubts, a [[c0|calf injury]] limits Neymar to two games.",
+    "[[c1|Haaland scores twice]] as Norway win 2–1."
+   ],
+   "cues": {
+    "c0": "calf injury",
+    "c1": "Haaland scored twice"
+   }
+  },
+  {
+   "type": "quote",
+   "vo": "Neymar scored a late penalty. His eightieth goal for Brazil. Afterwards, in tears, he said his Brazil career was over. I tried.",
+   "pre": "His [[q0|80th goal]] for Brazil. His last.",
+   "text": "“I tried.”",
+   "by": "Neymar, July 5, 2026",
+   "cues": {
+    "q0": "eightieth goal",
+    "qt": "I tried"
+   }
+  },
+  {
+   "type": "chapter",
+   "num": "VII",
+   "title": "The Verdict",
+   "vo": "Chapter seven. The verdict."
+  },
+  {
+   "type": "stat",
+   "vo": "Eighty goals for Brazil. A Champions League. Olympic gold. Twice third in the Ballon Dor.",
+   "kicker": "The career in numbers",
+   "rows": [
+    {
+     "id": "n5",
+     "num": 80,
+     "label": "GOALS FOR BRAZIL",
+     "cue": "Eighty goals"
+    },
+    {
+     "id": "n6",
+     "num": 1,
+     "label": "CHAMPIONS LEAGUE",
+     "cue": "A Champions League"
+    },
+    {
+     "id": "n7",
+     "num": 1,
+     "label": "OLYMPIC GOLD",
+     "cue": "Olympic gold"
+    }
+   ],
+   "cues": {}
+  },
+  {
+   "type": "quote",
+   "vo": "So what went wrong? Some blame the injuries. Some blame the move to Paris. Some say he loved the spotlight more than the work. The truth is probably all three.",
+   "pre": "Injuries? Paris? [[q0|The spotlight]]?",
+   "text": "Probably all three.",
+   "by": "",
+   "cues": {
+    "q0": "spotlight",
+    "qt": "all three"
+   }
+  },
+  {
+   "type": "quote",
+   "vo": "By any normal standard, a legendary career. But Neymar was never measured by normal standards. He was measured against Messi, Ronaldo, and Pelé. And next to kings, a prince will always look small.",
+   "pre": "Measured against [[q0|Messi, Ronaldo and Pelé]].",
+   "text": "Next to kings, a prince looks small.",
+   "by": "",
+   "cues": {
+    "q0": "Messi, Ronaldo",
+    "qt": "next to kings"
+   }
+  },
+  {
+   "type": "verdict",
+   "vo": "So, was Neymar a failure, or a legend? Tell me in the comments. And subscribe, for the next story.",
+   "q": "FAILURE OR LEGEND?",
+   "opts": [
+    "FAILURE",
+    "LEGEND"
+   ],
+   "cta": "Tell me in the comments",
+   "photo": {
+    "src": "brazil26",
+    "pos": "50% 20%",
+    "slot": "brazil26b"
+   },
+   "cues": {
+    "q0": "failure, or a legend",
+    "cta": "comments"
+   }
+  }
+ ]
+}
