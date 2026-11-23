@@ -1,0 +1,226 @@
+<!doctype html>
+<html><head><meta charset="utf-8">
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,700;0,900;1,400&family=Old+Standard+TT:ital,wght@0,400;0,700;1,400&family=UnifrakturMaguntia&family=Special+Elite&family=Oswald:wght@500;700&family=Permanent+Marker&display=block" rel="stylesheet">
+<script src="timeline.js"></script>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{width:1080px;height:1920px;overflow:hidden;background:#111}
+#stage{position:absolute;inset:0;overflow:hidden;perspective:2400px;perspective-origin:50% 50%}
+#desk{position:absolute;left:-1200px;top:-1200px;width:4400px;height:6600px;background:#262a33 url(desk.jpg);background-size:1200px}
+#world{position:absolute;left:540px;top:960px;width:0;height:0;transform-style:preserve-3d}
+#deskwrap{position:absolute;left:-2200px;top:-3000px;width:4400px;height:6600px}
+.paper{position:absolute;transform-origin:50% 50%;filter:drop-shadow(0 18px 22px rgba(0,0,0,.55));will-change:transform}
+.sheet{position:relative;background:#eee6d4 url(paper.jpg);background-size:900px;color:#161412;padding:42px 46px 50px;
+  font-family:'Old Standard TT',serif;}
+.sheet::after{content:"";position:absolute;inset:0;background:radial-gradient(ellipse at 30% 20%,rgba(255,255,255,.15),rgba(90,70,40,.18) 95%);pointer-events:none;mix-blend-mode:multiply}
+.torn{clip-path:polygon(0 1.5%,6% 0,13% 1.2%,21% .2%,29% 1.4%,37% .3%,45% 1.1%,53% 0,61% 1.3%,69% .2%,77% 1%,85% 0,93% 1.2%,100% .4%,
+  99.2% 12%,100% 25%,99.4% 38%,100% 52%,99.3% 66%,100% 80%,99.5% 92%,100% 99%,92% 100%,84% 98.8%,76% 100%,68% 98.9%,60% 99.8%,52% 98.7%,44% 100%,36% 98.9%,28% 99.9%,20% 98.8%,12% 100%,5% 99%,0 100%,.6% 88%,0 74%,.7% 60%,0 46%,.5% 32%,0 18%)}
+.dimmable{transition:none}
+.txt{color:rgba(22,20,18,var(--ink,1))}
+.mast{font-family:'UnifrakturMaguntia',serif;font-size:64px;text-align:center;line-height:1}
+.rule{border-top:3px double #1a1714;border-bottom:1px solid #1a1714;height:7px;margin:12px 0 8px}
+.dateline{display:flex;justify-content:space-between;font-size:17px;letter-spacing:1px;text-transform:uppercase;font-family:'Old Standard TT'}
+.hed{font-family:'Playfair Display',serif;font-weight:900;line-height:.98;letter-spacing:-1px}
+.dek{font-family:'Playfair Display',serif;font-style:italic;font-weight:400;font-size:30px;line-height:1.2;margin:14px 0 18px}
+.body{font-size:25px;line-height:1.38;text-align:justify;hyphens:auto}
+.cols{column-count:2;column-gap:30px;column-rule:1px solid #9a8f7c}
+.body p{margin-bottom:10px;text-indent:1.2em}
+.kicker{font-family:'Oswald';font-weight:700;letter-spacing:3px;font-size:22px;text-transform:uppercase;color:#a3221b}
+.hl{--p:0;color:#111!important;background-image:linear-gradient(100deg,rgba(255,226,60,0) 0,rgba(255,222,40,.95) 1%,rgba(255,214,30,.92) 99%,rgba(255,226,60,0) 100%);
+  background-repeat:no-repeat;background-size:calc(var(--p)*100%) 78%;background-position:0 65%;-webkit-box-decoration-break:clone;box-decoration-break:clone;padding:0 3px}
+.photo{height:300px;margin:6px 0 16px;background:#3a3631;position:relative;overflow:hidden}
+.halftone{position:absolute;inset:0;background-image:radial-gradient(circle,#0d0c0b 38%,transparent 42%);background-size:9px 9px;opacity:.9}
+.stamp{font-family:'Special Elite';color:#b0201a;border:5px solid #b0201a;padding:6px 18px;display:inline-block;font-size:44px;letter-spacing:4px;transform:rotate(-6deg);opacity:.85}
+.typed{font-family:'Special Elite';font-size:30px;line-height:1.5}
+.card-row{display:flex;gap:18px;align-items:baseline;border-bottom:1px dashed #8d826d;padding:14px 0}
+.card-row .yr{font-family:'Oswald';font-weight:700;font-size:34px;color:#2b2723;min-width:120px}
+.scrap{position:absolute;font-family:'Playfair Display';font-weight:900;padding:4px 14px 10px;filter:drop-shadow(0 10px 10px rgba(0,0,0,.5))}
+.marker{font-family:'Permanent Marker',cursive;color:#c8231b}
+#grain{position:absolute;inset:0;background-size:1080px 1920px;mix-blend-mode:overlay;opacity:.22;pointer-events:none;image-rendering:pixelated}
+#vig{position:absolute;inset:0;background:radial-gradient(ellipse at 50% 48%,rgba(0,0,0,0) 45%,rgba(0,0,0,.55) 100%);pointer-events:none}
+#flicker{position:absolute;inset:0;background:#fff3d8;mix-blend-mode:soft-light;pointer-events:none;opacity:0}
+#lightleak{position:absolute;inset:0;background:radial-gradient(circle at 15% 10%,rgba(255,200,120,.20),transparent 45%);pointer-events:none;mix-blend-mode:screen}
+.handle{position:absolute;left:0;top:0;width:100%;height:100%;pointer-events:none}
+.real{background-size:cover;background-repeat:no-repeat;filter:grayscale(1) contrast(1.22) brightness(1.04) sepia(.18);position:relative}
+.real::after{content:"";position:absolute;inset:0;background-image:radial-gradient(circle,rgba(20,18,16,.55) 30%,transparent 34%);background-size:5px 5px;mix-blend-mode:multiply;opacity:.35}
+.cap{font-size:15px;font-style:italic;margin:-8px 0 14px;color:#4a443c;line-height:1.3}
+.cap b{font-style:normal;font-weight:700;letter-spacing:.5px}
+.polaroid{position:absolute;background:#f7f4ec;padding:16px 16px 64px;box-shadow:0 14px 26px rgba(0,0,0,.55);z-index:5}
+.polaroid .img{width:100%;height:100%;background-size:cover;filter:contrast(1.08) saturate(.85) sepia(.12)}
+.polaroid .pc{position:absolute;left:0;right:0;bottom:12px;text-align:center;font-family:'Permanent Marker';font-size:30px;color:#222}
+.polaroid .cr{position:absolute;right:10px;bottom:2px;font-family:'Old Standard TT';font-size:11px;color:#777}
+.tape{position:absolute;width:130px;height:38px;background:rgba(235,225,190,.75);box-shadow:0 1px 3px rgba(0,0,0,.2)}
+svg.draw path{fill:none;stroke:#c8231b;stroke-linecap:round;stroke-linejoin:round}
+</style></head>
+<style>
+.stat{display:flex;align-items:center;gap:26px;padding:18px 0;border-bottom:2px dashed #8d826d}
+.stat .num{font-family:'Playfair Display';font-weight:900;font-size:150px;line-height:.9;min-width:250px;text-align:right;color:#161412}
+.stat .lbl{font-family:'Oswald';font-weight:700;font-size:54px;letter-spacing:2px;line-height:1.05;text-align:left}
+</style>
+<body>
+<div id="stage">
+ <div id="world">
+  <div id="deskwrap"><div id="desk" style="left:0;top:0"></div></div>
+
+  <div class="paper" id="pA" data-x="0" data-y="-760" data-r="-2.5">
+   <div class="sheet torn txt" style="width:860px">
+    <div class="mast">The Matchday Chronicle</div>
+    <div class="rule"></div>
+    <div class="dateline"><span>Tuesday, February 5, 1985</span><span>Funchal</span><span>Archive</span></div>
+    <div class="rule"></div>
+    <div class="kicker" style="margin-top:14px">Funchal, Madeira</div>
+    <div class="hed" style="font-size:112px;margin-top:6px">A STAR IS BORN</div>
+    <div class="dek">A kit man's son arrives on the Portuguese island of <span class="hl" id="a0">Madeira</span></div>
+    <div class="photo real" style="height:330px;background-image:url(img/utd_2007.jpg);background-size:220% auto;background-position:13% 17%"></div><div class="cap"><b>THE BOY FROM FUNCHAL</b> Ronaldo, pictured at United in 2007. Photo: Sam &amp; Emer / CC BY 2.0</div>
+    <div class="body cols">
+     <p><span class="hl" id="a1">Cristiano Ronaldo</span> dos Santos Aveiro was born in Funchal on February 5, 1985, the youngest of four children.</p>
+     <p>His father, José Dinis Aveiro, worked as a kit man at local club Andorinha, and named his son after the American president Ronald Reagan.</p>
+     <p>The family lived modestly in the hills above the city, where the boy spent every spare hour with a ball at his feet.</p>
+    </div>
+   </div>
+  </div>
+
+  <div class="paper" id="pB" data-x="430" data-y="230" data-r="4">
+   <div class="sheet txt" style="width:700px;padding-top:36px">
+    <div style="display:flex;justify-content:space-between;align-items:center"><div class="hed" style="font-size:54px">Scouting File:<br>C. Ronaldo</div><div class="stamp" style="font-size:32px;color:#1d6b33;border-color:#1d6b33">PROSPECT</div></div>
+    <div class="rule"></div>
+    <div class="typed">
+     <div class="card-row"><span class="yr">AGE 12</span><span><span class="hl" id="b0">Leaves Madeira alone</span> for Sporting's academy in Lisbon</span></div>
+     <div class="card-row"><span class="yr">AGE 15</span><span>Surgery for a <span class="hl" id="b1">racing heart</span>. Back training within days</span></div>
+     <div class="card-row" style="border:0"><span class="yr">AGE 17</span><span>First-team debut for Sporting</span></div>
+    </div>
+   </div>
+  </div>
+
+  <div class="paper" id="pC" data-x="-410" data-y="880" data-r="-4">
+   <div class="polaroid" style="width:290px;height:370px;right:-80px;top:-240px;transform:rotate(9deg)"><div class="img" style="background-image:url(img/ferguson.jpg);background-size:cover;background-position:50% 20%"></div><div class="pc">Sir Alex</div><div class="cr">Photo: "photo with zoom" / CC BY 2.0</div><div class="tape" style="left:80px;top:-18px;transform:rotate(-4deg)"></div></div>
+   <div class="sheet torn txt" style="width:760px">
+    <div class="kicker">Manchester, August 2003</div>
+    <div class="hed" style="font-size:86px;margin:6px 0 4px">UNITED SIGN TEEN SENSATION</div>
+    <div class="rule"></div>
+    <div class="photo real" style="height:320px;margin-top:14px;background-image:url(img/utd_scores.jpg);background-size:190% auto;background-position:52% 30%"></div><div class="cap" style="margin-top:-6px">Ronaldo in United's No. 7 shirt, 2006. Photo: Ray Booysen / CC BY 2.0</div>
+    <div class="body">
+     <p style="text-indent:0">Manchester United have signed Cristiano Ronaldo, 18, days after he <span class="hl" id="c0">ran Manchester United ragged</span> in a friendly to open Sporting's new stadium.</p>
+     <p>Sir Alex Ferguson moved quickly, agreeing a fee of <span class="hl" id="c1">£12.24 million</span> and handing the teenager the No. 7 shirt.</p>
+    </div>
+   </div>
+  </div>
+
+  <div class="paper" id="pD" data-x="400" data-y="1430" data-r="3.5">
+   <div class="polaroid" style="width:280px;height:380px;left:-90px;top:-230px;transform:rotate(-8deg)"><div class="img" style="background-image:url(img/ballon2008.jpg);background-size:cover;background-position:50% 55%"></div><div class="pc">Ballon d'Or '08</div><div class="cr">Photo: Ank Kumar / CC BY-SA 4.0</div><div class="tape" style="left:75px;top:-18px;transform:rotate(5deg)"></div></div>
+   <div class="sheet torn txt" style="width:740px">
+    <div class="kicker">Madrid, June 2009</div>
+    <div class="hed" style="font-size:92px;margin:6px 0 4px">WORLD RECORD: £80M</div>
+    <div class="rule"></div>
+    <div class="photo real" style="height:320px;margin-top:14px;background-image:url(img/madrid.jpg);background-size:100% auto;background-position:50% 12%"></div><div class="cap" style="margin-top:-6px">Ronaldo with Real Madrid at the 2018 Champions League final. Photo: Anton Zaitsev / CC BY-SA 3.0</div>
+    <div class="body">
+     <p style="text-indent:0">Fresh from winning the <span class="hl" id="d0">Champions League and the Ballon d'Or</span> with United in 2008, Ronaldo joins Real Madrid for a <span class="hl" id="d1">world-record £80 million</span>.</p>
+    </div>
+   </div>
+  </div>
+
+  <div class="paper" id="pE" data-x="-60" data-y="-120" data-r="-1.5">
+   <div class="polaroid" style="width:270px;height:360px;right:-150px;top:-300px;transform:rotate(9deg)"><div class="img" style="background-image:url(img/ballon_cr.jpg);background-size:cover;background-position:50% 20%"></div><div class="pc">2015</div><div class="cr">Photo: Anish Morarji / CC BY 2.0</div><div class="tape" style="left:70px;top:-18px;transform:rotate(-5deg)"></div></div>
+   <div class="sheet torn txt" style="width:880px;padding:50px 60px 60px">
+    <div class="kicker" style="text-align:center">The career in numbers</div>
+    <div class="hed" style="font-size:84px;text-align:center;margin:6px 0 10px">BY THE NUMBERS</div>
+    <div class="rule"></div>
+    <div class="stat" id="s0"><span class="num">5</span><span class="lbl">BALLON<br>D'ORS</span></div>
+    <div class="stat" id="s1"><span class="num">5</span><span class="lbl">CHAMPIONS<br>LEAGUES</span></div>
+    <div class="stat" id="s2" style="border:0"><span class="num">900+</span><span class="lbl">CAREER<br>GOALS</span></div>
+   </div>
+  </div>
+
+  <div class="paper" id="pF" data-x="0" data-y="330" data-r="-1">
+   <div class="polaroid" style="width:330px;height:430px;left:-70px;top:-340px;transform:rotate(-8deg)"><div class="img" style="background-image:url(img/portugal2026.jpg);background-size:cover;background-position:50% 18%"></div><div class="pc">Portugal, 2026</div><div class="cr">Photo: Bryan Berlin / CC BY-SA 4.0</div><div class="tape" style="left:100px;top:-18px;transform:rotate(5deg)"></div></div>
+   <div class="sheet torn txt" style="width:820px;padding:60px 56px 70px;text-align:center">
+    <div class="mast" style="font-size:44px">The Matchday Chronicle</div>
+    <div class="rule"></div>
+    <div class="hed" style="font-size:96px;margin-top:20px;line-height:1.02"><span class="hl" id="f0">THE GREATEST</span><br>OF ALL TIME<span id="qmark" style="position:relative;display:inline-block">?
+      <svg class="draw" id="circ" style="position:absolute;left:-36px;top:-16px;width:130px;height:150px;overflow:visible" viewBox="0 0 150 170"><path d="M80 12 C 20 8, 2 70, 22 122 C 40 168, 126 166, 140 104 C 152 50, 110 6, 58 20" stroke-width="7"/></svg></span></div>
+    <div style="display:flex;justify-content:center;gap:90px;margin-top:40px;font-family:'Oswald';font-weight:700;font-size:58px">
+     <span>YES <span style="display:inline-block;width:56px;height:56px;border:5px solid #161412;vertical-align:-6px"></span></span>
+     <span>NO <span style="display:inline-block;width:56px;height:56px;border:5px solid #161412;vertical-align:-6px"></span></span>
+    </div>
+    <div class="marker" style="font-size:52px;margin-top:40px;transform:rotate(-3deg)"><span class="hl" id="f1" style="color:#c8231b!important">Tell me in the comments</span></div>
+   </div>
+  </div>
+ </div>
+ <div id="lightleak"></div><div id="flicker"></div><div id="vig"></div><div id="grain"></div>
+</div>
+<script>
+const TL=window.TL,S=TL.scenes;
+const clamp=(v,a=0,b=1)=>Math.max(a,Math.min(b,v)), lerp=(a,b,t)=>a+(b-a)*t;
+const ease=x=>{x=clamp(x);return x<.5?4*x*x*x:1-Math.pow(-2*x+2,3)/2}, easeOut=x=>1-Math.pow(1-clamp(x),3);
+const back=x=>{x=clamp(x);const c=1.9;return 1+(c+1)*Math.pow(x-1,3)+c*Math.pow(x-1,2)};
+const order=['A','B','C','D','E','F'], papers={};
+order.forEach((k,i)=>{const el=document.getElementById('p'+k);papers[k]={el,i,x:+el.dataset.x,y:+el.dataset.y,r:+el.dataset.r};el.style.zIndex=10+i;});
+const drops={}; order.forEach((k,i)=>drops[k]=i?S[i].start:-10);
+// highlight: [spanId, scene, cueKey]
+const HL=[['a0',0,'a0'],['a1',0,'a1'],['b0',1,'b0'],['b1',1,'b1'],['c0',2,'c0'],['c1',2,'c1'],['d0',3,'d0'],['d1',3,'d1'],['f0',5,'f0'],['f1',5,'f1']];
+const cueStart=(sc,k)=>Math.max(S[sc].cues[k], drops[order[sc]]+0.5);
+function layout(){for(const k of order){const P=papers[k];P.el.style.left=(P.x-P.w/2)+'px';P.el.style.top=(P.y-P.h/2)+'px';}}
+const M={};
+function measure(ids){for(const id of ids){const el=document.getElementById(id);const p=el.closest('.paper');const pr=p.getBoundingClientRect();
+  let l=1e9,t=1e9,r=-1e9,b=-1e9;for(const q of el.getClientRects()){l=Math.min(l,q.left);t=Math.min(t,q.top);r=Math.max(r,q.right);b=Math.max(b,q.bottom);}
+  M[id]={k:p.id.slice(1),cx:(l+r)/2-pr.left,cy:(t+b)/2-pr.top,w:r-l};}}
+function pt(id){const m=M[id],P=papers[m.k],lx=m.cx-P.w/2,ly=m.cy-P.h/2,a=P.r*Math.PI/180;
+  return {x:P.x+lx*Math.cos(a)-ly*Math.sin(a),y:P.y+lx*Math.sin(a)+ly*Math.cos(a),z:Math.min(1.7,820/m.w)};}
+let keys=[];
+function fit(k,f=1){const P=papers[k];return {x:P.x,y:P.y,z:Math.min(1000/P.w,1700/P.h)*f};}
+function buildKeys(){const sc=i=>S[i],c=pt; let p;
+ keys=[{t:-1,...fit('A'),r:2,d:.01}];
+ p=c('a0');keys.push({t:cueStart(0,'a0')-.5,...p,r:1.5,d:.9});
+ p=c('a1');keys.push({t:cueStart(0,'a1')-.5,...p,r:-1,d:.7});
+ keys.push({t:sc(1).start,...fit('B',.95),r:-3,d:.75});
+ p=c('b0');keys.push({t:cueStart(1,'b0')-.2,...p,r:-4,d:.7});
+ p=c('b1');keys.push({t:cueStart(1,'b1')-.5,...p,r:-3,d:.7});
+ keys.push({t:sc(2).start,...fit('C',.92),r:3,d:.75});
+ p=c('c0');keys.push({t:cueStart(2,'c0')-.5,...p,r:4,d:.8});
+ p=c('c1');keys.push({t:cueStart(2,'c1')-.5,...p,r:3,d:.7});
+ keys.push({t:sc(3).start,...fit('D',.92),r:-2,d:.75});
+ p=c('d0');keys.push({t:cueStart(3,'d0')-.5,...p,r:-3.5,d:.8});
+ p=c('d1');keys.push({t:cueStart(3,'d1')-.5,...p,r:-2.5,d:.7});
+ keys.push({t:sc(4).start,...fit('E',.9),r:1,d:.6});
+ for(const [i,k] of [[0,'e0'],[1,'e1'],[2,'e2']]){p=c('s'+i);keys.push({t:cueStart(4,k)-.3,x:p.x,y:p.y,z:1.25,r:1.5-i,d:.45});}
+ keys.push({t:sc(5).start,...fit('F'),r:0,d:.75});
+ keys.push({t:sc(5).cues.f1+.25,x:papers.F.x,y:papers.F.y+120,z:.6,r:-1.5,d:1.4});
+}
+function camPose(t){let pose={x:keys[0].x,y:keys[0].y,z:keys[0].z,r:keys[0].r};
+ for(let i=1;i<keys.length;i++){const k=keys[i],nt=i+1<keys.length?keys[i+1].t:1e9; if(t<k.t)break;
+  const te=Math.min(t,nt),u=ease((te-k.t)/k.d),f={...pose};
+  pose={x:lerp(f.x,k.x,u),y:lerp(f.y,k.y,u),z:lerp(f.z,k.z,u),r:lerp(f.r,k.r,u)};
+  const hold=Math.max(0,te-k.t-k.d*.6); pose.z*=1+.018*hold; pose.r+=.25*hold;}
+ return pose;}
+const grainEl=document.getElementById('grain');
+function cueP(t,sc,k){const s=cueStart(sc,k),e=S[sc].cues[k+'_end'];return easeOut((t-s+.05)/Math.max(.35,Math.min(.8,(e-S[sc].cues[k])*1.05)));}
+window.render=function(t,frame){
+ for(const k of order){const P=papers[k],t0=drops[k],u=clamp((t-t0)/.55);
+  if(t<t0){P.el.style.visibility='hidden';continue;} P.el.style.visibility='visible';
+  const e=easeOut(u),odd=k.charCodeAt(0)%2;
+  P.el.style.transform=`translate3d(${lerp((odd?1:-1)*260,0,e)}px,${lerp(-120,0,e)}px,${lerp(900,0,e)+P.i*.5}px) rotate(${P.r+lerp(odd?-14:12,0,e)}deg)`;
+  const nk=order[P.i+1]; const dim=(nk&&t>drops[nk])?clamp((t-drops[nk])/.6)*.45:0; const sh=lerp(70,18,e);
+  P.el.style.filter=`drop-shadow(0 ${sh}px ${sh*1.2}px rgba(0,0,0,${lerp(.25,.55,e)}))`+(dim?` brightness(${(1-dim).toFixed(3)})`:'');}
+ document.querySelectorAll('.polaroid').forEach(pl=>{const k=pl.closest('.paper').id.slice(1),u=easeOut((t-drops[k]-.5)/.45);
+  const base=pl.dataset.rot||(pl.dataset.rot=pl.style.transform); pl.style.opacity=u>0?1:0; pl.style.transform=base+` translate(${lerp(120,0,u)}px,${lerp(-160,0,u)}px) scale(${lerp(1.25,1,u)})`;});
+ for(const [id,sc,k] of HL) document.getElementById(id).style.setProperty('--p',cueP(t,sc,k).toFixed(4));
+ const dimSpec={A:[cueStart(0,'a0'),S[1].start],B:[cueStart(1,'b0'),S[2].start],C:[cueStart(2,'c0'),S[3].start],D:[cueStart(3,'d0'),S[4].start]};
+ for(const k in dimSpec){const [a,b]=dimSpec[k],u=clamp((t-a+.1)/.5)*(1-clamp((t-b)/.4)); papers[k].el.querySelector('.sheet').style.setProperty('--ink',(1-.62*u).toFixed(3));}
+ [['s0','e0'],['s1','e1'],['s2','e2']].forEach(([id,k])=>{const el=document.getElementById(id),u=clamp((t-cueStart(4,k)+.05)/.35);
+  el.style.opacity=u>0?1:0; el.querySelector('.num').style.transform=`scale(${lerp(2.4,1,back(u))}) rotate(${lerp(-12,0,u)}deg)`; el.querySelector('.num').style.display='inline-block';
+  el.querySelector('.num').style.color=u<1?'#c8231b':'#161412';});
+ const path=document.querySelector('#circ path'),L=path.getTotalLength(),cu=easeOut((t-(S[5].cues.f0_end+.05))/.6);
+ path.style.strokeDasharray=L; path.style.strokeDashoffset=L*(1-cu); path.style.opacity=cu>0?1:0;
+ const c=camPose(t),sh=Math.sin(t*1.7)*3+Math.sin(t*2.9)*2,sv=Math.cos(t*1.3)*3;
+ document.getElementById('world').style.transform=`rotateX(${6+Math.sin(t*.4)*2}deg) rotateY(${Math.sin(t*.33)*3}deg) scale(${c.z}) rotate(${c.r}deg) translate(${-c.x+sh}px,${-c.y+sv}px)`;
+ grainEl.style.backgroundImage=`url(grain${frame%6}.png)`;
+ document.getElementById('flicker').style.opacity=(.06+.05*Math.sin(frame*1.9)*Math.sin(frame*.71)).toFixed(3);
+ document.getElementById('stage').style.opacity=Math.min(clamp(t/.25),clamp((TL.total-t)/.35)).toFixed(3);
+};
+window.ready=(async()=>{await document.fonts.ready;
+ const urls=[...new Set([...document.documentElement.innerHTML.matchAll(/url\((img\/[^)]+)\)/g)].map(m=>m[1]).concat([0,1,2,3,4,5].map(i=>`grain${i}.png`)))];
+ await Promise.all(urls.map(u=>new Promise(r=>{const im=new Image();im.onload=r;im.onerror=r;im.src=u;})));
+ for(const k of order){papers[k].w=papers[k].el.offsetWidth;papers[k].h=papers[k].el.offsetHeight;} layout();
+ measure(['a0','a1','b0','b1','c0','c1','d0','d1','s0','s1','s2','f0','f1']); buildKeys(); return true;})();
+</script>
+</body></html>
