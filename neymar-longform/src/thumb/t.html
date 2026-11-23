@@ -1,0 +1,53 @@
+<!doctype html><html><head><meta charset="utf-8">
+<link href="https://fonts.googleapis.com/css2?family=Anton&family=Playfair+Display:wght@900&family=UnifrakturMaguntia&family=Oswald:wght@700&display=block" rel="stylesheet">
+<style>*{margin:0;padding:0;box-sizing:border-box}body{width:1280px;height:720px;overflow:hidden}
+.v{position:absolute;inset:0;display:none;overflow:hidden}
+.cut{position:absolute;filter:drop-shadow(0 0 3px #fff) drop-shadow(0 0 3px #fff) drop-shadow(0 18px 30px rgba(0,0,0,.7))}
+.big{font-family:'Anton';line-height:.86;text-transform:uppercase;letter-spacing:1px}
+.stroke{-webkit-text-stroke:10px #0b0b0d;paint-order:stroke fill}
+</style></head><body>
+<svg width="0" height="0" style="position:absolute"><defs>
+ <linearGradient id="gold" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#fff2a8"/><stop offset=".45" stop-color="#f5c22b"/><stop offset="1" stop-color="#a86b05"/></linearGradient>
+ <symbol id="crown" viewBox="0 0 200 130"><path d="M20 115 L8 32 L60 72 L100 8 L140 72 L192 32 L180 115 Z" fill="url(#gold)" stroke="#3a2500" stroke-width="7" stroke-linejoin="round"/>
+  <rect x="18" y="104" width="164" height="20" rx="4" fill="url(#gold)" stroke="#3a2500" stroke-width="6"/><circle cx="100" cy="8" r="9" fill="#e23" stroke="#3a2500" stroke-width="4"/><circle cx="8" cy="32" r="8" fill="url(#gold)" stroke="#3a2500" stroke-width="4"/><circle cx="192" cy="32" r="8" fill="url(#gold)" stroke="#3a2500" stroke-width="4"/>
+  <circle cx="100" cy="88" r="9" fill="#2a6bff" stroke="#3a2500" stroke-width="4"/></symbol>
+</defs></svg>
+
+<!-- A: before / after -->
+<div class="v" id="A">
+ <div style="position:absolute;inset:0;background:radial-gradient(circle at 25% 40%,#ffd56a 0,#d58a10 35%,#5a2a00 75%)"></div>
+ <div style="position:absolute;inset:0;background:radial-gradient(circle at 78% 45%,#6b7a8c 0,#2a3340 45%,#0b0e13 85%);clip-path:polygon(58% 0,100% 0,100% 100%,44% 100%)"></div>
+ <div style="position:absolute;left:0;top:0;width:100%;height:100%;clip-path:polygon(57.4% 0,58.6% 0,45.2% 100%,44% 100%);background:#fff"></div>
+ <img class="cut" src="psg_cut.png" style="left:-40px;top:70px;height:760px">
+ <svg style="position:absolute;left:120px;top:4px;width:230px;height:155px;transform:rotate(-12deg);filter:drop-shadow(0 10px 14px rgba(0,0,0,.5))"><use href="#crown"/></svg>
+ <img class="cut" src="brazil26_cut.png" style="right:-110px;top:40px;height:900px;filter:grayscale(.85) contrast(1.1) drop-shadow(0 0 3px #fff) drop-shadow(0 0 3px #fff) drop-shadow(0 18px 30px rgba(0,0,0,.7))">
+ <svg style="position:absolute;left:560px;top:575px;width:200px;height:130px;transform:rotate(-104deg);filter:grayscale(.55) brightness(.85) drop-shadow(-10px 8px 10px rgba(0,0,0,.7))"><use href="#crown"/><path d="M95 10 L110 50 L92 70 L112 120" stroke="#2a1800" stroke-width="7" fill="none"/></svg>
+ <div class="big stroke" style="position:absolute;left:452px;top:26px;font-size:146px;color:#fff;text-align:center;transform:rotate(-4deg)">NEVER<br><span style="color:#ffd61e">KING</span></div>
+ <div style="position:absolute;left:40px;bottom:34px;font-family:'Oswald';font-weight:700;font-size:44px;color:#fff;background:#c8231b;padding:2px 16px;transform:rotate(-3deg)">€222M</div>
+</div>
+
+<!-- B: single hero -->
+<div class="v" id="B">
+ <div style="position:absolute;inset:0;background:radial-gradient(circle at 70% 40%,#3b5b8a 0,#14213a 45%,#05070c 90%)"></div>
+ <div style="position:absolute;right:120px;top:-200px;width:700px;height:1100px;background:radial-gradient(ellipse at 50% 20%,rgba(255,230,150,.35),transparent 60%)"></div>
+ <img class="cut" src="brazil26_cut.png" style="right:-60px;top:70px;height:960px">
+ <svg style="position:absolute;left:830px;top:20px;width:270px;height:180px;transform:rotate(-24deg);filter:drop-shadow(0 12px 16px rgba(0,0,0,.6))"><use href="#crown"/></svg>
+ <svg style="position:absolute;left:880px;top:150px;width:120px;height:120px"><path d="M10 10 L50 60 M60 0 L70 70 M110 20 L85 75" stroke="#fff" stroke-width="6" stroke-linecap="round" opacity=".8"/></svg>
+ <div class="big stroke" style="position:absolute;left:46px;top:70px;font-size:96px;color:#fff">THE PRINCE<br>WHO NEVER<br>BECAME</div>
+ <div class="big stroke" style="position:absolute;left:40px;top:375px;font-size:250px;color:#ffd61e">KING</div>
+</div>
+
+<!-- C: newspaper break-out -->
+<div class="v" id="C" style="background:#262a33 url(desk.jpg);background-size:900px">
+ <div style="position:absolute;left:60px;top:40px;width:1160px;height:650px;background:#eee6d4 url(paper.jpg);background-size:700px;transform:rotate(-2deg);box-shadow:0 30px 50px rgba(0,0,0,.7);padding:26px 40px">
+  <div style="font-family:'UnifrakturMaguntia';font-size:54px;text-align:center">The Matchday Chronicle</div>
+  <div style="border-top:4px double #161412;border-bottom:1px solid #161412;height:8px;margin:8px 0 14px"></div>
+  <div style="position:absolute;left:40px;top:120px;width:520px;font-family:'Playfair Display';font-weight:900;font-size:120px;line-height:.9;color:#161412">NEVER<br><span style="background:linear-gradient(100deg,transparent,#ffd61e 3%,#ffd61e 97%,transparent);padding:0 12px">KING</span></div>
+  <div style="position:absolute;left:46px;top:370px;width:500px;font-family:'Oswald';font-weight:700;font-size:40px;line-height:1.1;color:#a3221b">€222 MILLION. 80 GOALS.<br>NO BALLON D'OR.</div>
+  <div style="position:absolute;right:40px;top:110px;width:520px;height:500px;background:#2b2a28;filter:grayscale(1)"><div style="position:absolute;inset:0;background-image:radial-gradient(circle,#000 30%,transparent 34%);background-size:6px 6px;opacity:.25"></div></div>
+ </div>
+ <img class="cut" src="brazil26_cut.png" style="right:30px;top:-10px;height:860px;filter:drop-shadow(0 0 3px #fff) drop-shadow(0 0 3px #fff) drop-shadow(0 26px 30px rgba(0,0,0,.75))">
+ <svg style="position:absolute;left:810px;top:520px;width:250px;height:170px;transform:rotate(170deg);filter:drop-shadow(0 8px 10px rgba(0,0,0,.6))"><use href="#crown"/><path d="M95 10 L110 50 L92 70 L112 120" stroke="#2a1800" stroke-width="7" fill="none"/></svg>
+ 
+</div>
+</body></html>
