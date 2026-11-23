@@ -1,0 +1,96 @@
+{
+ "duration": 31.589,
+ "voice": "af_heart",
+ "lines": [
+  {
+   "i": 0,
+   "text": "Your life is a movie. And right now, you're the main character.",
+   "start": 0.15,
+   "end": 3.215
+  },
+  {
+   "i": 1,
+   "text": "But here's the problem.",
+   "start": 3.365,
+   "end": 4.479
+  },
+  {
+   "i": 2,
+   "text": "Most people let someone else write their script.",
+   "start": 4.599,
+   "end": 6.582
+  },
+  {
+   "i": 3,
+   "text": "Their parents. Their friends. Their fears.",
+   "start": 6.682,
+   "end": 8.677
+  },
+  {
+   "i": 4,
+   "text": "So they end up as an extra, in their own story.",
+   "start": 8.827,
+   "end": 11.126
+  },
+  {
+   "i": 5,
+   "text": "Same scene. Every single day. Waiting for the plot to change.",
+   "start": 11.246,
+   "end": 14.624
+  },
+  {
+   "i": 6,
+   "text": "But the plot doesn't change, until you do.",
+   "start": 14.774,
+   "end": 16.856
+  },
+  {
+   "i": 7,
+   "text": "So pick up the pen.",
+   "start": 17.106,
+   "end": 18.149
+  },
+  {
+   "i": 8,
+   "text": "Write the scene where you wake up early.",
+   "start": 18.299,
+   "end": 19.919
+  },
+  {
+   "i": 9,
+   "text": "Where you fall, and get back up.",
+   "start": 19.999,
+   "end": 21.516
+  },
+  {
+   "i": 10,
+   "text": "Where everyone doubted you, and you kept going.",
+   "start": 21.596,
+   "end": 23.784
+  },
+  {
+   "i": 11,
+   "text": "Every great movie has a hard part in the middle.",
+   "start": 23.934,
+   "end": 26.314
+  },
+  {
+   "i": 12,
+   "text": "That's not your ending. That's your comeback.",
+   "start": 26.414,
+   "end": 28.456
+  },
+  {
+   "i": 13,
+   "text": "So stop watching your life from the audience.",
+   "start": 28.656,
+   "end": 30.756
+  },
+  {
+   "i": 14,
+   "text": "And remember,",
+   "start": 30.876,
+   "end": 31.589
+  }
+ ]
+}
