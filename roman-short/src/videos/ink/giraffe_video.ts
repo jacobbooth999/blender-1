@@ -2,7 +2,9 @@
 // explainer look and animated per frame: slow push-ins, blinks, tail swishes, gallop cycles, a pumping heart,
 // flowing dashed lines. Every shot starts on its sentence (timeline.json); long sentences get two shots.
 import { Ink, P, INKC, PAPER, RED, BLUE } from "./ink2d";
-import { giraffe, giraffeHead, lioness, zebra, acacia } from "./animals2d";
+import { giraffeHead, acacia } from "./animals2d";
+import { quad, gaitSpeed, GIRAFFE, CALF, ANCESTOR, LIONESS, ZEBRA, Species } from "./quadruped";
+const MIDNECK: Species = { ...GIRAFFE, neckLen: 0.6, neckW0: 0.26, neckW1: 0.11 };
 import TL from "../../../videos_ink/giraffe/timeline.json";
 
 type S = { i: number; text: string; start: number; end: number };
@@ -58,8 +60,8 @@ const SHOTS: Shot[] = [
   { at: 0, push: [960, 560, 0.05], draw: (ink, t, lt) => {
     savanna(ink, t);
     acacia(ink, 400, 700, 300, "#7c9a4a", 3); acacia(ink, 1500, 660, 220, "#86a252", 4);
-    zebra(ink, 1500, 900, 150, { headDown: true }, true);
-    giraffe(ink, 1000, 980, 400, { pose: "hide", look: "front", brow: "worried", blink: blink(t, 1), swish: Math.sin(t * 1.6), sweat: lt > 1.6 }, true);
+    quad(ink, ZEBRA, 1500, 900, 150, { gait: "graze", t }, true);
+    quad(ink, GIRAFFE, 1000, 980, 420, { gait: "stand", t, head: "front", brow: "worried", blink: blink(t, 1), sweat: lt > 1.6 }, true);
     acacia(ink, 960, 990, 330, "#7c9a4a", 5);
     tallGrass(ink, -50, 2000, 1090, 60, 7, "#c9a24a", t);
   } },
@@ -70,7 +72,7 @@ const SHOTS: Shot[] = [
     for (let i = 0; i < 9; i++) { const x = 60 + i * 230, h = 380 + (i % 3) * 60; ink.shape([[x - 22, 700], [x - 14, 700 - h], [x + 14, 700 - h], [x + 22, 700]], "#7a5a3a", 2.4); for (const [dx, dy, r] of [[0, -h, 120], [-80, -h + 50, 90], [80, -h + 40, 95]]) ink.ell(x + dx, 700 + dy, r, r * 0.75, "#5f8a4a", 2.4); }
     ground(ink, 700, "#93a86a", "#72884e", 200, 22);
     for (let i = 0; i < 8; i++) { const x = 100 + i * 250; for (let k = -3; k <= 3; k++) ink.line(ink.curve([x, 1000], [x + k * 18, 940], [x + k * 40, 900 + Math.abs(k) * 10]), 4, "#4f7a3c", 0.3); }
-    giraffe(ink, 820 + lt * 25, 960, 300, { kind: "ancestor", pose: "walk", phase: lt * 0.7, blink: blink(t, 2), swish: Math.sin(t * 1.4) });
+    quad(ink, ANCESTOR, 620 + lt * gaitSpeed(ANCESTOR, "walk") * 300, 960, 300, { gait: "walk", t: lt, blink: blink(t, 2) });
     label(ink, "MILLIONS OF YEARS AGO", 1500, 140, 64, INKC, lt * 2);
   } },
   // 2a. natural selection: necks get longer
@@ -79,7 +81,7 @@ const SHOTS: Shot[] = [
     title(ink, "NATURAL SELECTION.", 960, 120, 110, lt);
     const ks = [0, 1, 2];
     ks.forEach((k) => { const show = clamp01((lt - 0.4 - k * 0.9) * 3); if (!show) return; ink.g.globalAlpha = show;
-      giraffe(ink, 400 + k * 560, 900, 240, { kind: k === 0 ? "ancestor" : "adult", neckTilt: k === 1 ? 0.3 : 0, blink: blink(t, 10 + k) }); ink.g.globalAlpha = 1; });
+      quad(ink, [ANCESTOR, MIDNECK, GIRAFFE][k], 400 + k * 560, 900, 250, { gait: "stand", t: t + k, blink: blink(t, 10 + k) }); ink.g.globalAlpha = 1; });
     if (lt > 1.3) arrow(ink, [580, 960], [800, 960], INKC, 5);
     if (lt > 2.2) arrow(ink, [1140, 960], [1360, 960], INKC, 5);
     label(ink, "generation after generation...", 960, 1030, 46, "#6a655f", lt - 2.6);
@@ -88,8 +90,8 @@ const SHOTS: Shot[] = [
   { at: at(2, "allowing"), push: [1100, 400, 0.05], draw: (ink, t, lt) => {
     savanna(ink, t, 700, 5);
     acacia(ink, 1150, 1000, 900, "#7c9a4a", 8);
-    zebra(ink, 520, 960, 190, { headDown: true });
-    giraffe(ink, 880, 1010, 470, { pose: "eat", tongue: 0.6 + 0.4 * Math.sin(t * 3), chew: Math.sin(t * 6) > 0 ? 1 : 0, blink: blink(t, 3), swish: Math.sin(t * 1.5) });
+    quad(ink, ZEBRA, 480, 960, 190, { gait: "graze", t });
+    quad(ink, GIRAFFE, 860, 1010, 470, { gait: "eat", t, tongue: 0.6 + 0.4 * Math.sin(t * 3), chew: Math.sin(t * 6) > 0 ? 1 : 0, blink: blink(t, 3) });
     if (lt > 0.8) check(ink, 1500, 230, 80);
     if (lt > 1.4) { cross(ink, 300, 760, 60); label(ink, "too high!", 300, 680, 48, RED, lt - 1.4); }
     tallGrass(ink, -50, 2000, 1090, 50, 9, "#c9a24a", t);
@@ -98,16 +100,16 @@ const SHOTS: Shot[] = [
   { at: at(3), push: [960, 560, 0.035], draw: (ink, t, lt) => {
     paper(ink);
     title(ink, "BONUS: HEIGHT.", 820, 300, 150, lt);
-    giraffe(ink, 1450, 1010, 420, { pose: "alert", look: "front", brow: "proud", blink: blink(t, 4), swish: Math.sin(t * 1.5) });
+    quad(ink, GIRAFFE, 1450, 1010, 420, { gait: "stand", t, head: "front", brow: "proud", blink: blink(t, 4), neckAdd: 0.2 });
     if (lt > 0.5) { ink.line([[1750, 1000], [1750, 240]], 4, BLUE, 0.4); for (const y of [1000, 240]) ink.line([[1725, y], [1775, y]], 4, BLUE, 0.3); label(ink, "up to 5.5 m", 1750, 200, 50, BLUE, lt - 0.5); }
   } },
   // 4. spotting predators from far away
   { at: at(4), push: [700, 400, 0.04], draw: (ink, t, lt) => {
     savanna(ink, t, 680, 11);
     acacia(ink, 1300, 700, 260, "#86a252", 12);
-    giraffe(ink, 380, 1020, 470, { pose: "alert", look: "front", brow: "alert", blink: blink(t, 5), swish: Math.sin(t * 1.4) });
+    quad(ink, GIRAFFE, 380, 1020, 470, { gait: "stand", t, head: "front", brow: "alert", blink: blink(t, 5), neckAdd: 0.2 });
     // the lioness, tiny and far, in the grass
-    lioness(ink, 1560, 770, 46, { pose: "stalk", swish: Math.sin(t * 2) }, true);
+    quad(ink, LIONESS, 1600 - lt * gaitSpeed(LIONESS, "walk") * 46 * 0.6, 770, 46, { gait: "stalk", t: lt * 0.6 }, true);
     tallGrass(ink, 1450, 1720, 775, 30, 13, "#c9a24a", t);
     const k = ease((lt - 0.8) / 1.2);
     if (k > 0) dashed(ink, [[470, 170], [470 + (1540 - 470) * k, 170 + (735 - 170) * k]], RED, 4, t * 60);
@@ -118,19 +120,19 @@ const SHOTS: Shot[] = [
   { at: at(5), push: [960, 560, 0.035], draw: (ink, t, lt) => {
     paper(ink);
     title(ink, "NOT EXACTLY SLOW.", 960, 160, 120, lt);
-    giraffe(ink, 960, 1000, 380, { pose: "run", phase: t * 1.4, blink: false, brow: "alert", swish: 0.8 });
+    quad(ink, GIRAFFE, 960, 1000, 380, { gait: "gallop", t, brow: "alert" });
     dust(ink, 760, 1000, t);
   } },
   // 6. up to ~60 km/h, leaving the lioness behind
   { at: at(6), draw: (ink, t, lt) => {
-    const scroll = (t * 380) % 1920;
+    const vG = gaitSpeed(GIRAFFE, "gallop") * 430, scroll = (lt * vG * 0.45) % 1920; // trees in the middle distance; the ground at full gallop speed
     sky(ink, 640, [[0, "#8fc7e8"], [1, "#e6f2ef"]]); sun(ink, 1650, 150, 62);
     const g = ink.g; g.save(); g.translate(-scroll * 0.2, 0); hills(ink, 620, 28, "#b8b48a", 31, 1.5); g.restore();
     ground(ink, 640, "#dcc27a", "#c9a55a", 0, 32);
     for (let k = 0; k < 2; k++) { g.save(); g.translate(-scroll + k * 1920, 0); acacia(ink, 400, 690, 240, "#86a252", 33); acacia(ink, 1300, 700, 300, "#7c9a4a", 34); g.restore(); }
-    for (let k = 0; k < 2; k++) { g.save(); g.translate(-(scroll * 2.2 % 1920) + k * 1920, 0); ink.seed(35); const pts: P[] = [[0, 640], [1920, 640], [1920, 1080], [0, 1080]]; ink.hatch(pts, 160, 18, "rgba(110,90,40,0.5)", 2.4, -Math.PI / 2, 0.7); g.restore(); }
-    lioness(ink, 330 - lt * 40, 990, 120, { pose: "run", phase: t * 2.2 }); dust(ink, 250 - lt * 40, 990, t + 0.3);
-    giraffe(ink, 1050, 1000, 430, { pose: "run", phase: t * 1.6, brow: "proud", swish: 0.9 });
+    for (let k = 0; k < 2; k++) { g.save(); g.translate(-((lt * vG) % 1920) + k * 1920, 0); ink.seed(35); const pts: P[] = [[0, 640], [1920, 640], [1920, 1080], [0, 1080]]; ink.hatch(pts, 160, 18, "rgba(110,90,40,0.5)", 2.4, -Math.PI / 2, 0.7); g.restore(); }
+    quad(ink, LIONESS, 330 - lt * 40, 990, 130, { gait: "gallop", t: t * 0.9, mouth: "pant" }); dust(ink, 230 - lt * 40, 990, t + 0.3);
+    quad(ink, GIRAFFE, 1050, 1000, 430, { gait: "gallop", t, brow: "proud" });
     speedLines(ink, 760, 520, 5, 220, t); dust(ink, 860, 1000, t);
     // speedometer badge
     ink.ell(1690, 220, 140, 140, PAPER, 4); ink.arc(1690, 240, 105, 105, Math.PI, Math.PI * 2, 6, INKC);
@@ -154,7 +156,7 @@ const SHOTS: Shot[] = [
   { at: at(8), push: [960, 560, 0.035], draw: (ink, t, lt) => {
     paper(ink);
     title(ink, "THE SECRET IS INSIDE.", 960, 140, 110, lt);
-    ink.g.globalAlpha = 0.35; giraffe(ink, 960, 1010, 420, { pose: "stand", blink: true }); ink.g.globalAlpha = 1;
+    ink.g.globalAlpha = 0.35; quad(ink, GIRAFFE, 960, 1010, 420, { gait: "stand", t, blink: true }); ink.g.globalAlpha = 1;
     const beat = 1 + 0.12 * Math.max(0, Math.sin(t * 7.5)) ** 4;
     const hx = 1040, hy = 560; ink.shape(heartPts(hx, hy, 38 * beat), RED, 3);
     if (lt > 0.6) { label(ink, "heart", 1180, 560, 50, RED, lt - 0.6); ink.line([[1090, 560], [1140, 560]], 3, RED, 0.2); }
@@ -179,15 +181,15 @@ const SHOTS: Shot[] = [
   { at: at(10), push: [960, 560, 0.035], draw: (ink, t, lt) => {
     paper(ink);
     title(ink, "NOT INVINCIBLE.", 820, 300, 150, lt);
-    giraffe(ink, 1480, 1010, 400, { pose: "alert", look: "front", brow: "worried", blink: blink(t, 9), sweat: true });
+    quad(ink, GIRAFFE, 1480, 1010, 400, { gait: "stand", t, head: "front", brow: "worried", blink: blink(t, 9), sweat: true });
   } },
   // 11a. lions still hunt them, especially calves
   { at: at(11), push: [900, 700, 0.05], draw: (ink, t, lt) => {
     savanna(ink, t, 660, 51);
     acacia(ink, 1600, 690, 260, "#86a252", 52);
-    giraffe(ink, 1250, 1000, 420, { pose: "alert", look: "front", brow: "alert", blink: blink(t, 11), swish: Math.sin(t * 1.5) });
-    giraffe(ink, 900, 1010, 220, { kind: "calf", pose: "stand", blink: blink(t, 12), swish: Math.sin(t * 2) });
-    lioness(ink, 260 + lt * 40, 1030, 150, { pose: "stalk", swish: Math.sin(t * 2.2) });
+    quad(ink, GIRAFFE, 1250, 1000, 420, { gait: "stand", t, head: "front", brow: "alert", blink: blink(t, 11), neckAdd: 0.15 });
+    quad(ink, CALF, 880, 1010, 230, { gait: "stand", t: t + 2, blink: blink(t, 12) });
+    quad(ink, LIONESS, 200 + lt * gaitSpeed(LIONESS, "walk") * 150 * 0.5, 1030, 150, { gait: "stalk", t: lt * 0.5, brow: "alert" });
     tallGrass(ink, -50, 700, 1060, 120, 53, "#c9a24a", t);
     tallGrass(ink, -50, 2000, 1095, 45, 54, "#c9a24a", t);
     bang(ink, 1330, 380, 80, lt - 1.2);
@@ -204,19 +206,22 @@ const SHOTS: Shot[] = [
     // fence
     for (let x = 900; x < 2000; x += 120) ink.line([[x, 1000], [x, 860]], 7, "#6e4a32", 0.4);
     for (const y of [890, 930, 970]) ink.line([[900, y], [1990, y]], 2, "#5a5a60", 0.6);
-    giraffe(ink, 640, 1060, 380, { pose: "stand", look: "front", brow: "worried", blink: blink(t, 13), swish: Math.sin(t * 1.2) });
+    quad(ink, GIRAFFE, 640, 1060, 380, { gait: "stand", t, head: "front", brow: "worried", blink: blink(t, 13) });
   } },
   // 12. survivors: a giraffe family at sunset
   { at: at(12), push: [960, 560, 0.06], draw: (ink, t, lt) => {
     sky(ink, 700, [[0, "#5b5c94"], [0.55, "#e58f72"], [1, "#ffd08a"]]);
     ink.ell(1300, 560, 120, 120, "#fff1c9", null);
     hills(ink, 690, 30, "#8a6a6e", 71, 1.6);
-    ground(ink, 700, "#c98a5a", "#7a5a52", 160, 72);
-    acacia(ink, 380, 760, 300, "#5a6a3a", 73); acacia(ink, 1700, 740, 240, "#5a6a3a", 74);
-    const x0 = 520 + lt * 30;
-    giraffe(ink, x0 + 520, 980, 420, { pose: "walk", phase: lt * 0.6, blink: blink(t, 14), swish: Math.sin(t * 1.3), brow: "proud" });
-    giraffe(ink, x0 + 150, 990, 380, { pose: "walk", phase: lt * 0.6 + 0.4, blink: blink(t, 15), swish: Math.sin(t * 1.5 + 1) });
-    giraffe(ink, x0 + 320, 1000, 200, { kind: "calf", pose: "walk", phase: lt * 0.9 + 0.2, blink: blink(t, 16), swish: Math.sin(t * 2) });
+    // tracking shot: the family walks at its natural cadence, the ground slides past at the same speed (feet stay planted)
+    const v = gaitSpeed(GIRAFFE, "walk") * 400, off = lt * v, g = ink.g;
+    ground(ink, 700, "#c98a5a", "#7a5a52", 0, 72);
+    for (let k = -1; k < 2; k++) { g.save(); g.translate(-(off * 0.35 % 1920) + k * 1920, 0); acacia(ink, 380, 760, 300, "#5a6a3a", 73); acacia(ink, 1300, 745, 200, "#5a6a3a", 75); g.restore(); }
+    for (let k = -1; k < 2; k++) { g.save(); g.translate(-(off % 1920) + k * 1920, 0); ink.seed(76); ink.hatch([[0, 700], [1920, 700], [1920, 1080], [0, 1080]], 170, 18, "rgba(70,40,30,0.45)", 2.4, -Math.PI / 2, 0.7); g.restore(); }
+    const kC = v / (gaitSpeed(CALF, "walk") * 210);
+    quad(ink, GIRAFFE, 520, 990, 380, { gait: "walk", t: lt * (400 / 380) + 0.4, blink: blink(t, 15) });
+    quad(ink, GIRAFFE, 1120, 980, 420, { gait: "walk", t: lt * (400 / 420), blink: blink(t, 14), brow: "proud" });
+    quad(ink, CALF, 820, 1005, 210, { gait: "walk", t: lt * kC + 0.2, blink: blink(t, 16) });
   } },
 ];
 function heartPts(x: number, y: number, s: number): P[] {
