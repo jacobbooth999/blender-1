@@ -1,10 +1,10 @@
 // Who stands where in each of the seven stills: people (rome/toon.ts bodies) and dogs (dog.ts) as lit flat cards,
 // each with a contact shadow (+ a sun-side tail by day), plus effect cards (fire, splash).
 import * as THREE from "three";
-import { Pen, bodyFront, bodySide, fxShadow, fxContact, fxFlame, fxSplash, fxSteam, Outfit, FrontOpts, SideOpts, SKINS, KID, INK } from "../rome/toon";
+import { Pen, bodyFront, bodySide, fxShadow, fxContact, fxFlame, fxSplash, fxSteam, fxSpeed, Outfit, FrontOpts, SideOpts, SKINS, KID, INK } from "../rome/toon";
 import { Place, FxPlace, CamInfo } from "../rome/cast";
-import { drawDog, Dog, DogPose, WOLF, EARLY_DOG, WATER_DOG, TWEED, NOUS, PUP, KEEPER_GOLDEN, GOLDEN } from "./dog";
-import { SHOTS, O } from "./story";
+import { drawDog, drawDogFront, DogFrontPose, Dog, DogPose, WOLF, EARLY_DOG, WATER_DOG, TWEED, NOUS, PUP, KEEPER_GOLDEN, GOLDEN } from "./dog";
+import { SHOTS, shotO } from "./story";
 
 export type Stage = { places: Place[]; fx: FxPlace[] };
 const tmp = new THREE.Vector3();
@@ -65,6 +65,17 @@ const dog = (c: Ctx, s: DSpec) => {
   const sz = (s.d.size ?? 1) * (s.d.puppy ? 0.5 : 1);
   if (!s.noBlob) blob(c, x, y, z, 1.0 * sz, 0.42 * sz, 0.8 * sz);
 };
+type FSpec = { d: Dog; pose: DogFrontPose; x: number; z: number; y?: number; noBlob?: boolean };
+/** a dog card drawn face-on (it looks straight at the lens) */
+const dogF = (c: Ctx, s: FSpec) => {
+  const x = c.o[0] + s.x, z = c.o[2] + s.z, y = s.y ?? 0;
+  const dist = c.cam.pos.distanceTo(tmp.set(x, y + 0.5, z));
+  const [w, h, k] = tier(dist * 0.8);
+  const pose: DogFrontPose = { ...s.pose, light: light2D(c.cam, c.sun, false) };
+  c.out.places.push({ key: `DF|${fkey(s.d)}|${fkey(pose)}`, x, y, z, size: [w, h, k], draw: (p) => drawDogFront(p, s.d, pose) });
+  const sz = (s.d.size ?? 1) * (s.d.puppy ? 0.5 : 1);
+  if (!s.noBlob) blob(c, x, y, z, 0.62 * sz, 0.5 * sz, 0.7 * sz);
+};
 const fx = (c: Ctx, key: string, cw: number, ch: number, draw: (p: Pen) => void, x: number, y: number, z: number, w: number, h: number, extra: Partial<FxPlace> = {}) =>
   c.out.fx.push({ key, cw, ch, draw, x: c.o[0] + x, y, z: c.o[2] + z, w, h, ...extra });
 
@@ -77,59 +88,97 @@ const LORD: Outfit = { jacket: "#2f4a3c", pants: "#6a6450", boots: "#2a201a", ha
 const KEEPER: Outfit = { jacket: "#8a6a3a", pants: "#6a5a3a", boots: "#4a3426", hat: "cap", cap: "#5a4630", moustache: "#5a3b2a", skin: SKINS[1], rifle: true, belt: "#4a3020" };
 const BOY: Outfit = { ...KID, jacket: "#3f8fd2", pants: "#3b4a6a", boots: "#f4f1ea", cap: "#e2453c" };
 
-// ---------------- the seven scenes ----------------
-const SCENES: ((c: Ctx) => void)[] = [
-  // 1. wolf: howling on the outcrop at sunset, a second wolf below looking up
-  (c) => {
-    dog(c, { d: WOLF, pose: { pose: "howl", mouth: "O", eye: "happy" }, x: 0.15, z: 0.1, y: 2.12, noBlob: true });
-    dog(c, { d: WOLF, pose: { pose: "stand", eye: "up", headTilt: -12 }, x: -0.4, z: -1.7 });
+// ---------------- the scenes (keyed by shot name) ----------------
+// screen directions are for the final (mirrored) frame; person `look` +1 = eyes toward screen-left
+const SCENES: Record<string, (c: Ctx) => void> = {
+  // Ice Age: howling on the outcrop at sunset, a second wolf below looking up at the howl
+  wolf: (c) => {
+    dog(c, { d: WOLF, pose: { pose: "howl", mouth: "O", eye: "happy", wag: -8 }, x: 0.15, z: 0.1, y: 2.12, noBlob: true });
+    dog(c, { d: WOLF, pose: { pose: "stand", eye: "up", headTilt: -16, wag: 6 }, x: -0.4, z: -1.7 });
   },
-  // 2. stone-age camp: a kid shares the fire with a half-tame dog, the hunter looks on
-  (c) => {
-    person(c, { o: HUNTER, x: 0.75, z: 2.9, seed: 3, fo: { mode: "stand", expr: "smile", prop: "spear" } });
-    person(c, { o: CAVE_KID, x: 0.05, z: 1.3, seed: 5, fo: { mode: "sit", expr: "grin", prop: "arms" } });
-    dog(c, { d: EARLY_DOG, pose: { pose: "sit", mouth: "smile" }, x: -0.55, z: 0.75 });
+  // face-on: a wolf stares down the lens, its packmate howling on the rock behind
+  wolfFace: (c) => {
+    dogF(c, { d: WOLF, pose: { pose: "stand", mouth: "stern", brow: "proud" }, x: 1.4, z: -2.6 });
+    dog(c, { d: WOLF, pose: { pose: "howl", mouth: "O", eye: "happy", wag: -8 }, x: 0.15, z: 0.1, y: 2.12, noBlob: true });
+  },
+  // Stone Age camp: a kid shares the fire with a half-tame dog, the hunter looks on
+  camp: (c) => {
+    person(c, { o: HUNTER, x: 0.75, z: 2.9, seed: 3, fo: { mode: "stand", expr: "smile", prop: "spear", look: 0.8, headTilt: 6 } });
+    person(c, { o: CAVE_KID, x: 0.05, z: 1.3, seed: 5, fo: { mode: "sit", expr: "laugh", prop: "arms", look: 1, headTilt: 8 } });
+    dog(c, { d: EARLY_DOG, pose: { pose: "sit", mouth: "smile", wag: 22, wagLines: true, brow: "happy", headTilt: -8 }, x: -0.55, z: 0.75 });
     fx(c, "flame0.3", 300, 400, (p) => fxFlame(p, 0.3), 0.55, 0.42, 0.55, 0.58, 0.78);
   },
-  // 3. Newfoundland: the black water dog brings in a fish to its fisherman
-  (c) => {
-    person(c, { o: FISHER, x: 0.75, z: 5.2, y: 0.2, seed: 2, fo: { mode: "stand", expr: "laugh", prop: "arms" } });
-    dog(c, { d: WATER_DOG, pose: { pose: "stand", mouth: "fish" }, x: -0.3, z: 4.1, y: 0.2 });
+  // face-on: the first dog, sitting by the fire, tail going
+  campFace: (c) => {
+    dogF(c, { d: EARLY_DOG, pose: { pose: "sit", mouth: "smile", brow: "happy", wag: 18, wagLines: true, headTilt: -8 }, x: -0.35, z: -0.2 });
+    person(c, { o: CAVE_KID, x: 0.2, z: 1.1, seed: 5, fo: { mode: "sit", expr: "laugh", prop: "cheer", look: 1 } });
+    fx(c, "flame0.55", 300, 400, (p) => fxFlame(p, 0.55), 0.55, 0.42, 0.55, 0.58, 0.78);
   },
-  // 4. the river Tweed: a curly liver Tweed Water Spaniel on the bank, its ghillie behind
-  (c) => {
-    dog(c, { d: TWEED, pose: { pose: "stand", mouth: "smile" }, x: -0.2, z: 1.6, left: true });
-    person(c, { o: GHILLIE, x: 1.1, z: 2.8, seed: 6, fo: { mode: "stand", expr: "smile" } });
+  // Newfoundland: the black water dog brings in a fish to its fisherman
+  dock: (c) => {
+    person(c, { o: FISHER, x: 0.75, z: 5.2, y: 0.2, seed: 2, fo: { mode: "stand", expr: "laugh", wave: 0.6, look: 1 } });
+    dog(c, { d: WATER_DOG, pose: { pose: "walk", phase: 0.25, mouth: "fish", wag: 24, wagLines: true, brow: "proud" }, x: -0.3, z: 4.1, y: 0.2 });
   },
-  // 5. Guisachan 1868: the lord with Nous and Belle and their four yellow puppies
-  (c) => {
-    person(c, { o: LORD, x: 1.3, z: 2.5, seed: 1, fo: { mode: "stand", expr: "smile" } });
-    dog(c, { d: NOUS, pose: { pose: "sit", mouth: "closed" }, x: 0.2, z: 2.0, left: true });
-    dog(c, { d: TWEED, pose: { pose: "sit", mouth: "smile" }, x: -0.95, z: 2.2 });
-    dog(c, { d: PUP, pose: { pose: "sit", mouth: "smile" }, x: -0.55, z: 0.75 });
-    dog(c, { d: PUP, pose: { pose: "stand", mouth: "open", eye: "happy" }, x: 0.15, z: 0.45 });
-    dog(c, { d: PUP, pose: { pose: "sit", mouth: "closed", headTilt: 14 }, x: 0.75, z: 0.95, left: true });
-    dog(c, { d: PUP, pose: { pose: "walk", mouth: "smile", phase: 0.3 }, x: -0.05, z: 1.15 });
+  // face-on: the water dog sits on the dock, its fisherman waving behind
+  dockFace: (c) => {
+    dogF(c, { d: WATER_DOG, pose: { pose: "sit", mouth: "smile", brow: "happy", wag: 14, wagLines: true }, x: 0.0, z: 3.0, y: 0.2 });
+    person(c, { o: FISHER, x: 0.55, z: 4.9, y: 0.2, seed: 2, fo: { mode: "stand", expr: "grin", wave: 0.8, look: 0.6 } });
   },
-  // 6. the marsh at sunset: the golden retriever wades out with a duck for the gamekeeper
-  (c) => {
-    person(c, { o: KEEPER, x: -0.5, z: 1.9, seed: 4, fo: { mode: "stand", expr: "smile" } });
-    dog(c, { d: KEEPER_GOLDEN, pose: { pose: "walk", mouth: "duck", phase: 0.15 }, x: 0.25, z: 1.3, left: true, noBlob: true });
+  // the river Tweed: a curly liver Tweed Water Spaniel on the bank, its ghillie behind
+  tweed: (c) => {
+    dog(c, { d: TWEED, pose: { pose: "stand", mouth: "smile", wag: 28, wagLines: true, brow: "happy", headTilt: -6 }, x: -0.2, z: 1.6, left: true });
+    person(c, { o: GHILLIE, x: 1.1, z: 2.8, seed: 6, fo: { mode: "stand", expr: "smile", look: 1, headTilt: 5 } });
+  },
+  // Guisachan 1868: Sir Dudley with Nous and Belle and their four yellow puppies
+  estate: (c) => {
+    person(c, { o: LORD, x: 1.3, z: 2.5, seed: 1, fo: { mode: "stand", expr: "smile", look: 1, headTilt: -4 } });
+    dog(c, { d: NOUS, pose: { pose: "sit", mouth: "closed", brow: "proud", wag: 10 }, x: 0.2, z: 2.0, left: true });
+    dog(c, { d: TWEED, pose: { pose: "sit", mouth: "smile", brow: "happy", headTilt: -8 }, x: -0.95, z: 2.2 });
+    dog(c, { d: PUP, pose: { pose: "sit", mouth: "smile", headTilt: -12, brow: "happy" }, x: -0.55, z: 0.75 });
+    dog(c, { d: PUP, pose: { pose: "stand", mouth: "open", eye: "happy", wag: 30, wagLines: true }, x: 0.15, z: 0.45 });
+    dog(c, { d: PUP, pose: { pose: "sit", mouth: "closed", headTilt: 16, brow: "worried" }, x: 0.75, z: 0.95, left: true });
+    dog(c, { d: PUP, pose: { pose: "walk", mouth: "smile", phase: 0.3, wag: 20 }, x: -0.05, z: 1.15 });
+  },
+  // face-on: the first litter lined up for the camera, Nous and Belle behind
+  puppies: (c) => {
+    dogF(c, { d: NOUS, pose: { pose: "sit", mouth: "closed", brow: "proud" }, x: 0.36, z: 1.5 });
+    dogF(c, { d: TWEED, pose: { pose: "sit", mouth: "smile", brow: "happy", headTilt: 6 }, x: -0.38, z: 1.6 });
+    dogF(c, { d: PUP, pose: { pose: "sit", mouth: "smile", brow: "happy", headTilt: -12, wag: 20, wagLines: true }, x: -0.39, z: 0.3 });
+    dogF(c, { d: PUP, pose: { pose: "sit", mouth: "closed", brow: "worried", headTilt: 14, look: 1 }, x: -0.13, z: 0.22 });
+    dogF(c, { d: PUP, pose: { pose: "sit", mouth: "open", eye: "happy", brow: "happy" }, x: 0.13, z: 0.25 });
+    dogF(c, { d: PUP, pose: { pose: "stand", mouth: "smile", brow: "alert", headTilt: 8, wag: 25 }, x: 0.4, z: 0.32 });
+  },
+  // early 1900s marsh at sunset: the golden wades out with a duck for the gamekeeper
+  marsh: (c) => {
+    person(c, { o: KEEPER, x: -0.5, z: 1.9, seed: 4, fo: { mode: "stand", expr: "grin", look: -1, headTilt: -5 } });
+    dog(c, { d: KEEPER_GOLDEN, pose: { pose: "walk", mouth: "duck", phase: 0.15, wag: 18, brow: "proud" }, x: 0.25, z: 1.3, left: true, noBlob: true });
     fx(c, "splash0.35", 800, 800, (p) => fxSplash(p, 0.35), 0.25, 0.3, 1.25, 1.2, 0.7, { flat: false });
   },
-  // 7. today: a family golden bounds across the lawn with a ball, the kid cheering
-  (c) => {
-    person(c, { o: BOY, x: -1.2, z: 1.7, seed: 7, fo: { mode: "stand", expr: "laugh", prop: "cheer" } });
-    dog(c, { d: GOLDEN, pose: { pose: "run", mouth: "ball", eye: "happy" }, x: 0.55, z: 1.0, y: 0.18, noBlob: true });
+  // today: a family golden bounds across the lawn with a ball, the kid cheering
+  today: (c) => {
+    person(c, { o: BOY, x: -1.2, z: 1.7, seed: 7, fo: { mode: "stand", expr: "laugh", prop: "cheer", look: -1 } });
+    dog(c, { d: GOLDEN, pose: { pose: "run", mouth: "ball", eye: "happy", wag: 18, brow: "happy" }, x: 0.55, z: 1.0, y: 0.18, noBlob: true });
     blobAt(c, 0.55, 1.0);
+    fx(c, "speed", 400, 300, (p) => fxSpeed(p, 0.5), 0.0, 0.62, 1.0, 0.9, 0.5);
   },
-];
+  // face-on: the family golden, tongue out, ball at its paws, the kid waving behind
+  goldenFace: (c) => {
+    dogF(c, { d: GOLDEN, pose: { pose: "sit", mouth: "smile", eye: "happy", brow: "happy", wag: 22, wagLines: true, headTilt: -7 }, x: 0.1, z: 0.6 });
+    ballAt(c, 0.36, 0.2);
+    person(c, { o: BOY, x: -0.55, z: 2.8, seed: 7, fo: { mode: "stand", expr: "laugh", wave: 1, look: -0.6 } });
+  },
+};
 const blobAt = (c: Ctx, x: number, z: number) => blob(c, c.o[0] + x, 0, c.o[2] + z, 0.9, 0.36, 0.7);
+const ballAt = (c: Ctx, x: number, z: number) => {
+  fx(c, "ball", 200, 200, (p) => { p.ell(100, 100, 80, 80, "#d8e84a", 12); p.arc(40, 100, 60, 70, -60, 60, 9, "#f8fbe8"); }, x, 0.065, z, 0.13, 0.13);
+  blob(c, c.o[0] + x, 0, c.o[2] + z, 0.16, 0.12, 0.2);
+};
 
 export const stage = (id: number, _t: number, cam: CamInfo & { sun: THREE.Vector3 }): Stage => {
   const out: Stage = { places: [], fx: [] };
-  const c: Ctx = { out, cam, sun: cam.sun, light: SHOTS[id - 1].light, o: O(id - 1) };
-  SCENES[id - 1](c);
+  const s = SHOTS[id - 1];
+  const c: Ctx = { out, cam, sun: cam.sun, light: s.light, o: shotO(id) };
+  SCENES[s.name](c);
   return out;
 };
 export { INK };

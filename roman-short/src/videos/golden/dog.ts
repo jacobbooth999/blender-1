@@ -22,6 +22,19 @@ export type DogPose = {
   mouth?: "closed" | "open" | "O" | "duck" | "ball" | "fish" | "smile";
   eye?: "dot" | "happy" | "lid" | "up";
   blink?: number; phase?: number; light?: number; headTilt?: number;
+  /** tail angle in degrees (+ = raised) and motion arcs beside it */
+  wag?: number; wagLines?: boolean;
+  /** eyebrow attitude (side and front views) */
+  brow?: "soft" | "happy" | "worried" | "proud" | "alert" | "none";
+};
+const rotP = (pts: P2[], a: number, c: P2): P2[] => pts.map(([x, y]) => [c[0] + (x - c[0]) * Math.cos(a) - (y - c[1]) * Math.sin(a), c[1] + (x - c[0]) * Math.sin(a) + (y - c[1]) * Math.cos(a)]);
+/** brow stroke over an eye at (ex, ey) facing +x; dir = +1 for the side view / right eye, -1 for the left eye in front view */
+const browAt = (p: Pen, ex: number, ey: number, k: number, kind: DogPose["brow"], dir = 1) => {
+  if (kind === "none") return;
+  const w = 15 * k, y = ey - 27 * k;
+  // [outer end, middle, inner end] heights (negative = up); inner = the end toward the nose / face centre
+  const [to, tm, ti] = kind === "worried" ? [4, -2, -9] : kind === "proud" ? [-5, -4, 5] : kind === "alert" ? [-7, -9, -7] : kind === "happy" ? [-2, -8, -2] : [0, -3, 0];
+  p.stroke([[ex - w * dir, y + to * k], [ex, y + tm * k], [ex + w * dir, y + ti * k]], 7 * Math.min(1.3, k));
 };
 export const DOG_K = 0.6;
 
@@ -97,10 +110,11 @@ export const drawDog = (p0: Pen, d: Dog, o: DogPose) => {
     const sw = (off: number) => (o.pose === "walk" ? 34 * Math.sin(two * (ph + off)) : 0);
     const lift = (off: number) => (o.pose === "walk" ? Math.max(0, Math.cos(two * (ph + off))) * 30 : 0);
     if (run) {
-      legs.push({ hip: [bx + 10, top], foot: [bx - 120, sole - 70], back: true, near: false });
-      legs.push({ hip: [fx + 10, top - 10], foot: [fx + 150, sole - 110], back: false, near: false });
-      legs.push({ hip: [bx, top], foot: [bx - 160, sole - 40], back: true, near: true });
-      legs.push({ hip: [fx, top - 10], foot: [fx + 175, sole - 60], back: false, near: true });
+      // extended suspension of the gallop: forelegs reaching, hind legs pushing off
+      legs.push({ hip: [bx + 14, top], foot: [bx - 150, sole - 95], back: true, near: false });
+      legs.push({ hip: [fx + 14, top - 10], foot: [fx + 165, sole - 150], back: false, near: false });
+      legs.push({ hip: [bx, top], foot: [bx - 185, sole - 55], back: true, near: true });
+      legs.push({ hip: [fx, top - 10], foot: [fx + 190, sole - 95], back: false, near: true });
     } else {
       legs.push({ hip: [bx + 18, top], foot: [bx + 18 + sw(0.5), sole - 12 - lift(0.5)], back: true, near: false });
       legs.push({ hip: [fx + 18, top], foot: [fx + 18 + sw(0), sole - 12 - lift(0)], back: false, near: false });
@@ -125,7 +139,9 @@ export const drawDog = (p0: Pen, d: Dog, o: DogPose) => {
   else if (d.tail === "otter") tail = taper(curve(tr, [tr[0] - 110, tr[1] + 30], [tr[0] - 200, tr[1] + 70]), 50 * tw, 12 * tw);
   else tail = taper(o.pose === "sit" ? curve(tr, [tr[0] - 100, tr[1] + 10], [tr[0] - 190, tr[1] + 25]) : curve(tr, [tr[0] - 110, tr[1] - 10], [tr[0] - 210, tr[1] + 30]), 46 * tw, 16 * tw, fringe ? 40 * tw : 0);
   if (d.tail === "bushy") tail = [...tail.slice(0, tail.length / 2), ...Array.from({ length: 9 }, (_, i): P2 => { const e = tail[tail.length / 2 - 1], f = tail[tail.length / 2], a0 = Math.atan2(e[1] - f[1], e[0] - f[0]); const r = Math.hypot(e[0] - f[0], e[1] - f[1]) / 2, c: P2 = [(e[0] + f[0]) / 2, (e[1] + f[1]) / 2]; const a = a0 + (Math.PI * (i + 1)) / 10; return [c[0] + Math.cos(a) * r * 1.0, c[1] + Math.sin(a) * r * 1.25]; }), ...tail.slice(tail.length / 2)];
-  p.poly(tail, d.tail === "bushy" ? coat : coat, 0);
+  if (o.wag) tail = rotP(tail, rad(-o.wag), tr);
+  if (o.wagLines) for (const [r, a0] of [[130, -150], [175, -145]] as const) p.arc(tr[0], tr[1], r * tw, r * tw, a0 - (o.wag ?? 0) - 25, a0 - (o.wag ?? 0) + 25, 9);
+  p.poly(tail, coat, 0);
   if (d.tail === "bushy") p.clip(tail, () => p.ell(tr[0] - 115, tr[1] + 195, 50, 48, dark, 0));
   p.inkRing(tail, 11, thick);
 
@@ -134,6 +150,7 @@ export const drawDog = (p0: Pen, d: Dog, o: DogPose) => {
     const col = l.near ? coat : far, [hx, hy] = l.hip, [fx, fy] = l.foot;
     const pts: P2[] = l.back
       ? [[hx, hy], [hx + 22, hy + (fy - hy) * 0.4], [fx - 18, hy + (fy - hy) * 0.72], [fx, fy]]
+      : o.pose === "run" ? [[hx, hy], [hx + (fx - hx) * 0.55, hy + (fy - hy) * 0.6], [fx - 20, fy + 18], [fx, fy]]
       : [[hx, hy], [hx + (fx - hx) * 0.5, hy + (fy - hy) * 0.5], [fx, fy]];
     p.stroke(pts, legW + 22, INK);
     p.stroke(pts, legW, col);
@@ -238,13 +255,12 @@ export const drawDog = (p0: Pen, d: Dog, o: DogPose) => {
   const ex = hx + 30 * hs, ey = hy - 16 * hs, eyeK = pup ? 1.45 : 1, eye = o.eye ?? "dot";
   if ((o.blink ?? 0) >= 1 || eye === "happy") p.arc(ex, ey + 6, 13 * eyeK, 9 * eyeK, 200, 340, 8);
   else if (eye === "lid") { p.ell(ex, ey + 2, 11 * eyeK, 9 * eyeK, INK, 0, 0, 180); p.stroke([[ex - 14, ey], [ex + 14, ey - 2]], 7); }
-  else {
-    p.ell(ex, ey, 9.5 * eyeK, 12.5 * eyeK, INK, 0);
-    if (eye === "up") p.stroke([[ex - 16, ey - 30 * eyeK], [ex + 12, ey - 36 * eyeK]], 7);
-  }
+  else p.ell(ex, ey, 9.5 * eyeK, 12.5 * eyeK, INK, 0);
+  browAt(p, ex, ey, eyeK, eye === "up" ? "alert" : o.brow ?? "soft");
   // near ear
   if (d.ear === "drop") {
-    const ear = taper(curve([hx - 34 * hs, hy - 56 * hs], [hx - 62 * hs, hy - 2 * hs], [hx - 50 * hs, hy + 50 * hs]), 52 * hs, 46 * hs);
+    let ear = taper(curve([hx - 34 * hs, hy - 56 * hs], [hx - 62 * hs, hy - 2 * hs], [hx - 50 * hs, hy + 50 * hs]), 52 * hs, 46 * hs);
+    if (o.pose === "run") ear = rotP(ear, rad(62), [hx - 34 * hs, hy - 56 * hs]);
     p.gradFill(ear, dark, shade(dark, 0.8), light, 0.3);
     p.inkRing(ear, 10, thick);
     if (d.fur === "curly") p.clip(ear, () => { for (let i = 0; i < 4; i++) p.arc(hx - 46 * hs, hy - 35 * hs + i * 24 * hs, 12, 10, i * 60, 300 + i * 60, 6, shade(dark, 0.7)); });
@@ -273,6 +289,143 @@ export const drawDog = (p0: Pen, d: Dog, o: DogPose) => {
     p.stroke([[dx + 30, dy + 10], [dx + 60, dy - 20]], 26, INK); p.stroke([[dx + 30, dy + 10], [dx + 60, dy - 20]], 16, "#f2f0e8"); // neck ring
     p.ell(dx + 75, dy - 40, 34, 28, "#2f7a4a", 9);                        // green head
     p.poly([[dx + 100, dy - 44], [dx + 140, dy - 52], [dx + 136, dy - 34]], "#f0b13c", 7);
+  }
+  p.rot = null;
+  g.restore();
+};
+
+// ---------------- face-on view ----------------
+export type DogFrontPose = {
+  pose: "sit" | "stand";
+  mouth?: "closed" | "smile" | "open" | "stern" | "ball";
+  eye?: "dot" | "happy" | "lid";
+  brow?: DogPose["brow"];
+  headTilt?: number; wag?: number; wagLines?: boolean; light?: number; look?: number;
+};
+/** the dog looking straight at the lens: centred on x = 500, sole at 975, same design space and scale as drawDog */
+export const drawDogFront = (p0: Pen, d: Dog, o: DogFrontPose) => {
+  const g = p0.g;
+  const k = DOG_K * (d.size ?? 1) * (d.puppy ? 0.5 : 1);
+  g.save(); g.translate(300, 975); g.scale(k, k); g.translate(-500, -975);
+  const p = new Pen(g); p.ol = 12;
+  const light = o.light ?? rad(-120), thick = thickAngle(light);
+  const coat = d.coat, far = mul(coat, SH), dark = d.dark ?? shade(coat, 0.7), bib = d.chest ?? mix(coat, d.belly, 0.7);
+  const pup = !!d.puppy, hs = pup ? 1.5 : 1.22, HF = pup ? 1 : 1.22, sole = 975, cx = 500, fringe = d.fur === "wavy";
+  const sit = o.pose === "sit";
+  const legW = pup ? 62 : 50;
+  const chestC: P2 = sit ? [cx, sole - (pup ? 215 : 235)] : [cx, sole - (pup ? 250 : 290)];
+  const chestA = pup ? 100 : 118, chestB = sit ? (pup ? 150 : 160) : (pup ? 105 : 115);
+  const head: P2 = [cx, chestC[1] - chestB - (pup ? 55 : 82)];
+
+  // tail wagging up behind one side
+  const tr: P2 = sit ? [cx + 70, sole - 60] : [cx + 60, chestC[1] - 60];
+  let tail = d.tail === "bushy" ? taper(curve(tr, [tr[0] + 105, tr[1] + 50], [tr[0] + 125, tr[1] + 200]), 64, 54)
+    : d.tail === "curl" ? taper(curve(tr, [tr[0] + 100, tr[1] - 120], [tr[0] + 30, tr[1] - 190]), 46, 24)
+    : taper(curve(tr, [tr[0] + 140, tr[1] - 60], [tr[0] + 205, tr[1] - 170]), (pup ? 40 : 46), 16, fringe ? 38 : 0);
+  if (o.wag) tail = rotP(tail, rad(-o.wag), tr);
+  if (o.wagLines) for (const r of [250, 295]) p.arc(tr[0], tr[1], r * (pup ? 0.8 : 1), r * (pup ? 0.8 : 1), -50 - (o.wag ?? 0), -10 - (o.wag ?? 0), 9);
+  p.poly(tail, coat, 0); p.inkRing(tail, 11, thick);
+
+  if (sit) {
+    // haunches and hind paws either side
+    for (const sd of [-1, 1]) {
+      const hp = blobPts(cx + sd * (pup ? 85 : 105), sole - (pup ? 75 : 90), { a: pup ? 80 : 95, b: pup ? 72 : 85, nTop: 2.1, nBot: 2.6, egg: 0.05, asym: 0, rot: 0, noise: 0.01, seed: 6 + sd });
+      p.gradFill(hp, sd < 0 ? coat : far, far, light, 0.4); p.inkRing(hp, 11, thick);
+      p.ell(cx + sd * (pup ? 140 : 170), sole - 16, pup ? 46 : 54, pup ? 20 : 22, coat, 10);
+    }
+  } else {
+    // back of the body behind the chest, hind legs peeking out
+    const back = blobPts(cx, chestC[1] - 45, { a: chestA * 1.02, b: chestB * 0.75, nTop: 2.2, nBot: 2.4, egg: 0, asym: 0, rot: 0, noise: 0.01, seed: 4 });
+    p.gradFill(back, far, shade(far, 0.85), light, 0.3); p.inkRing(back, 11, thick);
+    for (const sd of [-1, 1]) {
+      const pts: P2[] = [[cx + sd * 88, chestC[1]], [cx + sd * 98, sole - 120], [cx + sd * 92, sole - 14]];
+      p.stroke(pts, legW + 20, INK); p.stroke(pts, legW - 4, far);
+      p.ell(cx + sd * 94, sole - 14, legW * 0.66, legW * 0.34, far, 10);
+    }
+  }
+
+  // chest
+  const chest = blobPts(chestC[0], chestC[1], { a: chestA, b: chestB, nTop: 2.0, nBot: 2.6, egg: sit ? 0.12 : 0.05, asym: 0, rot: 0, noise: 0.012, seed: 5 });
+  p.gradFill(chest, coat, far, light, 0.32);
+  p.clip(chest, () => {
+    p.ell(cx, chestC[1] - chestB * 0.15, chestA * 0.55, chestB * 0.75, bib, 0);
+    if (d.fur === "curly") for (let i = 0; i < 26; i++) { const u = ((i * 0.618) % 1) * 2 - 1, v = ((i * 0.381 + 0.2) % 1) * 2 - 1; p.arc(cx + u * chestA * 0.9, chestC[1] + v * chestB * 0.9, 15, 13, i * 37, 290 + i * 37, 6, dark); }
+    if (fringe) for (let i = 0; i < 5; i++) p.arc(cx - 50 + (i % 3) * 50, chestC[1] - chestB * 0.3 + Math.floor(i / 3) * 60 + (i % 2) * 10, 20, 9, 200, 340, 6, dark);
+  });
+  p.inkRing(chest, 13, thick);
+  if (fringe && !pup) p.poly(scallop(cx - chestA * 0.6, cx + chestA * 0.6, chestC[1] + chestB * 0.55, 46, 4), coat, 0);
+
+  // front legs
+  for (const sd of [-1, 1]) {
+    const top: P2 = [cx + sd * (pup ? 48 : 55), chestC[1] + chestB * (sit ? 0.05 : 0.3)], foot: P2 = [cx + sd * (pup ? 52 : 60), sole - 14];
+    const pts: P2[] = [top, [(top[0] + foot[0]) / 2, (top[1] + foot[1]) / 2], foot];
+    p.stroke(pts, legW + 22, INK); p.stroke(pts, legW, sd < 0 ? coat : mix(coat, far, 0.5));
+    p.ell(foot[0], foot[1], legW * 0.7, legW * 0.36, coat, 10);
+    for (const t of [-1, 1]) p.stroke([[foot[0] + t * legW * 0.22, foot[1] - 4], [foot[0] + t * legW * 0.22, foot[1] + 8]], 5);
+  }
+  if (o.mouth === "ball" && !pup) { p.ell(cx + 150, sole - 40, 40, 40, "#d8e84a", 10); p.arc(cx + 122, sole - 40, 30, 36, -60, 60, 6, "#f8fbe8"); }
+
+  // head
+  const hx = head[0], hy = head[1];
+  p.rot = o.headTilt ? [rad(o.headTilt), hx, hy + 60] : null;
+  const ha = (pup ? 92 : 98) * (pup ? 1.25 : HF), hb = (pup ? 84 : 86) * (pup ? 1.2 : HF);
+  const earA: P2 = [hx, hy];
+  const ears = (back: boolean) => {
+    for (const sd of [-1, 1]) {
+      if (d.ear === "drop") {
+        if (!back) continue;
+        let ear = taper(curve([hx + sd * ha * 0.62, hy - hb * 0.62], [hx + sd * ha * 1.12, hy - hb * 0.05], [hx + sd * ha * 1.0, hy + hb * 0.62]), 58 * hs, 50 * hs);
+        if (sd > 0) ear = ear.map(([x, y]): P2 => [x, y]);
+        p.gradFill(ear, dark, shade(dark, 0.78), light, 0.3); p.inkRing(ear, 10, thick);
+        if (d.fur === "curly") p.clip(ear, () => { for (let i = 0; i < 4; i++) p.arc(hx + sd * ha * 1.0, hy - hb * 0.35 + i * 26 * hs, 12, 10, i * 60, 300 + i * 60, 6, shade(dark, 0.7)); });
+      } else if (back) {
+        const base0: P2 = [hx + sd * ha * 0.25, hy - hb * 0.82], base1: P2 = [hx + sd * ha * 0.85, hy - hb * 0.5];
+        const tip: P2 = d.ear === "semi" ? [hx + sd * ha * 0.75, hy - hb * 1.45] : [hx + sd * ha * 0.72, hy - hb * 1.65];
+        p.poly([base0, base1, tip], coat, 11);
+        p.poly([[base0[0] + sd * 14, base0[1] - 4], [base1[0] - sd * 12, base1[1] - 8], [tip[0], tip[1] + 34]], "#d8a8a0", 0);
+        if (d.ear === "semi") p.poly([tip, [tip[0] + sd * 34, tip[1] + 22], [tip[0] + sd * 4, tip[1] + 34]], dark, 8);
+      }
+    }
+  };
+  void earA;
+  if (d.ear !== "drop") ears(true);
+  if (d.fur === "shaggy") { // ruff framing the face
+    const ruff: P2[] = [];
+    for (let i = 0; i <= 24; i++) { const a = rad(-10 + i * 8.3), r = i % 2 ? 1.28 : 1.1; ruff.push([hx + Math.cos(a) * ha * r, hy + 20 + Math.sin(a) * hb * r]); }
+    p.poly(ruff, mix(coat, d.belly, 0.4), 11);
+  }
+  const skull = blobPts(hx, hy, { a: ha, b: hb, nTop: 1.9, nBot: 2.4, egg: -0.1, asym: 0, rot: 0, noise: 0.008, seed: 5 });
+  p.shadedFill(skull, coat, far, light, ha);
+  p.inkRing(skull, 12, thick);
+  if (d.saddle) p.clip(skull, () => p.ell(hx, hy - hb * 0.95, ha * 0.55, hb * 0.4, d.saddle!, 0));
+  if (d.fur === "curly") p.clip(skull, () => { for (let i = 0; i < 9; i++) p.arc(hx - 60 + (i % 5) * 30, hy - hb * 0.72 + Math.floor(i / 5) * 24, 13, 11, i * 40, 280 + i * 40, 6, dark); });
+  if (d.ear === "drop") ears(true);
+  // muzzle: a broad lighter pad below the eyes
+  const m = d.muzzle * (pup ? 0.7 : 1);
+  const mc: P2 = [hx, hy + hb * 0.42], mra = (48 + 10 * m) * (pup ? 1.15 : HF), mrb = (34 + 14 * m) * (pup ? 1.05 : HF);
+  const open = o.mouth === "smile" || o.mouth === "open";
+  if (open) {
+    p.ell(mc[0], mc[1] + mrb * 0.75, mra * 0.62, mrb * 0.75, MOUTH, 10, 0, 180);
+    p.poly(taper(curve([mc[0], mc[1] + mrb * 0.8], [mc[0] + 2, mc[1] + mrb * 1.45], [mc[0], mc[1] + mrb * 1.95]), 46 * (pup ? 1.1 : 1), 40 * (pup ? 1.1 : 1)), TONGUE, 9);
+    p.stroke([[mc[0], mc[1] + mrb * 1.0], [mc[0], mc[1] + mrb * 1.6]], 5, mul(TONGUE, [0.75, 0.6, 0.6]));
+  }
+  const muz = blobPts(mc[0], mc[1], { a: mra, b: mrb, nTop: 2.2, nBot: 2.3, egg: 0.08, asym: 0, rot: 0, noise: 0.01, seed: 3 });
+  p.shadedFill(muz, mix(coat, d.belly, 0.5), mix(far, d.belly, 0.35), light, mra);
+  p.inkRing(muz, 10, thick, 0.3);
+  // nose + mouth
+  const nw = (pup ? 26 : 25 * HF) * (d.muzzle > 1.05 ? 0.95 : 1);
+  p.poly(blobPts(mc[0], mc[1] - mrb * 0.42, { a: nw, b: nw * 0.66, nTop: 2.4, nBot: 1.7, egg: -0.25, asym: 0, rot: 0, noise: 0, seed: 1 }), INK, 0);
+  p.stroke([[mc[0], mc[1] - mrb * 0.1], [mc[0], mc[1] + mrb * 0.25]], 6);
+  if (o.mouth === "stern") p.stroke([[mc[0] - mra * 0.5, mc[1] + mrb * 0.42], [mc[0] + mra * 0.5, mc[1] + mrb * 0.42]], 6);
+  else for (const sd of [-1, 1]) p.arc(mc[0] + sd * mra * 0.27, mc[1] + mrb * 0.22, mra * 0.27, mrb * 0.3, open ? 10 : 20, open ? 170 : 160, 6);
+  // eyes + brows
+  const ek = pup ? 1.4 : 1.15, eg = (pup ? 42 : 40 * HF), eyY = hy - hb * 0.12, look = (o.look ?? 0) * 4;
+  for (const sd of [-1, 1]) {
+    const ex = hx + sd * eg, eye = o.eye ?? "dot";
+    if (eye === "happy") p.arc(ex, eyY + 6, 13 * ek, 9 * ek, 200, 340, 8);
+    else if (eye === "lid") { p.ell(ex + look, eyY + 2, 11 * ek, 9 * ek, INK, 0, 0, 180); p.stroke([[ex - 14, eyY], [ex + 14, eyY]], 7); }
+    else p.ell(ex + look, eyY, 10.5 * ek, 13.5 * ek, INK, 0);
+    browAt(p, ex, eyY, ek, o.brow ?? "soft", -sd);
   }
   p.rot = null;
   g.restore();
