@@ -5,3 +5,4 @@ audio/_cache/
 audio/*.wav
 audio/score.log
 backup/
+videos_ink/*/mix_raw.wav
