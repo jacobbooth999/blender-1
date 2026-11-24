@@ -1,0 +1,48 @@
+<!doctype html><html><head><meta charset="utf-8">
+<link href="https://fonts.googleapis.com/css2?family=Anton&family=Permanent+Marker&family=Oswald:wght@700&display=block" rel="stylesheet">
+<style>*{margin:0;padding:0;box-sizing:border-box}body{width:1280px;height:720px;overflow:hidden;position:relative;background:#0a0f1c}
+.cut{position:absolute;filter:drop-shadow(0 0 3px #fff) drop-shadow(0 0 3px #fff) drop-shadow(0 18px 30px rgba(0,0,0,.7))}
+.big{font-family:'Anton';line-height:.9;text-transform:uppercase;-webkit-text-stroke:10px #0b0b0d;paint-order:stroke fill}
+</style></head><body>
+<!-- stadium night: floodlight glow + bokeh crowd -->
+<div style="position:absolute;inset:0;background:radial-gradient(ellipse at 70% -10%,rgba(255,240,200,.55),transparent 55%),radial-gradient(ellipse at 15% 0%,rgba(200,220,255,.35),transparent 45%),linear-gradient(#16223d,#0a0f1c 70%)"></div>
+<svg id="bokeh" width="1280" height="720" style="position:absolute;inset:0"></svg>
+<!-- Rooney cut-out, looking towards the sign -->
+<img class="cut" src="dc2_cut.png" style="right:-70px;top:70px;height:760px">
+<!-- anonymous child from behind holding a sign -->
+<svg width="1280" height="720" style="position:absolute;inset:0;filter:drop-shadow(0 20px 30px rgba(0,0,0,.6))" viewBox="0 0 1280 720">
+ <!-- arms -->
+ <path d="M250 560 C 215 470, 190 420, 165 370" stroke="#1f4fa8" stroke-width="44" stroke-linecap="round" fill="none"/>
+ <path d="M440 560 C 480 470, 505 420, 530 370" stroke="#1f4fa8" stroke-width="44" stroke-linecap="round" fill="none"/>
+ <!-- sign -->
+ <g transform="rotate(-4 350 250)">
+  <rect x="90" y="110" width="520" height="290" rx="8" fill="#c99a5b" stroke="#7a5527" stroke-width="5"/>
+  <rect x="100" y="120" width="500" height="270" rx="6" fill="#f3ede0"/>
+  <text x="350" y="205" text-anchor="middle" font-family="Permanent Marker" font-size="62" fill="#c8231b">PLEASE</text>
+  <text x="350" y="285" text-anchor="middle" font-family="Permanent Marker" font-size="70" fill="#161412">SIGN WAYNE</text>
+  <text x="350" y="365" text-anchor="middle" font-family="Permanent Marker" font-size="80" fill="#1f4fa8">ROONEY!</text>
+  <path d="M135 378 C 260 390, 450 372, 565 382" stroke="#c8231b" stroke-width="8" fill="none" stroke-linecap="round"/>
+ </g>
+ <!-- hands -->
+ <circle cx="160" cy="362" r="24" fill="#e2b08c"/><circle cx="535" cy="362" r="24" fill="#e2b08c"/>
+ <!-- body (back view hoodie) -->
+ <path d="M220 720 C 220 600, 250 540, 345 530 C 440 540, 470 600, 470 720 Z" fill="#1f4fa8"/>
+ <path d="M300 545 C 320 585, 370 585, 390 545" stroke="#163a7d" stroke-width="10" fill="none"/>
+ <!-- scarf -->
+ <path d="M285 540 C 320 560, 370 560, 405 540 L 410 565 C 370 585, 320 585, 280 565 Z" fill="#ffffff"/>
+ <path d="M300 548 l12 22 M330 553 l10 24 M360 553 l10 24 M388 548 l10 22" stroke="#1f4fa8" stroke-width="8"/>
+ <!-- head from behind -->
+ <rect x="322" y="510" width="46" height="34" fill="#d9a684"/>
+ <ellipse cx="283" cy="478" rx="12" ry="19" fill="#d9a684"/><ellipse cx="407" cy="478" rx="12" ry="19" fill="#d9a684"/>
+ <ellipse cx="345" cy="468" rx="63" ry="66" fill="#3b2619"/>
+ <path d="M300 430 C 320 418, 370 418, 392 432" stroke="#5a3b26" stroke-width="7" fill="none" stroke-linecap="round"/>
+ <path d="M296 462 C 316 450, 374 450, 396 464" stroke="#5a3b26" stroke-width="6" fill="none" stroke-linecap="round"/>
+ <path d="M302 495 C 322 485, 368 485, 388 497" stroke="#2c1c12" stroke-width="6" fill="none" stroke-linecap="round"/>
+</svg>
+<div class="big" style="position:absolute;left:640px;top:24px;font-size:96px;color:#fff;text-align:center;transform:rotate(-3deg)">THE SIGN THAT<br><span style="color:#ffd61e">SAID IT ALL</span></div>
+<script>
+const s=document.getElementById('bokeh');let h='';let seed=7;const r=()=>{seed=(seed*16807)%2147483647;return seed/2147483647};
+for(let i=0;i<140;i++){const x=r()*1280,y=360+r()*360,rad=6+r()*22,c=['#ffd9a0','#9fc2ff','#ffffff','#ff9f9f'][Math.floor(r()*4)];h+=`<circle cx="${x}" cy="${y}" r="${rad}" fill="${c}" opacity="${.08+r()*.22}"/>`}
+s.innerHTML=h;
+</script>
+</body></html>
