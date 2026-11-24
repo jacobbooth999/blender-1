@@ -82,15 +82,14 @@ const SCENES: ((c: Ctx) => void)[] = [
   // 1. wolf: howling on the outcrop at sunset, a second wolf below looking up
   (c) => {
     dog(c, { d: WOLF, pose: { pose: "howl", mouth: "O", eye: "happy" }, x: 0.15, z: 0.1, y: 2.12, noBlob: true });
-    dog(c, { d: WOLF, pose: { pose: "stand", eye: "up", headTilt: -12 }, x: -1.15, z: -1.0 });
+    dog(c, { d: WOLF, pose: { pose: "stand", eye: "up", headTilt: -12 }, x: -0.4, z: -1.7 });
   },
   // 2. stone-age camp: a kid shares the fire with a half-tame dog, the hunter looks on
   (c) => {
-    person(c, { o: HUNTER, x: 1.55, z: 1.2, seed: 3, fo: { mode: "sit", expr: "smile", prop: null }, noBlob: true });
-    person(c, { o: CAVE_KID, x: -0.35, z: 1.0, seed: 5, fo: { mode: "sit", expr: "grin", prop: "arms" } });
-    dog(c, { d: EARLY_DOG, pose: { pose: "sit", mouth: "smile" }, x: -1.25, z: 0.75, left: false });
-    fx(c, "flame0.3", 300, 400, (p) => fxFlame(p, 0.3), 0.4, 0.45, 0.7, 0.62, 0.82);
-    fx(c, "steamFire", 300, 400, (p) => fxSteam(p, 0.4), 0.45, 1.25, 0.75, 0.5, 0.66, { soft: true });
+    person(c, { o: HUNTER, x: 0.75, z: 2.9, seed: 3, fo: { mode: "stand", expr: "smile", prop: "spear" } });
+    person(c, { o: CAVE_KID, x: 0.05, z: 1.3, seed: 5, fo: { mode: "sit", expr: "grin", prop: "arms" } });
+    dog(c, { d: EARLY_DOG, pose: { pose: "sit", mouth: "smile" }, x: -0.55, z: 0.75 });
+    fx(c, "flame0.3", 300, 400, (p) => fxFlame(p, 0.3), 0.55, 0.42, 0.55, 0.58, 0.78);
   },
   // 3. Newfoundland: the black water dog brings in a fish to its fisherman
   (c) => {
@@ -106,7 +105,7 @@ const SCENES: ((c: Ctx) => void)[] = [
   (c) => {
     person(c, { o: LORD, x: 1.3, z: 2.5, seed: 1, fo: { mode: "stand", expr: "smile" } });
     dog(c, { d: NOUS, pose: { pose: "sit", mouth: "closed" }, x: 0.2, z: 2.0, left: true });
-    dog(c, { d: TWEED, pose: { pose: "sit", mouth: "smile" }, x: -1.1, z: 2.2 });
+    dog(c, { d: TWEED, pose: { pose: "sit", mouth: "smile" }, x: -0.95, z: 2.2 });
     dog(c, { d: PUP, pose: { pose: "sit", mouth: "smile" }, x: -0.55, z: 0.75 });
     dog(c, { d: PUP, pose: { pose: "stand", mouth: "open", eye: "happy" }, x: 0.15, z: 0.45 });
     dog(c, { d: PUP, pose: { pose: "sit", mouth: "closed", headTilt: 14 }, x: 0.75, z: 0.95, left: true });
@@ -114,9 +113,9 @@ const SCENES: ((c: Ctx) => void)[] = [
   },
   // 6. the marsh at sunset: the golden retriever wades out with a duck for the gamekeeper
   (c) => {
-    person(c, { o: KEEPER, x: -0.95, z: 0.7, seed: 4, fo: { mode: "stand", expr: "smile" } });
-    dog(c, { d: KEEPER_GOLDEN, pose: { pose: "walk", mouth: "duck", phase: 0.15 }, x: 0.45, z: 1.65, left: true, noBlob: true });
-    fx(c, "splash0.35", 800, 800, (p) => fxSplash(p, 0.35), 0.45, 0.3, 1.6, 1.2, 0.7, { flat: false });
+    person(c, { o: KEEPER, x: -0.5, z: 1.9, seed: 4, fo: { mode: "stand", expr: "smile" } });
+    dog(c, { d: KEEPER_GOLDEN, pose: { pose: "walk", mouth: "duck", phase: 0.15 }, x: 0.25, z: 1.3, left: true, noBlob: true });
+    fx(c, "splash0.35", 800, 800, (p) => fxSplash(p, 0.35), 0.25, 0.3, 1.25, 1.2, 0.7, { flat: false });
   },
   // 7. today: a family golden bounds across the lawn with a ball, the kid cheering
   (c) => {

@@ -13,12 +13,12 @@ const add = (a: V3, b: V3): V3 => [a[0] + b[0], a[1] + b[1], a[2] + b[2]];
 type Seed = { name: string; light: Light; fogFar?: number; sunAz?: number; sunEl?: number; cam: Omit<Cam, "roll"> & { roll?: number }; cInf: number; focus?: V3 };
 // cam pos / look are LOCAL to the set origin O(i)
 const SEEDS: Seed[] = [
-  { name: "wolf", light: "golden", fogFar: 520, sunAz: 14, sunEl: 6, cam: { pos: [0.6, 1.25, -3.9], look: [-0.25, 2.25, 0.2], fov: 42, roll: 0.03 }, cInf: 8, focus: [0, 2.6, 0] },
-  { name: "camp", light: "golden", fogFar: 420, sunAz: 150, sunEl: 9, cam: { pos: [0.35, 1.45, -5.6], look: [0, 0.85, 1.3], fov: 42 }, cInf: 10, focus: [-0.9, 0.7, 1.1] },
+  { name: "wolf", light: "golden", fogFar: 520, sunAz: -8, sunEl: 9, cam: { pos: [0.8, 1.05, -7.2], look: [-0.1, 1.85, 0.4], fov: 42, roll: 0.03 }, cInf: 6, focus: [0, 2.5, 0] },
+  { name: "camp", light: "golden", fogFar: 420, sunAz: 150, sunEl: 9, cam: { pos: [0.1, 1.2, -3.6], look: [0.05, 0.85, 1.3], fov: 42 }, cInf: 10, focus: [-0.2, 0.7, 0.8] },
   { name: "dock", light: "day", fogFar: 650, sunAz: 70, sunEl: 40, cam: { pos: [0.95, 1.5, -0.6], look: [0.1, 0.95, 5.0], fov: 42, roll: -0.03 }, cInf: 9, focus: [-0.3, 0.9, 4.2] },
   { name: "tweed", light: "day", fogFar: 600, sunAz: 80, sunEl: 44, cam: { pos: [-0.3, 1.05, -2.3], look: [0.35, 0.75, 3.0], fov: 42 }, cInf: 10, focus: [-0.2, 0.5, 1.6] },
   { name: "estate", light: "day", fogFar: 700, sunAz: 105, sunEl: 46, cam: { pos: [0.25, 1.3, -4.4], look: [0.1, 0.75, 2.0], fov: 44 }, cInf: 8, focus: [0, 0.5, 1.2] },
-  { name: "marsh", light: "golden", fogFar: 520, sunAz: 6, sunEl: 11, cam: { pos: [0.1, 1.0, -2.7], look: [-0.15, 1.05, 3.0], fov: 42, roll: -0.03 }, cInf: 8, focus: [0.4, 0.6, 1.6] },
+  { name: "marsh", light: "golden", fogFar: 520, sunAz: 6, sunEl: 11, cam: { pos: [0.0, 1.05, -3.3], look: [-0.1, 1.0, 3.0], fov: 42, roll: -0.03 }, cInf: 8, focus: [0.1, 0.8, 1.3] },
   { name: "today", light: "day", fogFar: 600, sunAz: 95, sunEl: 50, cam: { pos: [0.35, 0.95, -4.4], look: [0, 0.85, 1.8], fov: 44, roll: 0.035 }, cInf: 9, focus: [0.6, 0.7, 1.0] },
 ];
 export const SHOTS: ShotDef[] = SEEDS.map((s, i) => ({ id: i + 1, a: i, b: i + 1, light: s.light, name: s.name, fogFar: s.fogFar, sunAz: s.sunAz, sunEl: s.sunEl }));

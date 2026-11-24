@@ -33,7 +33,7 @@ const hideTex = () => ctex("hide", 512, 512, (g, r) => {
   g.strokeStyle = "rgba(70,45,30,0.55)"; g.lineWidth = 4; g.setLineDash([10, 10]);
   for (let x = 0; x < 512; x += 128) { g.beginPath(); g.moveTo(x + 20, 0); g.lineTo(x + 50, 512); g.stroke(); }
 });
-const rockTex = () => flatTex("rockG", "#9b968f", ["#878279", "#aca79f", "#7c776f"], 500, 10);
+const rockTex = () => flatTex("rockG", "#b3a898", ["#9e9384", "#c4baab", "#8f8476"], 500, 10);
 const mudTex = () => flatTex("mudG", "#8e7556", ["#7d6548", "#a08664", "#6f5a40"], 700, 7);
 const pebbleTex = () => flatTex("pebble", "#a9a198", ["#8f877e", "#c4bcb2", "#7d756c"], 1600, 6);
 const gravelTex = () => flatTex("gravelG", "#cfc3ad", ["#b8ab93", "#e0d6c2", "#a69a84"], 2400, 4);
@@ -132,9 +132,9 @@ const wolfSet = (b: Batch, o: V3) => {
   b.add(ground(X - 700, X + 700, Z - 700, Z + 700, 0, 6), lam("snowG", () => ({ map: snowTex() })));
   const rm = lam("rockG", () => ({ map: rockTex() }));
   // the outcrop the wolf howls from (top ~2.2 m) and boulders around it
-  rock(b, X, 1.05, Z, 1.6, 1.15, 1.3, 0.3, rm); rock(b, X + 0.4, 1.7, Z + 0.2, 1.05, 0.55, 0.9, 1.0, rm);
-  rock(b, X - 1.5, 0.4, Z + 0.6, 1.0, 0.7, 0.9, 0.7, rm); rock(b, X + 1.9, 0.3, Z - 0.2, 0.8, 0.5, 0.7, 2.1, rm);
-  b.add(sph, lam("snowCap", () => ({ color: "#f1f4f8" })), M4(X + 0.3, 2.08, Z + 0.25, 0.4, [0.8, 0.16, 0.65]));
+  rock(b, X - 0.2, 0.5, Z + 0.6, 2.4, 0.95, 1.5, 0.3, rm); rock(b, X + 0.25, 1.35, Z + 0.45, 1.5, 0.7, 1.05, 1.0, rm); rock(b, X + 0.1, 1.95, Z + 0.35, 0.85, 0.32, 0.65, 2.0, rm);
+  rock(b, X - 1.4, 0.3, Z + 0.9, 0.8, 0.6, 0.7, 0.7, rm); rock(b, X + 1.5, 0.2, Z + 0.2, 0.6, 0.4, 0.5, 2.1, rm);
+  b.add(sph, lam("snowCap", () => ({ color: "#f1f4f8" })), M4(X + 0.15, 2.17, Z + 0.4, 0.4, [0.55, 0.1, 0.45]));
   for (const [x, z, s] of [[-3, 2, 1.4], [3.4, 3, 1.8], [-6, 6, 2.2], [5, -1, 1.0]] as const) b.add(sph, lam("snowCap", () => ({ color: "#f1f4f8" })), M4(X + x, 0, Z + z, 0, [s, s * 0.35, s * 0.8]));
   // firs: a near stand on the left, forest behind
   for (const [x, z, h] of [[-5.5, 4, 7], [-7.5, 9, 9], [-4.2, 12, 8], [6.5, 10, 8.5], [9, 6, 6.5], [11, 14, 9], [-12, 16, 10], [2, 22, 9]] as const) snowFir(b, X + x, Z + z, h);
@@ -150,8 +150,8 @@ const campSet = (b: Batch, o: V3) => {
   tent(b, X + 3.6, Z + 6.5, 1.7, 3.0);
   // fire: stone ring + crossed logs
   const st = lam("rockG", () => ({ map: rockTex() })), log = lam("log", () => ({ color: "#6e4a32" }));
-  for (let i = 0; i < 11; i++) { const a = (i / 11) * TAU; rock(b, X + 0.4 + Math.cos(a) * 0.48, 0.06, Z + 0.7 + Math.sin(a) * 0.48, 0.13, 0.1, 0.12, a, st); }
-  for (const a of [0.3, 1.5, 2.6]) b.add(cyl(0.06, 0.07, 0.8, 8), log, M4(X + 0.4, 0.12, Z + 0.7, a, [1, 1, 1], 0, Math.PI / 2 - 0.25));
+  for (let i = 0; i < 11; i++) { const a = (i / 11) * TAU; rock(b, X + 0.55 + Math.cos(a) * 0.42, 0.06, Z + 0.55 + Math.sin(a) * 0.42, 0.11, 0.09, 0.1, a, st); }
+  for (const a of [0.3, 1.5, 2.6]) b.add(cyl(0.05, 0.06, 0.7, 8), log, M4(X + 0.55, 0.11, Z + 0.55, a, [1, 1, 1], 0, Math.PI / 2 - 0.25));
   b.add(cyl(0.16, 0.18, 1.6, 10), log, M4(X + 1.55, 0.17, Z + 1.0, 0.4, [1, 1, 1], 0, Math.PI / 2)); // sitting log
   // drying rack with a hide
   const pole = lam("pole", () => ({ color: "#6e4a32" }));
@@ -178,7 +178,7 @@ const dockSet = (b: Batch, o: V3) => {
   for (let z = 1.5; z <= 14; z += 2.5) for (const x of [-1.45, 1.45]) b.add(cyl(0.12, 0.12, 2.4, 8), post, M4(X + x, -0.9, Z + z));
   for (let z = 6.5; z <= 14; z += 5) for (const x of [-1.45, 1.45]) b.add(cyl(0.11, 0.11, 0.7, 8), post, M4(X + x, 0.5, Z + z)); // bollards
   crate(b, X - 0.9, 0.2, Z + 7.2, 0.55, 0.3); crate(b, X - 0.95, 0.585, Z + 7.25, 0.45, 0.9); crate(b, X + 0.95, 0.2, Z + 9.5, 0.5, -0.2);
-  b.add(cyl(0.22, 0.22, 0.6, 12), lam("barrel", () => ({ color: "#8a5a3a" })), M4(X + 1.0, 0.5, Z + 2.2));
+  b.add(cyl(0.22, 0.22, 0.6, 12), lam("barrel", () => ({ color: "#8a5a3a" })), M4(X + 1.0, 0.5, Z + 9.0));
   rowboat(b, X + 2.9, -0.62, Z + 6.5, 0.15);
   rowboat(b, X - 3.4, -0.62, Z + 9.5, -0.3);
   // fishing stages / sheds on the shore (left) and across the cove
@@ -240,7 +240,7 @@ const marshSet = (b: Batch, o: V3) => {
   b.add(quad(V(X - 700, -0.02, Z + 0.6), V(X + 700, -0.02, Z + 0.6), V(X + 700, -0.6, Z + 2.2), V(X - 700, -0.6, Z + 2.2), 350, 1), lam("mudG", () => ({ map: mudTex() })));
   WATERS.push([X - 700, X + 700, Z + 1.0, Z + 700, 0.1]);
   // reed beds: banks left and right, islands across the water
-  for (const [x, z, n] of [[-3.4, 1.6, 26], [-4.4, 2.6, 22], [3.2, 2.4, 22], [4.4, 1.4, 26], [-2.0, 7, 30], [2.6, 9, 30], [-6, 12, 30], [7, 14, 30], [-1, 18, 26], [10, 6, 26], [-10, 5, 26]] as const) reeds(b, X + x, Z + z, n, (x * 31 + z * 7) | 0 || 3);
+  for (const [x, z, n] of [[-1.25, -0.9, 18], [1.3, -0.6, 18], [-3.4, 1.6, 26], [-4.4, 2.6, 22], [3.2, 2.4, 22], [4.4, 1.4, 26], [-2.0, 7, 30], [2.6, 9, 30], [-6, 12, 30], [7, 14, 30], [-1, 18, 26], [10, 6, 26], [-10, 5, 26]] as const) reeds(b, X + x, Z + z, n, (x * 31 + z * 7) | 0 || 3);
   for (const [x, z, s] of [[-12, 30, 8], [8, 40, 10], [30, 28, 9], [-30, 45, 9]] as const) b.add(sph, lam("grassIsle", () => ({ color: "#7c8a4a" })), M4(X + x, 0, Z + z, 0, [s, 0.6, s * 0.6]));
   for (const [x, z, h, n] of [[-14, 30, 10, "tree_default"], [-9, 33, 8, "tree_oak"], [9, 41, 11, "tree-high-round"], [30, 28, 9, "tree_fat"], [-30, 45, 12, "tree_default"], [-60, 90, 14, "tree_oak"], [55, 95, 13, "tree_default"]] as const) prop(b, {}, n, X + x, 0, Z + z, h, x);
   hill(b, X - 120, Z + 240, 160, 40, 60, "#6a7a5a"); hill(b, X + 140, Z + 270, 200, 55, 80, "#62725a");
