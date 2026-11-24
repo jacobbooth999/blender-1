@@ -1,0 +1,1 @@
+window.CREDITS={"utd3": "Gordon Flood / CC BY 2.0", "ov_utd10": "Paolo Camera / CC BY 2.0", "ov_chelsea": "gordonflood.com / CC BY 2.0", "ov_aon": "nasmac / CC BY-SA 2.0", "ov_fk": "nasmac / CC BY-SA 2.0", "ov_dark": "gordonflood.com / CC BY 2.0", "dc2": "All-Pro Reels / CC BY-SA 2.0", "ov_derby": "The Roaming Picture Taker / CC BY 2.0"};

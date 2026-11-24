@@ -1,0 +1,38 @@
+{
+ "dc2": {
+  "size": "138% auto",
+  "pos": "47% 7%"
+ },
+ "ov_aon": {
+  "size": "260% auto",
+  "pos": "93% 56%"
+ },
+ "ov_chelsea": {
+  "size": "161% auto",
+  "pos": "3% 18%"
+ },
+ "ov_dark": {
+  "size": "201% auto",
+  "pos": "98% 85%"
+ },
+ "ov_derby": {
+  "size": "189% auto",
+  "pos": "47% 33%"
+ },
+ "ov_eng": {
+  "size": "131% auto",
+  "pos": "66% 50%"
+ },
+ "ov_fk": {
+  "size": "151% auto",
+  "pos": "0% 0%"
+ },
+ "ov_utd10": {
+  "size": "260% auto",
+  "pos": "16% 48%"
+ },
+ "utd3": {
+  "size": "154% auto",
+  "pos": "63% 10%"
+ }
+}

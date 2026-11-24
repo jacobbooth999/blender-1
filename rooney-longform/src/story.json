@@ -1,0 +1,695 @@
+{
+ "title": "Remember the Name",
+ "places": {
+  "liverpool": [
+   -2.98,
+   53.41,
+   "LIVERPOOL"
+  ],
+  "manchester": [
+   -2.24,
+   53.48,
+   "MANCHESTER"
+  ],
+  "washington": [
+   -77.04,
+   38.9,
+   "WASHINGTON, D.C."
+  ],
+  "derby": [
+   -1.48,
+   52.92,
+   "DERBY"
+  ],
+  "birmingham": [
+   -1.89,
+   52.48,
+   "BIRMINGHAM"
+  ],
+  "plymouth": [
+   -4.14,
+   50.38,
+   "PLYMOUTH"
+  ]
+ },
+ "start": "liverpool",
+ "scenes": [
+  {
+   "type": "stat",
+   "vo": "He was sixteen years old when he scored the goal that made a commentator tell the whole country to remember his name.",
+   "kicker": "Goodison Park, October 2002",
+   "photo": {
+    "slot": "young",
+    "pos": "63% 10%",
+    "src": "utd3",
+    "size": "154% auto"
+   },
+   "rows": [
+    {
+     "id": "n0",
+     "num": 16,
+     "label": "YEARS OLD",
+     "cue": "sixteen years old"
+    }
+   ],
+   "foot": "“[[h0|Remember the name]].”",
+   "cues": {
+    "h0": "remember his name"
+   }
+  },
+  {
+   "type": "stat",
+   "vo": "He became Manchester United's all-time top scorer. Two hundred and fifty three goals.",
+   "kicker": "Manchester United, 2004 to 2017",
+   "photo": {
+    "slot": "utd",
+    "pos": "16% 48%",
+    "src": "ov_utd10",
+    "size": "260% auto"
+   },
+   "rows": [
+    {
+     "id": "n1",
+     "num": 253,
+     "label": "GOALS FOR UNITED",
+     "cue": "Two hundred and fifty three"
+    }
+   ],
+   "foot": "[[h1|All-time top scorer]].",
+   "cues": {
+    "h1": "all-time top scorer"
+   }
+  },
+  {
+   "type": "stat",
+   "vo": "And England's record goalscorer.",
+   "kicker": "England, 2003 to 2018",
+   "rows": [
+    {
+     "id": "n2",
+     "num": 53,
+     "label": "GOALS FOR ENGLAND",
+     "cue": "record goalscorer"
+    }
+   ],
+   "cues": {}
+  },
+  {
+   "type": "quote",
+   "vo": "And yet, the boy who could do everything never quite got the credit. And as a manager, he won barely one game in four. This is the story of Wayne Rooney.",
+   "pre": "Never quite [[q0|got the credit]]. As a manager: [[q1|one win in four]].",
+   "text": "“Remember the name.”",
+   "by": "Clive Tyldesley, ITV, October 2002",
+   "cues": {
+    "q0": "got the credit",
+    "q1": "one game in four",
+    "qt": "story of Wayne Rooney"
+   }
+  },
+  {
+   "type": "title",
+   "vo": "Remember the name.",
+   "line1": "REMEMBER",
+   "line2": "the",
+   "line3": "NAME",
+   "icon": "none",
+   "mark": "underline",
+   "cues": {
+    "cross": "Remember the name"
+   }
+  },
+  {
+   "type": "chapter",
+   "num": "I",
+   "title": "The Boy from Croxteth",
+   "vo": "Chapter one. The boy from Croxteth."
+  },
+  {
+   "type": "front",
+   "vo": "Wayne Mark Rooney was born on the twenty fourth of October, 1985, in Croxteth, a working class area of Liverpool. His family were Everton fans. At nine, he joined Everton's academy.",
+   "date": "Thursday, October 24, 1985",
+   "place": "Liverpool",
+   "kicker": "Croxteth, Liverpool",
+   "hed": "A BLUE IS BORN",
+   "dek": "An Everton-mad family welcomes a son in [[f0|Croxteth]]",
+   "photo": {
+    "slot": "young",
+    "pos": "63% 10%",
+    "cap": "Rooney at Manchester United, 2008.",
+    "src": "utd3",
+    "size": "154% auto"
+   },
+   "body": [
+    "Wayne Mark Rooney was born on October 24, 1985, the eldest of three brothers.",
+    "His family were Everton supporters. At nine, he [[f1|joined Everton's academy]]."
+   ],
+   "cues": {
+    "f0": "Croxteth",
+    "f1": "joined Everton's academy"
+   }
+  },
+  {
+   "type": "clip",
+   "vo": "On the nineteenth of October, 2002, five days before his seventeenth birthday, he came off the bench against Arsenal, the champions, unbeaten in thirty games, and curled in a last minute winner.",
+   "kicker": "Goodison Park, October 2002",
+   "hed": "ROONEY ENDS ARSENAL RUN",
+   "photo": {
+    "slot": "young",
+    "pos": "63% 10%",
+    "cap": "Rooney at Manchester United, 2008.",
+    "src": "utd3",
+    "size": "154% auto"
+   },
+   "body": [
+    "Aged 16, substitute Wayne Rooney [[c0|curls in a last-minute winner]].",
+    "Arsenal's [[c1|30-game unbeaten run]] is over."
+   ],
+   "cues": {
+    "c0": "last minute winner",
+    "c1": "unbeaten in thirty games"
+   }
+  },
+  {
+   "type": "file",
+   "vo": "At sixteen years and three hundred and sixty days old, he was, at the time, the youngest goalscorer in Premier League history.",
+   "title": "Record file: W. Rooney",
+   "stamp": "RECORD",
+   "rows": [
+    [
+     "AGE",
+     "16 years, 360 days"
+    ],
+    [
+     "RECORD",
+     "[[r0|Youngest Premier League scorer]] at the time"
+    ],
+    [
+     "VICTIM",
+     "Arsenal, the champions"
+    ]
+   ],
+   "cues": {
+    "r0": "youngest goalscorer"
+   }
+  },
+  {
+   "type": "clip",
+   "vo": "Four months later, he became England's youngest ever player. At Euro 2004, he scored four goals, and the world took notice. Until a broken foot ended his tournament.",
+   "kicker": "Lisbon, June 2004",
+   "hed": "WAYNE'S WORLD",
+   "body": [
+    "England's [[c0|youngest ever player]] lights up Euro 2004 with four goals.",
+    "Then a [[c1|broken foot]] against Portugal ends his tournament."
+   ],
+   "cues": {
+    "c0": "youngest ever player",
+    "c1": "broken foot"
+   }
+  },
+  {
+   "type": "chapter",
+   "num": "II",
+   "title": "The Red Devil",
+   "vo": "Chapter two. The red devil."
+  },
+  {
+   "type": "map",
+   "vo": "That summer, Manchester United paid more than twenty five million pounds for him. A record for a teenager.",
+   "legs": [
+    [
+     "liverpool",
+     "manchester",
+     "Manchester United paid"
+    ]
+   ],
+   "note": "2004: [[m0|a record fee for a teenager]]",
+   "cues": {
+    "m0": "A record for a teenager"
+   },
+   "photo": {
+    "slot": "utd",
+    "pos": "16% 48%",
+    "pc": "United",
+    "src": "ov_utd10",
+    "size": "260% auto"
+   }
+  },
+  {
+   "type": "clip",
+   "vo": "On his debut, in the Champions League against Fenerbahçe, he scored a hat-trick.",
+   "kicker": "Old Trafford, September 2004",
+   "hed": "DEBUT HAT-TRICK",
+   "photo": {
+    "slot": "utd",
+    "pos": "16% 48%",
+    "cap": "Rooney at Old Trafford.",
+    "src": "ov_utd10",
+    "size": "260% auto"
+   },
+   "body": [
+    "Rooney scores [[c0|three goals on his United debut]] as Fenerbahçe are beaten 6–2."
+   ],
+   "cues": {
+    "c0": "scored a hat-trick"
+   }
+  },
+  {
+   "type": "clip",
+   "vo": "But at the 2006 World Cup, he was sent off against Portugal. His United teammate, Cristiano Ronaldo, was caught on camera winking at the bench.",
+   "kicker": "Gelsenkirchen, July 2006",
+   "hed": "ROONEY SEES RED",
+   "body": [
+    "England's hope is [[c0|sent off]] in the quarter-final.",
+    "Cristiano Ronaldo's [[c1|wink]] becomes the image of the tournament."
+   ],
+   "cues": {
+    "c0": "sent off",
+    "c1": "winking"
+   }
+  },
+  {
+   "type": "stat",
+   "vo": "Two years later, Rooney and Ronaldo won the Champions League together in Moscow. At Old Trafford, Rooney won five Premier League titles.",
+   "kicker": "Moscow, May 2008",
+   "photo": {
+    "slot": "utd2",
+    "pos": "3% 18%",
+    "src": "ov_chelsea",
+    "size": "161% auto"
+   },
+   "rows": [
+    {
+     "id": "n3",
+     "num": 5,
+     "label": "PREMIER LEAGUE TITLES",
+     "cue": "five Premier League titles"
+    }
+   ],
+   "foot": "Plus a [[h0|Champions League]], won with Ronaldo in 2008.",
+   "cues": {
+    "h0": "won the Champions League"
+   }
+  },
+  {
+   "type": "stat",
+   "vo": "In 2010, the season after Ronaldo left, Rooney scored thirty four goals, and was named PFA Player of the Year.",
+   "kicker": "Season 2009–10",
+   "rows": [
+    {
+     "id": "n9",
+     "num": 34,
+     "label": "GOALS IN ONE SEASON",
+     "cue": "thirty four goals"
+    }
+   ],
+   "foot": "Named [[h0|PFA Player of the Year]].",
+   "cues": {
+    "h0": "PFA Player of the Year"
+   }
+  },
+  {
+   "type": "clip",
+   "vo": "In 2011, against Manchester City, he scored an overhead kick that was later voted the best goal of the Premier League's first twenty years.",
+   "kicker": "Old Trafford, February 2011",
+   "hed": "THE OVERHEAD KICK",
+   "photo": {
+    "slot": "utd2",
+    "pos": "3% 18%",
+    "cap": "Rooney against Chelsea.",
+    "src": "ov_chelsea",
+    "size": "161% auto"
+   },
+   "body": [
+    "A spectacular [[c0|overhead kick]] wins the Manchester derby.",
+    "It is later voted the [[c1|best goal of the Premier League's first 20 years]]."
+   ],
+   "cues": {
+    "c0": "overhead kick",
+    "c1": "best goal"
+   }
+  },
+  {
+   "type": "file",
+   "vo": "There was always drama. In 2010, he said publicly that he wanted to leave United. Days later, he signed a new contract.",
+   "title": "Transfer file: October 2010",
+   "stamp": "U-TURN",
+   "rows": [
+    [
+     "OCT 19",
+     "[[r0|Wants to leave]] United"
+    ],
+    [
+     "OCT 22",
+     "[[r1|Signs a new contract]]"
+    ]
+   ],
+   "cues": {
+    "r0": "wanted to leave",
+    "r1": "signed a new contract"
+   }
+  },
+  {
+   "type": "clip",
+   "vo": "In 2013, Sir Alex Ferguson retired, and revealed Rooney had asked to leave again. He stayed. He became captain, and lifted the FA Cup in 2016, and the Europa League in 2017.",
+   "kicker": "Manchester, 2013 to 2017",
+   "hed": "CAPTAIN ROONEY",
+   "photo": {
+    "slot": "aon",
+    "pos": "93% 56%",
+    "cap": "Rooney at Manchester United, 2011.",
+    "src": "ov_aon",
+    "size": "260% auto"
+   },
+   "body": [
+    "After Ferguson's exit, Rooney [[c0|becomes captain]].",
+    "He lifts the [[c1|FA Cup]] in 2016 and the Europa League in 2017."
+   ],
+   "cues": {
+    "c0": "became captain",
+    "c1": "FA Cup"
+   }
+  },
+  {
+   "type": "stat",
+   "vo": "In 2017, a free kick against Stoke took him past Sir Bobby Charlton, as United's all-time top scorer.",
+   "kicker": "Stoke, January 2017",
+   "rows": [
+    {
+     "id": "n4",
+     "num": 250,
+     "label": "GOALS · PASSING SIR BOBBY CHARLTON",
+     "cue": "past Sir Bobby"
+    }
+   ],
+   "foot": "A [[h0|free kick]] to make history.",
+   "cues": {
+    "h0": "free kick"
+   },
+   "photo": {
+    "slot": "fk",
+    "pos": "0% 0%",
+    "src": "ov_fk",
+    "size": "151% auto"
+   }
+  },
+  {
+   "type": "chapter",
+   "num": "III",
+   "title": "Three Lions",
+   "vo": "Chapter three. Three lions."
+  },
+  {
+   "type": "file",
+   "vo": "For England, he was meant to be the boy who ended the wait. Instead came heartbreak. Penalties in 2004 and 2006. Germany in 2010. A group stage exit in 2014. Iceland in 2016.",
+   "title": "England file: the heartbreak",
+   "stamp": "OUT",
+   "rows": [
+    [
+     "2004",
+     "Portugal, [[r0|on penalties]]"
+    ],
+    [
+     "2006",
+     "Portugal, on penalties"
+    ],
+    [
+     "2010",
+     "[[r1|Germany]], 4–1"
+    ],
+    [
+     "2014",
+     "Out in the group stage"
+    ],
+    [
+     "2016",
+     "[[r2|Iceland]], 2–1"
+    ]
+   ],
+   "cues": {
+    "r0": "Penalties in 2004",
+    "r1": "Germany in 2010",
+    "r2": "Iceland in 2016"
+   }
+  },
+  {
+   "type": "stat",
+   "vo": "In 2015, he scored his fiftieth England goal, passing Sir Bobby Charlton's record.",
+   "kicker": "Wembley, September 2015",
+   "rows": [
+    {
+     "id": "n5",
+     "num": 50,
+     "label": "ENGLAND GOALS · A NEW RECORD",
+     "cue": "fiftieth England goal"
+    }
+   ],
+   "cues": {}
+  },
+  {
+   "type": "quote",
+   "vo": "He finished with fifty three goals in a hundred and twenty games. But no trophies. The golden generation never won a thing.",
+   "pre": "53 goals. [[q0|120 caps]].",
+   "text": "No trophies.",
+   "by": "",
+   "cues": {
+    "q0": "hundred and twenty games",
+    "qt": "no trophies"
+   }
+  },
+  {
+   "type": "chapter",
+   "num": "IV",
+   "title": "The Road Back",
+   "vo": "Chapter four. The road back."
+  },
+  {
+   "type": "map",
+   "vo": "In 2017, he went home to Everton. Against West Ham, he scored a hat-trick, including a goal from inside his own half.",
+   "legs": [
+    [
+     "manchester",
+     "liverpool",
+     "went home to Everton"
+    ]
+   ],
+   "note": "2017: [[m0|a goal from his own half]]",
+   "cues": {
+    "m0": "inside his own half"
+   },
+   "photo": {
+    "slot": "everton17",
+    "pos": "98% 85%",
+    "pc": "v Everton",
+    "src": "ov_dark",
+    "size": "201% auto"
+   }
+  },
+  {
+   "type": "map",
+   "vo": "Then came America. At DC United, he took a team that was bottom of the table into the play-offs.",
+   "legs": [
+    [
+     "liverpool",
+     "washington",
+     "Then came America"
+    ]
+   ],
+   "note": "2018: [[m0|bottom to the play-offs]]",
+   "cues": {
+    "m0": "into the play-offs"
+   },
+   "photo": {
+    "slot": "dc",
+    "pos": "47% 7%",
+    "pc": "D.C. United",
+    "src": "dc2",
+    "size": "138% auto"
+   }
+  },
+  {
+   "type": "clip",
+   "vo": "In one game, deep into stoppage time, he chased back to win the ball, then crossed for the winner.",
+   "kicker": "Washington, August 2018",
+   "hed": "THE TACKLE",
+   "photo": {
+    "slot": "dc",
+    "pos": "47% 7%",
+    "cap": "Rooney at D.C. United, 2018.",
+    "src": "dc2",
+    "size": "138% auto"
+   },
+   "body": [
+    "In the final seconds, Rooney [[c0|chases back to win the ball]]...",
+    "...then [[c1|crosses for the winner]]."
+   ],
+   "cues": {
+    "c0": "chased back",
+    "c1": "crossed for the winner"
+   }
+  },
+  {
+   "type": "chapter",
+   "num": "V",
+   "title": "The Dugout",
+   "vo": "Chapter five. The dugout."
+  },
+  {
+   "type": "map",
+   "vo": "In 2020, he returned to England with Derby County. First as a player, then as manager.",
+   "legs": [
+    [
+     "washington",
+     "derby",
+     "returned to England"
+    ]
+   ],
+   "note": "2021: [[m0|Derby manager]]",
+   "cues": {
+    "m0": "then as manager"
+   },
+   "photo": {
+    "slot": "derby",
+    "pos": "47% 33%",
+    "pc": "Derby, 2022",
+    "src": "ov_derby",
+    "size": "189% auto"
+   }
+  },
+  {
+   "type": "clip",
+   "vo": "The club fell into administration, and was docked twenty one points. Rooney turned down an approach from Everton to stay. Derby were relegated anyway.",
+   "kicker": "Derby, 2022",
+   "hed": "DERBY DOCKED 21 POINTS",
+   "photo": {
+    "slot": "derby",
+    "pos": "47% 33%",
+    "cap": "Street art in Derby during the club's crisis, 2022.",
+    "src": "ov_derby",
+    "size": "189% auto"
+   },
+   "body": [
+    "Derby fall into [[c0|administration]].",
+    "Rooney [[c1|turns down Everton]] to stay, but cannot stop relegation."
+   ],
+   "cues": {
+    "c0": "administration",
+    "c1": "turned down an approach from Everton"
+   }
+  },
+  {
+   "type": "map",
+   "vo": "After a spell back in Washington, as DC United manager, Birmingham City hired him in 2023.",
+   "legs": [
+    [
+     "derby",
+     "birmingham",
+     "Birmingham City hired him"
+    ]
+   ],
+   "note": "2023: [[m0|Birmingham City]]",
+   "cues": {
+    "m0": "Birmingham City"
+   }
+  },
+  {
+   "type": "file",
+   "vo": "It lasted eighty three days. Then came Plymouth Argyle. Twenty five games, and he was gone again.",
+   "title": "Managerial file",
+   "stamp": "SACKED",
+   "rows": [
+    [
+     "BIRMINGHAM",
+     "[[r0|83 days]], 15 games"
+    ],
+    [
+     "PLYMOUTH",
+     "[[r1|25 games]], bottom of the table"
+    ],
+    [
+     "OVERALL",
+     "45 wins in 179 games"
+    ]
+   ],
+   "cues": {
+    "r0": "eighty three days",
+    "r1": "Twenty five games"
+   }
+  },
+  {
+   "type": "chapter",
+   "num": "VI",
+   "title": "The Verdict",
+   "vo": "Chapter six. The verdict."
+  },
+  {
+   "type": "quote",
+   "vo": "Today, he works in the studio, for the BBC. He has spoken openly about the toll the pressure took on his mental health. In June 2026, asked if he would manage again, he said, probably not.",
+   "pre": "Asked if he would [[q0|manage again]]:",
+   "text": "“Probably not.”",
+   "by": "Wayne Rooney, June 2026",
+   "cues": {
+    "q0": "manage again",
+    "qt": "probably not"
+   }
+  },
+  {
+   "type": "stat",
+   "vo": "Two hundred and fifty three goals for United. Fifty three for England. Five league titles.",
+   "kicker": "The career in numbers",
+   "rows": [
+    {
+     "id": "n6",
+     "num": 253,
+     "label": "GOALS FOR UNITED",
+     "cue": "Two hundred and fifty three"
+    },
+    {
+     "id": "n7",
+     "num": 53,
+     "label": "GOALS FOR ENGLAND",
+     "cue": "Fifty three for England"
+    },
+    {
+     "id": "n8",
+     "num": 5,
+     "label": "LEAGUE TITLES",
+     "cue": "Five league titles"
+    }
+   ],
+   "cues": {}
+  },
+  {
+   "type": "quote",
+   "vo": "He played up front, in midfield, on the wing. Wherever he was asked. Maybe that's why he never got the credit of a Ronaldo or a Messi. But at sixteen, we were told to remember his name. We did.",
+   "pre": "Striker. Midfielder. Winger. [[q0|Wherever he was asked]].",
+   "text": "We remembered the name.",
+   "by": "",
+   "cues": {
+    "q0": "Wherever he was asked",
+    "qt": "We did"
+   }
+  },
+  {
+   "type": "verdict",
+   "vo": "So, is Wayne Rooney the most underrated legend of the Premier League era? Tell me in the comments. And subscribe, for the next story.",
+   "q": "UNDERRATED LEGEND?",
+   "opts": [
+    "YES",
+    "NO"
+   ],
+   "cta": "Tell me in the comments",
+   "photo": {
+    "slot": "utd",
+    "pos": "16% 48%",
+    "pc": "United",
+    "src": "ov_utd10",
+    "size": "260% auto"
+   },
+   "cues": {
+    "q0": "most underrated legend",
+    "cta": "comments"
+   }
+  }
+ ],
+ "minSpan": 4.5
+}

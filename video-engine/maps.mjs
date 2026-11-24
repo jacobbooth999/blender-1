@@ -5,13 +5,13 @@ import {feature} from 'topojson-client';
 const story=JSON.parse(fs.readFileSync('story.json'));
 const land10=feature(...(t=>[t,t.objects.land])(JSON.parse(fs.readFileSync('node_modules/world-atlas/land-10m.json'))));
 const land50=feature(...(t=>[t,t.objects.land])(JSON.parse(fs.readFileSync('node_modules/world-atlas/land-50m.json'))));
-const P={mogi:[-46.19,-23.52,'MOGI DAS CRUZES'],santos:[-46.33,-23.96,'SANTOS'],barcelona:[2.17,41.39,'BARCELONA'],paris:[2.35,48.86,'PARIS'],riyadh:[46.72,24.71,'RIYADH']};
-const W=1240,H=700; const out={}; const visited=['mogi'];
+const P=story.places;
+const W=1240,H=700; const out={}; const visited=[story.start];
 story.scenes.forEach((sc,i)=>{ if(sc.type!=='map')return;
   const legs=sc.legs; legs.forEach(l=>{if(!visited.includes(l[0]))visited.push(l[0]);});
   const pts=legs.flatMap(l=>[P[l[0]],P[l[1]]]);
   let lo0=Math.min(...pts.map(p=>p[0])),lo1=Math.max(...pts.map(p=>p[0])),la0=Math.min(...pts.map(p=>p[1])),la1=Math.max(...pts.map(p=>p[1]));
-  let span=Math.max(lo1-lo0,(la1-la0)*W/H,0.8); const cx=(lo0+lo1)/2,cy=(la0+la1)/2; span*=1.45;
+  let span=Math.max(lo1-lo0,(la1-la0)*W/H,story.minSpan||0.8); const cx=(lo0+lo1)/2,cy=(la0+la1)/2; span*=1.45;
   const spanLa=span*H/W;
   const proj=geoEquirectangular().fitExtent([[0,0],[W,H]],{type:'Feature',geometry:{type:'Polygon',coordinates:[[[cx-span/2,cy-spanLa/2],[cx-span/2,cy+spanLa/2],[cx+span/2,cy+spanLa/2],[cx+span/2,cy-spanLa/2],[cx-span/2,cy-spanLa/2]]]}});
   proj.clipExtent([[-20,-20],[W+20,H+20]]);
@@ -22,7 +22,8 @@ story.scenes.forEach((sc,i)=>{ if(sc.type!=='map')return;
   const step=span>60?15:span>20?5:span>4?1:0.25; let grat='';
   for(let lo=Math.ceil((cx-span/2)/step)*step;lo<cx+span/2;lo+=step){const a=proj([lo,cy-spanLa]),b=proj([lo,cy+spanLa]);grat+=`M${a[0].toFixed(0)} ${a[1].toFixed(0)}L${b[0].toFixed(0)} ${b[1].toFixed(0)}`;}
   for(let la=Math.ceil((cy-spanLa/2)/step)*step;la<cy+spanLa/2;la+=step){const a=proj([cx-span,la]),b=proj([cx+span,la]);grat+=`M${a[0].toFixed(0)} ${a[1].toFixed(0)}L${b[0].toFixed(0)} ${b[1].toFixed(0)}`;}
-  if(stops.mogi&&stops.santos&&Math.hypot(stops.mogi.x-stops.santos.x,stops.mogi.y-stops.santos.y)<60) delete stops.mogi;
+  const cur=new Set(legs.flat().slice(0,2).concat(legs.map(l=>l[1])));
+  for(const a of Object.keys(stops)) for(const b of Object.keys(stops)) if(a!==b&&stops[a]&&stops[b]&&!cur.has(a)&&Math.hypot(stops[a].x-stops[b].x,stops[a].y-stops[b].y)<70) delete stops[a];
   out[i]={w:W,h:H,land,grat,stops,legs:legs.map(l=>({from:l[0],to:l[1],cue:'leg_'+l[1]}))};
 });
 fs.writeFileSync('maps.js','window.MAPS='+JSON.stringify(out)+';');

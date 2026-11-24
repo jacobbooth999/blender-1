@@ -26,3 +26,9 @@ Turns a story file (`story.json`) into a 1920×1080 newspaper-style video, with 
 - Risers into reveals, and music that changes with each chapter.
 
 To change the voice, set the `VOICE` environment variable to another Piper `.onnx` model. You can also replace `vo_full.wav` with your own recording; if you do, re-time it in `voice.py`.
+
+## Added for the Rooney video
+- `story.places`, `story.start` and `story.minSpan` drive the route map, so any journey works. Labels for nearby cities flip sides so they don't overlap.
+- The `title` scene takes `icon: "none"` and `mark: "underline"`, as well as the crown and X.
+- `python3 autocrop.py` finds the person (or artwork) in each photo with rembg and writes `img/autocrop.json`. `photos.py` uses it to frame the subject automatically.
+- Photos can come from Openverse (Flickr) as well as Wikimedia Commons. Only use CC BY, CC BY-SA, CC0 or public domain, never NC or ND licences, on a monetized channel.
