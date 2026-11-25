@@ -128,14 +128,14 @@ export const giraffe = (ink: Ink, x: number, y: number, u: number, o: GiraffeOpt
 /** big giraffe head in profile for close-ups (facing right); (x, y) = head centre, s = head length px */
 export const giraffeHead = (ink: Ink, x: number, y: number, s: number, o: { tongue?: number; blink?: boolean; chew?: number; brow?: "soft" | "worried" | "proud" } = {}) => {
   const g = ink.g; g.save(); g.translate(x, y); g.scale(s, s);
-  const saved = { unit: ink.unit, w: ink.w }; ink.unit = 1 / s; ink.w = Math.max(3, s * 0.008) / s; const W = ink.w;
-  const base = "#f3e1b4", patch = "#b5632c", dark = "#5a3a24";
+  const saved = { unit: ink.unit, w: ink.w, vec: ink.vector }; ink.unit = 1 / s; ink.w = Math.max(3, s * 0.008) / s; const W = ink.w; ink.vector = true;
+  const base = "#f1d6a8", patch = "#d48f55", dark = "#8a5a3c";
   // neck going down-left
   const neck: P[] = [[-0.35, 0.05], [-0.1, 0.12], [-0.25, 1.4], [-0.95, 1.4]];
   ink.shape(neck, base, null); clipTo(ink, neck, () => patches(ink, -1.2, 0.1, -0.1, 1.5, 0.22, patch, 5)); ink.line([neck[0], neck[3]], W); ink.line([neck[1], neck[2]], W);
   ink.line([[-0.4, 0.05], [-1.0, 1.35]], 0.06, dark, 0.3);
-  ink.line([[-0.25, -0.12], [-0.3, -0.42]], 0.06, INKC, 0.2); ink.ell(-0.3, -0.44, 0.05, 0.05, dark, null);
-  ink.line([[-0.1, -0.13], [-0.12, -0.44]], 0.06, INKC, 0.2); ink.ell(-0.12, -0.46, 0.05, 0.05, dark, null);
+  ink.line([[-0.25, -0.12], [-0.3, -0.42]], 0.06, "#d7a86e", 0.2); ink.ell(-0.3, -0.44, 0.05, 0.05, dark, null);
+  ink.line([[-0.1, -0.13], [-0.12, -0.44]], 0.06, "#d7a86e", 0.2); ink.ell(-0.12, -0.46, 0.05, 0.05, dark, null);
   ink.shape(ink.ellPts(-0.42, -0.08, 0.17, 0.06, -0.4), base, W); ink.shape(ink.ellPts(-0.42, -0.08, 0.1, 0.025, -0.4), "#e6b7a0", null);
   const tg = o.tongue ?? 0;
   if (tg > 0) { const t0: P = [0.78, 0.2], t1: P = [0.78 + 0.3 * tg, 0.1 - 0.25 * tg], t2: P = [0.75 + 0.12 * tg, -0.35 * tg]; ink.line(ink.curve(t0, t1, t2), 0.11 + W * 2, INKC, 0.2); ink.line(ink.curve(t0, t1, t2), 0.11, "#5a3a6a", 0.2); ink.line(ink.curve(t0, t1, t2), 0.03, "#7a5a8a", 0.1); }
@@ -150,7 +150,7 @@ export const giraffeHead = (ink: Ink, x: number, y: number, s: number, o: { tong
   else { ink.ell(0.12, -0.03, 0.06, 0.055, "#ffffff", W); ink.dot(0.135, -0.03, 0.03); }
   const b = o.brow ?? "soft", [bo, bi] = b === "worried" ? [0.03, -0.05] : b === "proud" ? [-0.04, 0.02] : [0, -0.015];
   ink.line([[0.04, -0.12 + bo], [0.2, -0.12 + bi]], W * 1.2, INKC, 0.1);
-  g.restore(); ink.unit = saved.unit; ink.w = saved.w;
+  g.restore(); ink.unit = saved.unit; ink.w = saved.w; ink.vector = saved.vec;
 };
 
 export type LionOpts = { pose?: "stalk" | "run" | "sit" | "pant" | "surprised"; phase?: number; swish?: number; blink?: boolean };

@@ -6,6 +6,8 @@ export const INKC = "#1d1a1c";
 export const PAPER = "#fbfaf5";
 export const RED = "#d0453a";
 export const BLUE = "#3d6fb6";
+export const VEC_LINE = "#6b4a3a";
+export const VEC_DARK = "#3a2a26";
 
 export const rng = (seed: number) => {
   let s = (Math.abs(seed * 9301 + 49297) % 233280) || 1;
@@ -25,6 +27,8 @@ export class Ink {
   /** base ink width in px */
   w = 3.2;
   wob = 1.0;
+  /** flat-vector mode (characters): no black outlines; ink lines become a soft warm brown, thick ink underlays vanish */
+  vector = false;
   /** drawing-unit size in px^-1 when the context is scaled (wobble amplitude and resample step follow it) */
   unit = 1;
   constructor(g: CanvasRenderingContext2D, seed = 1) { this.g = g; this.r = rng(seed); }
@@ -57,6 +61,7 @@ export class Ink {
   }
   /** a wobbly ink stroke */
   line(pts: P[], w = this.w, col = INKC, amp = 1.1) {
+    if (this.vector && col === INKC) { if (w > this.w * 3) return; col = VEC_LINE; w *= 0.8; }
     const g = this.g, q = this.wobble(pts, amp);
     g.lineCap = "round"; g.lineJoin = "round"; g.strokeStyle = col; g.lineWidth = w;
     this.path(q, false); g.stroke();
@@ -64,7 +69,8 @@ export class Ink {
   /** a filled shape (fill may be a gradient) with an optional wobbly outline */
   shape(pts: P[], fill: string | CanvasGradient | null, w: number | null = this.w, col = INKC, amp = 1.0) {
     const g = this.g;
-    if (fill) { g.fillStyle = fill; this.path(pts, true); g.fill(); }
+    if (fill) { g.fillStyle = this.vector && fill === INKC ? VEC_DARK : fill; this.path(pts, true); g.fill(); }
+    if (w && this.vector && col === INKC) return;
     if (w) { const q = this.wobble(pts, amp, true); g.lineCap = "round"; g.lineJoin = "round"; g.strokeStyle = col; g.lineWidth = w; this.path(q, false); g.stroke(); }
   }
   ellPts(cx: number, cy: number, rx: number, ry: number, rot = 0, n = 48, a0 = 0, a1 = Math.PI * 2): P[] {
@@ -75,7 +81,7 @@ export class Ink {
   ell(cx: number, cy: number, rx: number, ry: number, fill: string | CanvasGradient | null, w: number | null = this.w, rot = 0, col = INKC) {
     this.shape(this.ellPts(cx, cy, rx, ry, rot), fill, w, col);
   }
-  dot(cx: number, cy: number, r: number, col = INKC) { const g = this.g; g.fillStyle = col; g.beginPath(); g.arc(cx, cy, r, 0, Math.PI * 2); g.fill(); }
+  dot(cx: number, cy: number, r: number, col = INKC) { const g = this.g; g.fillStyle = this.vector && col === INKC ? VEC_DARK : col; g.beginPath(); g.arc(cx, cy, r, 0, Math.PI * 2); g.fill(); }
   arc(cx: number, cy: number, rx: number, ry: number, a0: number, a1: number, w = this.w, col = INKC) {
     this.line(this.ellPts(cx, cy, rx, ry, 0, 24, a0, a1), w, col, 0.4);
   }

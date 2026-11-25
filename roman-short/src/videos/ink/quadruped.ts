@@ -67,6 +67,8 @@ export type QuadOpts = {
   blink?: boolean; brow?: "soft" | "worried" | "proud" | "alert"; mouth?: "closed" | "smile" | "open" | "pant";
   tongue?: number; chew?: number; sweat?: boolean; neckAdd?: number; seed?: number;
   shadow?: boolean; cel?: boolean;
+  /** flat-vector character look (no outlines, soft palette, fur flicks, gentle faces); default true */
+  vector?: boolean;
 };
 
 const add = (a: P, b: P): P => [a[0] + b[0], a[1] + b[1]];
@@ -112,6 +114,7 @@ export const gaitSpeed = (sp: Species, gait: "walk" | "gallop") => { const g = s
 // ---- shading helpers ----
 /** cel shadow: a hard-edged darker band on the side of a shape facing `dir` (multiply), plus a thin light rim opposite */
 const cel = (ink: Ink, pts: P[], dir: P, k = 0.56, dark = "rgba(92,58,110,0.34)", rim = 0.22) => {
+  if (ink.vector) { const a = parseFloat(dark.split(",")[3]) || 0.3; dark = `rgba(166,96,62,${(a * 0.8).toFixed(3)})`; rim *= 1.3; }
   const g = ink.g; let x0 = Infinity, x1 = -Infinity, y0 = Infinity, y1 = -Infinity;
   for (const [x, y] of pts) { x0 = Math.min(x0, x); x1 = Math.max(x1, x); y0 = Math.min(y0, y); y1 = Math.max(y1, y); }
   const cx = (x0 + x1) / 2, cy = (y0 + y1) / 2, l = Math.hypot(dir[0], dir[1]) || 1, dx = dir[0] / l, dy = dir[1] / l, R = Math.max(x1 - x0, y1 - y0) / 2 || 0.01;
@@ -139,7 +142,7 @@ export const quad = (ink: Ink, sp: Species, x: number, y: number, u: number, o: 
     sg.setTransform(1, 0, 0, 1, 0, 0); sg.clearRect(0, 0, Wc, Hc); sg.setTransform(m);
     const sink = new Ink(sg, 1); sink.wob = 0;
     quadBody(sink, sp, x, y, u, { ...o, sweat: false, cel: false }, flip);
-    sg.setTransform(1, 0, 0, 1, 0, 0); sg.globalCompositeOperation = "source-in"; sg.fillStyle = "#2b1f3c"; sg.fillRect(0, 0, Wc, Hc); sg.globalCompositeOperation = "source-over";
+    sg.setTransform(1, 0, 0, 1, 0, 0); sg.globalCompositeOperation = "source-in"; sg.fillStyle = o.vector === false ? "#2b1f3c" : "#4a3040"; sg.fillRect(0, 0, Wc, Hc); sg.globalCompositeOperation = "source-over";
     const gp = m.transformPoint(new DOMPoint(x, y)), sc = Math.hypot(m.a, m.b);
     g.save(); g.setTransform(1, 0, 0, 1, 0, 0);
     // contact shadow under the body
@@ -147,14 +150,28 @@ export const quad = (ink: Ink, sp: Species, x: number, y: number, u: number, o: 
     cg.addColorStop(0, "rgba(43,31,60,0.32)"); cg.addColorStop(1, "rgba(43,31,60,0)");
     g.save(); g.translate(gp.x, gp.y); g.scale(1, 0.16); g.translate(-gp.x, -gp.y); g.fillStyle = cg; g.fillRect(gp.x - cw, gp.y - cw, cw * 2, cw * 2); g.restore();
     // projected silhouette
-    g.globalAlpha = 0.3; g.filter = `blur(${Math.max(1.5, 4 * Wc / 1920)}px)`;
+    g.globalAlpha = o.vector === false ? 0.3 : 0.2; g.filter = `blur(${Math.max(2, 5 * Wc / 1920)}px)`;
     g.translate(gp.x, gp.y); g.transform(1, 0, -0.5, 0.34, 0, 0); g.translate(-gp.x, -gp.y);
     g.drawImage(shadowCanvas, 0, 0);
     g.restore();
   }
   return quadBody(ink, sp, x, y, u, o, flip);
 };
-const quadBody = (ink: Ink, sp: Species, x: number, y: number, u: number, o: QuadOpts = {}, flip = false) => {
+const VEC_COLORS: Record<string, Species["colors"]> = {
+  giraffe: { coat: "#f1d6a8", light: "#fbf0dc", patch: "#d48f55", dark: "#8a5a3c", hoof: "#5a3e30", leg: "#f6e6c9" },
+  calf: { coat: "#f4dcb2", light: "#fcf3e2", patch: "#dda06a", dark: "#8a5a3c", hoof: "#5a3e30", leg: "#f8ead0" },
+  ancestor: { coat: "#a8744e", light: "#e6c9a6", dark: "#5e3e2a", hoof: "#4a3226", leg: "#946140" },
+  lioness: { coat: "#e3ad6c", light: "#f7e4c4", dark: "#7a4e30", hoof: "#7a4e30" },
+  zebra: { coat: "#f7f3ec", light: "#ffffff", dark: "#4a4044", hoof: "#4a4044" },
+};
+/** small fur tufts: a few short curved flicks (light ones on chests, darker ones on edges) */
+const flicks = (ink: Ink, cx: number, cy: number, n: number, s: number, col: string, seed: number) => {
+  ink.seed(seed); const g = ink.g; g.strokeStyle = col; g.lineCap = "round"; g.lineWidth = s * 0.16;
+  for (let i = 0; i < n; i++) { const x = cx + (ink.r() - 0.5) * s * 3, y = cy + (ink.r() - 0.5) * s * 2, a = -0.4 + ink.r() * 0.8; g.beginPath(); g.moveTo(x - s * 0.5, y); g.quadraticCurveTo(x - s * 0.2, y - s * 0.55 + a * s * 0.2, x, y - s * 0.05); g.quadraticCurveTo(x + s * 0.2, y - s * 0.55 - a * s * 0.2, x + s * 0.5, y); g.stroke(); }
+};
+const quadBody = (ink: Ink, sp0: Species, x: number, y: number, u: number, o: QuadOpts = {}, flip = false) => {
+  const vec = o.vector ?? true, prevVec = ink.vector; ink.vector = vec;
+  const sp: Species = vec && VEC_COLORS[sp0.name] ? { ...sp0, colors: VEC_COLORS[sp0.name], head: sp0.head * 1.14 } : sp0;
   const g = ink.g, t = o.t ?? 0, gait = o.gait ?? "stand", shadeOn = o.cel !== false;
   g.save(); g.translate(x, y); g.scale(flip ? -u : u, u);
   const saved = { unit: ink.unit, w: ink.w }; ink.unit = 1 / u; const W = Math.max(2.2, u * (sp.name === "lioness" || sp.name === "zebra" ? 0.012 : 0.0065)) / u; ink.w = W;
@@ -270,15 +287,17 @@ const quadBody = (ink: Ink, sp: Species, x: number, y: number, u: number, o: Qua
     if (C.patch) patches(ink, -0.9, 0.7, -1.15, -0.35, giraffeLike ? 0.11 : 0.14, C.patch, o.seed ?? 3);
     if (sp.name === "zebra") for (let i = -7; i < 8; i++) ink.line(ink.curve([i * 0.08, -1.1], [i * 0.08 + 0.05, -0.8], [i * 0.08 - 0.03, -0.45]), 0.04, C.dark, 0.2);
     if (sp.name === "lioness" || sp.name === "ancestor") ink.ell(-0.05, sp.belly + 0.02, 0.6, 0.1, C.light, null);
+    if (vec && giraffeLike && sp.name !== "ancestor") { const c = tf([sp.shoulder[0] + 0.1, sp.chest - 0.06]); ink.ell(c[0], c[1], 0.12, 0.1, C.light, null, -0.3); ink.ell(-0.05, sp.belly + 0.03, 0.3, 0.05, C.light, null); }
   });
   if (shadeOn) cel(ink, trunk, [0.15, 1], 0.52, "rgba(92,58,110,0.42)", 0.3);
   ink.shape(trunk, null, W);
-  if (sp.name === "lioness") ink.hatch(trunk, 10, 0.08, "rgba(90,60,30,0.35)", W * 0.7, Math.PI * 0.8, 0.4);
+  if (sp.name === "lioness" && !vec) ink.hatch(trunk, 10, 0.08, "rgba(90,60,30,0.35)", W * 0.7, Math.PI * 0.8, 0.4);
+  if (vec) { const c = tf([sp.shoulder[0] + 0.09, sp.chest - 0.12]); flicks(ink, c[0], c[1], 3, 0.035, "rgba(255,250,238,0.95)", 5); const r2 = tf([sp.croup[0] - 0.02, sp.croup[1] + 0.12]); flicks(ink, r2[0], r2[1], 2, 0.03, shade(C.coat, 0.78), 6); }
   for (const L of solved) if (L.near) drawLeg(L);
   // ---- head ----
   const out = headAt(ink, sp, ntop, nAng, o, W, t, gait, neckSwing * 0.6, shadeOn);
   if (o.sweat) { const sx = out[0] + 0.12, sy = out[1] - 0.14; ink.shape([[sx, sy - 0.04], [sx + 0.025, sy + 0.01], [sx, sy + 0.035], [sx - 0.025, sy + 0.01]], "#9fd4ff", W * 0.8); }
-  g.restore(); ink.unit = saved.unit; ink.w = saved.w;
+  g.restore(); ink.unit = saved.unit; ink.w = saved.w; ink.vector = prevVec;
   return { headX: x + (flip ? -1 : 1) * out[0] * u, headY: y + out[1] * u };
 };
 const lerp2 = (a: P, b: P, k: number): P => [a[0] + (b[0] - a[0]) * k, a[1] + (b[1] - a[1]) * k];
@@ -298,7 +317,9 @@ const headAt = (ink: Ink, sp: Species, at: P, nAng: number, o: QuadOpts, W: numb
     for (const s of [-1, 1]) ink.ell(s * 0.017 * k, 0.15 * k, 0.007 * k, 0.005 * k, INKC, null);
     for (const s of [-1, 1]) {
       const ex = s * 0.045 * k, ey = -0.005 * k;
-      if (o.blink) ink.arc(ex, ey, 0.016 * k, 0.01 * k, Math.PI * 0.1, Math.PI * 0.9, W);
+      const calmF = !o.brow || o.brow === "soft" || o.brow === "proud";
+      if (o.blink || (ink.vector && calmF)) ink.arc(ex, ey, 0.017 * k, 0.011 * k, Math.PI * 1.08, Math.PI * 1.92, W * 1.5);
+      else if (ink.vector) { ink.ell(ex, ey, 0.016 * k, 0.018 * k, "#3a2a26", null); ink.ell(ex + 0.006 * k, ey - 0.007 * k, 0.005 * k, 0.005 * k, "#ffffff", null); }
       else { ink.ell(ex, ey, 0.019 * k, 0.017 * k, "#ffffff", W * 0.7); ink.dot(ex, ey + 0.002 * k, 0.011 * k); for (const q of [-0.4, 0, 0.4]) ink.line([[ex + s * 0.012 * k + q * 0.01 * k, ey - 0.016 * k], [ex + s * 0.02 * k + q * 0.015 * k, ey - 0.026 * k]], W * 0.6, INKC, 0.05); }
       const [bo, bi] = o.brow === "worried" ? [0.006, -0.012] : o.brow === "proud" ? [-0.01, 0.006] : o.brow === "alert" ? [-0.012, -0.012] : [0, -0.003];
       ink.line([[ex + s * 0.022 * k, ey - 0.03 * k + bo * k], [ex - s * 0.018 * k, ey - 0.03 * k + bi * k]], W, INKC, 0.05);
@@ -327,8 +348,11 @@ const headAt = (ink: Ink, sp: Species, at: P, nAng: number, o: QuadOpts, W: numb
     ink.shape(ink.ellPts(L * 0.95, L * 0.06, L * 0.04, L * 0.022, 0.5), INKC, null);
     if (o.mouth === "smile") ink.arc(L * 0.78, L * 0.2, L * 0.16, L * 0.06, 0.3, 2.6, W); else ink.line([[L * 0.62, L * 0.25], [L * 1.0, L * 0.22]], W, INKC, 0.1);
     const ex = L * 0.28, ey = -L * 0.06;
-    if (o.blink) ink.arc(ex, ey, L * 0.06, L * 0.035, Math.PI * 0.1, Math.PI * 0.9, W);
+    const calm = !o.brow || o.brow === "soft" || o.brow === "proud";
+    if (o.blink || (ink.vector && calm && gait !== "gallop")) ink.arc(ex, ey + L * 0.01, L * 0.065, L * 0.04, Math.PI * 1.08, Math.PI * 1.92, W * 1.5, ink.vector ? "#4a3428" : INKC);
+    else if (ink.vector) { ink.ell(ex, ey, L * 0.06, L * 0.065, "#3a2a26", null); ink.ell(ex + L * 0.02, ey - L * 0.025, L * 0.018, L * 0.018, "#ffffff", null); }
     else { ink.ell(ex, ey, L * 0.07, L * 0.062, "#ffffff", W * 0.8); ink.dot(ex + L * 0.012, ey + L * 0.005, L * 0.04); for (const q of [0, 1, 2]) ink.line([[ex + L * (0.0 + q * 0.03), ey - L * 0.06], [ex + L * (0.02 + q * 0.04), ey - L * 0.1]], W * 0.6, INKC, 0.05); }
+    if (ink.vector) { ink.ell(ex + L * 0.05, ey + L * 0.11, L * 0.06, L * 0.035, "rgba(232,140,120,0.35)", null); flicks(ink, -L * 0.05, L * 0.16, 2, L * 0.07, "rgba(255,250,238,0.9)", 9); }
     const [bo, bi] = o.brow === "worried" ? [0.03, -0.05] : o.brow === "proud" ? [-0.04, 0.02] : o.brow === "alert" ? [-0.05, -0.05] : [0, -0.01];
     ink.line([[ex - L * 0.08, ey - L * 0.13 + bo * L], [ex + L * 0.08, ey - L * 0.13 + bi * L]], W * 1.1, INKC, 0.05);
   } else if (sp.name === "lioness") {
@@ -342,6 +366,8 @@ const headAt = (ink: Ink, sp: Species, at: P, nAng: number, o: QuadOpts, W: numb
     if (o.mouth === "pant" || o.mouth === "open") { ink.shape(ink.ellPts(L * 0.55, L * 0.27, L * 0.14, L * 0.09), "#5a1e28", W * 0.8); ink.shape(ink.ellPts(L * 0.55, L * 0.36, L * 0.06, L * 0.1), "#e86e78", W * 0.7); }
     const ex = L * 0.3, ey = -L * 0.1;
     if (o.blink) ink.arc(ex, ey, L * 0.06, L * 0.03, Math.PI * 0.1, Math.PI * 0.9, W);
+    else if (ink.vector && (o.brow ?? "soft") === "soft") ink.arc(ex, ey, L * 0.065, L * 0.04, Math.PI * 1.08, Math.PI * 1.92, W * 1.5);
+    else if (ink.vector) { ink.ell(ex, ey, L * 0.055, L * 0.05, "#3a2a26", null); ink.ell(ex + L * 0.018, ey - L * 0.02, L * 0.015, L * 0.015, "#ffffff", null); }
     else { ink.ell(ex, ey, L * 0.07, L * 0.045, "#f2d24a", W * 0.8); ink.dot(ex + L * 0.015, ey, L * 0.028); }
     const [bo, bi] = o.brow === "worried" ? [0.03, -0.05] : o.brow === "alert" ? [-0.06, -0.06] : [-0.01, 0.04];
     ink.line([[ex - L * 0.09, ey - L * 0.1 + bo * L], [ex + L * 0.09, ey - L * 0.1 + bi * L]], W * 1.1, INKC, 0.05);
