@@ -66,6 +66,7 @@ export type QuadOpts = {
   head?: "side" | "front";
   blink?: boolean; brow?: "soft" | "worried" | "proud" | "alert"; mouth?: "closed" | "smile" | "open" | "pant";
   tongue?: number; chew?: number; sweat?: boolean; neckAdd?: number; seed?: number;
+  shadow?: boolean; cel?: boolean;
 };
 
 const add = (a: P, b: P): P => [a[0] + b[0], a[1] + b[1]];
@@ -108,8 +109,53 @@ const footAt = (sp: Species, gait: "walk" | "gallop", t: number, phase: number) 
 /** world speed (u per second) that keeps planted feet still on the ground */
 export const gaitSpeed = (sp: Species, gait: "walk" | "gallop") => { const g = sp.gaits[gait]; return (g.stride * g.freq) / g.duty; };
 
+// ---- shading helpers ----
+/** cel shadow: a hard-edged darker band on the side of a shape facing `dir` (multiply), plus a thin light rim opposite */
+const cel = (ink: Ink, pts: P[], dir: P, k = 0.56, dark = "rgba(92,58,110,0.34)", rim = 0.22) => {
+  const g = ink.g; let x0 = Infinity, x1 = -Infinity, y0 = Infinity, y1 = -Infinity;
+  for (const [x, y] of pts) { x0 = Math.min(x0, x); x1 = Math.max(x1, x); y0 = Math.min(y0, y); y1 = Math.max(y1, y); }
+  const cx = (x0 + x1) / 2, cy = (y0 + y1) / 2, l = Math.hypot(dir[0], dir[1]) || 1, dx = dir[0] / l, dy = dir[1] / l, R = Math.max(x1 - x0, y1 - y0) / 2 || 0.01;
+  clip(ink, pts, () => {
+    const gr = g.createLinearGradient(cx - dx * R, cy - dy * R, cx + dx * R, cy + dy * R);
+    gr.addColorStop(0, "rgba(0,0,0,0)"); gr.addColorStop(k, "rgba(0,0,0,0)"); gr.addColorStop(Math.min(1, k + 0.025), dark); gr.addColorStop(1, dark);
+    g.save(); g.globalCompositeOperation = "multiply"; g.fillStyle = gr; g.fillRect(x0 - 1, y0 - 1, x1 - x0 + 2, y1 - y0 + 2); g.restore();
+    if (rim > 0) {
+      const hr = g.createLinearGradient(cx - dx * R, cy - dy * R, cx + dx * R, cy + dy * R);
+      hr.addColorStop(0, `rgba(255,250,235,${rim})`); hr.addColorStop(0.12, "rgba(255,250,235,0)"); hr.addColorStop(1, "rgba(255,250,235,0)");
+      g.save(); g.globalCompositeOperation = "screen"; g.fillStyle = hr; g.fillRect(x0 - 1, y0 - 1, x1 - x0 + 2, y1 - y0 + 2); g.restore();
+    }
+  });
+};
+let shadowCanvas: HTMLCanvasElement | null = null;
+/** draws the animal with a soft cast shadow: its real silhouette, squashed onto the ground plane and sheared away
+ *  from the sun (upper left), blurred, under a soft contact shadow. Pass shadow: false to skip (e.g. close-ups). */
+export { cel };
 export const quad = (ink: Ink, sp: Species, x: number, y: number, u: number, o: QuadOpts = {}, flip = false) => {
-  const g = ink.g, t = o.t ?? 0, gait = o.gait ?? "stand";
+  const g = ink.g;
+  if (o.shadow !== false) {
+    const Wc = g.canvas.width, Hc = g.canvas.height, m = g.getTransform();
+    if (!shadowCanvas || shadowCanvas.width !== Wc || shadowCanvas.height !== Hc) { shadowCanvas = document.createElement("canvas"); shadowCanvas.width = Wc; shadowCanvas.height = Hc; }
+    const sg = shadowCanvas.getContext("2d")!;
+    sg.setTransform(1, 0, 0, 1, 0, 0); sg.clearRect(0, 0, Wc, Hc); sg.setTransform(m);
+    const sink = new Ink(sg, 1); sink.wob = 0;
+    quadBody(sink, sp, x, y, u, { ...o, sweat: false, cel: false }, flip);
+    sg.setTransform(1, 0, 0, 1, 0, 0); sg.globalCompositeOperation = "source-in"; sg.fillStyle = "#2b1f3c"; sg.fillRect(0, 0, Wc, Hc); sg.globalCompositeOperation = "source-over";
+    const gp = m.transformPoint(new DOMPoint(x, y)), sc = Math.hypot(m.a, m.b);
+    g.save(); g.setTransform(1, 0, 0, 1, 0, 0);
+    // contact shadow under the body
+    const cw = u * sc * (sp.name === "lioness" ? 1.25 : 0.95), cg = g.createRadialGradient(gp.x, gp.y, 0, gp.x, gp.y, cw);
+    cg.addColorStop(0, "rgba(43,31,60,0.32)"); cg.addColorStop(1, "rgba(43,31,60,0)");
+    g.save(); g.translate(gp.x, gp.y); g.scale(1, 0.16); g.translate(-gp.x, -gp.y); g.fillStyle = cg; g.fillRect(gp.x - cw, gp.y - cw, cw * 2, cw * 2); g.restore();
+    // projected silhouette
+    g.globalAlpha = 0.3; g.filter = `blur(${Math.max(1.5, 4 * Wc / 1920)}px)`;
+    g.translate(gp.x, gp.y); g.transform(1, 0, -0.5, 0.34, 0, 0); g.translate(-gp.x, -gp.y);
+    g.drawImage(shadowCanvas, 0, 0);
+    g.restore();
+  }
+  return quadBody(ink, sp, x, y, u, o, flip);
+};
+const quadBody = (ink: Ink, sp: Species, x: number, y: number, u: number, o: QuadOpts = {}, flip = false) => {
+  const g = ink.g, t = o.t ?? 0, gait = o.gait ?? "stand", shadeOn = o.cel !== false;
   g.save(); g.translate(x, y); g.scale(flip ? -u : u, u);
   const saved = { unit: ink.unit, w: ink.w }; ink.unit = 1 / u; const W = Math.max(2.2, u * (sp.name === "lioness" || sp.name === "zebra" ? 0.012 : 0.0065)) / u; ink.w = W;
   const C = sp.colors, giraffeLike = sp.name === "giraffe" || sp.name === "calf" || sp.name === "ancestor";
@@ -155,6 +201,7 @@ export const quad = (ink: Ink, sp: Species, x: number, y: number, u: number, o: 
     const s2 = ink.curvePoly(seg(L.j1, L.j2, w2, w3 * 1.15), 1), s3 = seg(L.j2, L.fet, w3, w3 * 0.85);
     void w1;
     ink.shape(s3, legc, W); ink.shape(s2, L.fore ? legc : coat, W);
+    if (shadeOn) { cel(ink, s3, [-1, 0.25], 0.5, "rgba(92,58,110,0.28)", 0.18); cel(ink, s2, [-1, 0.35], 0.52, "rgba(92,58,110,0.3)", 0.2); ink.shape(s2, null, W); }
     if (sp.name === "ancestor") for (let i = 1; i < 4; i++) { const p = add(L.j2, mul(sub(L.fet, L.j2), i / 4)); ink.line([add(p, [-w3 * 0.5, 0]), add(p, [w3 * 0.5, -0.01])], 0.018, "#f3eee2", 0.1); }
     if (sp.name === "zebra") for (let i = 0; i < 5; i++) { const p = add(L.j1, mul(sub(L.j2, L.j1), i / 5)); ink.line([add(p, [-w2 * 0.5, 0]), add(p, [w2 * 0.5, 0.01])], 0.025, C.dark, 0.1); }
     // joint knob (carpus / hock) and fetlock
@@ -179,7 +226,8 @@ export const quad = (ink: Ink, sp: Species, x: number, y: number, u: number, o: 
       : ink.curvePoly([add(top, [-0.12, 0]), add(top, [0.08, 0.01]), add(L.j1, [0.07, -0.02]), add(L.j1, [0.04, 0.09]), add(lerp2(L.j1, L.j2, 0.45), [-0.05, 0]), add(top, [-0.15, 0.2])], 2);
     ink.shape(pts, coat, far ? null : W);
     if (C.patch && !far) clip(ink, pts, () => patches(ink, -0.8, 0.6, -1.1, -0.3, 0.085, C.patch!, (o.seed ?? 3) + (L.fore ? 5 : 6)));
-    if (C.patch && !far) ink.shape(pts, null, W);
+    if (shadeOn && !far) { cel(ink, pts, [-0.35, 1], 0.55); ink.shape(pts, null, W); }
+    else if (C.patch && !far) ink.shape(pts, null, W);
   };
   for (const L of solved) if (!L.near) { drawLeg(L); muscle(L); }
   // ---- tail ----
@@ -205,6 +253,7 @@ export const quad = (ink: Ink, sp: Species, x: number, y: number, u: number, o: 
   ink.shape(neck, C.coat, null);
   if (C.patch) clip(ink, neck, () => patches(ink, -0.4, 1.6, -2.2, -0.3, giraffeLike && sp.name !== "ancestor" ? 0.075 : 0.1, C.patch!, (o.seed ?? 3) + 1));
   if (sp.name === "zebra") clip(ink, neck, () => { for (let i = 0; i < 9; i++) { const p = lerp2(nb, ntop, i / 9); ink.line([add(p, mul(nrm, -0.25)), add(p, mul(nrm, 0.25))], 0.035, C.dark, 0.1); } });
+  if (shadeOn) cel(ink, neck, nrm, 0.6, "rgba(92,58,110,0.32)", 0.24);
   ink.line(left, W); ink.line(right.slice().reverse(), W);
   if (giraffeLike || sp.name === "zebra") { const hl = sp.name === "zebra" ? 0.05 : 0.03, edge = left.slice(1, -1), outer = edge.map((p, i) => add(p, mul(nrm, -hl * (0.75 + 0.5 * ((i * 7) % 3) / 2)))); ink.shape([...edge, ...outer.reverse()], sp.name === "zebra" ? C.dark : "#7a4a2a", W * 0.8); }
   // ---- trunk ----
@@ -214,6 +263,7 @@ export const quad = (ink: Ink, sp: Species, x: number, y: number, u: number, o: 
     [wx - 0.02, wy], [wx * 0.4 + cx * 0.6, wy * 0.4 + cy * 0.6 - 0.005], [cx, cy], [cx - 0.08, cy + 0.05], [cx - 0.1, sp.rump], [sp.hip[0] + 0.02, sp.flank],
     [(sp.hip[0] + sp.shoulder[0]) / 2, sp.belly], [sp.shoulder[0] - 0.04, sp.chest], [sp.shoulder[0] + 0.08, sp.chest - 0.03], [sp.shoulder[0] + 0.16, sp.chest - 0.14], [sp.shoulder[0] + 0.17, sp.shoulder[1] - 0.06], [sp.shoulder[0] + 0.08, wy + 0.1],
   ].map((p, i) => (gait === "stalk" && (i === 0 || i === 11) ? add(p as P, [0, -0.12]) : (p as P))).map(tf), 3);
+  { const br = moving ? 1 : 1 + 0.014 * Math.sin(t * 1.7), st = gait === "gallop" ? 1 + 0.035 * Math.sin(cyc + 0.8) : 1; for (const p of trunk) { p[1] = -0.75 + (p[1] + 0.75) * br; p[0] *= st; } }
   for (const L of solved) if (L.near) muscle(L);
   ink.shape(trunk, C.coat, W);
   clip(ink, trunk, () => {
@@ -221,11 +271,12 @@ export const quad = (ink: Ink, sp: Species, x: number, y: number, u: number, o: 
     if (sp.name === "zebra") for (let i = -7; i < 8; i++) ink.line(ink.curve([i * 0.08, -1.1], [i * 0.08 + 0.05, -0.8], [i * 0.08 - 0.03, -0.45]), 0.04, C.dark, 0.2);
     if (sp.name === "lioness" || sp.name === "ancestor") ink.ell(-0.05, sp.belly + 0.02, 0.6, 0.1, C.light, null);
   });
+  if (shadeOn) cel(ink, trunk, [0.15, 1], 0.52, "rgba(92,58,110,0.42)", 0.3);
   ink.shape(trunk, null, W);
   if (sp.name === "lioness") ink.hatch(trunk, 10, 0.08, "rgba(90,60,30,0.35)", W * 0.7, Math.PI * 0.8, 0.4);
   for (const L of solved) if (L.near) drawLeg(L);
   // ---- head ----
-  const out = headAt(ink, sp, ntop, nAng, o, W, t, gait);
+  const out = headAt(ink, sp, ntop, nAng, o, W, t, gait, neckSwing * 0.6, shadeOn);
   if (o.sweat) { const sx = out[0] + 0.12, sy = out[1] - 0.14; ink.shape([[sx, sy - 0.04], [sx + 0.025, sy + 0.01], [sx, sy + 0.035], [sx - 0.025, sy + 0.01]], "#9fd4ff", W * 0.8); }
   g.restore(); ink.unit = saved.unit; ink.w = saved.w;
   return { headX: x + (flip ? -1 : 1) * out[0] * u, headY: y + out[1] * u };
@@ -234,7 +285,7 @@ const lerp2 = (a: P, b: P, k: number): P => [a[0] + (b[0] - a[0]) * k, a[1] + (b
 const shade = (hex: string, k: number) => { const n = parseInt(hex.slice(1), 16); const c = (s: number) => Math.round(((n >> s) & 255) * k).toString(16).padStart(2, "0"); return `#${c(16)}${c(8)}${c(0)}`; };
 
 /** head at the neck tip; returns the head centre */
-const headAt = (ink: Ink, sp: Species, at: P, nAng: number, o: QuadOpts, W: number, t: number, gait: string): P => {
+const headAt = (ink: Ink, sp: Species, at: P, nAng: number, o: QuadOpts, W: number, t: number, gait: string, stab = 0, shadeOn = true): P => {
   const g = ink.g, C = sp.colors, H = sp.head, giraffeLike = sp.name === "giraffe" || sp.name === "calf" || sp.name === "ancestor";
   g.save(); g.translate(at[0], at[1]);
   if (o.head === "front" && giraffeLike) {
@@ -242,7 +293,7 @@ const headAt = (ink: Ink, sp: Species, at: P, nAng: number, o: QuadOpts, W: numb
     for (const s of [-1, 1]) { ink.shape(ink.ellPts(s * 0.1 * k, -0.02 * k, 0.075 * k, 0.026 * k, s * 0.35 + Math.sin(t * 2 + s) * 0.06), C.coat, W); ink.shape(ink.ellPts(s * 0.1 * k, -0.02 * k, 0.05 * k, 0.012 * k, s * 0.35), "#e6b7a0", null); }
     if (sp.name !== "ancestor") for (const s of [-1, 1]) { ink.line([[s * 0.035 * k, -0.05 * k], [s * 0.045 * k, -0.13 * k]], 0.024 * k, C.coat, 0.2); ink.line([[s * 0.035 * k, -0.05 * k], [s * 0.045 * k, -0.13 * k]], W, INKC, 0.1); ink.ell(s * 0.046 * k, -0.135 * k, 0.02 * k, 0.018 * k, C.dark, null); }
     const face = ink.curvePoly([[-0.075 * k, -0.07 * k], [0.075 * k, -0.07 * k], [0.065 * k, 0.08 * k], [0.04 * k, 0.17 * k], [-0.04 * k, 0.17 * k], [-0.065 * k, 0.08 * k]], 2);
-    ink.shape(face, C.coat, W); if (C.patch) clip(ink, face, () => { ink.shape(ink.curvePoly([[-0.03 * k, -0.06 * k], [0.03 * k, -0.06 * k], [0.02 * k, 0.03 * k], [-0.02 * k, 0.03 * k]], 2), C.patch!, null); });
+    ink.shape(face, C.coat, W); if (shadeOn) cel(ink, face, [0.8, 0.6], 0.62, "rgba(92,58,110,0.28)", 0.22); if (C.patch) clip(ink, face, () => { ink.shape(ink.curvePoly([[-0.03 * k, -0.06 * k], [0.03 * k, -0.06 * k], [0.02 * k, 0.03 * k], [-0.02 * k, 0.03 * k]], 2), C.patch!, null); });
     ink.ell(0, 0.145 * k, 0.045 * k, 0.034 * k, shade(C.coat, 0.88), W * 0.7);
     for (const s of [-1, 1]) ink.ell(s * 0.017 * k, 0.15 * k, 0.007 * k, 0.005 * k, INKC, null);
     for (const s of [-1, 1]) {
@@ -258,7 +309,8 @@ const headAt = (ink: Ink, sp: Species, at: P, nAng: number, o: QuadOpts, W: numb
   let ha = giraffeLike ? nAng + Math.PI / 2 - 0.25 : sp.name === "lioness" ? 0.18 + nAng * 0.3 + (gait === "stalk" ? 0.25 : 0) : nAng + Math.PI / 2 - 0.1;
   if (gait === "graze") ha = nAng + 0.6;
   if (gait === "eat") ha -= 0.35;
-  g.rotate(ha + Math.PI / 2 - Math.PI / 2); // head local: +x along the face (toward the nose), y down
+  if (sp.name !== "lioness") ha += stab; // head stabilisation: the head stays steadier than the swinging neck
+  g.rotate(ha); // head local: +x along the face (toward the nose), y down
   const L = H;
   if (giraffeLike) {
     const flick = Math.sin(t * 1.3) > 0.97 ? 0.4 : 0;
@@ -270,6 +322,7 @@ const headAt = (ink: Ink, sp: Species, at: P, nAng: number, o: QuadOpts, W: numb
     const head = ink.curvePoly([[-L * 0.22, -L * 0.18], [L * 0.2, -L * 0.22], [L * 0.7, -L * 0.12], [L * 1.02, 0], [L * 1.04, L * 0.14], [L * 0.95, L * 0.28 + chew], [L * 0.55, L * 0.28], [L * 0.1, L * 0.3], [-L * 0.2, L * 0.2]], 2);
     ink.shape(head, C.coat, W);
     if (C.patch) clip(ink, head, () => patches(ink, -L * 0.4, L * 0.45, -L * 0.4, L * 0.4, L * 0.24, C.patch!, 8));
+    if (shadeOn) { cel(ink, head, [0.1, 1], 0.6, "rgba(92,58,110,0.3)", 0.25); ink.shape(head, null, W); }
     ink.shape(ink.curvePoly([[L * 0.72, -L * 0.06], [L * 1.04, L * 0.02], [L * 1.03, L * 0.2], [L * 0.8, L * 0.24]], 2), shade(C.coat, 0.9), W * 0.7);
     ink.shape(ink.ellPts(L * 0.95, L * 0.06, L * 0.04, L * 0.022, 0.5), INKC, null);
     if (o.mouth === "smile") ink.arc(L * 0.78, L * 0.2, L * 0.16, L * 0.06, 0.3, 2.6, W); else ink.line([[L * 0.62, L * 0.25], [L * 1.0, L * 0.22]], W, INKC, 0.1);
@@ -283,6 +336,7 @@ const headAt = (ink: Ink, sp: Species, at: P, nAng: number, o: QuadOpts, W: numb
     ink.ell(-L * 0.12, -L * 0.36, L * 0.05, L * 0.04, C.dark, null);
     const head = ink.curvePoly([[-L * 0.3, -L * 0.25], [L * 0.2, -L * 0.36], [L * 0.62, -L * 0.18], [L * 0.75, L * 0.02], [L * 0.7, L * 0.2], [L * 0.3, L * 0.3], [-L * 0.25, L * 0.2]], 2);
     ink.shape(head, C.coat, W);
+    if (shadeOn) { cel(ink, head, [0.1, 1], 0.62, "rgba(92,58,110,0.3)", 0.25); ink.shape(head, null, W); }
     ink.shape(ink.ellPts(L * 0.6, L * 0.12, L * 0.17, L * 0.12), C.light, W * 0.8);
     ink.shape(ink.ellPts(L * 0.72, L * 0.0, L * 0.06, L * 0.045), "#5a3a34", null);
     if (o.mouth === "pant" || o.mouth === "open") { ink.shape(ink.ellPts(L * 0.55, L * 0.27, L * 0.14, L * 0.09), "#5a1e28", W * 0.8); ink.shape(ink.ellPts(L * 0.55, L * 0.36, L * 0.06, L * 0.1), "#e86e78", W * 0.7); }

@@ -2,6 +2,7 @@
 // acacia trees, a big giraffe head for close-ups. Natural proportions, flat colour, thin wobbly ink, animatable
 // (gallop phase, tail swish, blink, chewing, tongue). Units: u = shoulder height in px, ground at y = 0.
 import { Ink, P, INKC } from "./ink2d";
+import { cel } from "./quadruped";
 
 const rotP = (pts: P[], a: number, c: P): P[] => pts.map(([x, y]) => [c[0] + (x - c[0]) * Math.cos(a) - (y - c[1]) * Math.sin(a), c[1] + (x - c[0]) * Math.sin(a) + (y - c[1]) * Math.cos(a)]);
 const begin = (ink: Ink, x: number, y: number, u: number, flip: boolean) => {
@@ -140,6 +141,8 @@ export const giraffeHead = (ink: Ink, x: number, y: number, s: number, o: { tong
   if (tg > 0) { const t0: P = [0.78, 0.2], t1: P = [0.78 + 0.3 * tg, 0.1 - 0.25 * tg], t2: P = [0.75 + 0.12 * tg, -0.35 * tg]; ink.line(ink.curve(t0, t1, t2), 0.11 + W * 2, INKC, 0.2); ink.line(ink.curve(t0, t1, t2), 0.11, "#5a3a6a", 0.2); ink.line(ink.curve(t0, t1, t2), 0.03, "#7a5a8a", 0.1); }
   const head = ink.curvePoly([[-0.3, -0.12], [0.2, -0.16], [0.7, -0.02], [0.9, 0.12], [0.8, 0.27 + (o.chew ?? 0) * 0.03], [0.2, 0.25], [-0.25, 0.18]], 2);
   ink.shape(head, base, W); clipTo(ink, head, () => patches(ink, -0.4, 0.45, -0.3, 0.35, 0.16, patch, 8));
+  cel(ink, head, [0.15, 1], 0.55, "rgba(92,58,110,0.38)", 0.28); ink.shape(head, null, W);
+  cel(ink, neck, [1, 0.2], 0.5, "rgba(92,58,110,0.34)", 0.22);
   ink.ell(0.72, 0.1, 0.18, 0.16, "#d8c6a4", W);
   ink.shape(ink.ellPts(0.83, 0.05, 0.035, 0.02, 0.4), INKC, null);
   ink.line([[0.5, 0.235], [0.86, 0.2]], W, INKC, 0.2);
