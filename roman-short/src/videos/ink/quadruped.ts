@@ -62,7 +62,7 @@ export const ZEBRA: Species = {
 };
 
 export type QuadOpts = {
-  gait?: "stand" | "walk" | "gallop" | "stalk" | "graze" | "eat";
+  gait?: "stand" | "walk" | "gallop" | "stalk" | "graze" | "eat" | "drink";
   t?: number;            // seconds (drives gait, breathing, ears, tail)
   head?: "side" | "front";
   blink?: boolean; brow?: "soft" | "worried" | "proud" | "alert"; mouth?: "closed" | "smile" | "open" | "pant";
@@ -189,6 +189,7 @@ const quadBody = (ink: Ink, sp0: Species, x: number, y: number, u: number, o: Qu
   if (gait === "gallop") { bob = -0.05 * Math.sin(cyc) - 0.02; pitch = 0.07 * Math.sin(cyc + 0.8); neckSwing = (giraffeLike ? 0.2 : 0.08) * Math.sin(cyc + 2.2); }
   if (gait === "stalk") { crouch = 0.14; bob = 0.005 * Math.sin(cyc * 2); neckSwing = 0.02 * Math.sin(cyc * 2); }
   if (gait === "stand" || gait === "graze" || gait === "eat") { bob = 0.004 * Math.sin(t * 1.6); neckSwing = 0.025 * Math.sin(t * 0.7); }
+  if (gait === "drink") { pitch = 0.14; neckSwing = 0.015 * Math.sin(t * 2.2); } // front end lowered over the splayed forelegs
   const tf = (p: P): P => add(rot(p, pitch, [0, -0.75]), [0, bob + crouch]);
   // ---- legs ----
   const legs: Leg[] = [
@@ -202,6 +203,7 @@ const quadBody = (ink: Ink, sp0: Species, x: number, y: number, u: number, o: Qu
     let fx = l.base[0] + (l.fore ? 0.02 : -0.02), lift = 0, stance = true;
     if (moving) { const f = footAt(sp, gk, t, l.phase); fx += f.dx; lift = f.lift; stance = f.stance; }
     if (gait === "graze" && l.fore) fx += l.near ? 0.12 : -0.02; // a grazing stance: one foreleg forward
+    if (gait === "drink" && l.fore) fx += l.near ? 0.34 : -0.2;  // drinking: forelegs splayed wide
     const foot: P = [fx, -lift];
     // pastern: sloped forward when planted, hoof folds back in swing
     const pa = stance ? -1.15 : l.fore ? -2.2 : -1.6;
@@ -261,7 +263,7 @@ const quadBody = (ink: Ink, sp0: Species, x: number, y: number, u: number, o: Qu
     ink.line(tc, 0.07 + W * 2, INKC, 0.2); ink.line(tc, 0.07, C.coat, 0.2); const e = tc[tc.length - 1]; ink.ell(e[0], e[1], 0.06, 0.045, C.dark, W);
   } else { ink.line(ink.curve(tr, add(tr, [-0.08, 0.2]), add(tr, [-0.06 + sw * 0.04, 0.42])), 0.05, C.dark, 0.2); }
   // ---- neck (behind the trunk) ----
-  const nAng = -(sp.neckAng + (o.neckAdd ?? 0) + neckSwing + (gait === "eat" ? 0.32 : 0) + (gait === "graze" ? -1.75 : 0) + (gait === "stalk" ? -0.35 : 0) + (gait === "gallop" ? -0.38 : 0));
+  const nAng = -(sp.neckAng + (o.neckAdd ?? 0) + neckSwing + (gait === "eat" ? 0.32 : 0) + (gait === "graze" ? -1.75 : 0) + (gait === "drink" ? -2.2 : 0) + (gait === "stalk" ? -0.35 : 0) + (gait === "gallop" ? -0.38 : 0));
   const nb = tf(lerp2(sp.withers, [sp.shoulder[0] + 0.14, sp.shoulder[1] + 0.06], 0.42));
   const dir: P = [Math.cos(nAng), Math.sin(nAng)], nrm: P = [-dir[1], dir[0]];
   const ntop = add(nb, mul(dir, sp.neckLen));
@@ -337,7 +339,7 @@ const headAt = (ink: Ink, sp: Species, at: P, nAng: number, o: QuadOpts, W: numb
   }
   // side head: giraffe faces down-forward roughly perpendicular to the neck; lion / zebra by their build
   let ha = giraffeLike ? nAng + Math.PI / 2 - 0.25 : sp.name === "lioness" ? 0.18 + nAng * 0.3 + (gait === "stalk" ? 0.25 : 0) : nAng + Math.PI / 2 - 0.1;
-  if (gait === "graze") ha = nAng + 0.6;
+  if (gait === "graze" || gait === "drink") ha = nAng + 0.6;
   if (gait === "eat") ha -= 0.35;
   if (sp.name !== "lioness") ha += stab; // head stabilisation: the head stays steadier than the swinging neck
   g.rotate(ha); // head local: +x along the face (toward the nose), y down

@@ -19,13 +19,14 @@ def wt(i, w):
 
 # main shots (same order as giraffe_video.ts after the hook) and the extra hook cuts
 shots = [max(0, x - 0.12) for x in [0, at(1), at(2), at(2, "allowing"), at(3), at(4), at(5), at(6), at(7), at(8), at(9), at(10), at(11), at(11, "and modern"), at(12)]]
-hook_cuts = [wt(0, "outclimb") - 0.24, wt(0, "or") - 0.12, wt(0, "so") - 0.15]
+hook_cuts = [wt(0, "hide") - 0.2, wt(0, "drinking") - 0.25, wt(0, "so") - 0.15]
 cuts = sorted(shots[1:] + hook_cuts)
 
 ev = []
 # hook: chase hooves, the three X stamps, question-mark pops
-ev += [[round(0.1 + k * 0.17, 3), "hoof", 0.9] for k in range(int((hook_cuts[0] - 0.1) / 0.17))]
-ev += [[wt(0, "outrun") + 0.12, "pop", 1.4], [wt(0, "outclimb") + 0.3, "pop", 1.4], [wt(0, "hide") + 0.25, "pop", 1.4]]
+ev += [[0.2 + k * 0.09, "tick", 0.5] for k in range(6)]                                          # leaves shaking
+ev += [[wt(0, "climb") + 0.2, "pop", 1.4], [wt(0, "hide") + 0.35, "pop", 1.4], [wt(0, "danger") + 0.12, "pop", 1.5]]  # X stamps
+ev += [[wt(0, "danger"), "sting", 0.8]]
 ev += [[hook_cuts[2] + dd, "pop", 0.6] for dd in (0.1, 0.35, 0.6, 0.85)]
 # natural selection reveals, check / cross, predator spotted
 ev += [[shots[2] + 0.4 + k * 0.9, "pop", 0.7] for k in range(3)]

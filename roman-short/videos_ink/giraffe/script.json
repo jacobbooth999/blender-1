@@ -4,8 +4,7 @@
   "speed": 1.05,
   "sentences": [
     {
-      "text": "Giraffes can't outrun, outclimb or hide from predators. So how did they survive?",
-      "say": "Giraffes can't outrun, out-climb, or hide from predators. So how did they survive?",
+      "text": "Giraffes can't climb or hide from predators, and even drinking puts them in danger. So how did they survive?",
       "gap": 0.7
     },
     {

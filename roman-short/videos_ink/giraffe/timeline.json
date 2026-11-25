@@ -1,83 +1,83 @@
 {
- "duration": 78.681,
+ "duration": 79.497,
  "sentences": [
   {
    "i": 0,
-   "text": "Giraffes can't outrun, outclimb or hide from predators. So how did they survive?",
+   "text": "Giraffes can't climb or hide from predators, and even drinking puts them in danger. So how did they survive?",
    "start": 0.4,
-   "end": 5.853
+   "end": 6.67
   },
   {
    "i": 1,
    "text": "Millions of years ago, giraffe ancestors didn't look quite like the animals we see today.",
-   "start": 6.553,
-   "end": 11.649
+   "start": 7.37,
+   "end": 12.465
   },
   {
    "i": 2,
    "text": "Over generations, natural selection favoured giraffes with longer necks, allowing them to reach leaves high above the ground that other animals couldn't.",
-   "start": 11.999,
-   "end": 20.382
+   "start": 12.815,
+   "end": 21.198
   },
   {
    "i": 3,
    "text": "But their height gave them another advantage.",
-   "start": 21.082,
-   "end": 23.936
+   "start": 21.898,
+   "end": 24.752
   },
   {
    "i": 4,
    "text": "They could spot predators approaching from much further away, giving them precious time to escape.",
-   "start": 24.286,
-   "end": 29.596
+   "start": 25.102,
+   "end": 30.412
   },
   {
    "i": 5,
    "text": "And when escaping, giraffes aren't exactly slow.",
-   "start": 30.296,
-   "end": 33.469
+   "start": 31.112,
+   "end": 34.286
   },
   {
    "i": 6,
    "text": "They can sprint at speeds of around 60 kilometres per hour, using their powerful legs to outrun many predators.",
-   "start": 33.819,
-   "end": 40.178
+   "start": 34.636,
+   "end": 40.994
   },
   {
    "i": 7,
    "text": "Their incredibly long, tough tongues also allow them to pull leaves from thorny acacia trees without getting injured.",
-   "start": 40.878,
-   "end": 47.502
+   "start": 41.694,
+   "end": 48.319
   },
   {
    "i": 8,
    "text": "But perhaps their most impressive adaptation is inside their bodies.",
-   "start": 48.202,
-   "end": 52.245
+   "start": 49.019,
+   "end": 53.061
   },
   {
    "i": 9,
    "text": "Their hearts are powerful enough to pump blood all the way up their enormous necks to their brains.",
-   "start": 52.595,
-   "end": 57.606
+   "start": 53.411,
+   "end": 58.422
   },
   {
    "i": 10,
    "text": "However, giraffes aren't invincible.",
-   "start": 58.306,
-   "end": 61.053
+   "start": 59.122,
+   "end": 61.869
   },
   {
    "i": 11,
    "text": "Lions can still attack them, especially when they're young, and modern giraffes face growing threats from habitat loss and human activity.",
-   "start": 61.403,
-   "end": 69.008
+   "start": 62.219,
+   "end": 69.824
   },
   {
    "i": 12,
    "text": "So despite their unusual appearance, giraffes survived by developing some of the most extraordinary adaptations in the animal kingdom.",
-   "start": 69.708,
-   "end": 77.481
+   "start": 70.524,
+   "end": 78.297
   }
  ]
 }

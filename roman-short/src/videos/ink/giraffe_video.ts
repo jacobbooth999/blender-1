@@ -11,7 +11,7 @@ import { buildChunks, drawCaptions, DEFAULT_STYLE, CapWord } from "./captions";
 import { journalGrade, journalFrame } from "./journal";
 const STYLE = () => (globalThis as { INK_STYLE?: string }).INK_STYLE ?? "classic";
 const CAPS = buildChunks(WORDS.words as CapWord[]);
-const CAP_STYLE = DEFAULT_STYLE(["outrun", "outclimb", "hide", "survive", "millions", "necks", "height", "predators", "sprint", "tongues", "thorny", "hearts", "brains", "invincible", "lions", "young", "habitat", "extraordinary"]);
+const CAP_STYLE = DEFAULT_STYLE(["climb", "hide", "drinking", "danger", "survive", "millions", "necks", "height", "predators", "sprint", "tongues", "thorny", "hearts", "brains", "invincible", "lions", "young", "habitat", "extraordinary"]);
 /** onset (s) of the n-th occurrence of a script word in sentence i (from words.json) */
 const wt = (i: number, w: string, n = 1) => { let k = 0; for (const x of WORDS.words as CapWord[]) if (x.i === i && x.word.toLowerCase().replace(/[^a-z0-9']/g, "") === w) { k++; if (k === n) return x.start; } throw new Error(`no word ${w} in ${i}`); };
 
@@ -73,24 +73,9 @@ const title = (ink: Ink, s: string, x: number, y: number, size: number, k = 1) =
 // ---------------- shots ----------------
 type Shot = { at: number; whip?: boolean; push?: [number, number, number]; draw: (ink: Ink, t: number, lt: number, d: number) => void };
 const SHOTS: Shot[] = [
-  // ---- the hook, cut fast: OUTRUN... OUTCLIMB... HIDE... "so how did they survive?" ----
-  // 0a. outrun: a lioness gains on the galloping giraffe
+  // ---- the hook, cut fast: CLIMB... HIDE... DRINKING... "so how did they survive?" ----
+  // 0a. climb: rears up against an acacia, the tree shakes, slides back down
   { at: 0, whip: true, draw: (ink, t, lt) => {
-    const v = gaitSpeed(GIRAFFE, "gallop") * 340, g = ink.g;
-    shake(g, t, lt > 1.0 ? 7 : 3);
-    sky(ink, 620, [[0, "#8fc7e8"], [1, "#e6f2ef"]]); sun(ink, 1650, 140, 58);
-    g.save(); g.translate(-(lt * v * 0.08) % 1920, 0); hills(ink, 600, 26, "#b8b48a", 81, 1.5); g.restore();
-    ground(ink, 620, "#dcc27a", "#c9a55a", 0, 82);
-    for (let k = -1; k < 2; k++) { g.save(); g.translate(-((lt * v * 0.45) % 1920) + k * 1920, 0); acacia(ink, 300, 680, 230, "#86a252", 83); acacia(ink, 1250, 690, 280, "#7c9a4a", 84); g.restore(); }
-    for (let k = -1; k < 2; k++) { g.save(); g.translate(-((lt * v) % 1920) + k * 1920, 0); ink.seed(85); ink.hatch([[0, 620], [1920, 620], [1920, 1080], [0, 1080]], 160, 18, "rgba(110,90,40,0.5)", 2.4, -Math.PI / 2, 0.7); g.restore(); }
-    const lx = 120 + ease(lt / 1.5) * 560;
-    quad(ink, LIONESS, lx, 1000, 170, { emotion: "angry", gait: "gallop", t: t * 1.1, brow: "alert", mouth: "open" }); dust(ink, lx - 100, 1000, t + 0.4);
-    quad(ink, GIRAFFE, 1250, 1000, 340, { emotion: "scared", gait: "gallop", t, brow: "worried", sweat: true });
-    dust(ink, 1080, 1000, t); speedLines(ink, 820, 470, 5, 240, t);
-    stamp(ink, 960, 300, t - wt(0, "outrun") - 0.12);
-  } },
-  // 0b. outclimb: rears up against an acacia, the tree shakes, slides back down
-  { at: wt(0, "outclimb") - 0.24, whip: true, draw: (ink, t, lt) => {
     const g = ink.g; shake(g, t, 4);
     sky(ink, 640, [[0, "#9fd0ea"], [1, "#eef4ea"]]);
     hills(ink, 620, 24, "#b8b48a", 91, 1.4); ground(ink, 640, "#dcc27a", "#c9a55a", 140, 92);
@@ -98,16 +83,16 @@ const SHOTS: Shot[] = [
     g.save(); g.translate(1180, 1000); g.rotate(sway); g.translate(-1180, -1000); acacia(ink, 1180, 1000, 720, "#7c9a4a", 93); g.restore();
     ink.seed(94); for (let k = 0; k < 9; k++) { const fx = 900 + ink.r() * 600, fy = 330 + ((lt * (300 + ink.r() * 200) + ink.r() * 200) % 700); ink.ell(fx + Math.sin(lt * 6 + k) * 20, fy, 14, 7, "#7c9a4a", 2, lt * 4 + k); }
     // rearing: rotate the whole giraffe about its hind feet; slips back at the end
-    const up = lt < 0.5 ? ease(lt / 0.25) : 1 - ease((lt - 0.5) / 0.2), ang = -0.62 * up;
+    const up = lt < 0.85 ? ease(lt / 0.3) : 1 - ease((lt - 0.85) / 0.2), ang = -0.62 * up;
     const px = 760 - 0.33 * 360, py = 1000;
     g.save(); g.translate(px, py); g.rotate(ang); g.translate(-px, -py);
     quad(ink, GIRAFFE, 760, 1000, 360, { emotion: "scared", gait: "stand", t, brow: "worried", head: "side", blink: false });
     g.restore();
     quad(ink, LIONESS, 330, 1010, 160, { emotion: "angry", gait: "stand", t, brow: "alert", mouth: "open" });
-    stamp(ink, 960, 300, t - wt(0, "outclimb") - 0.3);
+    stamp(ink, 960, 300, t - wt(0, "climb") - 0.2);
   } },
-  // 0c. hide: behind a tree far too small, the lioness walks past and looks up
-  { at: wt(0, "or") - 0.12, whip: true, push: [960, 520, 0.08], draw: (ink, t, lt) => {
+  // 0b. hide: behind a tree far too small, the lioness walks past and looks up
+  { at: wt(0, "hide") - 0.2, whip: true, push: [960, 520, 0.08], draw: (ink, t, lt) => {
     savanna(ink, t);
     acacia(ink, 400, 700, 300, "#7c9a4a", 3); acacia(ink, 1500, 660, 220, "#86a252", 4);
     quad(ink, GIRAFFE, 1000, 980, 420, { emotion: "scared", gait: "stand", t, head: "front", brow: "worried", blink: false, sweat: lt > 0.5 }, true);
@@ -115,8 +100,27 @@ const SHOTS: Shot[] = [
     const lx = 100 + lt * gaitSpeed(LIONESS, "walk") * 170;
     quad(ink, LIONESS, lx, 1040, 170, { emotion: "smug", gait: "walk", t: lt, brow: "alert" });
     tallGrass(ink, -50, 2000, 1090, 60, 7, "#c9a24a", t);
-    bang(ink, lx + 120, 780, 90, lt - 0.85);
-    stamp(ink, 960, 260, t - wt(0, "hide") - 0.25);
+    bang(ink, lx + 120, 780, 90, lt - 0.7);
+    stamp(ink, 960, 260, t - wt(0, "hide") - 0.35);
+  } },
+  // 0c. drinking: forelegs splayed, head down at the waterhole, a lioness creeping up behind
+  { at: wt(0, "drinking") - 0.25, whip: true, push: [1000, 640, 0.06], draw: (ink, t, lt) => {
+    const g = ink.g, danger = t - wt(0, "danger");
+    if (danger > 0) shake(g, t, Math.max(0, 8 - danger * 10));
+    savanna(ink, t, 600, 41);
+    acacia(ink, 300, 640, 230, "#86a252", 42); acacia(ink, 1650, 630, 200, "#7c9a4a", 43);
+    // waterhole with a muddy rim (kept above the caption band so the splayed legs read)
+    ink.shape(ink.ellPts(1150, 845, 520, 80), "#9c7a52", null);
+    ink.shape(ink.ellPts(1150, 848, 470, 62), ink.vgrad(790, 910, [[0, "#6fb2d6"], [1, "#3f86b8"]]), 2.4);
+    for (const [a, b] of [[860, 960], [1220, 1350], [1020, 1120]]) ink.line(ink.curve([a, 846 + (a % 3) * 6], [(a + b) / 2, 838], [b, 846 + (a % 3) * 6]), 3, "rgba(230,246,255,0.8)", 0.3);
+    const rip = ((lt * 1.2) % 1);
+    ink.arc(1240, 840, 30 + rip * 90, 7 + rip * 18, 0, Math.PI * 2, 3, `rgba(230,246,255,${(1 - rip).toFixed(2)})`);
+    quad(ink, GIRAFFE, 880, 815, 430, { emotion: "scared", gait: "drink", t, blink: false });
+    const lx = 40 + lt * gaitSpeed(LIONESS, "walk") * 150 * 0.6;
+    quad(ink, LIONESS, lx, 880, 150, { emotion: "smug", gait: "stalk", t: lt * 0.6 });
+    tallGrass(ink, -50, 560, 905, 100, 44, "#c9a24a", t);
+    bang(ink, 1080, 330, 110, danger);
+    stamp(ink, 960, 260, danger - 0.12);
   } },
   // 0d. "so how did they survive?": punch in on the worried face
   { at: wt(0, "so") - 0.15, whip: true, draw: (ink, t, lt) => {
