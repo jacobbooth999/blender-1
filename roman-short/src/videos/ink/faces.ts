@@ -12,6 +12,7 @@ export type FaceGeo = {
   top: P;             // above the head, for extras ("!", "?", hearts, Zzz)
   side: boolean;      // side view: the face looks toward +x
   skin?: string;      // head colour (eyelids)
+  look?: number;      // -1..1 pupils glance left / right
 };
 const DARK = "#3a2a26", LINE = "#5b3f33", BLUSH = "rgba(236,120,110,", TEAR = "#8fd0f2", RED = "#d8453a", PINK = "#f06a8a";
 
@@ -32,7 +33,7 @@ const drop = (ink: Ink, x: number, y: number, s: number, col = TEAR) => ink.shap
 export const drawFace = (ink: Ink, F: FaceGeo, e: Emotion, t: number, blink = false) => {
   const r = F.er, lw = r * 0.32, g = ink.g;
   const n = F.eyes.length, inner = (i: number) => (F.side ? 1 : i === 0 ? 1 : -1); // direction toward the face centre / nose
-  const look = e === "smug" ? 0.35 : e === "confused" ? -0.2 : 0;
+  const look = (F.look ?? 0) + (e === "smug" ? 0.35 : e === "confused" ? -0.2 : 0);
   // ---- blush (under everything else on the face) ----
   const blush = e === "laugh" || e === "love" ? 0.55 : e === "happy" || e === "smug" ? 0.32 : e === "angry" ? 0.25 : e === "sad" ? 0.18 : 0.12;
   for (const c of F.cheeks) ink.ell(c[0], c[1], r * 1.3, r * 0.75, `${BLUSH}${blush})`, null);
@@ -50,7 +51,7 @@ export const drawFace = (ink: Ink, F: FaceGeo, e: Emotion, t: number, blink = fa
         const big = e === "scared" ? 1.35 : 1.25;
         ink.ell(x, y, r * big, r * big * 1.08, "#ffffff", null); ink.arc(x, y, r * big, r * big * 1.08, 0, Math.PI * 2, lw * 0.7, LINE);
         const pr = e === "scared" ? r * 0.38 : r * 0.62, j = e === "scared" ? Math.sin(t * 40) * r * 0.08 : 0;
-        ink.ell(x + j, y + r * 0.05, pr, pr * 1.1, DARK, null); ink.ell(x + j + pr * 0.35, y - pr * 0.3, pr * 0.3, pr * 0.3, "#ffffff", null);
+        const lx = look * r * 0.45; ink.ell(x + j + lx, y + r * 0.05, pr, pr * 1.1, DARK, null); ink.ell(x + j + lx + pr * 0.35, y - pr * 0.3, pr * 0.3, pr * 0.3, "#ffffff", null);
         break; }
       case "sad": {
         ink.ell(x, y + r * 0.1, r * 0.95, r * 1.0, DARK, null); ink.ell(x + r * 0.3, y - r * 0.2, r * 0.3, r * 0.3, "#ffffff", null); ink.ell(x - r * 0.3, y + r * 0.35, r * 0.16, r * 0.16, "#ffffff", null);
@@ -67,7 +68,7 @@ export const drawFace = (ink: Ink, F: FaceGeo, e: Emotion, t: number, blink = fa
         break; }
       case "confused": {
         const k = i === 0 ? 1.15 : 0.8; ink.ell(x, y, r * k, r * k * 1.05, DARK, null); ink.ell(x + r * 0.3 * k, y - r * 0.3 * k, r * 0.26 * k, r * 0.26 * k, "#ffffff", null); break; }
-      default: ink.ell(x, y, r * 0.9, r * 0.95, DARK, null); ink.ell(x + r * 0.3, y - r * 0.3, r * 0.26, r * 0.26, "#ffffff", null);
+      default: { const lx = look * r * 0.35; ink.ell(x, y, r * 1.15, r * 1.2, "#ffffff", null); ink.ell(x + lx, y, r * 0.8, r * 0.85, DARK, null); ink.ell(x + lx + r * 0.28, y - r * 0.28, r * 0.24, r * 0.24, "#ffffff", null); }
     }
   });
   // ---- brows ----

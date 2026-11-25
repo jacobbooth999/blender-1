@@ -1,0 +1,22 @@
+{
+  "title": "Why Lions Are Scared of Giraffes",
+  "voice": "bm_fable",
+  "speed": 1.1,
+  "sources": {
+    "kick": "National Geographic 2019 (San Diego Zoo researcher: an adult male giraffe can kill a lion easily with one kick)",
+    "drinking": "Giraffe Conservation Foundation; Smithsonian: giraffes scout for upwards of an hour before drinking",
+    "zebras": "Science News 2024 / BMC Biology 2025: collar-camera zebras spend ~2x longer and synchronise movement with giraffes, likely using them as sentinels",
+    "speed": "giraffes can run up to ~60 km/h",
+    "calves": "Bristol / Mongabay 2018: lions target young giraffes; Serengeti ~60% of calves die in their first year"
+  },
+  "sentences": [
+    { "text": "Lions are scared of an animal that can't climb, can't hide, and nearly dies every time it drinks.", "gap": 0.35 },
+    { "text": "To drink, a giraffe has to do the splits, so it checks for lions for up to an hour first.", "gap": 0.3 },
+    { "text": "But at nearly six metres tall, it's the best lookout on the savanna.", "gap": 0.2 },
+    { "text": "Zebras even follow giraffes around, just to use them as an alarm.", "gap": 0.3 },
+    { "text": "If a lion gets close, it can sprint at sixty kilometres an hour.", "gap": 0.25 },
+    { "text": "And if it can't run?", "gap": 0.35 },
+    { "text": "One kick from an adult giraffe can kill a lion.", "gap": 0.4 },
+    { "text": "That's why lions mostly go after the babies, and it's exactly why", "gap": 0.0 }
+  ]
+}

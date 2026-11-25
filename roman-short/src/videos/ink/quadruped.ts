@@ -72,6 +72,10 @@ export type QuadOpts = {
   vector?: boolean;
   /** expressive face (overrides brow / mouth / blink styling) */
   emotion?: Emotion;
+  /** 0..1: near hind leg kicks backward (lion defence) */
+  kick?: number;
+  /** -1..1: eyes glance left / right (face-on and side faces) */
+  look?: number;
 };
 
 const add = (a: P, b: P): P => [a[0] + b[0], a[1] + b[1]];
@@ -189,6 +193,7 @@ const quadBody = (ink: Ink, sp0: Species, x: number, y: number, u: number, o: Qu
   if (gait === "gallop") { bob = -0.05 * Math.sin(cyc) - 0.02; pitch = 0.07 * Math.sin(cyc + 0.8); neckSwing = (giraffeLike ? 0.2 : 0.08) * Math.sin(cyc + 2.2); }
   if (gait === "stalk") { crouch = 0.14; bob = 0.005 * Math.sin(cyc * 2); neckSwing = 0.02 * Math.sin(cyc * 2); }
   if (gait === "stand" || gait === "graze" || gait === "eat") { bob = 0.004 * Math.sin(t * 1.6); neckSwing = 0.025 * Math.sin(t * 0.7); }
+  if (o.kick) pitch += 0.07 * o.kick;
   if (gait === "drink") { pitch = 0.14; neckSwing = 0.015 * Math.sin(t * 2.2); } // front end lowered over the splayed forelegs
   const tf = (p: P): P => add(rot(p, pitch, [0, -0.75]), [0, bob + crouch]);
   // ---- legs ----
@@ -204,7 +209,8 @@ const quadBody = (ink: Ink, sp0: Species, x: number, y: number, u: number, o: Qu
     if (moving) { const f = footAt(sp, gk, t, l.phase); fx += f.dx; lift = f.lift; stance = f.stance; }
     if (gait === "graze" && l.fore) fx += l.near ? 0.12 : -0.02; // a grazing stance: one foreleg forward
     if (gait === "drink" && l.fore) fx += l.near ? 0.34 : -0.2;  // drinking: forelegs splayed wide
-    const foot: P = [fx, -lift];
+    let foot: P = [fx, -lift];
+    if (o.kick && l.near && !l.fore) { const k = o.kick; foot = [fx + (-0.62 - 0.1) * k, -0.5 * k]; stance = k < 0.2; }
     // pastern: sloped forward when planted, hoof folds back in swing
     const pa = stance ? -1.15 : l.fore ? -2.2 : -1.6;
     const fet: P = add(foot, [-Math.cos(pa) * b4 * (l.fore ? -0.4 : -0.4), -b4 * (stance ? 0.92 : 0.7)]);
@@ -323,7 +329,7 @@ const headAt = (ink: Ink, sp: Species, at: P, nAng: number, o: QuadOpts, W: numb
     ink.ell(0, 0.145 * k, 0.045 * k, 0.034 * k, shade(C.coat, 0.88), W * 0.7);
     for (const s of [-1, 1]) ink.ell(s * 0.017 * k, 0.15 * k, 0.007 * k, 0.005 * k, INKC, null);
     if (o.emotion) {
-      drawFace(ink, { eyes: [[-0.045 * k, -0.005 * k], [0.045 * k, -0.005 * k]], er: 0.018 * k, mouth: [0, 0.158 * k], mw: 0.027 * k, cheeks: [[-0.062 * k, 0.05 * k], [0.062 * k, 0.05 * k]], top: [0, -0.16 * k], side: false, skin: C.coat }, o.emotion, t, o.blink);
+      drawFace(ink, { eyes: [[-0.045 * k, -0.005 * k], [0.045 * k, -0.005 * k]], er: 0.018 * k, mouth: [0, 0.158 * k], mw: 0.027 * k, cheeks: [[-0.062 * k, 0.05 * k], [0.062 * k, 0.05 * k]], top: [0, -0.16 * k], side: false, skin: C.coat, look: o.look }, o.emotion, t, o.blink);
       g.restore(); return [at[0], at[1] + 0.05];
     }
     for (const s of [-1, 1]) {
