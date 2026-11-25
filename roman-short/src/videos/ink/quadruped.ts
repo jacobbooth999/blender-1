@@ -12,6 +12,7 @@
 //    rise above the back, head low, belly near the ground; rotary gallop.
 //  zebra (horse build): forelegs straight, hock behind, grazes with the neck down.
 import { Ink, P, INKC } from "./ink2d";
+import { drawFace, emoPose, Emotion } from "./faces";
 
 type Leg = { base: P; bones: [number, number, number, number]; fore: boolean; phase: number; near: boolean };
 export type Species = {
@@ -69,6 +70,8 @@ export type QuadOpts = {
   shadow?: boolean; cel?: boolean;
   /** flat-vector character look (no outlines, soft palette, fur flicks, gentle faces); default true */
   vector?: boolean;
+  /** expressive face (overrides brow / mouth / blink styling) */
+  emotion?: Emotion;
 };
 
 const add = (a: P, b: P): P => [a[0] + b[0], a[1] + b[1]];
@@ -308,13 +311,19 @@ const headAt = (ink: Ink, sp: Species, at: P, nAng: number, o: QuadOpts, W: numb
   const g = ink.g, C = sp.colors, H = sp.head, giraffeLike = sp.name === "giraffe" || sp.name === "calf" || sp.name === "ancestor";
   g.save(); g.translate(at[0], at[1]);
   if (o.head === "front" && giraffeLike) {
-    const k = H / 0.26;
-    for (const s of [-1, 1]) { ink.shape(ink.ellPts(s * 0.1 * k, -0.02 * k, 0.075 * k, 0.026 * k, s * 0.35 + Math.sin(t * 2 + s) * 0.06), C.coat, W); ink.shape(ink.ellPts(s * 0.1 * k, -0.02 * k, 0.05 * k, 0.012 * k, s * 0.35), "#e6b7a0", null); }
+    const k = H / 0.26, ep = o.emotion ? emoPose(o.emotion) : null;
+    if (ep) { g.rotate(ep.tilt); g.translate(Math.sin(t * 50) * ep.shake, 0); }
+    const earA = ep ? -ep.ears * 0.9 : 0;
+    for (const s of [-1, 1]) { ink.shape(ink.ellPts(s * 0.1 * k, -0.02 * k + (ep ? -ep.ears * 0.02 * k : 0), 0.075 * k, 0.026 * k, s * (0.35 - earA) + Math.sin(t * 2 + s) * 0.06), C.coat, W); ink.shape(ink.ellPts(s * 0.1 * k, -0.02 * k, 0.05 * k, 0.012 * k, s * 0.35), "#e6b7a0", null); }
     if (sp.name !== "ancestor") for (const s of [-1, 1]) { ink.line([[s * 0.035 * k, -0.05 * k], [s * 0.045 * k, -0.13 * k]], 0.024 * k, C.coat, 0.2); ink.line([[s * 0.035 * k, -0.05 * k], [s * 0.045 * k, -0.13 * k]], W, INKC, 0.1); ink.ell(s * 0.046 * k, -0.135 * k, 0.02 * k, 0.018 * k, C.dark, null); }
     const face = ink.curvePoly([[-0.075 * k, -0.07 * k], [0.075 * k, -0.07 * k], [0.065 * k, 0.08 * k], [0.04 * k, 0.17 * k], [-0.04 * k, 0.17 * k], [-0.065 * k, 0.08 * k]], 2);
     ink.shape(face, C.coat, W); if (shadeOn) cel(ink, face, [0.8, 0.6], 0.62, "rgba(92,58,110,0.28)", 0.22); if (C.patch) clip(ink, face, () => { ink.shape(ink.curvePoly([[-0.03 * k, -0.06 * k], [0.03 * k, -0.06 * k], [0.02 * k, 0.03 * k], [-0.02 * k, 0.03 * k]], 2), C.patch!, null); });
     ink.ell(0, 0.145 * k, 0.045 * k, 0.034 * k, shade(C.coat, 0.88), W * 0.7);
     for (const s of [-1, 1]) ink.ell(s * 0.017 * k, 0.15 * k, 0.007 * k, 0.005 * k, INKC, null);
+    if (o.emotion) {
+      drawFace(ink, { eyes: [[-0.045 * k, -0.005 * k], [0.045 * k, -0.005 * k]], er: 0.018 * k, mouth: [0, 0.158 * k], mw: 0.027 * k, cheeks: [[-0.062 * k, 0.05 * k], [0.062 * k, 0.05 * k]], top: [0, -0.16 * k], side: false, skin: C.coat }, o.emotion, t, o.blink);
+      g.restore(); return [at[0], at[1] + 0.05];
+    }
     for (const s of [-1, 1]) {
       const ex = s * 0.045 * k, ey = -0.005 * k;
       const calmF = !o.brow || o.brow === "soft" || o.brow === "proud";
@@ -334,7 +343,9 @@ const headAt = (ink: Ink, sp: Species, at: P, nAng: number, o: QuadOpts, W: numb
   g.rotate(ha); // head local: +x along the face (toward the nose), y down
   const L = H;
   if (giraffeLike) {
-    const flick = Math.sin(t * 1.3) > 0.97 ? 0.4 : 0;
+    const epS = o.emotion ? emoPose(o.emotion) : null;
+    if (epS) { g.rotate(epS.tilt * 0.6); g.translate(Math.sin(t * 50) * epS.shake, 0); }
+    const flick = (Math.sin(t * 1.3) > 0.97 ? 0.4 : 0) + (epS ? epS.ears * 0.9 : 0);
     ink.shape(ink.ellPts(-L * 0.18, -L * 0.2, L * 0.24, L * 0.08, -0.5 - flick), C.coat, W); ink.shape(ink.ellPts(-L * 0.18, -L * 0.2, L * 0.15, L * 0.035, -0.5 - flick), "#e6b7a0", null);
     if (sp.name !== "ancestor") for (const dx of [-0.05, 0.05]) { const b: P = [L * (0.05 + dx), -L * 0.22], tp: P = [L * (dx - 0.02), -L * 0.55]; ink.line([b, tp], L * 0.09, C.coat, 0.2); ink.line([b, tp], W, INKC, 0.1); ink.ell(tp[0], tp[1], L * 0.07, L * 0.06, C.dark, null); }
     const tg = o.tongue ?? 0;
@@ -346,6 +357,7 @@ const headAt = (ink: Ink, sp: Species, at: P, nAng: number, o: QuadOpts, W: numb
     if (shadeOn) { cel(ink, head, [0.1, 1], 0.6, "rgba(92,58,110,0.3)", 0.25); ink.shape(head, null, W); }
     ink.shape(ink.curvePoly([[L * 0.72, -L * 0.06], [L * 1.04, L * 0.02], [L * 1.03, L * 0.2], [L * 0.8, L * 0.24]], 2), shade(C.coat, 0.9), W * 0.7);
     ink.shape(ink.ellPts(L * 0.95, L * 0.06, L * 0.04, L * 0.022, 0.5), INKC, null);
+    if (o.emotion) { drawFace(ink, { eyes: [[L * 0.28, -L * 0.06]], er: L * 0.06, mouth: [L * 0.8, L * 0.235], mw: L * 0.14, cheeks: [[L * 0.42, L * 0.09]], top: [L * 0.15, -L * 0.45], side: true, skin: C.coat }, o.emotion, t, o.blink); g.restore(); return at; }
     if (o.mouth === "smile") ink.arc(L * 0.78, L * 0.2, L * 0.16, L * 0.06, 0.3, 2.6, W); else ink.line([[L * 0.62, L * 0.25], [L * 1.0, L * 0.22]], W, INKC, 0.1);
     const ex = L * 0.28, ey = -L * 0.06;
     const calm = !o.brow || o.brow === "soft" || o.brow === "proud";
@@ -363,6 +375,7 @@ const headAt = (ink: Ink, sp: Species, at: P, nAng: number, o: QuadOpts, W: numb
     if (shadeOn) { cel(ink, head, [0.1, 1], 0.62, "rgba(92,58,110,0.3)", 0.25); ink.shape(head, null, W); }
     ink.shape(ink.ellPts(L * 0.6, L * 0.12, L * 0.17, L * 0.12), C.light, W * 0.8);
     ink.shape(ink.ellPts(L * 0.72, L * 0.0, L * 0.06, L * 0.045), "#5a3a34", null);
+    if (o.emotion) { drawFace(ink, { eyes: [[L * 0.3, -L * 0.1]], er: L * 0.055, mouth: [L * 0.56, L * 0.25], mw: L * 0.13, cheeks: [[L * 0.42, L * 0.07]], top: [L * 0.1, -L * 0.5], side: true, skin: C.coat }, o.emotion, t, o.blink); g.restore(); return at; }
     if (o.mouth === "pant" || o.mouth === "open") { ink.shape(ink.ellPts(L * 0.55, L * 0.27, L * 0.14, L * 0.09), "#5a1e28", W * 0.8); ink.shape(ink.ellPts(L * 0.55, L * 0.36, L * 0.06, L * 0.1), "#e86e78", W * 0.7); }
     const ex = L * 0.3, ey = -L * 0.1;
     if (o.blink) ink.arc(ex, ey, L * 0.06, L * 0.03, Math.PI * 0.1, Math.PI * 0.9, W);
