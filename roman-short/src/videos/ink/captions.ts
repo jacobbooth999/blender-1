@@ -27,7 +27,7 @@ export const buildChunks = (words: CapWord[], maxWords = 3, maxChars = 18): Chun
   return out;
 };
 
-export type CapStyle = { y: number; size: number; font: string; emphasis: Set<string>; variant?: "pop" | "journal" };
+export type CapStyle = { y: number; size: number; font: string; emphasis: Set<string>; variant?: "pop" | "journal"; cx?: number };
 export const DEFAULT_STYLE = (emph: string[] = []): CapStyle => ({ y: 945, size: 104, font: "Bangers", emphasis: new Set(emph.map((s) => s.toLowerCase())) });
 
 const clean = (w: string) => w.replace(/[.,!:;]+$/g, "").toUpperCase();
@@ -43,13 +43,14 @@ export const drawCaptions = (g: CanvasRenderingContext2D, chunks: Chunk[], t: nu
   const shown = c.words.filter((w) => t >= w.start - 0.04);
   const widths = c.words.map((w) => g.measureText(clean(w.word)).width);
   const total = widths.reduce((a, b) => a + b, 0) + space * (c.words.length - 1); // layout for the full chunk so words don't shift
-  let x = 960 - total / 2;
+  const CX = st.cx ?? 960;
+  let x = CX - total / 2;
   // chunk enters with a small upward slide
   const enter = ease((t - c.start + 0.04) / 0.12), yBase = st.y + (1 - enter) * 18;
   if (st.variant === "journal") {
     const shownW = c.words.reduce((a, w, k) => (t >= w.start - 0.04 ? a + widths[k] + (k ? space : 0) : a), 0);
-    const pad = st.size * 0.45, h = st.size * 1.05, x0 = 960 - total / 2 - pad, x1 = 960 - total / 2 + shownW + pad;
-    g.save(); g.translate(960, yBase); g.rotate(-0.012); g.translate(-960, -yBase);
+    const pad = st.size * 0.45, h = st.size * 1.05, x0 = CX - total / 2 - pad, x1 = CX - total / 2 + shownW + pad;
+    g.save(); g.translate(CX, yBase); g.rotate(-0.012); g.translate(-CX, -yBase);
     g.fillStyle = "rgba(246,239,223,0.94)"; g.beginPath(); g.moveTo(x0, yBase - h / 2);
     for (let q = 0; q <= 16; q++) g.lineTo(x0 + ((x1 - x0) * q) / 16, yBase - h / 2 + (q % 2 ? 4 : -3));
     for (let q = 16; q >= 0; q--) g.lineTo(x0 + ((x1 - x0) * q) / 16, yBase + h / 2 + (q % 2 ? -4 : 3));

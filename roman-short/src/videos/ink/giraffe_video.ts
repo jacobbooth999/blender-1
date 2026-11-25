@@ -10,6 +10,8 @@ import WORDS from "../../../videos_ink/giraffe/words.json";
 import { buildChunks, drawCaptions, DEFAULT_STYLE, CapWord } from "./captions";
 import { journalGrade, journalFrame } from "./journal";
 const STYLE = () => (globalThis as { INK_STYLE?: string }).INK_STYLE ?? "classic";
+/** "short" = vertical 9:16 re-framing of every shot (1080 x 1920 output) */
+const SHORTV = () => (globalThis as { INK_FORMAT?: string }).INK_FORMAT === "short";
 const CAPS = buildChunks(WORDS.words as CapWord[]);
 const CAP_STYLE = DEFAULT_STYLE(["climb", "hide", "drinking", "danger", "survive", "millions", "necks", "height", "predators", "sprint", "tongues", "thorny", "hearts", "brains", "invincible", "lions", "young", "habitat", "extraordinary"]);
 /** onset (s) of the n-th occurrence of a script word in sentence i (from words.json) */
@@ -27,10 +29,10 @@ const hash = (n: number) => { const v = Math.sin(n * 127.1) * 43758.5453; return
 const blink = (t: number, seed: number) => { const p = 2.2 + hash(seed) * 1.8; return ((t + hash(seed + 1) * p) % p) < 0.12; };
 
 // ---------------- scenery ----------------
-const sky = (ink: Ink, hor: number, stops: [number, string][]) => { ink.g.fillStyle = ink.vgrad(0, hor, stops); ink.g.fillRect(-200, -200, 2320, hor + 204); };
+const sky = (ink: Ink, hor: number, stops: [number, string][]) => { ink.g.fillStyle = ink.vgrad(0, hor, stops); ink.g.fillRect(-2000, -3000, 6000, hor + 6000); };
 const ground = (ink: Ink, y0: number, a: string, b: string, tufts = 220, seed = 1) => {
   const pts: P[] = [[-200, y0], [2120, y0], [2120, 1300], [-200, 1300]];
-  ink.shape(pts, ink.vgrad(y0, 1080, [[0, a], [1, b]]), null);
+  ink.shape([[-2000, y0], [4000, y0], [4000, 4000], [-2000, 4000]], ink.vgrad(y0, 1080, [[0, a], [1, b]]), null);
   ink.seed(seed); ink.hatch(pts, tufts, 16, "rgba(110,90,40,0.45)", 2.2, -Math.PI / 2, 0.7);
 };
 const hills = (ink: Ink, y: number, amp: number, col: string, seed: number, freq = 2) => {
@@ -50,7 +52,7 @@ const savanna = (ink: Ink, t: number, hor = 640, seed = 1) => {
   hills(ink, hor - 20, 28, "#b8b48a", seed + 3, 1.5);
   ground(ink, hor, "#dcc27a", "#c9a55a", 260, seed);
 };
-const paper = (ink: Ink) => { const g = ink.g; g.fillStyle = PAPER; g.fillRect(-200, -200, 2320, 1480); ink.seed(99); for (let i = 0; i < 300; i++) { g.fillStyle = "rgba(120,110,90,0.035)"; g.fillRect(ink.r() * 1920, ink.r() * 1080, 2, 2); } };
+const paper = (ink: Ink) => { const g = ink.g; g.fillStyle = PAPER; g.fillRect(-2000, -3000, 6000, 8000); ink.seed(99); for (let i = 0; i < 300; i++) { g.fillStyle = "rgba(120,110,90,0.035)"; g.fillRect(ink.r() * 1920, ink.r() * 1080, 2, 2); } };
 const dashed = (ink: Ink, pts: P[], col = INKC, w = 3, off = 0, dash = [16, 14]) => { const g = ink.g; g.save(); g.setLineDash(dash); g.lineDashOffset = -off; g.strokeStyle = col; g.lineWidth = w; g.lineCap = "round"; g.beginPath(); pts.forEach(([x, y], i) => (i ? g.lineTo(x, y) : g.moveTo(x, y))); g.stroke(); g.restore(); };
 const arrow = (ink: Ink, a: P, b: P, col = INKC, w = 4) => { ink.line([a, b], w, col, 0.8); const ang = Math.atan2(b[1] - a[1], b[0] - a[0]); for (const s of [-1, 1]) ink.line([b, [b[0] - Math.cos(ang + s * 0.5) * 26, b[1] - Math.sin(ang + s * 0.5) * 26]], w, col, 0.3); };
 const check = (ink: Ink, x: number, y: number, s: number) => ink.line([[x - s * 0.5, y], [x - s * 0.15, y + s * 0.4], [x + s * 0.55, y - s * 0.45]], s * 0.14, "#3f9a4f", 0.6);
@@ -140,7 +142,7 @@ const SHOTS: Shot[] = [
     ground(ink, 700, "#93a86a", "#72884e", 200, 22);
     for (let i = 0; i < 8; i++) { const x = 100 + i * 250; for (let k = -3; k <= 3; k++) ink.line(ink.curve([x, 1000], [x + k * 18, 940], [x + k * 40, 900 + Math.abs(k) * 10]), 4, "#4f7a3c", 0.3); }
     quad(ink, ANCESTOR, 620 + lt * gaitSpeed(ANCESTOR, "walk") * 300, 960, 300, { emotion: "happy", gait: "walk", t: lt, blink: blink(t, 2) });
-    label(ink, "MILLIONS OF YEARS AGO", 1500, 140, 64, INKC, lt * 2);
+    if (SHORTV()) label(ink, "MILLIONS OF YEARS AGO", 640 + lt * gaitSpeed(ANCESTOR, "walk") * 300, 60, 64, INKC, lt * 2); else label(ink, "MILLIONS OF YEARS AGO", 1500, 140, 64, INKC, lt * 2);
   } },
   // 2a. natural selection: necks get longer
   { at: at(2), push: [960, 560, 0.035], draw: (ink, t, lt) => {
@@ -166,7 +168,7 @@ const SHOTS: Shot[] = [
   // 3. height = another advantage
   { at: at(3), push: [960, 560, 0.035], draw: (ink, t, lt) => {
     paper(ink);
-    title(ink, "BONUS: HEIGHT.", 820, 300, 150, lt);
+    if (SHORTV()) title(ink, "BONUS: HEIGHT.", 1530, 30, 118, lt); else title(ink, "BONUS: HEIGHT.", 820, 300, 150, lt);
     quad(ink, GIRAFFE, 1450, 1010, 420, { emotion: "smug", gait: "stand", t, head: "front", brow: "proud", blink: blink(t, 4), neckAdd: 0.2 });
     if (lt > 0.5) { ink.line([[1750, 1000], [1750, 240]], 4, BLUE, 0.4); for (const y of [1000, 240]) ink.line([[1725, y], [1775, y]], 4, BLUE, 0.3); label(ink, "up to 5.5 m", 1750, 200, 50, BLUE, lt - 0.5); }
   } },
@@ -202,10 +204,12 @@ const SHOTS: Shot[] = [
     quad(ink, GIRAFFE, 1050, 1000, 430, { emotion: "determined", gait: "gallop", t, brow: "proud" });
     speedLines(ink, 760, 520, 5, 220, t); dust(ink, 860, 1000, t);
     // speedometer badge
+    const SX = SHORTV() ? 1300 : 1690, SY = SHORTV() ? 0 : 0; g.save(); g.translate(SX - 1690, SY);
     ink.ell(1690, 220, 140, 140, PAPER, 4); ink.arc(1690, 240, 105, 105, Math.PI, Math.PI * 2, 6, INKC);
     const needle = Math.PI + Math.PI * (0.15 + 0.7 * ease(lt / 1.6)) + Math.sin(t * 20) * 0.02;
     ink.line([[1690, 240], [1690 + Math.cos(needle) * 90, 240 + Math.sin(needle) * 90]], 7, RED, 0.2); ink.dot(1690, 240, 12);
     ink.text(`~${Math.round(60 * ease(lt / 1.6))} km/h`, 1690, 300, 50, "Patrick Hand", INKC);
+    g.restore();
   } },
   // 7. the long tough tongue vs thorns
   { at: at(7), push: [1100, 450, 0.05], draw: (ink, t, lt) => {
@@ -247,7 +251,7 @@ const SHOTS: Shot[] = [
   // 10. not invincible
   { at: at(10), push: [960, 560, 0.035], draw: (ink, t, lt) => {
     paper(ink);
-    title(ink, "NOT INVINCIBLE.", 820, 300, 150, lt);
+    if (SHORTV()) title(ink, "NOT INVINCIBLE.", 1480, 50, 112, lt); else title(ink, "NOT INVINCIBLE.", 820, 300, 150, lt);
     quad(ink, GIRAFFE, 1480, 1010, 400, { emotion: "sad", gait: "stand", t, head: "front", brow: "worried", blink: blink(t, 9), sweat: true });
   } },
   // 11a. lions still hunt them, especially calves
@@ -298,17 +302,33 @@ function heartPts(x: number, y: number, s: number): P[] {
 }
 for (const s of SHOTS) s.at = Math.max(0, s.at - 0.12); // cut a few frames before the line
 
+// vertical framing per shot: [focus x, focus y, zoom] in the 1920 x 1080 design space (zoom 1 = 1080 design units
+// across the 1080 px width; cards use 0.56 so their full width fits). Focus x may follow a walking subject.
+const ancX = (lt: number) => 640 + lt * gaitSpeed(ANCESTOR, "walk") * 300;
+const VFRAME: ((lt: number) => [number, number, number])[] = [
+  () => [800, 600, 1.25], () => [880, 620, 1.2], () => [900, 640, 1.1], () => [1130, 560, 1.25],
+  (lt) => [ancX(lt) + 40, 660, 1.3], () => [960, 640, 0.68], () => [900, 600, 1.05], () => [1530, 520, 0.95],
+  () => [980, 600, 0.8], () => [960, 560, 0.95], () => [1000, 640, 0.85], () => [1000, 520, 1.0],
+  () => [960, 560, 0.85], () => [1120, 600, 0.75], () => [1480, 540, 0.95], () => [820, 680, 0.9],
+  () => [880, 700, 0.95], () => [830, 680, 0.95],
+];
+const CAPS_V = buildChunks(WORDS.words as CapWord[], 2, 13);
 export const drawAt = (g: CanvasRenderingContext2D, W: number, H: number, t: number) => {
   let k = 0; while (k + 1 < SHOTS.length && t >= SHOTS[k + 1].at) k++;
   const s = SHOTS[k], lt = t - s.at, d = (SHOTS[k + 1]?.at ?? DURATION) - s.at;
-  g.save(); g.scale(W / 1920, H / 1080);
+  const V = SHORTV();
+  g.save();
+  if (V) { const [fx, fy, z] = VFRAME[k](lt); g.translate(W / 2, H / 2); g.scale((z * W) / 1080, (z * W) / 1080); g.translate(-fx, -fy); }
+  else g.scale(W / 1920, H / 1080);
   if (s.whip && k > 0) { const z = 1 + 0.22 * (1 - ease(lt / 0.16)); g.translate(960, 540); g.scale(z, z); g.translate(-960, -540); } // zoom-punch whip in
   if (s.push) { const [fx, fy, amt] = s.push, z = 1 + amt * ease(lt / Math.max(1, d)); g.translate(fx, fy); g.scale(z, z); g.translate(-fx, -fy); }
   const ink = new Ink(g, 11); s.draw(ink, t, lt, d);
   g.restore();
-  g.save(); g.scale(W / 1920, H / 1080);
-  if (s.whip && k > 0 && lt < 0.14) { const a = 1 - lt / 0.14; for (let i = 0; i < 14; i++) { const y = (i * 83 + 40) % 1080; g.fillStyle = `rgba(255,255,255,${(0.55 * a).toFixed(3)})`; g.fillRect(0, y, 1920, 10 + (i % 3) * 8); } }
-  else if (lt < 0.1 && k > 0) { g.fillStyle = `rgba(255,255,255,${(0.6 * (1 - lt / 0.1)).toFixed(3)})`; g.fillRect(0, 0, 1920, 1080); } // quick white flash on other cuts
+  g.save();
+  if (s.whip && k > 0 && lt < 0.14) { const a = 1 - lt / 0.14, n = Math.round(14 * H / W * 0.56 + 6); for (let i = 0; i < n; i++) { const y = ((i * 83 + 40) % 1080) * H / 1080; g.fillStyle = `rgba(255,255,255,${(0.55 * a).toFixed(3)})`; g.fillRect(0, y, W, (10 + (i % 3) * 8) * W / 1920); } }
+  else if (lt < 0.1 && k > 0) { g.fillStyle = `rgba(255,255,255,${(0.6 * (1 - lt / 0.1)).toFixed(3)})`; g.fillRect(0, 0, W, H); } // quick white flash on other cuts
+  if (V) { g.scale(W / 1080, H / 1920); drawCaptions(g, CAPS_V, t, { ...CAP_STYLE, cx: 540, y: 1370, size: 118 }); g.restore(); return; }
+  g.scale(W / 1920, H / 1080);
   if (STYLE() === "journal") {
     g.restore();
     journalGrade(g, W, H, t);
