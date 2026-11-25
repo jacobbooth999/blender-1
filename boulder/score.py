@@ -66,6 +66,7 @@ for c in C['cues']:
     elif ty=='hit': n=int(1*SR); ts=np.arange(n)/SR; s=np.sin(2*np.pi*np.cumsum(55+80*np.exp(-ts*25))/SR)*np.exp(-ts*3.5); place(sfx,s*.25*v,t0)
     elif ty=='pop': n=int(.1*SR); ts=np.arange(n)/SR; place(sfx,np.sin(2*np.pi*np.cumsum(700+600*np.minimum(1,ts/.03))/SR)*env(n,.002,.03)*.1*v,t0)
 sfx=reverb(sfx,1.0,.15,seed=4)
-mix=mus+sfx; mix*=np.clip((END-np.arange(N)/SR)/1.2,0,1)
+mix=sfx;  # music removed — sound effects only
+mix*=np.clip((END-np.arange(N)/SR)/1.2,0,1)
 st=np.stack([mix,np.roll(mix,int(.011*SR))],1); st/=np.abs(st).max()/1.1; st=np.tanh(st); st/=np.abs(st).max()/.92
 o=wave.open(os.path.join(D,'mix.wav'),'wb'); o.setnchannels(2); o.setsampwidth(2); o.setframerate(SR); o.writeframes((st*32767).astype(np.int16).tobytes()); o.close(); print('mix',round(N/SR,1))
