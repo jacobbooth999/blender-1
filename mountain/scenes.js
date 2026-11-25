@@ -13,10 +13,10 @@ function bigText(x,y,txt,size,op=1,fill='#fff'){add(`<text x="${x}" y="${y}" fon
 /* ---------- the five climbers (world x along the path) ---------- */
 const disX=t=>t<TOP?V*t+4*Math.sin(t*1.6*Math.PI*2):SUM+70*eo(P(t,TOP,.5));
 const sprX=t=>t<7?V*t+150+50*eo(P(t,0,6)):V*7+200;
-const cmpX=t=>t<12?V*t-250:(t<13.6?V*12-250:V*12-250-40*(t-13.6));   // last in line, so nobody walks past them when they stop
-const cplX=t=>t<18.6?V*t-125:V*18.6-125;
+const cmpX=t=>t<18.6?V*t-125:(t<20.2?V*18.6-125:V*18.6-125-40*(t-20.2));   // outlasts the complainer, quits second-to-last
+const cplX=t=>t<12?V*t-250:V*12-250;   // last in line, so nobody walks past them when they stop
 const drmX=()=>-560;
-const STORM=[16.5,24.5];
+const STORM=[10.2,17.6];
 const storm=t=>P(t,STORM[0],1)*(1-P(t,STORM[1],1));
 
 /* ---------- props ---------- */
@@ -58,13 +58,13 @@ S.push({s:0,e:END+1,cam:{zoom:0},draw:()=>{const t=T;
       cue('thud',7.45,.7);cue('pop',.8,.35);}
     // 3 THE COMPARER — keeps checking everyone else, stops, turns back
     {const w=cmpX(t);const px=sx(w),py=gy(w);
-      if(t<12){fig(w,walk(1.3));if(t>8&&t<12){const look=Math.sin(t*2)>0;label(px+(look?60:-60),py-160,look?'?':'?',{size:44,op:.9,weight:900,fill:AMB});}}
-      else if(t<13.6){fig(w,{lean:0,arm:[44,-30],arm2:[-30,52]});add(`<circle cx="${px+48}" cy="${py-120}" r="44" fill="url(#bk)" fill-opacity=".35"/><rect x="${px+36}" y="${py-142}" width="24" height="42" rx="5" fill="#0b0b0b" stroke="#fff" stroke-width="3"/>`);}
-      else fig(w,{...walk(1.3,6),flip:-1,lean:-ANG*.3,op:1-P(t,14.6,1)});
-      if(t<15.4)label(px,py-245,'COMPARER',{size:20,op:.95*(1-P(t,14.6,.8)),weight:900,sp:.1});bubbleT(px+60,py-330,'WHY ARE THEY AHEAD?',P(t,12.2,.2)*(1-P(t,14.2,.2)));cue('pop',12.2,.35);}
+      if(t<18.6){fig(w,walk(1.3));if(t>14.6&&t<18.6){const look=Math.sin(t*2)>0;label(px+(look?60:-60),py-160,look?'?':'?',{size:44,op:.9,weight:900,fill:AMB});}}
+      else if(t<20.2){fig(w,{lean:0,arm:[44,-30],arm2:[-30,52]});add(`<circle cx="${px+48}" cy="${py-120}" r="44" fill="url(#bk)" fill-opacity=".35"/><rect x="${px+36}" y="${py-142}" width="24" height="42" rx="5" fill="#0b0b0b" stroke="#fff" stroke-width="3"/>`);}
+      else fig(w,{...walk(1.3,6),flip:-1,lean:-ANG*.3,op:1-P(t,21.2,1)});
+      if(t<22.0)label(px,py-245,'COMPARER',{size:20,op:.95*(1-P(t,21.2,.8)),weight:900,sp:.1});bubbleT(px+60,py-330,'WHY ARE THEY AHEAD?',P(t,18.8,.2)*(1-P(t,20.8,.2)));cue('pop',18.8,.35);}
     // 4 THE COMPLAINER — climbs until the storm, then sits down and moans
-    {const w=cplX(t);const px=sx(w),py=gy(w);if(t<18.6)fig(w,walk(2.6));else{fig(w,{lean:0,arm:[30,60],arm2:[-30,60]});const s=Math.sin(t*30)*3;add(`<g stroke="${RED}" stroke-width="5" stroke-linecap="round"><path d="M${px-26+s},${py-190} l-10,-16 M${px},${py-200} l0,-20 M${px+26+s},${py-190} l10,-16"/></g>`);}
-      tag(px,py,'COMPLAINER');bubbleT(px+80,py-300,"THIS ISN'T FAIR!",P(t,18.8,.2)*(1-P(t,21.4,.2)));cue('pop',18.8,.35);}
+    {const w=cplX(t);const px=sx(w),py=gy(w);if(t<12)fig(w,walk(2.6));else{fig(w,{lean:0,arm:[30,60],arm2:[-30,60]});const s=Math.sin(t*30)*3;add(`<g stroke="${RED}" stroke-width="5" stroke-linecap="round"><path d="M${px-26+s},${py-190} l-10,-16 M${px},${py-200} l0,-20 M${px+26+s},${py-190} l10,-16"/></g>`);}
+      tag(px,py,'COMPLAINER');bubbleT(px+80,py-300,"THIS ISN'T FAIR!",P(t,12.2,.2)*(1-P(t,14.8,.2)));cue('pop',12.2,.35);}
     // 5 THE DISCIPLINED — same pace, every step, through the storm
     {const w=disX(t);let o=walk(3.9);if(t>TOP+.3)o={arm:[44,-90+Math.sin(t*8)*6],arm2:[-44,-90-Math.sin(t*8)*6],lean:0,spot:true};const [px,py]=fig(w,o);tag(px,py,'DISCIPLINED',AMB);
       if(t<TOP)for(let k=0;k*.5<TOP;k++)cue('step',k*.5,.3);cue('win',TOP+.1,.8);}
@@ -73,17 +73,17 @@ S.push({s:0,e:END+1,cam:{zoom:0},draw:()=>{const t=T;
       for(let k=0;k<6;k++){const y=200+k*290,x=fogX+90+Math.sin(t*.4+k)*30;add(`<ellipse cx="${x}" cy="${y}" rx="130" ry="40" fill="#fff" opacity="${.05*fo}"/>`);}}
   });
   // weather
-  rain(st);if(flashOn)add(`<rect width="1080" height="1920" fill="#fff" opacity=".22"/>`);[17.3,19.6,21.9,23.4].forEach(x=>cue('impact',x,.35));if(st>0)cue('wind',16.6,.8);
+  rain(st);if(flashOn)add(`<rect width="1080" height="1920" fill="#fff" opacity=".22"/>`);[10.8,12.6,14.6,16.4].forEach(x=>cue('impact',x,.35));if(st>0)cue('wind',10.3,.8);
   if(t>TOP+.3)for(let k=0;k<36;k++){const x=(k*137)%1080,y=((k*97+(t-TOP-.3)*300)%1600)+120;add(`<rect x="${x}" y="${y}" width="12" height="20" fill="${k%3?'#fff':AMB}" opacity=".75" transform="rotate(${k*40+t*200},${x},${y})"/>`);}
   // HUD: title, then the climbers-left counter
   const ho=1-P(t,4.0,.4);if(ho>0)add(`<g opacity="${ho}"><rect x="90" y="140" width="900" height="110" rx="55" fill="#fff" filter="url(#glow)"/><text x="540" y="216" font-size="54" font-weight="900" letter-spacing="2" text-anchor="middle" fill="#000">WHO REACHES THE TOP?</text></g>`);
-  const left=5-[t>=.5,t>=7.4,t>=13.6,t>=18.6].filter(Boolean).length;
+  const left=5-[t>=.5,t>=7.4,t>=12,t>=18.6].filter(Boolean).length;
   if(t>4.3&&t<TOP){const o=P(t,4.3,.3)*(1-P(t,TOP-.4,.3));label(540,190,'STILL CLIMBING',{size:22,op:.7*o,weight:900});add(`<g opacity="${o}">`);for(let k=0;k<5;k++){const x=540+(k-2)*80,on=k<left;add(`<circle cx="${x}" cy="245" r="24" fill="${on?(k===0?AMB:'#fff'):'none'}" stroke="#fff" stroke-opacity="${on?1:.3}" stroke-width="3"/>`);}add('</g>');}
   // lessons, the moment each one drops out
   banner(.5,3.0,560,'THE DREAMER','NEVER TAKES THE FIRST STEP.');
   banner(8.0,11.2,560,'THE SPRINTER','BURNS OUT BEFORE HALFWAY.');
-  banner(13.2,16.4,560,'THE COMPARER','FORGETS THEIR OWN CLIMB.');
-  banner(19.6,23.0,560,'THE COMPLAINER','QUITS WHEN IT STORMS.');
+  banner(13.0,16.4,560,'THE COMPLAINER','QUITS WHEN IT STORMS.');
+  banner(19.6,23.0,560,'THE COMPARER','FORGETS THEIR OWN CLIMB.');
   if(t>30.1&&t<TOP+.3)label(540,200,'THE TOP',{size:32,op:P(t,30.1,.3)*(1-P(t,TOP+.1,.2)),weight:900,fill:AMB});
   if(t>TOP+.6){const p=back(P(t,TOP+.6,.4));g(`transform="translate(540,330) scale(${p}) translate(-540,-330)"`,()=>{bigText(540,300,'ONLY DISCIPLINE',100,1,AMB);bigText(540,410,'REACHES THE TOP.',84);});cue('impact',TOP+.65,.9);}
   if(t>33.6){const p=back(P(t,33.6,.35));g(`transform="translate(540,1700) scale(${p}) translate(-540,-1700)"`,()=>{add(`<rect x="200" y="1640" width="680" height="96" rx="48" fill="#fff" filter="url(#glow)"/>`);label(540,1704,'WHICH ONE ARE YOU?',{size:40,op:1,weight:900,fill:'#000',sp:.08});});cue('pop',33.6,.6);}
