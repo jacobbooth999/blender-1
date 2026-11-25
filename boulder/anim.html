@@ -238,6 +238,8 @@ function meterBar(x,y,v,lab){add(`<rect x="${x-90}" y="${y}" width="180" height=
 function cloud(x,y,op){if(op<=0)return;add(`<g opacity="${op}"><path d="M${x-120},${y} a50,50 0 0 1 60,-60 a70,70 0 0 1 120,10 a50,50 0 0 1 60,50 Z" fill="#1a1a1a" stroke="#fff" stroke-opacity=".6" stroke-width="4"/></g>`);let d='';for(let k=0;k<14;k++){const xx=x-110+(k*37)%230,yy=y+20+((k*53+T*700)%260);d+=`<line x1="${xx}" y1="${yy}" x2="${xx-6}" y2="${yy+26}"/>`;}add(`<g stroke="#fff" stroke-opacity="${.45*op}" stroke-width="2.5">${d}</g>`);}
 function bubbleT(x,y,txt,op=1){if(op<=0)return;const w=txt.length*17+50;add(`<g opacity="${op}"><rect x="${x-w/2}" y="${y-36}" width="${w}" height="58" rx="29" fill="#fff"/><path d="M${x-16},${y+20} l-8,24 l26,-24 Z" fill="#fff"/></g>`);label(x,y+2,txt,{size:22,op:op,weight:900,fill:'#000',sp:.06});}
 
+function banner(t0,t1,y,l1,l2){const p=P(T,t0,.25),o=1-P(T,t1,.3);if(p<=0||o<=0)return;const sc=lerp(1.6,1,eo(p));
+  add(`<g opacity="${Math.min(1,p*2)*o}"><rect x="0" y="${y-85}" width="1080" height="190" fill="#000" opacity=".72"/>`);g(`transform="translate(540,${y}) scale(${sc}) translate(-540,${-y})"`,()=>{bigText(540,y-8,l1,76);bigText(540,y+76,l2,62,1,AMB);});add('</g>');cue('impact',t0+.05,.55);}
 /* ---------- one lane ---------- */
 function lane(i,t,{op=1}={}){const L=LANES[i];const AY=L.base-120;
   const f=focusOf[i](t);const camX=Math.min(f-AX,SUM-640);const hc=hgt(camX+AX);
@@ -263,15 +265,15 @@ function lane(i,t,{op=1}={}){const L=LANES[i];const AY=L.base-120;
     if(t>=9.4){fwx=lerp(-150,-700,P(t,9.4,1.8));lean=-4;arm=[30,50];arm2=[-30,50];flip=-1;}
     px=sx(fwx);py=gy(fwx);
     if(t<6.2)crown(px,py-sc*160,1,0);else{const c=P(t,6.2,1.0);const cw=lerp(egoX(6.2),420,c);crown(sx(cw),lerp(gy(egoX(6.2))-200,gy(420)-14,c),.9,c*160);}
-    bubbleT(px+90,py-240,'TOO EASY.',P(t,.6,.2)*(1-P(t,3.4,.2)));bubbleT(sx(-150)+170,gy(-150)-230,'THIS IS POINTLESS.',P(t,7.8,.2)*(1-P(t,10.2,.3)));
+    bubbleT(px+90,py-240,'TOO EASY.',P(t,.6,.2)*(1-P(t,3.4,.2)));bubbleT(sx(-150)+170,gy(-150)-230,'THIS IS POINTLESS.',P(t,7.8,.2)*(1-P(t,9.7,.2)));
     cue('thud',6.25,.7);cue('hit',7.3,.6);cue('whoosh',6.3,.6);cue('pop',.6,.4);cue('pop',7.8,.4);}
   if(i===1){// MOTIVATION: bursts of energy, drains, gives up, scrolls
     if(t>=11&&t<12.6){lean=lerp(ANG+12,4,P(t,11,.6));arm=[30,40];arm2=[-30,40];}
     if(t>=12.6){fwx=880;lean=0;arm=[44,-20];arm2=[-30,50];extra='phone';}
     px=sx(fwx);py=gy(fwx);const e=energy(t);if(t<13)meterBar(px,py-230,e,'ENERGY');
     if(t<3.5)for(let k=0;k<5;k++){const a=t*4+k*1.26;add(`<circle cx="${px+Math.cos(a)*70}" cy="${py-90+Math.sin(a)*70}" r="4" fill="${AMB}" opacity=".8"/>`);}
-    bubbleT(px+190,py-190,"LET'S GOOO!",P(t,.3,.2)*(1-P(t,3.0,.2)));bubbleT(px+150,py-250,'MAYBE TOMORROW...',P(t,13.0,.2)*(1-P(t,17.4,.3)));
-    if(t>10)cloud(px+60,py-300,P(t,10,.8)*(1-P(t,22,1)));cue('pop',.3,.4);cue('pop',13.0,.4);cue('thud',14.3,.4);}
+    bubbleT(px+190,py-190,"LET'S GOOO!",P(t,.3,.2)*(1-P(t,3.0,.2)));bubbleT(px+150,py-250,'MAYBE TOMORROW...',P(t,13.0,.2)*(1-P(t,15.0,.2)));
+    if(t>10)cloud(px+60,py-300,P(t,10,.8)*(1-P(t,15.0,.6)));cue('pop',.3,.4);cue('pop',13.0,.4);cue('thud',14.3,.4);}
   if(i===2){// DISCIPLINE: same pace, every day, rain or shine
     if(t>TOP+.3){fwx=wx+R+45;lean=0;arm=[44,-90+Math.sin(t*8)*6];arm2=[-44,-90-Math.sin(t*8)*6];}
     px=sx(fwx);py=gy(fwx);
@@ -298,9 +300,10 @@ S.push({s:0,e:END+1,cam:{zoom:0},draw:()=>{const t=T;
   if(t>4.4&&t<TOP){const o=P(t,4.4,.3)*(1-P(t,TOP-.4,.3));add(`<g opacity="${o}">`);label(540,210,'STILL CLIMBING',{size:22,op:.7,weight:900});
     [['EGO',t<6.2],['MOTIVATION',t<12.6],['DISCIPLINE',true]].forEach(([n,ok],k)=>{const x=250+k*290;add(`<rect x="${x-125}" y="240" width="250" height="58" rx="29" fill="${ok?'#fff':'none'}" stroke="#fff" stroke-opacity="${ok?1:.35}" stroke-width="3"/>`);label(x,278,n,{size:20,op:ok?1:.4,weight:900,fill:ok?'#000':'#fff'});if(!ok)add(`<line x1="${x-100}" y1="269" x2="${x+100}" y2="269" stroke="#ff6b5a" stroke-width="5"/>`);});add('</g>');}
   if(t>TOP+.6){const p=back(P(t,TOP+.6,.4));g(`transform="translate(540,330) scale(${p}) translate(-540,-330)"`,()=>{bigText(540,300,'DISCIPLINE',130,1,AMB);bigText(540,420,'WINS.',130);});cue('impact',TOP+.65,.9);}
-  if(t>33.2)label(540,1600,'EGO QUITS WHEN IT GETS HARD.',{size:30,op:P(t,33.2,.3),weight:900});
-  if(t>33.6)label(540,1660,'MOTIVATION FADES.',{size:30,op:P(t,33.6,.3),weight:900});
-  if(t>34.0){label(540,1740,'DISCIPLINE KEEPS GOING.',{size:38,op:P(t,34.0,.3),weight:900,fill:AMB});cue("ting",34.0,.6);}
+  // the lesson lands the moment each one quits
+  banner(9.8,13.0,LANES[0].base-330,'EGO QUITS','WHEN IT GETS HARD.');
+  banner(15.1,18.6,LANES[1].base-375,'MOTIVATION','FADES.');
+  if(t>33.4){label(540,1700,'DISCIPLINE KEEPS GOING.',{size:44,op:P(t,33.4,.3),weight:900,fill:AMB});cue("ting",33.4,.6);}
   label(1040,58,'THE NEXT VERSION',{size:16,op:.45,anchor:'end',weight:800});
   cue('whistle',0,.5);cue('wind',30.1,.6);
 }});
