@@ -17,7 +17,7 @@ def reverb(x,dur=2.4,wet=.28,seed=1):
     y=fftconvolve(x,ir)[:len(x)]; y*=np.abs(x).max()/max(np.abs(y).max(),1e-9); return x*(1-wet)+y*wet
 BPM=96; beat=60/BPM; bar=4*beat
 Am=[[57,60,64],[53,57,60],[48,52,55],[55,59,62]]; Tense=[[57,60,64],[57,60,63],[53,57,60],[52,56,59]]; Up=[[53,57,60],[55,59,62],[57,60,64],[60,64,67]]
-segs=[(0,2.6,1,Am),(2.6,8,2,Am),(8,20,1,Tense),(20,26,2,Up),(26,END,3,Up)]
+segs=[(0,6.2,2,Am),(6.2,14.5,1,Tense),(14.5,29.8,2,Am),(29.8,END,3,Up)]
 mus=np.zeros(N)
 for (s,e,I,prog) in segs:
     n=int((e-s+1.5)*SR); P=np.zeros(n); nb=int(np.ceil((e-s)/bar))

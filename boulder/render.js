@@ -1,6 +1,6 @@
 // node render.js stills t1,t2 | cues | video
 const {chromium}=require('playwright');const fs=require('fs');const path=require('path');const {spawn}=require('child_process');const D=__dirname;
-const TIMING={lines:[{start:0,end:33.0}]};
+const TIMING={lines:[{start:0,end:35.0}]};
 (async()=>{const mode=process.argv[2];const b=await chromium.launch();const p=await b.newPage({viewport:{width:1080,height:1920}});p.on('pageerror',e=>console.error('ERR',e.message));
  await p.addInitScript(t=>{window.TIMING=t},TIMING);await p.goto('file://'+path.join(D,'anim.html'));await p.waitForFunction(()=>window.render);
  fs.mkdirSync(path.join(D,'out'),{recursive:true});
