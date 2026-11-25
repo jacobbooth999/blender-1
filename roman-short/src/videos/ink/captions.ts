@@ -27,7 +27,7 @@ export const buildChunks = (words: CapWord[], maxWords = 3, maxChars = 18): Chun
   return out;
 };
 
-export type CapStyle = { y: number; size: number; font: string; emphasis: Set<string> };
+export type CapStyle = { y: number; size: number; font: string; emphasis: Set<string>; variant?: "pop" | "journal" };
 export const DEFAULT_STYLE = (emph: string[] = []): CapStyle => ({ y: 945, size: 104, font: "Bangers", emphasis: new Set(emph.map((s) => s.toLowerCase())) });
 
 const clean = (w: string) => w.replace(/[.,!:;]+$/g, "").toUpperCase();
@@ -46,6 +46,15 @@ export const drawCaptions = (g: CanvasRenderingContext2D, chunks: Chunk[], t: nu
   let x = 960 - total / 2;
   // chunk enters with a small upward slide
   const enter = ease((t - c.start + 0.04) / 0.12), yBase = st.y + (1 - enter) * 18;
+  if (st.variant === "journal") {
+    const shownW = c.words.reduce((a, w, k) => (t >= w.start - 0.04 ? a + widths[k] + (k ? space : 0) : a), 0);
+    const pad = st.size * 0.45, h = st.size * 1.05, x0 = 960 - total / 2 - pad, x1 = 960 - total / 2 + shownW + pad;
+    g.save(); g.translate(960, yBase); g.rotate(-0.012); g.translate(-960, -yBase);
+    g.fillStyle = "rgba(246,239,223,0.94)"; g.beginPath(); g.moveTo(x0, yBase - h / 2);
+    for (let q = 0; q <= 16; q++) g.lineTo(x0 + ((x1 - x0) * q) / 16, yBase - h / 2 + (q % 2 ? 4 : -3));
+    for (let q = 16; q >= 0; q--) g.lineTo(x0 + ((x1 - x0) * q) / 16, yBase + h / 2 + (q % 2 ? -4 : 3));
+    g.closePath(); g.shadowColor = "rgba(29,43,58,0.25)"; g.shadowBlur = 10; g.shadowOffsetY = 5; g.fill(); g.restore();
+  }
   c.words.forEach((w, k) => {
     const wd = widths[k];
     if (shown.includes(w)) {
@@ -60,10 +69,18 @@ export const drawCaptions = (g: CanvasRenderingContext2D, chunks: Chunk[], t: nu
       g.scale(scale, scale);
       const txt = clean(w.word);
       g.textAlign = "center";
-      g.shadowColor = "rgba(0,0,0,0.45)"; g.shadowBlur = 14; g.shadowOffsetY = 8;
-      g.lineWidth = st.size * 0.2; g.strokeStyle = "#141114"; g.strokeText(txt, 0, 0);
-      g.shadowColor = "transparent";
-      g.fillStyle = fill; g.fillText(txt, 0, 0);
+      if (st.variant === "journal") {
+        // highlighter swipe behind the spoken word, tangerine wiggle under key words, navy hand lettering
+        if (active) { g.fillStyle = "rgba(255,122,47,0.92)"; g.beginPath(); g.moveTo(-wd / 2 - 14, st.size * 0.34); g.lineTo(wd / 2 + 18, st.size * 0.3); g.lineTo(wd / 2 + 10, -st.size * 0.36); g.lineTo(-wd / 2 - 8, -st.size * 0.32); g.closePath(); g.fill(); }
+        else if (emph) { g.strokeStyle = "#ff7a2f"; g.lineWidth = 7; g.lineCap = "round"; g.beginPath(); for (let q = 0; q <= 12; q++) { const xx = -wd / 2 + (wd * q) / 12, yy = st.size * 0.42 + Math.sin(q * 1.6) * 4; if (q) g.lineTo(xx, yy); else g.moveTo(xx, yy); } g.stroke(); }
+        g.lineWidth = 8; g.strokeStyle = "#f6efdf"; g.strokeText(txt, 0, 0);
+        g.fillStyle = "#1d2b3a"; g.fillText(txt, 0, 0);
+      } else {
+        g.shadowColor = "rgba(0,0,0,0.45)"; g.shadowBlur = 14; g.shadowOffsetY = 8;
+        g.lineWidth = st.size * 0.2; g.strokeStyle = "#141114"; g.strokeText(txt, 0, 0);
+        g.shadowColor = "transparent";
+        g.fillStyle = fill; g.fillText(txt, 0, 0);
+      }
       g.restore();
     }
     x += wd + space;

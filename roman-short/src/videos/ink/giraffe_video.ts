@@ -8,6 +8,8 @@ const MIDNECK: Species = { ...GIRAFFE, neckLen: 0.6, neckW0: 0.26, neckW1: 0.11 
 import TL from "../../../videos_ink/giraffe/timeline.json";
 import WORDS from "../../../videos_ink/giraffe/words.json";
 import { buildChunks, drawCaptions, DEFAULT_STYLE, CapWord } from "./captions";
+import { journalGrade, journalFrame } from "./journal";
+const STYLE = () => (globalThis as { INK_STYLE?: string }).INK_STYLE ?? "classic";
 const CAPS = buildChunks(WORDS.words as CapWord[]);
 const CAP_STYLE = DEFAULT_STYLE(["outrun", "outclimb", "hide", "survive", "millions", "necks", "height", "predators", "sprint", "tongues", "thorny", "hearts", "brains", "invincible", "lions", "young", "habitat", "extraordinary"]);
 /** onset (s) of the n-th occurrence of a script word in sentence i (from words.json) */
@@ -303,7 +305,13 @@ export const drawAt = (g: CanvasRenderingContext2D, W: number, H: number, t: num
   g.save(); g.scale(W / 1920, H / 1080);
   if (s.whip && k > 0 && lt < 0.14) { const a = 1 - lt / 0.14; for (let i = 0; i < 14; i++) { const y = (i * 83 + 40) % 1080; g.fillStyle = `rgba(255,255,255,${(0.55 * a).toFixed(3)})`; g.fillRect(0, y, 1920, 10 + (i % 3) * 8); } }
   else if (lt < 0.1 && k > 0) { g.fillStyle = `rgba(255,255,255,${(0.6 * (1 - lt / 0.1)).toFixed(3)})`; g.fillRect(0, 0, 1920, 1080); } // quick white flash on other cuts
-  drawCaptions(g, CAPS, t, CAP_STYLE);
+  if (STYLE() === "journal") {
+    g.restore();
+    journalGrade(g, W, H, t);
+    journalFrame(g, W, H, t, k + 1, k <= 3 ? "shock" : k === 6 || k === 9 ? "point" : "notes");
+    g.save(); g.scale(W / 1920, H / 1080);
+    drawCaptions(g, CAPS, t, { ...CAP_STYLE, variant: "journal", font: "Gochi Hand", size: 96, y: 930 });
+  } else drawCaptions(g, CAPS, t, CAP_STYLE);
   g.restore();
 };
 (window as unknown as { INK_VIDEO: unknown }).INK_VIDEO = { duration: DURATION, drawAt, cuts: SHOTS.map((s) => s.at) };
