@@ -56,7 +56,7 @@ const title = (ink: Ink, s: string, x: number, y: number, size: number, k = 1) =
 // ---------------- shots ----------------
 type Shot = { at: number; push?: [number, number, number]; draw: (ink: Ink, t: number, lt: number, d: number) => void };
 const SHOTS: Shot[] = [
-  // 0. how do you hide something this tall? (a giraffe "hiding" behind a skinny acacia)
+  // 0. hook: can't outrun, outclimb or hide (a giraffe "hiding" behind a skinny acacia)
   { at: 0, push: [960, 560, 0.05], draw: (ink, t, lt) => {
     savanna(ink, t);
     acacia(ink, 400, 700, 300, "#7c9a4a", 3); acacia(ink, 1500, 660, 220, "#86a252", 4);
@@ -64,6 +64,13 @@ const SHOTS: Shot[] = [
     quad(ink, GIRAFFE, 1000, 980, 420, { gait: "stand", t, head: "front", brow: "worried", blink: blink(t, 1), sweat: lt > 1.6 }, true);
     acacia(ink, 960, 990, 330, "#7c9a4a", 5);
     tallGrass(ink, -50, 2000, 1090, 60, 7, "#c9a24a", t);
+    // the hook ticks off what giraffes can't do, each on its word
+    ([["OUTRUN", "outrun"], ["OUTCLIMB", "outclimb"], ["HIDE", "hide"]] as const).forEach(([lab, w], i) => {
+      const k = t - (at(0, w) - 0.05); if (k < 0) return;
+      const y = 130 + i * 105, pop = 0.85 + 0.15 * Math.min(1, k * 6);
+      ink.g.save(); ink.g.translate(205, y); ink.g.scale(pop, pop); ink.text(lab, 0, 0, 74, "Bangers", INKC, "left"); ink.g.restore();
+      if (k > 0.12) cross(ink, 140, y, 56);
+    });
   } },
   // 1. millions of years ago: a short-necked ancestor in an ancient forest
   { at: at(1), push: [900, 600, 0.04], draw: (ink, t, lt) => {
