@@ -6,6 +6,12 @@ import { giraffeHead, acacia } from "./animals2d";
 import { quad, gaitSpeed, GIRAFFE, CALF, ANCESTOR, LIONESS, ZEBRA, Species } from "./quadruped";
 const MIDNECK: Species = { ...GIRAFFE, neckLen: 0.6, neckW0: 0.26, neckW1: 0.11 };
 import TL from "../../../videos_ink/giraffe/timeline.json";
+import WORDS from "../../../videos_ink/giraffe/words.json";
+import { buildChunks, drawCaptions, DEFAULT_STYLE, CapWord } from "./captions";
+const CAPS = buildChunks(WORDS.words as CapWord[]);
+const CAP_STYLE = DEFAULT_STYLE(["outrun", "outclimb", "hide", "survive", "millions", "necks", "height", "predators", "sprint", "tongues", "thorny", "hearts", "brains", "invincible", "lions", "young", "habitat", "extraordinary"]);
+/** onset (s) of the n-th occurrence of a script word in sentence i (from words.json) */
+const wt = (i: number, w: string, n = 1) => { let k = 0; for (const x of WORDS.words as CapWord[]) if (x.i === i && x.word.toLowerCase().replace(/[^a-z0-9']/g, "") === w) { k++; if (k === n) return x.start; } throw new Error(`no word ${w} in ${i}`); };
 
 type S = { i: number; text: string; start: number; end: number };
 const SEN = TL.sentences as S[];
@@ -50,27 +56,75 @@ const cross = (ink: Ink, x: number, y: number, s: number) => { ink.line([[x - s 
 const bang = (ink: Ink, x: number, y: number, s: number, k: number) => { if (k <= 0) return; const q = ease(k * 3) * s; ink.shape([[x - q * 0.12, y - q], [x + q * 0.12, y - q], [x + q * 0.06, y - q * 0.3], [x - q * 0.06, y - q * 0.3]], RED, 2.4); ink.ell(x, y - q * 0.1, q * 0.08, q * 0.08, RED, 2.4); };
 const speedLines = (ink: Ink, x: number, y: number, n: number, len: number, t: number) => { for (let i = 0; i < n; i++) { const o = ((t * 3 + i * 0.37) % 1) * 120; ink.line([[x - o - len, y + i * 34], [x - o, y + i * 34]], 4, "rgba(255,255,255,0.95)", 0.3); } };
 const dust = (ink: Ink, x: number, y: number, t: number) => { for (let i = 0; i < 5; i++) { const k = (t * 1.5 + i * 0.2) % 1; ink.ell(x - k * 160 - i * 20, y - k * 40, 30 + k * 40, 22 + k * 25, `rgba(225,205,160,${(0.8 * (1 - k)).toFixed(3)})`, null); } };
+const shake = (g: CanvasRenderingContext2D, t: number, amt: number) => g.translate(Math.sin(t * 61) * amt, Math.cos(t * 47) * amt * 0.7);
+/** big red X stamp: slams in with overshoot, holds, fades */
+const stamp = (ink: Ink, x: number, y: number, k: number) => {
+  if (k < 0 || k > 0.75) return;
+  const g = ink.g, s = k < 0.08 ? 1.8 - 0.8 * (k / 0.08) : 1, a = k > 0.55 ? 1 - (k - 0.55) / 0.2 : 1;
+  g.save(); g.globalAlpha = a; g.translate(x, y); g.rotate(-0.12); g.scale(s, s);
+  for (const [w, c] of [[44, "#ffffff"], [26, RED]] as const) { ink.line([[-110, -110], [110, 110]], w, c, 0.4); ink.line([[110, -110], [-110, 110]], w, c, 0.4); }
+  g.restore();
+};
 const label = (ink: Ink, s: string, x: number, y: number, size = 56, col = INKC, k = 1) => { ink.g.globalAlpha = clamp01(k); ink.text(s, x, y, size, "Patrick Hand", col); ink.g.globalAlpha = 1; };
 const title = (ink: Ink, s: string, x: number, y: number, size: number, k = 1) => { const g = ink.g; g.save(); g.globalAlpha = clamp01(k * 2); g.translate(x, y); const sc = 0.92 + 0.08 * ease(k * 2.5); g.scale(sc, sc); ink.text(s, 0, 0, size, "Bangers", INKC); g.restore(); };
 
 // ---------------- shots ----------------
-type Shot = { at: number; push?: [number, number, number]; draw: (ink: Ink, t: number, lt: number, d: number) => void };
+type Shot = { at: number; whip?: boolean; push?: [number, number, number]; draw: (ink: Ink, t: number, lt: number, d: number) => void };
 const SHOTS: Shot[] = [
-  // 0. hook: can't outrun, outclimb or hide (a giraffe "hiding" behind a skinny acacia)
-  { at: 0, push: [960, 560, 0.05], draw: (ink, t, lt) => {
+  // ---- the hook, cut fast: OUTRUN... OUTCLIMB... HIDE... "so how did they survive?" ----
+  // 0a. outrun: a lioness gains on the galloping giraffe
+  { at: 0, whip: true, draw: (ink, t, lt) => {
+    const v = gaitSpeed(GIRAFFE, "gallop") * 340, g = ink.g;
+    shake(g, t, lt > 1.0 ? 7 : 3);
+    sky(ink, 620, [[0, "#8fc7e8"], [1, "#e6f2ef"]]); sun(ink, 1650, 140, 58);
+    g.save(); g.translate(-(lt * v * 0.08) % 1920, 0); hills(ink, 600, 26, "#b8b48a", 81, 1.5); g.restore();
+    ground(ink, 620, "#dcc27a", "#c9a55a", 0, 82);
+    for (let k = -1; k < 2; k++) { g.save(); g.translate(-((lt * v * 0.45) % 1920) + k * 1920, 0); acacia(ink, 300, 680, 230, "#86a252", 83); acacia(ink, 1250, 690, 280, "#7c9a4a", 84); g.restore(); }
+    for (let k = -1; k < 2; k++) { g.save(); g.translate(-((lt * v) % 1920) + k * 1920, 0); ink.seed(85); ink.hatch([[0, 620], [1920, 620], [1920, 1080], [0, 1080]], 160, 18, "rgba(110,90,40,0.5)", 2.4, -Math.PI / 2, 0.7); g.restore(); }
+    const lx = 120 + ease(lt / 1.5) * 560;
+    quad(ink, LIONESS, lx, 1000, 170, { gait: "gallop", t: t * 1.1, brow: "alert", mouth: "open" }); dust(ink, lx - 100, 1000, t + 0.4);
+    quad(ink, GIRAFFE, 1250, 1000, 340, { gait: "gallop", t, brow: "worried", sweat: true });
+    dust(ink, 1080, 1000, t); speedLines(ink, 820, 470, 5, 240, t);
+    stamp(ink, 960, 300, t - wt(0, "outrun") - 0.12);
+  } },
+  // 0b. outclimb: rears up against an acacia, the tree shakes, slides back down
+  { at: wt(0, "outclimb") - 0.24, whip: true, draw: (ink, t, lt) => {
+    const g = ink.g; shake(g, t, 4);
+    sky(ink, 640, [[0, "#9fd0ea"], [1, "#eef4ea"]]);
+    hills(ink, 620, 24, "#b8b48a", 91, 1.4); ground(ink, 640, "#dcc27a", "#c9a55a", 140, 92);
+    const sway = Math.sin(lt * 22) * 0.04 * (lt < 0.6 ? 1 : 0.3);
+    g.save(); g.translate(1180, 1000); g.rotate(sway); g.translate(-1180, -1000); acacia(ink, 1180, 1000, 720, "#7c9a4a", 93); g.restore();
+    ink.seed(94); for (let k = 0; k < 9; k++) { const fx = 900 + ink.r() * 600, fy = 330 + ((lt * (300 + ink.r() * 200) + ink.r() * 200) % 700); ink.ell(fx + Math.sin(lt * 6 + k) * 20, fy, 14, 7, "#7c9a4a", 2, lt * 4 + k); }
+    // rearing: rotate the whole giraffe about its hind feet; slips back at the end
+    const up = lt < 0.5 ? ease(lt / 0.25) : 1 - ease((lt - 0.5) / 0.2), ang = -0.62 * up;
+    const px = 760 - 0.33 * 360, py = 1000;
+    g.save(); g.translate(px, py); g.rotate(ang); g.translate(-px, -py);
+    quad(ink, GIRAFFE, 760, 1000, 360, { gait: "stand", t, brow: "worried", head: "side", blink: false });
+    g.restore();
+    quad(ink, LIONESS, 330, 1010, 160, { gait: "stand", t, brow: "alert", mouth: "open" });
+    stamp(ink, 960, 300, t - wt(0, "outclimb") - 0.3);
+  } },
+  // 0c. hide: behind a tree far too small, the lioness walks past and looks up
+  { at: wt(0, "or") - 0.12, whip: true, push: [960, 520, 0.08], draw: (ink, t, lt) => {
     savanna(ink, t);
     acacia(ink, 400, 700, 300, "#7c9a4a", 3); acacia(ink, 1500, 660, 220, "#86a252", 4);
-    quad(ink, ZEBRA, 1500, 900, 150, { gait: "graze", t }, true);
-    quad(ink, GIRAFFE, 1000, 980, 420, { gait: "stand", t, head: "front", brow: "worried", blink: blink(t, 1), sweat: lt > 1.6 }, true);
+    quad(ink, GIRAFFE, 1000, 980, 420, { gait: "stand", t, head: "front", brow: "worried", blink: false, sweat: lt > 0.5 }, true);
     acacia(ink, 960, 990, 330, "#7c9a4a", 5);
+    const lx = 100 + lt * gaitSpeed(LIONESS, "walk") * 170;
+    quad(ink, LIONESS, lx, 1040, 170, { gait: "walk", t: lt, brow: "alert" });
     tallGrass(ink, -50, 2000, 1090, 60, 7, "#c9a24a", t);
-    // the hook ticks off what giraffes can't do, each on its word
-    ([["OUTRUN", "outrun"], ["OUTCLIMB", "outclimb"], ["HIDE", "hide"]] as const).forEach(([lab, w], i) => {
-      const k = t - (at(0, w) - 0.05); if (k < 0) return;
-      const y = 130 + i * 105, pop = 0.85 + 0.15 * Math.min(1, k * 6);
-      ink.g.save(); ink.g.translate(205, y); ink.g.scale(pop, pop); ink.text(lab, 0, 0, 74, "Bangers", INKC, "left"); ink.g.restore();
-      if (k > 0.12) cross(ink, 140, y, 56);
-    });
+    bang(ink, lx + 120, 780, 90, lt - 0.85);
+    stamp(ink, 960, 260, t - wt(0, "hide") - 0.25);
+  } },
+  // 0d. "so how did they survive?": punch in on the worried face
+  { at: wt(0, "so") - 0.15, whip: true, draw: (ink, t, lt) => {
+    const g = ink.g;
+    sky(ink, 1080, [[0, "#8fc7e8"], [1, "#e6f2ef"]]);
+    const z = 1 + 0.12 * ease(lt / 0.3);
+    g.save(); g.translate(960, 540); g.scale(z, z); g.translate(-960, -540);
+    quad(ink, GIRAFFE, 600, 2400, 1250, { gait: "stand", t, head: "front", brow: "worried", blink: blink(t, 21) });
+    g.restore();
+    [[460, 300, 0.1], [1500, 260, 0.35], [1330, 620, 0.6], [560, 700, 0.85]].forEach(([x, y, d], k) => { const kk = lt - d; if (kk < 0) return; const s2 = 0.6 + 0.4 * ease(kk * 5) + 0.05 * Math.sin(t * 6 + k); g.save(); g.translate(x, y); g.rotate((k % 2 ? 0.2 : -0.2)); g.scale(s2, s2); ink.text("?", 0, 0, 170, "Bangers", RED, "center", 14, "#ffffff"); g.restore(); });
   } },
   // 1. millions of years ago: a short-necked ancestor in an ancient forest
   { at: at(1), push: [900, 600, 0.04], draw: (ink, t, lt) => {
@@ -91,7 +145,7 @@ const SHOTS: Shot[] = [
       quad(ink, [ANCESTOR, MIDNECK, GIRAFFE][k], 400 + k * 560, 900, 250, { gait: "stand", t: t + k, blink: blink(t, 10 + k) }); ink.g.globalAlpha = 1; });
     if (lt > 1.3) arrow(ink, [580, 960], [800, 960], INKC, 5);
     if (lt > 2.2) arrow(ink, [1140, 960], [1360, 960], INKC, 5);
-    label(ink, "generation after generation...", 960, 1030, 46, "#6a655f", lt - 2.6);
+    
   } },
   // 2b. high leaves only giraffes can reach
   { at: at(2, "allowing"), push: [1100, 400, 0.05], draw: (ink, t, lt) => {
@@ -242,10 +296,14 @@ export const drawAt = (g: CanvasRenderingContext2D, W: number, H: number, t: num
   let k = 0; while (k + 1 < SHOTS.length && t >= SHOTS[k + 1].at) k++;
   const s = SHOTS[k], lt = t - s.at, d = (SHOTS[k + 1]?.at ?? DURATION) - s.at;
   g.save(); g.scale(W / 1920, H / 1080);
+  if (s.whip && k > 0) { const z = 1 + 0.22 * (1 - ease(lt / 0.16)); g.translate(960, 540); g.scale(z, z); g.translate(-960, -540); } // zoom-punch whip in
   if (s.push) { const [fx, fy, amt] = s.push, z = 1 + amt * ease(lt / Math.max(1, d)); g.translate(fx, fy); g.scale(z, z); g.translate(-fx, -fy); }
   const ink = new Ink(g, 11); s.draw(ink, t, lt, d);
   g.restore();
-  // a quick white flash on the first frames of each card / section
-  if (lt < 0.1 && k > 0) { g.fillStyle = `rgba(255,255,255,${(0.6 * (1 - lt / 0.1)).toFixed(3)})`; g.fillRect(0, 0, W, H); }
+  g.save(); g.scale(W / 1920, H / 1080);
+  if (s.whip && k > 0 && lt < 0.14) { const a = 1 - lt / 0.14; for (let i = 0; i < 14; i++) { const y = (i * 83 + 40) % 1080; g.fillStyle = `rgba(255,255,255,${(0.55 * a).toFixed(3)})`; g.fillRect(0, y, 1920, 10 + (i % 3) * 8); } }
+  else if (lt < 0.1 && k > 0) { g.fillStyle = `rgba(255,255,255,${(0.6 * (1 - lt / 0.1)).toFixed(3)})`; g.fillRect(0, 0, 1920, 1080); } // quick white flash on other cuts
+  drawCaptions(g, CAPS, t, CAP_STYLE);
+  g.restore();
 };
 (window as unknown as { INK_VIDEO: unknown }).INK_VIDEO = { duration: DURATION, drawAt, cuts: SHOTS.map((s) => s.at) };
