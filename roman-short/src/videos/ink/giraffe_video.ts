@@ -84,8 +84,8 @@ const SHOTS: Shot[] = [
     for (let k = -1; k < 2; k++) { g.save(); g.translate(-((lt * v * 0.45) % 1920) + k * 1920, 0); acacia(ink, 300, 680, 230, "#86a252", 83); acacia(ink, 1250, 690, 280, "#7c9a4a", 84); g.restore(); }
     for (let k = -1; k < 2; k++) { g.save(); g.translate(-((lt * v) % 1920) + k * 1920, 0); ink.seed(85); ink.hatch([[0, 620], [1920, 620], [1920, 1080], [0, 1080]], 160, 18, "rgba(110,90,40,0.5)", 2.4, -Math.PI / 2, 0.7); g.restore(); }
     const lx = 120 + ease(lt / 1.5) * 560;
-    quad(ink, LIONESS, lx, 1000, 170, { gait: "gallop", t: t * 1.1, brow: "alert", mouth: "open" }); dust(ink, lx - 100, 1000, t + 0.4);
-    quad(ink, GIRAFFE, 1250, 1000, 340, { gait: "gallop", t, brow: "worried", sweat: true });
+    quad(ink, LIONESS, lx, 1000, 170, { emotion: "angry", gait: "gallop", t: t * 1.1, brow: "alert", mouth: "open" }); dust(ink, lx - 100, 1000, t + 0.4);
+    quad(ink, GIRAFFE, 1250, 1000, 340, { emotion: "scared", gait: "gallop", t, brow: "worried", sweat: true });
     dust(ink, 1080, 1000, t); speedLines(ink, 820, 470, 5, 240, t);
     stamp(ink, 960, 300, t - wt(0, "outrun") - 0.12);
   } },
@@ -101,19 +101,19 @@ const SHOTS: Shot[] = [
     const up = lt < 0.5 ? ease(lt / 0.25) : 1 - ease((lt - 0.5) / 0.2), ang = -0.62 * up;
     const px = 760 - 0.33 * 360, py = 1000;
     g.save(); g.translate(px, py); g.rotate(ang); g.translate(-px, -py);
-    quad(ink, GIRAFFE, 760, 1000, 360, { gait: "stand", t, brow: "worried", head: "side", blink: false });
+    quad(ink, GIRAFFE, 760, 1000, 360, { emotion: "scared", gait: "stand", t, brow: "worried", head: "side", blink: false });
     g.restore();
-    quad(ink, LIONESS, 330, 1010, 160, { gait: "stand", t, brow: "alert", mouth: "open" });
+    quad(ink, LIONESS, 330, 1010, 160, { emotion: "angry", gait: "stand", t, brow: "alert", mouth: "open" });
     stamp(ink, 960, 300, t - wt(0, "outclimb") - 0.3);
   } },
   // 0c. hide: behind a tree far too small, the lioness walks past and looks up
   { at: wt(0, "or") - 0.12, whip: true, push: [960, 520, 0.08], draw: (ink, t, lt) => {
     savanna(ink, t);
     acacia(ink, 400, 700, 300, "#7c9a4a", 3); acacia(ink, 1500, 660, 220, "#86a252", 4);
-    quad(ink, GIRAFFE, 1000, 980, 420, { gait: "stand", t, head: "front", brow: "worried", blink: false, sweat: lt > 0.5 }, true);
+    quad(ink, GIRAFFE, 1000, 980, 420, { emotion: "scared", gait: "stand", t, head: "front", brow: "worried", blink: false, sweat: lt > 0.5 }, true);
     acacia(ink, 960, 990, 330, "#7c9a4a", 5);
     const lx = 100 + lt * gaitSpeed(LIONESS, "walk") * 170;
-    quad(ink, LIONESS, lx, 1040, 170, { gait: "walk", t: lt, brow: "alert" });
+    quad(ink, LIONESS, lx, 1040, 170, { emotion: "smug", gait: "walk", t: lt, brow: "alert" });
     tallGrass(ink, -50, 2000, 1090, 60, 7, "#c9a24a", t);
     bang(ink, lx + 120, 780, 90, lt - 0.85);
     stamp(ink, 960, 260, t - wt(0, "hide") - 0.25);
@@ -124,7 +124,7 @@ const SHOTS: Shot[] = [
     sky(ink, 1080, [[0, "#8fc7e8"], [1, "#e6f2ef"]]);
     const z = 1 + 0.12 * ease(lt / 0.3);
     g.save(); g.translate(960, 540); g.scale(z, z); g.translate(-960, -540);
-    quad(ink, GIRAFFE, 600, 2400, 1250, { gait: "stand", t, head: "front", brow: "worried", blink: blink(t, 21) });
+    quad(ink, GIRAFFE, 600, 2400, 1250, { emotion: "confused", gait: "stand", t, head: "front", brow: "worried", blink: blink(t, 21) });
     g.restore();
     [[460, 300, 0.1], [1500, 260, 0.35], [1330, 620, 0.6], [560, 700, 0.85]].forEach(([x, y, d], k) => { const kk = lt - d; if (kk < 0) return; const s2 = 0.6 + 0.4 * ease(kk * 5) + 0.05 * Math.sin(t * 6 + k); g.save(); g.translate(x, y); g.rotate((k % 2 ? 0.2 : -0.2)); g.scale(s2, s2); ink.text("?", 0, 0, 170, "Bangers", RED, "center", 14, "#ffffff"); g.restore(); });
   } },
@@ -135,7 +135,7 @@ const SHOTS: Shot[] = [
     for (let i = 0; i < 9; i++) { const x = 60 + i * 230, h = 380 + (i % 3) * 60; ink.shape([[x - 22, 700], [x - 14, 700 - h], [x + 14, 700 - h], [x + 22, 700]], "#7a5a3a", 2.4); for (const [dx, dy, r] of [[0, -h, 120], [-80, -h + 50, 90], [80, -h + 40, 95]]) ink.ell(x + dx, 700 + dy, r, r * 0.75, "#5f8a4a", 2.4); }
     ground(ink, 700, "#93a86a", "#72884e", 200, 22);
     for (let i = 0; i < 8; i++) { const x = 100 + i * 250; for (let k = -3; k <= 3; k++) ink.line(ink.curve([x, 1000], [x + k * 18, 940], [x + k * 40, 900 + Math.abs(k) * 10]), 4, "#4f7a3c", 0.3); }
-    quad(ink, ANCESTOR, 620 + lt * gaitSpeed(ANCESTOR, "walk") * 300, 960, 300, { gait: "walk", t: lt, blink: blink(t, 2) });
+    quad(ink, ANCESTOR, 620 + lt * gaitSpeed(ANCESTOR, "walk") * 300, 960, 300, { emotion: "happy", gait: "walk", t: lt, blink: blink(t, 2) });
     label(ink, "MILLIONS OF YEARS AGO", 1500, 140, 64, INKC, lt * 2);
   } },
   // 2a. natural selection: necks get longer
@@ -144,7 +144,7 @@ const SHOTS: Shot[] = [
     title(ink, "NATURAL SELECTION.", 960, 120, 110, lt);
     const ks = [0, 1, 2];
     ks.forEach((k) => { const show = clamp01((lt - 0.4 - k * 0.9) * 3); if (!show) return; ink.g.globalAlpha = show;
-      quad(ink, [ANCESTOR, MIDNECK, GIRAFFE][k], 400 + k * 560, 900, 250, { gait: "stand", t: t + k, blink: blink(t, 10 + k) }); ink.g.globalAlpha = 1; });
+      quad(ink, [ANCESTOR, MIDNECK, GIRAFFE][k], 400 + k * 560, 900, 250, { emotion: "happy", gait: "stand", t: t + k, blink: blink(t, 10 + k) }); ink.g.globalAlpha = 1; });
     if (lt > 1.3) arrow(ink, [580, 960], [800, 960], INKC, 5);
     if (lt > 2.2) arrow(ink, [1140, 960], [1360, 960], INKC, 5);
     
@@ -154,7 +154,7 @@ const SHOTS: Shot[] = [
     savanna(ink, t, 700, 5);
     acacia(ink, 1150, 1000, 900, "#7c9a4a", 8);
     quad(ink, ZEBRA, 480, 960, 190, { gait: "graze", t });
-    quad(ink, GIRAFFE, 860, 1010, 470, { gait: "eat", t, tongue: 0.6 + 0.4 * Math.sin(t * 3), chew: Math.sin(t * 6) > 0 ? 1 : 0, blink: blink(t, 3) });
+    quad(ink, GIRAFFE, 860, 1010, 470, { emotion: "happy", gait: "eat", t, tongue: 0.6 + 0.4 * Math.sin(t * 3), chew: Math.sin(t * 6) > 0 ? 1 : 0, blink: blink(t, 3) });
     if (lt > 0.8) check(ink, 1500, 230, 80);
     if (lt > 1.4) { cross(ink, 300, 760, 60); label(ink, "too high!", 300, 680, 48, RED, lt - 1.4); }
     tallGrass(ink, -50, 2000, 1090, 50, 9, "#c9a24a", t);
@@ -163,16 +163,16 @@ const SHOTS: Shot[] = [
   { at: at(3), push: [960, 560, 0.035], draw: (ink, t, lt) => {
     paper(ink);
     title(ink, "BONUS: HEIGHT.", 820, 300, 150, lt);
-    quad(ink, GIRAFFE, 1450, 1010, 420, { gait: "stand", t, head: "front", brow: "proud", blink: blink(t, 4), neckAdd: 0.2 });
+    quad(ink, GIRAFFE, 1450, 1010, 420, { emotion: "smug", gait: "stand", t, head: "front", brow: "proud", blink: blink(t, 4), neckAdd: 0.2 });
     if (lt > 0.5) { ink.line([[1750, 1000], [1750, 240]], 4, BLUE, 0.4); for (const y of [1000, 240]) ink.line([[1725, y], [1775, y]], 4, BLUE, 0.3); label(ink, "up to 5.5 m", 1750, 200, 50, BLUE, lt - 0.5); }
   } },
   // 4. spotting predators from far away
   { at: at(4), push: [700, 400, 0.04], draw: (ink, t, lt) => {
     savanna(ink, t, 680, 11);
     acacia(ink, 1300, 700, 260, "#86a252", 12);
-    quad(ink, GIRAFFE, 380, 1020, 470, { gait: "stand", t, head: "front", brow: "alert", blink: blink(t, 5), neckAdd: 0.2 });
+    quad(ink, GIRAFFE, 380, 1020, 470, { emotion: "surprised", gait: "stand", t, head: "front", brow: "alert", blink: blink(t, 5), neckAdd: 0.2 });
     // the lioness, tiny and far, in the grass
-    quad(ink, LIONESS, 1600 - lt * gaitSpeed(LIONESS, "walk") * 46 * 0.6, 770, 46, { gait: "stalk", t: lt * 0.6 }, true);
+    quad(ink, LIONESS, 1600 - lt * gaitSpeed(LIONESS, "walk") * 46 * 0.6, 770, 46, { emotion: "angry", gait: "stalk", t: lt * 0.6 }, true);
     tallGrass(ink, 1450, 1720, 775, 30, 13, "#c9a24a", t);
     const k = ease((lt - 0.8) / 1.2);
     if (k > 0) dashed(ink, [[470, 170], [470 + (1540 - 470) * k, 170 + (735 - 170) * k]], RED, 4, t * 60);
@@ -183,7 +183,7 @@ const SHOTS: Shot[] = [
   { at: at(5), push: [960, 560, 0.035], draw: (ink, t, lt) => {
     paper(ink);
     title(ink, "NOT EXACTLY SLOW.", 960, 160, 120, lt);
-    quad(ink, GIRAFFE, 960, 1000, 380, { gait: "gallop", t, brow: "alert" });
+    quad(ink, GIRAFFE, 960, 1000, 380, { emotion: "determined", gait: "gallop", t, brow: "alert" });
     dust(ink, 760, 1000, t);
   } },
   // 6. up to ~60 km/h, leaving the lioness behind
@@ -194,8 +194,8 @@ const SHOTS: Shot[] = [
     ground(ink, 640, "#dcc27a", "#c9a55a", 0, 32);
     for (let k = 0; k < 2; k++) { g.save(); g.translate(-scroll + k * 1920, 0); acacia(ink, 400, 690, 240, "#86a252", 33); acacia(ink, 1300, 700, 300, "#7c9a4a", 34); g.restore(); }
     for (let k = 0; k < 2; k++) { g.save(); g.translate(-((lt * vG) % 1920) + k * 1920, 0); ink.seed(35); const pts: P[] = [[0, 640], [1920, 640], [1920, 1080], [0, 1080]]; ink.hatch(pts, 160, 18, "rgba(110,90,40,0.5)", 2.4, -Math.PI / 2, 0.7); g.restore(); }
-    quad(ink, LIONESS, 330 - lt * 40, 990, 130, { gait: "gallop", t: t * 0.9, mouth: "pant" }); dust(ink, 230 - lt * 40, 990, t + 0.3);
-    quad(ink, GIRAFFE, 1050, 1000, 430, { gait: "gallop", t, brow: "proud" });
+    quad(ink, LIONESS, 330 - lt * 40, 990, 130, { emotion: "sad", gait: "gallop", t: t * 0.9, mouth: "pant" }); dust(ink, 230 - lt * 40, 990, t + 0.3);
+    quad(ink, GIRAFFE, 1050, 1000, 430, { emotion: "determined", gait: "gallop", t, brow: "proud" });
     speedLines(ink, 760, 520, 5, 220, t); dust(ink, 860, 1000, t);
     // speedometer badge
     ink.ell(1690, 220, 140, 140, PAPER, 4); ink.arc(1690, 240, 105, 105, Math.PI, Math.PI * 2, 6, INKC);
@@ -219,7 +219,7 @@ const SHOTS: Shot[] = [
   { at: at(8), push: [960, 560, 0.035], draw: (ink, t, lt) => {
     paper(ink);
     title(ink, "THE SECRET IS INSIDE.", 960, 140, 110, lt);
-    ink.g.globalAlpha = 0.35; quad(ink, GIRAFFE, 960, 1010, 420, { gait: "stand", t, blink: true }); ink.g.globalAlpha = 1;
+    ink.g.globalAlpha = 0.35; quad(ink, GIRAFFE, 960, 1010, 420, { emotion: "happy", gait: "stand", t, blink: true }); ink.g.globalAlpha = 1;
     const beat = 1 + 0.12 * Math.max(0, Math.sin(t * 7.5)) ** 4;
     const hx = 1040, hy = 560; ink.shape(heartPts(hx, hy, 38 * beat), RED, 3);
     if (lt > 0.6) { label(ink, "heart", 1180, 560, 50, RED, lt - 0.6); ink.line([[1090, 560], [1140, 560]], 3, RED, 0.2); }
@@ -244,15 +244,15 @@ const SHOTS: Shot[] = [
   { at: at(10), push: [960, 560, 0.035], draw: (ink, t, lt) => {
     paper(ink);
     title(ink, "NOT INVINCIBLE.", 820, 300, 150, lt);
-    quad(ink, GIRAFFE, 1480, 1010, 400, { gait: "stand", t, head: "front", brow: "worried", blink: blink(t, 9), sweat: true });
+    quad(ink, GIRAFFE, 1480, 1010, 400, { emotion: "sad", gait: "stand", t, head: "front", brow: "worried", blink: blink(t, 9), sweat: true });
   } },
   // 11a. lions still hunt them, especially calves
   { at: at(11), push: [900, 700, 0.05], draw: (ink, t, lt) => {
     savanna(ink, t, 660, 51);
     acacia(ink, 1600, 690, 260, "#86a252", 52);
-    quad(ink, GIRAFFE, 1250, 1000, 420, { gait: "stand", t, head: "front", brow: "alert", blink: blink(t, 11), neckAdd: 0.15 });
-    quad(ink, CALF, 880, 1010, 230, { gait: "stand", t: t + 2, blink: blink(t, 12) });
-    quad(ink, LIONESS, 200 + lt * gaitSpeed(LIONESS, "walk") * 150 * 0.5, 1030, 150, { gait: "stalk", t: lt * 0.5, brow: "alert" });
+    quad(ink, GIRAFFE, 1250, 1000, 420, { emotion: "scared", gait: "stand", t, head: "front", brow: "alert", blink: blink(t, 11), neckAdd: 0.15 });
+    quad(ink, CALF, 880, 1010, 230, { emotion: "happy", gait: "stand", t: t + 2, blink: blink(t, 12) });
+    quad(ink, LIONESS, 200 + lt * gaitSpeed(LIONESS, "walk") * 150 * 0.5, 1030, 150, { emotion: "angry", gait: "stalk", t: lt * 0.5, brow: "alert" });
     tallGrass(ink, -50, 700, 1060, 120, 53, "#c9a24a", t);
     tallGrass(ink, -50, 2000, 1095, 45, 54, "#c9a24a", t);
     bang(ink, 1330, 380, 80, lt - 1.2);
@@ -269,7 +269,7 @@ const SHOTS: Shot[] = [
     // fence
     for (let x = 900; x < 2000; x += 120) ink.line([[x, 1000], [x, 860]], 7, "#6e4a32", 0.4);
     for (const y of [890, 930, 970]) ink.line([[900, y], [1990, y]], 2, "#5a5a60", 0.6);
-    quad(ink, GIRAFFE, 640, 1060, 380, { gait: "stand", t, head: "front", brow: "worried", blink: blink(t, 13) });
+    quad(ink, GIRAFFE, 640, 1060, 380, { emotion: "sad", gait: "stand", t, head: "front", brow: "worried", blink: blink(t, 13) });
   } },
   // 12. survivors: a giraffe family at sunset
   { at: at(12), push: [960, 560, 0.06], draw: (ink, t, lt) => {
@@ -282,9 +282,9 @@ const SHOTS: Shot[] = [
     for (let k = -1; k < 2; k++) { g.save(); g.translate(-(off * 0.35 % 1920) + k * 1920, 0); acacia(ink, 380, 760, 300, "#5a6a3a", 73); acacia(ink, 1300, 745, 200, "#5a6a3a", 75); g.restore(); }
     for (let k = -1; k < 2; k++) { g.save(); g.translate(-(off % 1920) + k * 1920, 0); ink.seed(76); ink.hatch([[0, 700], [1920, 700], [1920, 1080], [0, 1080]], 170, 18, "rgba(70,40,30,0.45)", 2.4, -Math.PI / 2, 0.7); g.restore(); }
     const kC = v / (gaitSpeed(CALF, "walk") * 210);
-    quad(ink, GIRAFFE, 520, 990, 380, { gait: "walk", t: lt * (400 / 380) + 0.4, blink: blink(t, 15) });
-    quad(ink, GIRAFFE, 1120, 980, 420, { gait: "walk", t: lt * (400 / 420), blink: blink(t, 14), brow: "proud" });
-    quad(ink, CALF, 820, 1005, 210, { gait: "walk", t: lt * kC + 0.2, blink: blink(t, 16) });
+    quad(ink, GIRAFFE, 520, 990, 380, { emotion: "happy", gait: "walk", t: lt * (400 / 380) + 0.4, blink: blink(t, 15) });
+    quad(ink, GIRAFFE, 1120, 980, 420, { emotion: "love", gait: "walk", t: lt * (400 / 420), blink: blink(t, 14), brow: "proud" });
+    quad(ink, CALF, 820, 1005, 210, { emotion: "happy", gait: "walk", t: lt * kC + 0.2, blink: blink(t, 16) });
   } },
 ];
 function heartPts(x: number, y: number, s: number): P[] {
