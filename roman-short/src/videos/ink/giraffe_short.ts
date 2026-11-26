@@ -11,6 +11,8 @@ import TL from "../../../videos_ink/giraffe2/timeline.json";
 import WORDS from "../../../videos_ink/giraffe2/words.json";
 import { buildChunks, drawCaptions, DEFAULT_STYLE, CapWord } from "./captions";
 import { setLook, postLook } from "./styles";
+// this Short uses the ink-outline look (style option 2); --style overrides it
+(globalThis as { INK_STYLE?: string }).INK_STYLE ??= "ink";
 const STYLE = () => (globalThis as { INK_STYLE?: string }).INK_STYLE ?? "classic";
 /** "short" = vertical 9:16 re-framing of every shot (1080 x 1920 output) */
 const SHORTV = () => (globalThis as { INK_FORMAT?: string }).INK_FORMAT === "short";
