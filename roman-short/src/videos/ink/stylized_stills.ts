@@ -2,6 +2,7 @@
 // proportions, bold black outlines that merge into one silhouette, flat earthy colours, cream rim-light slivers,
 // heavy-lidded deadpan eyes, a plain kraft-paper background and dry-brush scratches on the ground.
 // Five vertical stills, one per integer t: node scripts/ink-video.mjs <this> <out> 30 1080 1920 --stills 0,1,2,3,4
+export {};
 type P = [number, number];
 const LINE = "#191512", PAPER = "#c9b28a", PAPER2 = "#bfa67c", GROUND = "#b0956a", CREAM = "#f2e4c6";
 const G_COAT = "#d68a3c", G_SPOT = "#8a4a22", G_LEG = "#ecd3a1", G_DARK = "#4a2a18";
