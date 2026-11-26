@@ -1,0 +1,72 @@
+{
+ "duration": 28.533,
+ "voice": "af_heart",
+ "lines": [
+  {
+   "i": 0,
+   "text": "The average person lives about twenty seven thousand days.",
+   "start": 0.15,
+   "end": 3.552
+  },
+  {
+   "i": 1,
+   "text": "That's it.",
+   "start": 3.802,
+   "end": 4.464
+  },
+  {
+   "i": 2,
+   "text": "Take away sleep, and you're left with eighteen thousand.",
+   "start": 4.764,
+   "end": 7.343
+  },
+  {
+   "i": 3,
+   "text": "Then take away the scrolling. The waiting. The, I'll start tomorrow.",
+   "start": 7.493,
+   "end": 10.86
+  },
+  {
+   "i": 4,
+   "text": "Most people don't run out of time. They waste it, one day at a time.",
+   "start": 11.009,
+   "end": 14.707
+  },
+  {
+   "i": 5,
+   "text": "But one focused hour a day adds up to fifteen full days a year.",
+   "start": 14.957,
+   "end": 18.409
+  },
+  {
+   "i": 6,
+   "text": "Fifteen days to learn a skill. Build your body. Start something.",
+   "start": 18.529,
+   "end": 21.883
+  },
+  {
+   "i": 7,
+   "text": "You can't add more days to your life.",
+   "start": 22.083,
+   "end": 23.748
+  },
+  {
+   "i": 8,
+   "text": "But you can add more life to your days.",
+   "start": 23.848,
+   "end": 25.673
+  },
+  {
+   "i": 9,
+   "text": "Today is one of them. Use it.",
+   "start": 25.873,
+   "end": 27.58
+  },
+  {
+   "i": 10,
+   "text": "Because remember,",
+   "start": 27.7,
+   "end": 28.533
+  }
+ ]
+}
