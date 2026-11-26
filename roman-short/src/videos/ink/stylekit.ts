@@ -74,6 +74,12 @@ export const coat = (g: CanvasRenderingContext2D, clip: Path2D, x0: number, y0: 
   g.restore();
 };
 
+let NOW: number | undefined;
+/** global clock for idle motion (breathing, sways, flicks); undefined = no idle */
+export const setNow = (v?: number) => { NOW = v; };
+/** occasional quick ear flick (0..1 pulse) */
+export const flick = (t: number, period = 2.7, off = 0) => { const u = (((t + off) / period) % 1 + 1) % 1; return u < 0.08 ? Math.sin((u / 0.08) * Math.PI) : 0; };
+const rotP = (p: P, o: P, a: number): P => { const c = Math.cos(a), s2 = Math.sin(a); return [o[0] + (p[0] - o[0]) * c - (p[1] - o[1]) * s2, o[1] + (p[0] - o[0]) * s2 + (p[1] - o[1]) * c]; };
 export type Face = { lid?: number; brow?: number; look?: P; worried?: boolean };
 /** deadpan cartoon eye with a heavy upper lid; brow tilt + for a frown, - for worry */
 export const eye = (g: CanvasRenderingContext2D, c: P, r: number, f: Face, skin: string, lw: number, mirror = 1) => {
@@ -89,9 +95,10 @@ export const eye = (g: CanvasRenderingContext2D, c: P, r: number, f: Face, skin:
 };
 
 // ---------------- giraffe, front view (hook) ----------------
-export const giraffeFront = (g: CanvasRenderingContext2D, cx: number, base: number, s: number, f: Face) => {
+export const giraffeFront = (g: CanvasRenderingContext2D, cx: number, base: number, s: number, f: Face, t?: number) => {
   g.save(); g.translate(cx, base); g.scale(s, s); const lw = 3.6 / s, d = 9 / s;
-  const X = (x: number, y: number): P => [x, y];
+  const tt = t ?? NOW, it = tt ?? 0, idle = tt === undefined ? 0 : 1, sway = idle * (0.035 * Math.sin(it * 1.2) + 0.012 * Math.sin(it * 2.9)), br = 1 + idle * 0.018 * Math.sin(it * 2.1);
+  const X = (x: number, y: number): P => { const k = Math.max(0, Math.min(1, (-y - 1.25) / 1.5)); const yy = y > -1.4 && y < -0.8 ? -1.1 + (y + 1.1) * br : y; return [x * (y > -1.4 && y < -0.8 ? br : 1) + sway * k * k, yy - idle * 0.01 * Math.sin(it * 2.1) * k]; };
   // hind legs (behind, darker)
   const hind = [-1, 1].map((k) => spline(ribbon([X(k * 0.13, -0.98), X(k * 0.14, -0.7), X(k * 0.13, -0.42), X(k * 0.135, -0.2), X(k * 0.13, -0.02)], [0.12, 0.08, 0.07, 0.06, 0.06]), true));
   const hhoof = [-1, 1].map((k) => spline([X(k * 0.13 - 0.045, -0.06), X(k * 0.13 + 0.045, -0.06), X(k * 0.13 + 0.05, 0.005), X(k * 0.13 - 0.05, 0.005)], true, 0.2));
@@ -102,7 +109,7 @@ export const giraffeFront = (g: CanvasRenderingContext2D, cx: number, base: numb
   const hoof = [-1, 1].map((k) => spline([X(k * 0.105 - 0.05, -0.065), X(k * 0.105 + 0.05, -0.065), X(k * 0.105 + 0.058, 0.008), X(k * 0.105 - 0.058, 0.008)], true, 0.2));
   const neck = spline([X(-0.15, -1.3), X(-0.09, -1.75), X(-0.065, -2.2), X(-0.075, -2.45), X(0.075, -2.45), X(0.065, -2.2), X(0.09, -1.75), X(0.15, -1.3)]);
   const head = spline([X(-0.16, -2.62), X(-0.12, -2.72), X(0.0, -2.75), X(0.12, -2.72), X(0.16, -2.62), X(0.13, -2.5), X(0.1, -2.38), X(0.085, -2.26), X(0.0, -2.22), X(-0.085, -2.26), X(-0.1, -2.38), X(-0.13, -2.5)]);
-  const ears = [-1, 1].map((k) => spline([X(k * 0.13, -2.64), X(k * 0.3, -2.72), X(k * 0.34, -2.66), X(k * 0.15, -2.57)], true, 0.6));
+  const ears = [-1, 1].map((k) => { const fl = idle * flick(it, 2.6, k > 0 ? 0 : 1.3) * 0.06; return spline([X(k * 0.13, -2.64), X(k * 0.3, -2.72 - fl), X(k * 0.34, -2.66 - fl * 1.2), X(k * 0.15, -2.57)], true, 0.6); });
   const oss = [-1, 1].map((k) => spline(ribbon([X(k * 0.05, -2.72), X(k * 0.06, -2.82), X(k * 0.07, -2.9)], [0.04, 0.032, 0.03]), true));
   const knobs = [-1, 1].map((k) => ell(k * 0.07, -2.91, 0.034, 0.03));
   group(g, [...ears.map((p) => ({ path: p, fill: G_COAT, deco: () => { g.save(); g.clip(p); g.fillStyle = "#f2c9a0"; g.fill(ell(0, -2.66, 0.4, 0.02)); g.restore(); } })), ...oss.map((p) => ({ path: p, fill: G_COAT })), ...knobs.map((p) => ({ path: p, fill: G_HOOF, shade: false })),
@@ -122,7 +129,7 @@ export const giraffeFront = (g: CanvasRenderingContext2D, cx: number, base: numb
 };
 
 // ---------------- giraffe, side view ----------------
-export type GPose = { neckAng?: number; neckLen?: number; headAng?: number; feet?: Partial<Record<"fn" | "ff" | "hn" | "hf", P>>; bends?: Partial<Record<"fn" | "ff" | "hn" | "hf", number>>; face?: Face; tilt?: number };
+export type GPose = { neckAng?: number; neckLen?: number; headAng?: number; feet?: Partial<Record<"fn" | "ff" | "hn" | "hf", P>>; bends?: Partial<Record<"fn" | "ff" | "hn" | "hf", number>>; face?: Face; tilt?: number; t?: number };
 export const limb = (hip: P, foot: P, bend: number, w: number) => {
   const m = lerp(hip, foot, 0.5), dx = foot[0] - hip[0], dy = foot[1] - hip[1], l = Math.hypot(dx, dy) || 1, nx = -dy / l, ny = dx / l;
   const knee: P = [m[0] + nx * bend, m[1] + ny * bend], fet = lerp(knee, foot, 0.82);
@@ -137,19 +144,21 @@ export const giraffeSide = (g: CanvasRenderingContext2D, x: number, y: number, s
   const hoof = (k: string) => { const f = feet[k], kn = L[k].knee, a = Math.atan2(f[1] - kn[1], f[0] - kn[0]) - Math.PI / 2, c = Math.cos(a), sn = Math.sin(a), R = (p: P): P => [f[0] + p[0] * c - p[1] * sn, f[1] + p[0] * sn + p[1] * c];
     return spline([R([-0.035, -0.055]), R([0.035, -0.055]), R([0.05, 0.005]), R([-0.045, 0.005])], true, 0.2); };
   group(g, [...["ff", "hf"].map((k) => ({ path: spline(L[k].pts), fill: "#d4a66c" })), ...["ff", "hf"].map((k) => ({ path: hoof(k), fill: G_HOOF, shade: false }))], lw, d);
-  const body = spline([[-0.64, -0.86], [-0.6, -1.0], [-0.42, -1.07], [0.0, -1.14], [0.3, -1.24], [0.5, -1.22], [0.6, -1.06], [0.58, -0.9], [0.46, -0.78], [0.2, -0.74], [-0.1, -0.72], [-0.42, -0.74], [-0.6, -0.78]]);
-  const na = o.neckAng ?? -1.2, nl = o.neckLen ?? 1.05, nb: P = [0.45, -1.06], nt: P = [nb[0] + Math.cos(na) * nl, nb[1] + Math.sin(na) * nl];
+  const tt = o.t ?? NOW, it = tt ?? 0, idle = tt === undefined ? 0 : 1, br = 1 + idle * 0.02 * Math.sin(it * 2.1);
+  const body = spline(([[-0.64, -0.86], [-0.6, -1.0], [-0.42, -1.07], [0.0, -1.14], [0.3, -1.24], [0.5, -1.22], [0.6, -1.06], [0.58, -0.9], [0.46, -0.78], [0.2, -0.74], [-0.1, -0.72], [-0.42, -0.74], [-0.6, -0.78]] as P[]).map(([a, b]) => [a, -0.98 + (b + 0.98) * br] as P));
+  const na = (o.neckAng ?? -1.2) + idle * (0.025 * Math.sin(it * 1.25) + 0.01 * Math.sin(it * 3.1)), nl = o.neckLen ?? 1.05, nb: P = [0.45, -1.06], nt: P = [nb[0] + Math.cos(na) * nl, nb[1] + Math.sin(na) * nl];
   const bow: P = [-Math.sin(na) * 0.04, Math.cos(na) * 0.04];
   const neckPts = ribbon([nb, [lerp(nb, nt, 0.35)[0] + bow[0], lerp(nb, nt, 0.35)[1] + bow[1]], [lerp(nb, nt, 0.7)[0] + bow[0], lerp(nb, nt, 0.7)[1] + bow[1]], nt], [0.36, 0.2, 0.14, 0.12]);
   const neck = spline(neckPts);
-  const ha = o.headAng ?? 0.15, c = Math.cos(ha), sn = Math.sin(ha), H = (p: P): P => [nt[0] + p[0] * c - p[1] * sn, nt[1] + p[0] * sn + p[1] * c];
+  const ha = (o.headAng ?? 0.15) + idle * 0.05 * Math.sin(it * 1.7 + 1), c = Math.cos(ha), sn = Math.sin(ha), H = (p: P): P => [nt[0] + p[0] * c - p[1] * sn, nt[1] + p[0] * sn + p[1] * c];
   const head = spline([[-0.09, -0.07], [0.0, -0.1], [0.12, -0.095], [0.24, -0.06], [0.33, -0.02], [0.35, 0.04], [0.31, 0.085], [0.18, 0.08], [0.05, 0.075], [-0.06, 0.06], [-0.1, 0.0]].map((p) => H(p as P)));
   const muz = spline([[0.18, -0.07], [0.28, -0.045], [0.35, 0.02], [0.32, 0.085], [0.17, 0.08], [0.14, 0.0]].map((p) => H(p as P)));
-  const ear = spline([[-0.05, -0.06], [-0.2, -0.1], [-0.27, -0.06], [-0.07, -0.01]].map((p) => H(p as P)), true, 0.6);
+  const efl = idle * flick(it, 2.9, 0.7) * 0.5; const ear = spline(([[-0.05, -0.06], [-0.2, -0.1], [-0.27, -0.06], [-0.07, -0.01]] as P[]).map((p) => H(rotP(p, [-0.06, -0.03], efl))), true, 0.6);
   const oss = [[-0.03, -0.085], [0.03, -0.095]].map(([ox, oy]) => spline(ribbon([H([ox, oy]), H([ox - 0.015, oy - 0.07]), H([ox - 0.025, oy - 0.12])], [0.04, 0.03, 0.03])));
   const knobs = [[-0.03, -0.085], [0.03, -0.095]].map(([ox, oy]) => { const k = H([ox - 0.027, oy - 0.125]); return ell(k[0], k[1], 0.032, 0.028); });
-  const tail = spline(ribbon([[-0.6, -0.96], [-0.67, -0.82], [-0.7, -0.66], [-0.7, -0.55]], [0.04, 0.035, 0.03, 0.028]));
-  const tuft = spline([[-0.73, -0.6], [-0.66, -0.6], [-0.64, -0.5], [-0.68, -0.42], [-0.73, -0.47], [-0.75, -0.54]]);
+  const tsw = idle * (0.22 * Math.sin(it * 2.3) + 0.08 * Math.sin(it * 5.1)), TB: P = [-0.6, -0.96], TR = (p: P) => rotP(p, TB, tsw * (Math.hypot(p[0] - TB[0], p[1] - TB[1]) / 0.4));
+  const tail = spline(ribbon(([[-0.6, -0.96], [-0.67, -0.82], [-0.7, -0.66], [-0.7, -0.55]] as P[]).map(TR), [0.04, 0.035, 0.03, 0.028]));
+  const tuft = spline(([[-0.73, -0.6], [-0.66, -0.6], [-0.64, -0.5], [-0.68, -0.42], [-0.73, -0.47], [-0.75, -0.54]] as P[]).map(TR));
   const near = ["fn", "hn"];
   group(g, [{ path: tail, fill: G_COAT }, { path: tuft, fill: G_HOOF, shade: false }, ...near.map((k) => { const lp = spline(L[k].pts), hp = hips[k], kn = L[k].knee, la = Math.atan2(kn[1] - hp[1], kn[0] - hp[0]); return { path: lp, fill: G_LEG, deco: () => { g.save(); g.clip(lp); g.translate(hp[0], hp[1]); g.rotate(la); coat(g, BIG, -0.1, -0.1, 0.3, 0.1, 0.06, 0.01, G_SPOT, 13); g.restore(); } }; }), ...near.map((k) => ({ path: hoof(k), fill: G_HOOF, shade: false })),
     { path: neck, fill: G_COAT, deco: () => { g.save(); g.clip(neck); g.translate(nb[0], nb[1]); g.rotate(na); coat(g, BIG, -0.3, -0.3, nl + 0.15, 0.3, 0.07, 0.01, G_SPOT, 12); g.restore(); } },
@@ -170,7 +179,7 @@ export const giraffeSide = (g: CanvasRenderingContext2D, x: number, y: number, s
 
 // ---------------- lioness ----------------
 export type LPose = "sit" | "crouch" | "fly" | "walk" | "run";
-export const lioness = (g: CanvasRenderingContext2D, x: number, y: number, s: number, pose: LPose, f: Face, flip = false, tilt = 0, ph = 0) => {
+export const lioness = (g: CanvasRenderingContext2D, x: number, y: number, s: number, pose: LPose, f: Face, flip = false, tilt = 0, ph = 0, t?: number) => {
   g.save(); g.translate(x, y); g.scale(flip ? -s : s, s); g.rotate(tilt); const lw = 3.6 / s, d = 7 / s;
   let body: P[], legs: P[][], paws: Path2D[], headC: P, headTilt: number, tailP: P[], haunch: Path2D | null = null, farLegs: P[][] = [];
   if (pose === "sit") {
@@ -201,10 +210,12 @@ export const lioness = (g: CanvasRenderingContext2D, x: number, y: number, s: nu
     paws = [ell(0.78, -0.8, 0.07, 0.04, -0.6), ell(-0.92, -0.22, 0.07, 0.04, 0.5)]; headC = [0.64, -0.84]; headTilt = -0.2; tailP = [[-0.6, -0.62], [-0.85, -0.72], [-1.0, -0.92], [-0.98, -1.04]];
   }
   group(g, farLegs.map((p) => ({ path: spline(p), fill: "#a8743f" })), lw, d);
+  const tt = t ?? NOW, it = tt ?? 0, idle = tt === undefined ? 0 : 1; headC = [headC[0], headC[1] + idle * 0.008 * Math.sin(it * 2.3)]; headTilt += idle * 0.04 * Math.sin(it * 1.4);
   const [hx, hy] = headC, c = Math.cos(headTilt), sn = Math.sin(headTilt), Hh = (p: P): P => [hx + p[0] * c - p[1] * sn, hy + p[0] * sn + p[1] * c];
   const head = spline([[-0.17, -0.06], [-0.1, -0.15], [0.05, -0.17], [0.16, -0.1], [0.3, -0.05], [0.33, 0.04], [0.27, 0.13], [0.1, 0.16], [-0.08, 0.13], [-0.18, 0.05]].map((p) => Hh(p as P)));
-  const ear = spline([[-0.12, -0.11], [-0.11, -0.25], [-0.02, -0.25], [0.02, -0.14]].map((p) => Hh(p as P)), true, 0.7);
+  const lfl = idle * flick(it, 2.2, 0.4) * 0.6; const ear = spline(([[-0.12, -0.11], [-0.11, -0.25], [-0.02, -0.25], [0.02, -0.14]] as P[]).map((p) => Hh(rotP(p, [-0.06, -0.12], -lfl))), true, 0.7);
   const muz = spline([[0.08, 0.0], [0.2, -0.04], [0.33, 0.03], [0.28, 0.13], [0.1, 0.15]].map((p) => Hh(p as P)));
+  if (idle) { const b0 = tailP[0], sw = 0.25 * Math.sin(it * 2.6) + 0.1 * Math.sin(it * 6.3); tailP = tailP.map((p, i) => rotP(p, b0, sw * (i / (tailP.length - 1)))); }
   const tail = spline(ribbon(tailP, [0.05, 0.045, 0.04, 0.035]));
   const te = tailP[tailP.length - 1], tuft = spline([[te[0] - 0.05, te[1] + 0.02], [te[0] + 0.04, te[1] + 0.0], [te[0] + 0.03, te[1] - 0.09], [te[0] - 0.03, te[1] - 0.11]]);
   const bodyP = spline(body);

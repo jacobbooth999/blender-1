@@ -6,7 +6,7 @@ import TL from "../../../videos_ink/giraffe2/timeline.json";
 import WORDS from "../../../videos_ink/giraffe2/words.json";
 import { buildChunks, drawCaptions, DEFAULT_STYLE, CapWord } from "./captions";
 import {
-  P, Face, GPose, LINE, G_COAT, lerp, spline, ribbon, ell, group, taper, eye, giraffeFront, giraffeSide, lioness, floor, tree, burst, star, setSeed, rnd, shade,
+  P, Face, GPose, LINE, G_COAT, lerp, spline, ribbon, ell, group, taper, eye, giraffeFront, giraffeSide, lioness, floor, tree, burst, star, setSeed, rnd, shade, setNow,
 } from "./stylekit";
 
 const DURATION = TL.duration;
@@ -92,6 +92,7 @@ const savanna = (g: CanvasRenderingContext2D, t: number, hor: number, sd: number
 };
 
 // ---------------- zebra in kit style ----------------
+let TNOW = 0;
 const zebra = (g: CanvasRenderingContext2D, x: number, y: number, s: number, ph: number, walking: boolean) => {
   g.save(); g.translate(x, y); g.scale(s, s); const lw = 3.4 / s, d = 7 / s, A = walking ? 0.17 : 0, lift = walking ? 0.08 : 0;
   const ft = (hx: number, u: number): P => [hx - A * Math.cos(u), -Math.max(0, Math.sin(u)) * lift];
@@ -103,13 +104,14 @@ const zebra = (g: CanvasRenderingContext2D, x: number, y: number, s: number, ph:
   group(g, [legStripes(L.ff.r, [0.3, -0.7], L.ff.f), legStripes(L.fh.r, [-0.52, -0.7], L.fh.f), { path: hoof(L.ff.f), fill: "#2b2420", shade: false }, { path: hoof(L.fh.f), fill: "#2b2420", shade: false }], lw, d);
   const body = spline([[-0.58, -0.72], [-0.56, -0.92], [-0.4, -1.0], [0.0, -0.98], [0.38, -1.02], [0.56, -0.92], [0.56, -0.74], [0.3, -0.62], [-0.35, -0.62]]);
   const neckPts = ribbon([[0.42, -0.9], [0.62, -1.18], [0.78, -1.4]], [0.34, 0.24, 0.2]), neck = spline(neckPts);
-  const hc: P = [0.8, -1.42], ha = 1.0, c = Math.cos(ha), sn = Math.sin(ha), H = (p: P): P => [hc[0] + p[0] * c - p[1] * sn, hc[1] + p[0] * sn + p[1] * c];
+  const hc: P = [0.8, -1.42], ha = 1.0 + 0.07 * Math.sin(TNOW * 1.9 + x * 0.01) + (walking ? 0.06 * Math.sin(ph * 2) : 0), c = Math.cos(ha), sn = Math.sin(ha), H = (p: P): P => [hc[0] + p[0] * c - p[1] * sn, hc[1] + p[0] * sn + p[1] * c];
   const head = spline(([[-0.1, -0.09], [0.1, -0.09], [0.3, -0.06], [0.44, -0.02], [0.45, 0.07], [0.3, 0.09], [0.08, 0.09], [-0.1, 0.06]] as P[]).map(H));
   const muz = spline(([[0.32, -0.06], [0.45, -0.02], [0.46, 0.07], [0.32, 0.09], [0.28, 0.0]] as P[]).map(H));
   const ears = [spline(([[-0.06, -0.08], [-0.12, -0.24], [-0.02, -0.1]] as P[]).map(H), true, 0.4)];
   const mane = spline(ribbon([[0.38, -0.98], [0.56, -1.26], [0.7, -1.5]], [0.08, 0.09, 0.08]));
-  const tail = spline(ribbon([[-0.56, -0.9], [-0.64, -0.72], [-0.66, -0.55]], [0.035, 0.03, 0.025]));
-  group(g, [{ path: tail, fill: "#f4efe2" }, { path: spline([[-0.69, -0.58], [-0.62, -0.58], [-0.62, -0.46], [-0.67, -0.42], [-0.71, -0.48]]), fill: "#1d1a1c", shade: false },
+  const zsw = 0.3 * Math.sin(TNOW * 2.7 + x * 0.02), ZR = (p: P): P => { const a = zsw * Math.hypot(p[0] + 0.56, p[1] + 0.9) / 0.4, c2 = Math.cos(a), s2 = Math.sin(a); return [-0.56 + (p[0] + 0.56) * c2 - (p[1] + 0.9) * s2, -0.9 + (p[0] + 0.56) * s2 + (p[1] + 0.9) * c2]; };
+  const tail = spline(ribbon(([[-0.56, -0.9], [-0.64, -0.72], [-0.66, -0.55]] as P[]).map(ZR), [0.035, 0.03, 0.025]));
+  group(g, [{ path: tail, fill: "#f4efe2" }, { path: spline(([[-0.69, -0.58], [-0.62, -0.58], [-0.62, -0.46], [-0.67, -0.42], [-0.71, -0.48]] as P[]).map(ZR)), fill: "#1d1a1c", shade: false },
     legStripes(L.nf.r, [0.4, -0.7], L.nf.f), legStripes(L.nh.r, [-0.42, -0.7], L.nh.f), { path: hoof(L.nf.f), fill: "#2b2420", shade: false }, { path: hoof(L.nh.f), fill: "#2b2420", shade: false },
     { path: mane, fill: "#1d1a1c", shade: false }, { path: neck, fill: "#f4efe2", deco: () => { g.save(); g.clip(neck); g.translate(0.42, -0.9); g.rotate(-0.95); for (let k = 0; k < 7; k++) taper(g, [[0.05 + k * 0.08, -0.25], [0.08 + k * 0.08, 0], [0.05 + k * 0.08, 0.25]], 0.045, "#1d1a1c"); g.restore(); } },
     { path: body, fill: "#f4efe2", deco: () => stripesV(body, -0.6, 0.6, -1.05, -0.6, 0.1, 0.05) },
@@ -164,10 +166,49 @@ const hook = (g: CanvasRenderingContext2D, t: number) => {
   giraffeFront(g, 610, 1450, 450, { lid: blinkLid(t, 0.55), brow: 0.55, look: [-0.7, 0.8] });
   lioness(g, 235 + Math.sin(t * 47) * 2.5, 1462, 300, "sit", { lid: blinkLid(t, 0, 1.3) === 1.3 ? 1.3 : 0, brow: -0.7, look: [0.6, -0.9], worried: true });
 };
+// cold open: the lioness charges, slams on the brakes in front of the giraffe's legs, and the camera tilts up to the
+// giant glaring down at her (high stakes, then a reversal, all in the first 1.7 s)
+const LX0 = -60, T_BRAKE = 0.74, T_REVEAL = 1.02;
+const lionX = (t: number) => (t < T_BRAKE ? LX0 + (233 - LX0) * (t / T_BRAKE) : Math.min(255, 233 + (t - T_BRAKE) * 120));
+const openFrame = (lt: number): [number, number, number] => {
+  if (lt < T_BRAKE) return [lionX(lt) + 200, 1330, 1.7];
+  if (lt < T_REVEAL) { const k = ease((lt - T_BRAKE) / 0.12); return [lerp([lionX(lt) + 200, 1330], [lionX(lt) + 110, 1260], k)[0], 1330 - 70 * k, 1.7 + 0.5 * k]; }
+  const k = ease((lt - T_REVEAL) / 0.38); return [lionX(lt) + 110 + (560 - lionX(lt) - 110) * k, 1260 - 280 * k, 2.2 - 1.2 * k];
+};
+const coldOpen = (g: CanvasRenderingContext2D, t: number) => {
+  if (t > T_BRAKE && t < T_BRAKE + 0.3) shakeAt(g, t, 10 * (1 - (t - T_BRAKE) / 0.3));
+  savanna(g, t, 1170, 101, 0, { trees: false });
+  floor(g, 580, 1455, 760, 7);
+  giraffeFront(g, 610, 1450, 450, { lid: t < T_REVEAL ? 0.5 : blinkLid(t, 0.6), brow: 0.65, look: [-0.8, 0.9] });
+  const x = lionX(t);
+  if (t < T_BRAKE) {
+    for (let i = 0; i < 6; i++) { const o = frac(t * 4 + i * 0.29) * 160; taper(g, [[x - 160 - o - 160, 1250 + i * 34], [x - 160 - o, 1250 + i * 34]], 5, "rgba(250,240,215,0.9)"); }
+    setSeed(Math.floor(t * 14)); for (let i = 0; i < 4; i++) group(g, [{ path: ell(x - 180 - i * 40 - rnd() * 20, 1450 - rnd() * 30, 22 + rnd() * 16, 14 + rnd() * 10), fill: "rgba(232,214,170,0.85)", shade: false }], 0.01, 0);
+    lioness(g, x, 1475, 200, "run", { lid: 0.5, brow: 0.9, look: [1, 0] }, false, 0.05, t * 2 * Math.PI * 3);
+  } else if (t < T_REVEAL) {
+    const k = (t - T_BRAKE) / (T_REVEAL - T_BRAKE);
+    setSeed(9); for (let i = 0; i < 7; i++) group(g, [{ path: ell(x + 80 - rnd() * 140, 1460 - rnd() * 40 - k * 30, 26 + rnd() * 20 + k * 20, 16 + rnd() * 10), fill: `rgba(232,214,170,${(0.9 - k * 0.5).toFixed(2)})`, shade: false }], 0.01, 0);
+    lioness(g, x, 1475, 200, "crouch", { lid: 0, brow: -0.9, look: [0.7, -0.8], worried: true }, false, -0.22);
+    bang(g, x + 150, 1180, 120, t - T_BRAKE);
+  } else {
+    lioness(g, x - 20 + Math.sin(t * 47) * 2.5, 1475, 240, "sit", { lid: 0, brow: -0.8, look: [0.6, -0.9], worried: true });
+    for (let i = 0; i < 2; i++) { const yy = 1150 + frac(t * 1.6 + i * 0.5) * 70; group(g, [{ path: spline([[x + 40 + i * 50, yy - 22], [x + 54 + i * 50, yy + 3], [x + 40 + i * 50, yy + 15], [x + 26 + i * 50, yy + 3]], true, 0.5), fill: "#a8d3e6", shade: false }], 2.2, 0); }
+  }
+};
+// loop tail: the lioness crouches low, butt wiggling, about to charge (cuts straight into the cold open)
+const preCharge = (g: CanvasRenderingContext2D, t: number, lt: number) => {
+  savanna(g, t, 1170, 101, 0, { trees: false });
+  floor(g, 580, 1455, 760, 7);
+  giraffeFront(g, 610, 1450, 450, { lid: blinkLid(t, 0.55), brow: 0.55, look: [-0.8, 0.9] });
+  const wig = Math.sin(lt * 14) * Math.min(1, lt);
+  lioness(g, LX0 + wig * 4, 1475, 200, "crouch", { lid: 0.5, brow: 0.9, look: [1, -0.2] }, false, wig * 0.03);
+  tuft(g, LX0 - 60, 1500, 90, t, 21);
+};
+
 const HIT = wt(6, "kick") + 0.08, ALARM = wt(3, "alarm");
 const SH: Shot[] = [
   // A. hook
-  { at: 0, frame: (lt) => [560, 980, 1 + 0.05 * ease(lt / 1.7)], draw: (g, t) => hook(g, t) },
+  { at: 0, frame: (lt) => openFrame(lt), draw: (g, t) => coldOpen(g, t) },
   // B. can't climb: rears up an acacia and slides back down
   { at: W0(0, "can't"), frame: () => [560, 1000, 1.0], draw: (g, t, lt) => {
     shakeAt(g, t, 3); savanna(g, t, 1170, 91, 0, { trees: false });
@@ -281,7 +322,7 @@ const SH: Shot[] = [
     tuft(g, 40, 1510, 100, t, 6);
   } },
   // M. ...and it's exactly why -> back to the opening frame (loop)
-  { at: W0(7, "and"), frame: (lt, d) => [560, 980, 1.05 - 0.05 * ease(lt / Math.max(0.4, d))], draw: (g, t) => hook(g, t) },
+  { at: W0(7, "and"), frame: (lt, d) => { const k = ease(lt / Math.max(0.4, d)); return [560 + (LX0 + 200 - 560) * k, 980 + (1330 - 980) * k, 1.0 + 0.7 * k]; }, draw: (g, t, lt) => preCharge(g, t, lt) },
 ];
 void shade; void G_COAT; void LINE; void (null as unknown as Face);
 
@@ -293,7 +334,7 @@ export const drawAt = (g: CanvasRenderingContext2D, W: number, H: number, t: num
   const [fx, fy, z] = s.frame ? s.frame(lt, d) : [540, 960, 1];
   const zz = k > 0 ? 1 + 0.18 * (1 - ease(lt / 0.16)) : 1;
   g.translate(540, 960); g.scale(z * zz, z * zz); g.translate(-fx, -fy);
-  s.draw(g, t, lt, d);
+  setNow(t); TNOW = t; s.draw(g, t, lt, d); setNow(undefined);
   g.restore();
   // paper grain over the whole picture
   g.save(); g.globalCompositeOperation = "overlay"; g.globalAlpha = 0.55; g.drawImage(grainTex(), 0, 0, 1080, 1920); g.restore();

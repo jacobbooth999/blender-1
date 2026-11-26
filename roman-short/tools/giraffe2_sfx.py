@@ -16,7 +16,8 @@ def wt(i, w, n=1):
 cuts = [wt(0, "can't") - .1, wt(0, "can't", 2) - .1, wt(0, "and") - .1, wt(1, "to") - .1, wt(1, "so") - .1, wt(2, "but") - .1,
         wt(3, "zebras") - .1, wt(4, "if") - .1, wt(5, "and") - .1, wt(6, "one") - .1, wt(7, "that's") - .1, wt(7, "and") - .1]
 ev = []
-ev += [[wt(0, "scared") + .05, "sting", .5]]
+ev += [[round(0.04 + k * 0.11, 3), "hoof", 0.9] for k in range(7)]       # cold open: lioness charging
+ev += [[0.62, "whoosh", 1.0], [0.74, "pop", 1.6], [0.75, "sting", 0.9], [1.0, "whoosh", 0.7]]  # brakes + camera tilt up
 ev += [[cuts[0] + .1 + k * .07, "tick", .5] for k in range(6)]                      # leaves shaking
 ev += [[wt(0, "climb") + .15, "pop", 1.4], [wt(0, "hide") + .2, "pop", 1.4], [wt(0, "drinks") + .1, "pop", 1.5], [wt(0, "drinks"), "sting", .8]]
 ev += [[cuts[3] + 1.0, "pop", .8]]                                                   # THE SPLITS label
