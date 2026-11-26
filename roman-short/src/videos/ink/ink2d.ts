@@ -21,6 +21,8 @@ const noise1 = (r: () => number, n = 8) => {
   return (t: number) => { const x = t * n, i = Math.floor(x), f = x - i, u = f * f * (3 - 2 * f); return lerp(v[i] ?? 0, v[i + 1] ?? 0, u); };
 };
 
+/** global look overrides used by the style previews (styles.ts): drop shadows on fills, outline colour/width */
+export const LOOK: { shadow?: string; shadowPx?: number; lineCol?: string; wMul?: number; vector?: boolean } = {};
 export class Ink {
   g: CanvasRenderingContext2D;
   r: () => number;
@@ -62,6 +64,7 @@ export class Ink {
   /** a wobbly ink stroke */
   line(pts: P[], w = this.w, col = INKC, amp = 1.1) {
     if (this.vector && col === INKC) { if (w > this.w * 3) return; col = VEC_LINE; w *= 0.8; }
+    if (col === INKC || col === VEC_LINE) { if (LOOK.lineCol) col = LOOK.lineCol; if (LOOK.wMul) w *= LOOK.wMul; }
     const g = this.g, q = this.wobble(pts, amp);
     g.lineCap = "round"; g.lineJoin = "round"; g.strokeStyle = col; g.lineWidth = w;
     this.path(q, false); g.stroke();
@@ -69,8 +72,12 @@ export class Ink {
   /** a filled shape (fill may be a gradient) with an optional wobbly outline */
   shape(pts: P[], fill: string | CanvasGradient | null, w: number | null = this.w, col = INKC, amp = 1.0) {
     const g = this.g;
-    if (fill) { g.fillStyle = this.vector && fill === INKC ? VEC_DARK : fill; this.path(pts, true); g.fill(); }
+    if (fill) {
+      g.fillStyle = this.vector && fill === INKC ? VEC_DARK : fill; this.path(pts, true);
+      if (LOOK.shadow) { g.save(); const m = g.getTransform(), sc = Math.hypot(m.a, m.b), px = (LOOK.shadowPx ?? 6) * sc; g.shadowColor = LOOK.shadow; g.shadowBlur = px * 1.6; g.shadowOffsetX = px * 0.5; g.shadowOffsetY = px; g.fill(); g.restore(); } else g.fill();
+    }
     if (w && this.vector && col === INKC) return;
+    if (w && (col === INKC || col === VEC_LINE)) { if (LOOK.lineCol) col = LOOK.lineCol; if (LOOK.wMul) w *= LOOK.wMul; }
     if (w) { const q = this.wobble(pts, amp, true); g.lineCap = "round"; g.lineJoin = "round"; g.strokeStyle = col; g.lineWidth = w; this.path(q, false); g.stroke(); }
   }
   ellPts(cx: number, cy: number, rx: number, ry: number, rot = 0, n = 48, a0 = 0, a1 = Math.PI * 2): P[] {

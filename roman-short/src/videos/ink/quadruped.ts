@@ -11,7 +11,7 @@
 //  lioness: digitigrade (walks on the toes), long humerus, level back, deep chest, tucked waist; stalk = shoulders
 //    rise above the back, head low, belly near the ground; rotary gallop.
 //  zebra (horse build): forelegs straight, hock behind, grazes with the neck down.
-import { Ink, P, INKC } from "./ink2d";
+import { Ink, P, INKC, LOOK } from "./ink2d";
 import { drawFace, emoPose, Emotion } from "./faces";
 
 type Leg = { base: P; bones: [number, number, number, number]; fore: boolean; phase: number; near: boolean };
@@ -177,7 +177,7 @@ const flicks = (ink: Ink, cx: number, cy: number, n: number, s: number, col: str
   for (let i = 0; i < n; i++) { const x = cx + (ink.r() - 0.5) * s * 3, y = cy + (ink.r() - 0.5) * s * 2, a = -0.4 + ink.r() * 0.8; g.beginPath(); g.moveTo(x - s * 0.5, y); g.quadraticCurveTo(x - s * 0.2, y - s * 0.55 + a * s * 0.2, x, y - s * 0.05); g.quadraticCurveTo(x + s * 0.2, y - s * 0.55 - a * s * 0.2, x + s * 0.5, y); g.stroke(); }
 };
 const quadBody = (ink: Ink, sp0: Species, x: number, y: number, u: number, o: QuadOpts = {}, flip = false) => {
-  const vec = o.vector ?? true, prevVec = ink.vector; ink.vector = vec;
+  const vec = o.vector ?? LOOK.vector ?? true, prevVec = ink.vector; ink.vector = vec;
   const sp: Species = vec && VEC_COLORS[sp0.name] ? { ...sp0, colors: VEC_COLORS[sp0.name], head: sp0.head * 1.14 } : sp0;
   const g = ink.g, t = o.t ?? 0, gait = o.gait ?? "stand", shadeOn = o.cel !== false;
   g.save(); g.translate(x, y); g.scale(flip ? -u : u, u);

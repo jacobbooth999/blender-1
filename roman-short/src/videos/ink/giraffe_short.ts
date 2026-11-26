@@ -10,7 +10,7 @@ const MIDNECK: Species = { ...GIRAFFE, neckLen: 0.6, neckW0: 0.26, neckW1: 0.11 
 import TL from "../../../videos_ink/giraffe2/timeline.json";
 import WORDS from "../../../videos_ink/giraffe2/words.json";
 import { buildChunks, drawCaptions, DEFAULT_STYLE, CapWord } from "./captions";
-import { journalGrade, journalFrame } from "./journal";
+import { setLook, postLook } from "./styles";
 const STYLE = () => (globalThis as { INK_STYLE?: string }).INK_STYLE ?? "classic";
 /** "short" = vertical 9:16 re-framing of every shot (1080 x 1920 output) */
 const SHORTV = () => (globalThis as { INK_FORMAT?: string }).INK_FORMAT === "short";
@@ -275,8 +275,9 @@ export const drawAt = (g: CanvasRenderingContext2D, W: number, H: number, t: num
   const [fx, fy, z] = s.frame(lt, d);
   g.translate(W / 2, H / 2); g.scale((z * W) / 1080, (z * W) / 1080); g.translate(-fx, -fy);
   if (s.whip && k > 0) { const zz = 1 + 0.22 * (1 - ease(lt / 0.16)); g.translate(fx, fy); g.scale(zz, zz); g.translate(-fx, -fy); }
-  const ink = new Ink(g, 11); s.draw(ink, t, lt, d);
+  setLook(); const ink = new Ink(g, 11); s.draw(ink, t, lt, d);
   g.restore();
+  postLook(g, W, H, t);
   g.save();
   if (s.whip && k > 0 && lt < 0.12) { const a = 1 - lt / 0.12; for (let i = 0; i < 18; i++) { const y = ((i * 107 + 40) % 1920) * H / 1920; g.fillStyle = `rgba(255,255,255,${(0.5 * a).toFixed(3)})`; g.fillRect(0, y, W, (10 + (i % 3) * 8) * W / 1080); } }
   g.scale(W / 1080, H / 1920); drawCaptions(g, CAPS_V, t, { ...CAP_STYLE, cx: 540, y: 1370, size: 118 });
