@@ -48,11 +48,63 @@ const tallGrass = (ink: Ink, x0: number, x1: number, y: number, h: number, seed:
   ink.seed(seed);
   for (let x = x0; x < x1; x += 7) { const hh = h * (0.6 + ink.r() * 0.6), sw = Math.sin(t * 1.5 + x * 0.02) * 6; ink.line(ink.curve([x, y], [x + 3 + sw * 0.5, y - hh * 0.5], [x + (ink.r() - 0.5) * 20 + sw, y - hh]), 3, ink.r() < 0.5 ? col : "#a8823a", 0.2); }
 };
-const savanna = (ink: Ink, t: number, hor = 640, seed = 1) => {
-  sky(ink, hor, [[0, "#8fc7e8"], [1, "#e6f2ef"]]);
-  sun(ink, 1650, 150, 62); cloud(ink, 300 + t * 6, 140, 1); cloud(ink, 1100 + t * 4, 90, 0.8);
-  hills(ink, hor - 20, 28, "#b8b48a", seed + 3, 1.5);
-  ground(ink, hor, "#dcc27a", "#c9a55a", 260, seed);
+// ---- richer savanna backdrop: layered depth (haze mountain, ridges, tree line, herds, rocks, bushes, foreground) ----
+const rnd = (seed: number) => { let x = seed * 9301 + 49297; return () => { x = (x * 9301 + 49297) % 233280; return x / 233280; }; };
+const farTree = (ink: Ink, x: number, y: number, h: number, col: string) => {
+  ink.line([[x, y], [x + h * 0.05, y - h * 0.55]], Math.max(2, h * 0.07), col, 0.1);
+  ink.line([[x + h * 0.03, y - h * 0.4], [x - h * 0.25, y - h * 0.75]], Math.max(1.5, h * 0.04), col, 0.1);
+  ink.line([[x + h * 0.04, y - h * 0.45], [x + h * 0.3, y - h * 0.78]], Math.max(1.5, h * 0.04), col, 0.1);
+  ink.ell(x + h * 0.02, y - h * 0.82, h * 0.62, h * 0.16, col, null);
+};
+const farElephant = (ink: Ink, x: number, y: number, s: number, col: string, t: number) => {
+  const sw = Math.sin(t * 3) * s * 0.06;
+  for (const [dx, ph] of [[-0.32, 0], [-0.18, 1], [0.18, 1], [0.32, 0]] as const) ink.shape([[x + dx * s - s * 0.06, y - s * 0.4], [x + dx * s + s * 0.06, y - s * 0.4], [x + dx * s + s * 0.06 + (ph ? sw : -sw), y], [x + dx * s - s * 0.06 + (ph ? sw : -sw), y]], col, null);
+  ink.ell(x, y - s * 0.55, s * 0.48, s * 0.28, col, null);
+  ink.ell(x + s * 0.5, y - s * 0.6, s * 0.2, s * 0.2, col, null);
+  ink.line([[x + s * 0.64, y - s * 0.55], [x + s * 0.72, y - s * 0.25], [x + s * 0.68, y - s * 0.08]], s * 0.08, col, 0.1);
+  ink.ell(x + s * 0.4, y - s * 0.62, s * 0.14, s * 0.2, col, null);
+};
+const bird = (ink: Ink, x: number, y: number, s: number, t: number) => { const f = Math.sin(t * 9) * s * 0.35; ink.line([[x - s, y - f], [x - s * 0.4, y - s * 0.25], [x, y + s * 0.05]], 3, "#4d5b66", 0.1); ink.line([[x, y + s * 0.05], [x + s * 0.4, y - s * 0.25], [x + s, y - f]], 3, "#4d5b66", 0.1); };
+const kopje = (ink: Ink, x: number, y: number, s: number) => {
+  for (const [dx, dy, rx, ry, c] of [[-0.55, 0, 0.5, 0.32, "#a78e70"], [0.35, 0, 0.62, 0.4, "#b39a7a"], [-0.05, -0.38, 0.5, 0.36, "#bda483"], [0.55, -0.5, 0.32, 0.26, "#c4ab8a"]] as const) {
+    ink.ell(x + dx * s, y + dy * s - ry * s * 0.6, rx * s, ry * s, c, null);
+    ink.ell(x + dx * s + rx * s * 0.25, y + dy * s - ry * s * 0.35, rx * s * 0.7, ry * s * 0.55, "rgba(90,70,50,0.18)", null);
+  }
+};
+const termite = (ink: Ink, x: number, y: number, h: number) => { ink.shape([[x - h * 0.3, y], [x - h * 0.16, y - h * 0.55], [x - h * 0.06, y - h], [x + h * 0.05, y - h * 0.92], [x + h * 0.12, y - h * 0.6], [x + h * 0.2, y - h * 0.4], [x + h * 0.32, y]], "#c88d5c", null); ink.shape([[x + h * 0.05, y - h * 0.9], [x + h * 0.12, y - h * 0.6], [x + h * 0.2, y - h * 0.4], [x + h * 0.32, y], [x + h * 0.08, y]], "rgba(120,60,30,0.22)", null); };
+const bush = (ink: Ink, x: number, y: number, s: number, col: string) => { for (const [dx, dy, r] of [[-0.5, -0.3, 0.45], [0.1, -0.55, 0.55], [0.6, -0.3, 0.42], [0, -0.2, 0.5]] as const) ink.ell(x + dx * s, y + dy * s, r * s, r * s * 0.8, col, null); ink.ell(x + 0.15 * s, y - 0.12 * s, 0.9 * s, 0.22 * s, "rgba(60,60,20,0.18)", null); };
+const savanna = (ink: Ink, t: number, hor = 640, seed = 1, scroll = 0) => {
+  const g = ink.g, R = rnd(seed), par = (k: number, x: number) => { const span = 3400, v = (((x - scroll * k) % span) + span) % span; return v - 800; };
+  // sky: warm haze at the horizon, a second cloud layer, birds
+  sky(ink, hor, [[0, "#64ace0"], [0.55, "#a7d4ee"], [0.9, "#f3e6c6"], [1, "#f6dcb0"]]);
+  sun(ink, 1650, 150, 62); g.save(); g.globalAlpha = 0.35; ink.ell(1650, 150, 110, 110, "#fff4c8", null); g.restore();
+  for (const [x, y, sc, v] of [[-300, 40, 1.3, 3], [300, 140, 1, 6], [1100, 90, 0.8, 4], [1500, 260, 0.6, 2], [700, -120, 1.4, 5], [-100, -260, 1.1, 3], [1300, -200, 1.2, 4]]) {
+    const cx = par(0.05, x + t * v); g.save(); g.globalAlpha = 0.95; cloud(ink, cx, y, sc); g.globalAlpha = 0.25; ink.ell(cx + 60 * sc, y + 22 * sc, 120 * sc, 18 * sc, "#9ab7cf", null); g.restore();
+  }
+  for (let k = 0; k < 5; k++) bird(ink, par(0.1, 200 + k * 70 + t * 60 + (k % 2) * 30), hor - 360 + (k % 3) * 28 - k * 6, 14 - k, t + k * 0.4);
+  // far: a hazy snow-capped mountain and two ridges
+  const mx = par(0.08, 1250 + R() * 300);
+  ink.shape([[mx - 700, hor], [mx - 260, hor - 190], [mx - 120, hor - 235], [mx + 110, hor - 240], [mx + 260, hor - 200], [mx + 760, hor]], "#aebcd0", null);
+  ink.shape([[mx - 150, hor - 228], [mx - 120, hor - 235], [mx + 110, hor - 240], [mx + 150, hor - 225], [mx + 90, hor - 205], [mx + 30, hor - 218], [mx - 40, hor - 200], [mx - 100, hor - 215]], "#eef3f7", null);
+  g.save(); g.translate(-((scroll * 0.15) % 1920), 0); for (const k of [-1, 0, 1, 2]) { g.save(); g.translate(k * 1920, 0); hills(ink, hor - 30, 34, "#c2bfa0", seed + 3, 1.5); g.restore(); } g.restore();
+  g.save(); g.translate(-((scroll * 0.25) % 1920), 0); for (const k of [-1, 0, 1, 2]) { g.save(); g.translate(k * 1920, 0); hills(ink, hor - 6, 18, "#b4ae82", seed + 7, 2.4); g.restore(); } g.restore();
+  // ground with dry patches
+  ground(ink, hor, "#dcc27a", "#c9a55a", 0, seed);
+  for (let k = 0; k < 14; k++) { const x = par(0.9, R() * 3400 - 600), y = hor + 40 + R() * 900, w = 120 + R() * 260; ink.ell(x, y, w * (0.6 + (y - hor) / 900), w * 0.05 * (0.5 + (y - hor) / 600), R() < 0.5 ? "rgba(176,140,70,0.2)" : "rgba(238,214,150,0.28)", null); }
+  // distant tree line and a herd
+  for (let k = 0; k < 16; k++) { const x = par(0.3, R() * 3400 - 600), h = 26 + R() * 40; farTree(ink, x, hor + 2, h, "#8f9a66"); }
+  for (let k = 0; k < 4; k++) farElephant(ink, par(0.35, 300 + k * 46 + (k % 2) * 12 - t * 8), hor + 8 + (k % 2) * 3, 26 - (k % 2) * 6, "#8b8572", t + k);
+  // mid-ground: kopje, termite mounds, bushes
+  kopje(ink, par(0.5, 1700 + R() * 200), hor + 30, 110);
+  termite(ink, par(0.6, 250 + R() * 200), hor + 60, 90); termite(ink, par(0.6, 1450 + R() * 200), hor + 40, 55);
+  for (let k = 0; k < 7; k++) { const x = par(0.6, R() * 3400 - 600), y = hor + 30 + R() * 90; bush(ink, x, y, 26 + (y - hor) * 0.35, R() < 0.5 ? "#8aa457" : "#7a9650"); }
+  // grass texture, denser and longer towards the camera, plus pebbles and a few flowers down front
+  ink.seed(seed); g.save(); g.translate(-((scroll * 0.9) % 1920), 0);
+  for (const k of [-1, 0, 1]) { g.save(); g.translate(k * 1920, 0); ink.hatch([[0, hor], [1920, hor], [1920, hor + 260], [0, hor + 260]], 200, 12, "rgba(110,90,40,0.4)", 2, -Math.PI / 2, 0.7); ink.hatch([[0, hor + 260], [1920, hor + 260], [1920, hor + 1200], [0, hor + 1200]], 520, 26, "rgba(110,90,40,0.45)", 2.6, -Math.PI / 2, 0.8); g.restore(); }
+  g.restore();
+  for (let k = 0; k < 26; k++) { const x = par(1.1, R() * 3400 - 600), y = hor + 520 + R() * 900, r = 6 + R() * 14; ink.ell(x, y, r * 1.5, r, R() < 0.5 ? "#b8a888" : "#a8977a", null); ink.ell(x - r * 0.3, y - r * 0.3, r * 0.6, r * 0.35, "rgba(255,255,255,0.35)", null); }
+  for (let k = 0; k < 7; k++) { const x = par(1.0, R() * 3400 - 600), y = hor + 500 + R() * 900, sc = 0.6 + (y - hor) / 900; bush(ink, x, y, 40 * sc, R() < 0.5 ? "#9aac5a" : "#86a050"); }
+  for (let k = 0; k < 44; k++) { const x = par(1.1, R() * 3400 - 600), y = hor + 420 + R() * 1000, sc = 0.6 + (y - hor) / 700; tallGrass(ink, x, x + (40 + R() * 50) * sc, y, (45 + R() * 45) * sc, seed + k, "#c9a24a", t); if (R() < 0.35) for (let f = 0; f < 3; f++) ink.ell(x + 10 + f * 14, y - 40 - f * 9, 6, 6, R() < 0.5 ? "#f4f0e6" : "#f2c14e", null); }
 };
 const paper = (ink: Ink) => { const g = ink.g; g.fillStyle = PAPER; g.fillRect(-2000, -3000, 6000, 8000); ink.seed(99); for (let i = 0; i < 300; i++) { g.fillStyle = "rgba(120,110,90,0.035)"; g.fillRect(ink.r() * 1920, ink.r() * 1080, 2, 2); } };
 const dashed = (ink: Ink, pts: P[], col = INKC, w = 3, off = 0, dash = [16, 14]) => { const g = ink.g; g.save(); g.setLineDash(dash); g.lineDashOffset = -off; g.strokeStyle = col; g.lineWidth = w; g.lineCap = "round"; g.beginPath(); pts.forEach(([x, y], i) => (i ? g.lineTo(x, y) : g.moveTo(x, y))); g.stroke(); g.restore(); };
@@ -98,7 +150,7 @@ const SHOTS: Shot[] = [
   // B. "...can't climb," (rears up an acacia, slips)
   { at: W0(0, "can't"), whip: true, frame: () => [820, 600, 1.15], draw: (ink, t, lt) => {
     const g = ink.g; shake(g, t, 4);
-    sky(ink, 640, [[0, "#9fd0ea"], [1, "#eef4ea"]]); hills(ink, 620, 24, "#b8b48a", 91, 1.4); ground(ink, 640, "#dcc27a", "#c9a55a", 140, 92);
+    savanna(ink, t, 640, 91);
     const sway = Math.sin(lt * 22) * 0.05; g.save(); g.translate(1180, 1000); g.rotate(sway); g.translate(-1180, -1000); acacia(ink, 1180, 1000, 720, "#7c9a4a", 93); g.restore();
     ink.seed(94); for (let k = 0; k < 9; k++) { const fx = 900 + ink.r() * 600, fy = 330 + ((lt * (300 + ink.r() * 200) + ink.r() * 200) % 700); ink.ell(fx + Math.sin(lt * 6 + k) * 20, fy, 14, 7, "#7c9a4a", 2, lt * 4 + k); }
     const up = lt < 0.5 ? ease(lt / 0.2) : 1 - ease((lt - 0.5) / 0.18), px = 760 - 0.33 * 360;
@@ -155,10 +207,8 @@ const SHOTS: Shot[] = [
   { at: W0(3, "zebras"), whip: true, frame: () => [900, 620, 0.95], draw: (ink, t, lt) => {
     const alarm = t - wt(3, "alarm"), walking = alarm < 0, g = ink.g;
     const v = walking ? gaitSpeed(GIRAFFE, "walk") * 400 : 0, off = Math.min(lt, wt(3, "alarm") - (SHOTS_AT.H)) * gaitSpeed(GIRAFFE, "walk") * 400;
-    sky(ink, 640, [[0, "#8fc7e8"], [1, "#e6f2ef"]]); sun(ink, 1650, 150, 60);
-    ground(ink, 640, "#dcc27a", "#c9a55a", 0, 81);
-    for (let k = -1; k < 2; k++) { g.save(); g.translate(-((off * 0.4) % 1920) + k * 1920, 0); acacia(ink, 300, 690, 230, "#86a252", 83); acacia(ink, 1250, 700, 270, "#7c9a4a", 84); g.restore(); }
-    for (let k = -1; k < 2; k++) { g.save(); g.translate(-(off % 1920) + k * 1920, 0); ink.seed(85); ink.hatch([[0, 640], [1920, 640], [1920, 1080], [0, 1080]], 160, 18, "rgba(110,90,40,0.5)", 2.4, -Math.PI / 2, 0.7); g.restore(); }
+    savanna(ink, t, 640, 81, off);
+    for (let k = -1; k < 2; k++) { g.save(); g.translate(-((off * 0.6) % 1920) + k * 1920, 0); acacia(ink, 300, 700, 230, "#86a252", 83); acacia(ink, 1250, 710, 270, "#7c9a4a", 84); g.restore(); }
     void v;
     const tw = walking ? lt : wt(3, "alarm") - SHOTS_AT.H, kz = gaitSpeed(GIRAFFE, "walk") * 400 / (gaitSpeed(ZEBRA, "walk") * 170);
     quad(ink, ZEBRA, 560, 1000, 170, { gait: walking ? "walk" : "stand", t: tw * kz + 0.3 });
@@ -169,10 +219,8 @@ const SHOTS: Shot[] = [
   // I. "If a lion gets close, it can sprint at sixty kilometres an hour." (gallop, speedometer climbing)
   { at: W0(4, "if"), whip: true, frame: () => [1000, 620, 0.8], draw: (ink, t, lt) => {
     const g = ink.g, vG = gaitSpeed(GIRAFFE, "gallop") * 430, scroll = (lt * vG * 0.45) % 1920;
-    sky(ink, 640, [[0, "#8fc7e8"], [1, "#e6f2ef"]]); sun(ink, 1650, 150, 62);
-    ground(ink, 640, "#dcc27a", "#c9a55a", 0, 32);
-    for (let k = 0; k < 2; k++) { g.save(); g.translate(-scroll + k * 1920, 0); acacia(ink, 400, 690, 240, "#86a252", 33); acacia(ink, 1300, 700, 300, "#7c9a4a", 34); g.restore(); }
-    for (let k = 0; k < 2; k++) { g.save(); g.translate(-((lt * vG) % 1920) + k * 1920, 0); ink.seed(35); ink.hatch([[0, 640], [1920, 640], [1920, 1080], [0, 1080]], 160, 18, "rgba(110,90,40,0.5)", 2.4, -Math.PI / 2, 0.7); g.restore(); }
+    savanna(ink, t, 640, 31, lt * vG);
+    for (let k = 0; k < 2; k++) { g.save(); g.translate(-((lt * vG * 0.6) % 1920) + k * 1920, 0); acacia(ink, 400, 700, 240, "#86a252", 33); acacia(ink, 1300, 710, 300, "#7c9a4a", 34); g.restore(); }
     quad(ink, LIONESS, 380 - lt * 60, 990, 130, { gait: "gallop", t: t * 0.9, emotion: "sad" }); dust(ink, 290 - lt * 60, 990, t + 0.3);
     quad(ink, GIRAFFE, 1050, 1000, 430, { gait: "gallop", t, emotion: "determined" });
     speedLines(ink, 760, 520, 5, 220, t); dust(ink, 860, 1000, t);
