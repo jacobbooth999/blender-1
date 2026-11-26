@@ -236,7 +236,7 @@ const world = (scene: THREE.Scene, opts: { water?: V; seed?: number } = {}) => {
   const r = rock(1.4, 4); r.position.set(14, 0, -22); scene.add(r);
   grassField(scene, -30, 30, -25, 0.5, 1400, 21, 0.45); grassField(scene, -8, 8, 0.5, 5, 90, 22, 0.3);
   // clouds
-  reseed(31); for (let k = 0; k < 9; k++) { const cg = new THREE.Group(), cm = M("#ffffff", 1, { emissive: "#ffffff", emissiveIntensity: 0.25 }); for (let i = 0; i < 6; i++) ball(cg, cm, [(i - 2.5) * 3 + rnd(), rnd() * 2, rnd() * 2], [3 + rnd() * 2, 2 + rnd() * 1.5, 2.5]); cg.position.set(-120 + rnd() * 240, 35 + rnd() * 30, -150 - rnd() * 60); scene.add(cg); }
+  reseed(31); for (let k = 0; k < 9; k++) { const cg = new THREE.Group(), cm = M("#ffffff", 1, { emissive: "#ffffff", emissiveIntensity: 0.25 }); for (let i = 0; i < 6; i++) ball(cg, cm, [(i - 2.5) * 3 + rnd(), rnd() * 2, rnd() * 2], [3 + rnd() * 2, 2 + rnd() * 1.5, 2.5]); cg.position.set(-120 + rnd() * 240, 35 + rnd() * 30, -150 - rnd() * 60); cg.traverse((o) => { o.userData.noOutline = true; }); scene.add(cg); }
   if (opts.water) {
     const w = new THREE.Mesh(new THREE.CircleGeometry(1, 64), M("#4b97c8", 0.12, { metalness: 0.1 })); w.rotation.x = -Math.PI / 2; w.position.set(...opts.water); w.position.y = 0.03; w.scale.set(4.2, 2.6, 1); w.receiveShadow = true; scene.add(w);
     const rim = new THREE.Mesh(new THREE.RingGeometry(1, 1.12, 64), M("#8c6a45", 0.9)); rim.rotation.x = -Math.PI / 2; rim.position.copy(w.position); rim.position.y = 0.025; rim.scale.copy(w.scale); scene.add(rim);
@@ -290,11 +290,11 @@ const SHOTS: Shot[] = [
   // 6. the kick: WHAM
   { cap: ["ONE", "KICK"], hi: 1, build: (s, cam) => {
     world(s);
-    place(giraffe({ emo: "determined", look: [-0.4, -0.3, 1], legs: { hn: { foot: [-2.5, 1.2, 0.32], bend: -1 } } }), [1.2, 0, 0], 0, s);
-    const l = lioness({ emo: "dazed", pose: "flying", scale: 1.1 }); place(l, [-2.5, 1.0, 0.4], 0.3, s); l.rotation.z = 0.7;
+    place(giraffe({ emo: "determined", look: [-0.4, -0.3, 1], legs: { hn: { foot: [-2.5, 1.2, 0.32], bend: -1 } } }), [0.2, 0, 0], 0, s);
+    const l = lioness({ emo: "dazed", pose: "flying", scale: 1.1 }); place(l, [-3.1, 1.0, 0.4], 0.3, s); l.rotation.z = 0.7;
     const star = (p: V, c: string) => { const m = new THREE.Mesh(new THREE.OctahedronGeometry(0.22), M(c, 0.4, { emissive: c, emissiveIntensity: 0.6 })); m.position.set(...p); m.scale.set(1, 1, 0.3); s.add(m); };
-    star([-2.4, 3.0, 0.6], "#ffd33d"); star([-1.9, 3.3, 0.4], "#ffd33d"); star([-2.9, 3.2, 0.5], "#ffffff");
-    cam.position.set(-0.6, 1.8, 12.5); cam.lookAt(-0.6, 2.4, 0); cam.fov = 55;
+    star([-3.0, 3.0, 0.6], "#ffd33d"); star([-2.5, 3.3, 0.4], "#ffd33d"); star([-3.5, 3.2, 0.5], "#ffffff");
+    cam.position.set(-1.1, 1.8, 14); cam.lookAt(-1.1, 2.4, 0); cam.fov = 55;
   } },
   // 7. mother guards her calf
   { cap: ["THE", "BABIES"], hi: 1, build: (s, cam) => {
@@ -315,12 +315,36 @@ const drawCaption = (g: CanvasRenderingContext2D, W: number, H: number, words: s
     g.shadowColor = "transparent"; g.fillStyle = i === hi ? "#ffd33d" : "#ffffff"; g.fillText(w, 0, 0); g.restore(); x += ws[i] + sp; });
 };
 
+
+// ---------- ink look in 3D: cel shading + inverted-hull ink outlines (the 2D ink-outline style, in 3D) ----------
+const INK3D = () => ((globalThis as { INK3D?: boolean }).INK3D ?? false);
+const toonRamp = (() => { let t: THREE.DataTexture | null = null; return () => { if (t) return t; const d = new Uint8Array([120, 120, 120, 255, 205, 205, 205, 255, 255, 255, 255, 255]); t = new THREE.DataTexture(d, 3, 1, THREE.RGBAFormat); t.minFilter = t.magFilter = THREE.NearestFilter; t.needsUpdate = true; return t; }; })();
+const outlineMat = new THREE.ShaderMaterial({
+  side: THREE.BackSide, uniforms: { w: { value: 0.0035 }, col: { value: new THREE.Color("#1d1a1c") } },
+  vertexShader: `uniform float w; void main(){ vec4 wp = modelMatrix * vec4(position, 1.0); vec3 wn = normalize(transpose(inverse(mat3(modelMatrix))) * normal); float d = distance(cameraPosition, wp.xyz); wp.xyz += wn * w * d; gl_Position = projectionMatrix * viewMatrix * wp; }`,
+  fragmentShader: `uniform vec3 col; void main(){ gl_FragColor = vec4(col, 1.0); }`,
+});
+const inkify = (scene: THREE.Scene) => {
+  const add: [THREE.Object3D, THREE.Mesh][] = [];
+  scene.traverse((o) => {
+    const m = o as THREE.Mesh; if (!m.isMesh) return;
+    const sm = m.material as THREE.MeshStandardMaterial;
+    if (sm && sm.isMeshStandardMaterial) {
+      const tm = new THREE.MeshToonMaterial({ color: sm.color, map: sm.map, gradientMap: toonRamp(), transparent: sm.transparent, opacity: sm.opacity, emissive: sm.emissive, emissiveIntensity: sm.emissiveIntensity });
+      if ((sm as unknown as { fog?: boolean }).fog === false) tm.fog = false;
+      m.material = tm;
+    }
+    if (m.castShadow && !(m as unknown as THREE.InstancedMesh).isInstancedMesh && !m.userData.noOutline && !sm?.transparent) add.push([m.parent!, m]);
+  });
+  for (const [par, m] of add) { const o = new THREE.Mesh(m.geometry, outlineMat); o.position.copy(m.position); o.quaternion.copy(m.quaternion); o.scale.copy(m.scale); par.add(o); }
+};
 let renderer: THREE.WebGLRenderer | null = null;
 (window as unknown as { RENDER3D: unknown }).RENDER3D = (k: number, W: number, H: number) => {
   if (!renderer) { renderer = new THREE.WebGLRenderer({ antialias: true, preserveDrawingBuffer: true }); renderer.shadowMap.enabled = true; renderer.shadowMap.type = THREE.PCFSoftShadowMap; renderer.toneMapping = THREE.ACESFilmicToneMapping; renderer.toneMappingExposure = 1.05; renderer.outputColorSpace = THREE.SRGBColorSpace; }
-  renderer.setSize(W, H, false);
+  renderer.setSize(W, H, false); renderer.toneMapping = INK3D() ? THREE.NoToneMapping : THREE.ACESFilmicToneMapping;
   const scene = new THREE.Scene(), cam = new THREE.PerspectiveCamera(50, W / H, 0.1, 800);
   SHOTS[k].build(scene, cam); cam.updateProjectionMatrix();
+  if (INK3D()) inkify(scene);
   renderer.render(scene, cam);
   const out = document.createElement("canvas"); out.width = W; out.height = H; const g = out.getContext("2d")!;
   g.drawImage(renderer.domElement, 0, 0); drawCaption(g, W, H, SHOTS[k].cap, SHOTS[k].hi);

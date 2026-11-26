@@ -13,6 +13,7 @@ const p = await b.newPage();
 p.on("pageerror", (e) => console.log("ERR", e.message));
 p.on("console", (m) => { if (m.type() === "error") console.log("console:", m.text().slice(0, 300)); });
 await p.setContent(`<html><head><style>@font-face{font-family:"Bangers";src:url(data:font/woff2;base64,${font}) format("woff2");}body{margin:0}</style></head><body></body></html>`);
+if (process.env.INK3D) await p.evaluate(() => { globalThis.INK3D = true; });
 await p.addScriptTag({ content: js });
 await p.evaluate(async () => { await document.fonts.load('40px "Bangers"'); });
 const n = await p.evaluate(() => window.N3D);
