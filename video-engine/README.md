@@ -32,3 +32,10 @@ To change the voice, set the `VOICE` environment variable to another Piper `.onn
 - The `title` scene takes `icon: "none"` and `mark: "underline"`, as well as the crown and X.
 - `python3 autocrop.py` finds the person (or artwork) in each photo with rembg and writes `img/autocrop.json`. `photos.py` uses it to frame the subject automatically.
 - Photos can come from Openverse (Flickr) as well as Wikimedia Commons. Only use CC BY, CC BY-SA, CC0 or public domain, never NC or ND licences, on a monetized channel.
+
+## Added for the Amazon video
+- `story.masthead` sets the newspaper name (the default is "The Matchday Chronicle"), so the engine works for any topic.
+- `story.music: "dark"` switches the score to slow minor-key moods, for horror and mystery topics.
+- Map scenes accept a per-scene `span` (the width in degrees). Wide maps use unclipped land outlines, so land and sea always fill correctly.
+- Stat numbers can have decimals (for example `5.5`), and front pages without a photo use a two-column layout.
+- Photos under 900px wide are never shown full screen, to avoid blur.

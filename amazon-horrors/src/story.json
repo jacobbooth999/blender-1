@@ -1,0 +1,630 @@
+{
+ "title": "The Horrors of the Amazon",
+ "masthead": "The Expedition Chronicle",
+ "music": "dark",
+ "minSpan": 7,
+ "places": {
+  "cuiaba": [
+   -56.1,
+   -15.6,
+   "CUIABÁ"
+  ],
+  "xingu": [
+   -53.2,
+   -11.8,
+   "UPPER XINGU"
+  ],
+  "lima": [
+   -77.04,
+   -12.05,
+   "LIMA"
+  ],
+  "pucallpa": [
+   -74.55,
+   -8.38,
+   "PUCALLPA"
+  ],
+  "boiling": [
+   -74.73,
+   -9.05,
+   "BOILING RIVER"
+  ],
+  "araracuara": [
+   -72.4,
+   -0.6,
+   "ARARACUARA"
+  ],
+  "guaviare": [
+   -72.64,
+   2.57,
+   "SAN JOSÉ DEL GUAVIARE"
+  ]
+ },
+ "start": "cuiaba",
+ "scenes": [
+  {
+   "type": "stat",
+   "vo": "It covers five and a half million square kilometres. It spans nine countries and territories. And almost everything in it can hurt you.",
+   "kicker": "The Amazon rainforest",
+   "photo": {
+    "slot": "jaguar",
+    "pos": "47% 4%",
+    "src": "jaguar",
+    "size": "224% auto"
+   },
+   "rows": [
+    {
+     "id": "n0",
+     "num": 5.5,
+     "label": "SQUARE KILOMETRES",
+     "cue": "five and a half million",
+     "suffix": "M"
+    }
+   ],
+   "foot": "[[h0|Almost everything in it can hurt you.]]",
+   "cues": {
+    "h0": "almost everything in it"
+   }
+  },
+  {
+   "type": "stat",
+   "vo": "Eels that fire eight hundred and sixty volts.",
+   "kicker": "The Amazon, 2019",
+   "photo": {
+    "slot": "eel",
+    "pos": "90% 43%",
+    "src": "eel",
+    "size": "218% auto"
+   },
+   "rows": [
+    {
+     "id": "n1",
+     "num": 860,
+     "suffix": "V",
+     "label": "FROM ONE ELECTRIC EEL",
+     "cue": "eight hundred and sixty volts"
+    }
+   ],
+   "cues": {}
+  },
+  {
+   "type": "clip",
+   "vo": "Ants whose sting hurts for a full day. Spiders, snakes, parasites. And a river that boils.",
+   "kicker": "Field notes",
+   "hed": "WELCOME TO THE GREEN HELL",
+   "photo": {
+    "slot": "spider",
+    "pos": "30% 50%",
+    "cap": "A Brazilian wandering spider.",
+    "src": "spider",
+    "size": "134% auto"
+   },
+   "body": [
+    "An ant whose sting [[c0|hurts for a full day]].",
+    "Spiders. Snakes. Parasites. And a [[c1|river that boils]]."
+   ],
+   "cues": {
+    "c0": "hurts for a full day",
+    "c1": "river that boils"
+   }
+  },
+  {
+   "type": "quote",
+   "vo": "Explorers called it the green hell. Some walked in, and were never seen again. This is the dark side of the Amazon.",
+   "pre": "Explorers called it [[q0|the green hell]].",
+   "text": "Some were never seen again.",
+   "by": "",
+   "cues": {
+    "q0": "green hell",
+    "qt": "never seen again"
+   }
+  },
+  {
+   "type": "title",
+   "vo": "The horrors of the Amazon.",
+   "line1": "THE HORRORS",
+   "line2": "of the",
+   "line3": "AMAZON",
+   "icon": "none",
+   "mark": "underline",
+   "cues": {
+    "cross": "horrors of the Amazon"
+   }
+  },
+  {
+   "type": "chapter",
+   "num": "I",
+   "title": "Lost",
+   "vo": "Chapter one. Lost."
+  },
+  {
+   "type": "map",
+   "vo": "In 1925, the British explorer Percy Fawcett set out from Cuiabá, into the Brazilian jungle, searching for a lost city he called Z.",
+   "legs": [
+    [
+     "cuiaba",
+     "xingu",
+     "set out from Cuiabá"
+    ]
+   ],
+   "note": "1925: the search for [[m0|the lost city of Z]]",
+   "cues": {
+    "m0": "lost city"
+   },
+   "span": 36
+  },
+  {
+   "type": "front",
+   "vo": "With him were his son Jack, and Jack's friend Raleigh Rimell. Fawcett had insisted that no one should come looking for them if they failed to return. The three men were never seen again.",
+   "date": "May 29, 1925",
+   "place": "Mato Grosso",
+   "kicker": "Mato Grosso, Brazil",
+   "hed": "FAWCETT VANISHES",
+   "dek": "Explorer, son and friend [[f0|never seen again]]",
+   "body": [
+    "Colonel Percy Fawcett, his son Jack and Raleigh Rimell disappear in the Brazilian interior.",
+    "Fawcett had insisted [[f1|no one should come looking]] for them."
+   ],
+   "cues": {
+    "f0": "never seen again",
+    "f1": "no one should come looking"
+   }
+  },
+  {
+   "type": "file",
+   "vo": "They came anyway. Dozens of expeditions went looking for them. Some of those searchers never came back. The jungle kept its secret.",
+   "title": "Case file: Fawcett",
+   "stamp": "UNSOLVED",
+   "rows": [
+    [
+     "MISSING",
+     "Percy Fawcett, Jack Fawcett, Raleigh Rimell"
+    ],
+    [
+     "SEARCHES",
+     "[[r0|Dozens of expeditions]]"
+    ],
+    [
+     "STATUS",
+     "[[r1|Never found]]"
+    ]
+   ],
+   "cues": {
+    "r0": "Dozens of expeditions",
+    "r1": "kept its secret"
+   }
+  },
+  {
+   "type": "chapter",
+   "num": "II",
+   "title": "In the Water",
+   "vo": "Chapter two. In the water."
+  },
+  {
+   "type": "clip",
+   "vo": "In 2019, scientists described a new species of electric eel. One was measured firing eight hundred and sixty volts. The strongest discharge of any animal ever recorded.",
+   "kicker": "The Amazon basin, 2019",
+   "hed": "860 VOLTS",
+   "photo": {
+    "slot": "eel",
+    "pos": "90% 43%",
+    "cap": "An electric eel.",
+    "src": "eel",
+    "size": "218% auto"
+   },
+   "body": [
+    "A newly described electric eel delivers [[c0|860 volts]].",
+    "It is the [[c1|strongest shock of any animal]] on record."
+   ],
+   "cues": {
+    "c0": "eight hundred and sixty volts",
+    "c1": "strongest discharge"
+   }
+  },
+  {
+   "type": "clip",
+   "vo": "And piranhas? Their reputation is mostly a myth. Attacks on people are rare, and usually just a bite, often in the dry season, when the water is low.",
+   "kicker": "Myth check",
+   "hed": "THE PIRANHA MYTH",
+   "photo": {
+    "slot": "piranha",
+    "pos": "6% 50%",
+    "cap": "A red-bellied piranha.",
+    "src": "piranha",
+    "size": "122% auto"
+   },
+   "body": [
+    "Piranha attacks on people are [[c0|rare]].",
+    "Most are a single bite, often [[c1|in the dry season]]."
+   ],
+   "cues": {
+    "c0": "Attacks on people are rare",
+    "c1": "dry season"
+   }
+  },
+  {
+   "type": "file",
+   "vo": "Then there's the candiru. A tiny catfish, said to swim into the human body. In reality, there's just one disputed medical case, and experiments found it isn't attracted to urine at all.",
+   "title": "Myth file: the candiru",
+   "stamp": "MOSTLY MYTH",
+   "rows": [
+    [
+     "CLAIM",
+     "A fish that [[r0|swims into the human body]]"
+    ],
+    [
+     "EVIDENCE",
+     "One [[r1|disputed case]], 1997"
+    ],
+    [
+     "TESTS",
+     "[[r2|Not attracted to urine]]"
+    ]
+   ],
+   "cues": {
+    "r0": "swim into the human body",
+    "r1": "disputed medical case",
+    "r2": "isn't attracted to urine"
+   }
+  },
+  {
+   "type": "clip",
+   "vo": "The real giants are harder to joke about. The black caiman can grow to five metres. The largest predator in the Amazon.",
+   "kicker": "The riverbank",
+   "hed": "THE BLACK CAIMAN",
+   "photo": {
+    "slot": "caiman",
+    "pos": "76% 50%",
+    "cap": "A black caiman.",
+    "src": "caiman",
+    "size": "116% auto"
+   },
+   "body": [
+    "Up to [[c0|five metres]] long.",
+    "The [[c1|largest predator]] in the Amazon."
+   ],
+   "cues": {
+    "c0": "five metres",
+    "c1": "largest predator"
+   }
+  },
+  {
+   "type": "clip",
+   "vo": "And the green anaconda is the heaviest snake on Earth. It doesn't use venom. It squeezes.",
+   "kicker": "The swamp",
+   "hed": "THE GREEN ANACONDA",
+   "photo": {
+    "slot": "anaconda",
+    "pos": "0% 50%",
+    "cap": "A green anaconda.",
+    "src": "anaconda",
+    "size": "130% auto"
+   },
+   "body": [
+    "The [[c0|heaviest snake]] on Earth.",
+    "No venom. [[c1|It squeezes]]."
+   ],
+   "cues": {
+    "c0": "heaviest snake",
+    "c1": "It squeezes"
+   }
+  },
+  {
+   "type": "chapter",
+   "num": "III",
+   "title": "Small Killers",
+   "vo": "Chapter three. Small killers."
+  },
+  {
+   "type": "stat",
+   "vo": "The bullet ant has the most painful sting of any insect, rated at the very top of the Schmidt pain index. The pain can last up to twenty four hours.",
+   "kicker": "Paraponera clavata",
+   "photo": {
+    "slot": "bulletant2",
+    "pos": "67% 8%",
+    "src": "bulletant2",
+    "size": "172% auto"
+   },
+   "rows": [
+    {
+     "id": "n2",
+     "num": 24,
+     "suffix": " HRS",
+     "label": "OF PAIN FROM ONE STING",
+     "cue": "twenty four hours"
+    }
+   ],
+   "foot": "[[h0|The most painful sting]] of any insect.",
+   "cues": {
+    "h0": "most painful sting"
+   }
+  },
+  {
+   "type": "quote",
+   "vo": "For the Sateré-Mawé people, young men wear gloves woven with hundreds of these ants, as a rite of passage into manhood.",
+   "pre": "Gloves woven with [[q0|hundreds of ants]].",
+   "text": "A rite of passage.",
+   "by": "The Sateré-Mawé people, Brazil",
+   "cues": {
+    "q0": "hundreds of these ants",
+    "qt": "rite of passage"
+   }
+  },
+  {
+   "type": "clip",
+   "vo": "The Brazilian wandering spider has one of the most potent venoms of any spider. Thanks to antivenom, deaths today are rare.",
+   "kicker": "The forest floor",
+   "hed": "THE WANDERING SPIDER",
+   "photo": {
+    "slot": "spider",
+    "pos": "30% 50%",
+    "cap": "A Brazilian wandering spider.",
+    "src": "spider",
+    "size": "134% auto"
+   },
+   "body": [
+    "One of the [[c0|most potent venoms]] of any spider.",
+    "Thanks to [[c1|antivenom]], deaths are now rare."
+   ],
+   "cues": {
+    "c0": "most potent venoms",
+    "c1": "antivenom"
+   }
+  },
+  {
+   "type": "clip",
+   "vo": "The human botfly lays its eggs on mosquitoes. When a mosquito bites, the larvae drop onto the skin, and burrow in. They grow there for weeks.",
+   "kicker": "Parasites",
+   "hed": "THE BOTFLY",
+   "photo": {
+    "slot": "botfly",
+    "pos": "52% 0%",
+    "cap": "A botfly larva (rabbit botfly, a close relative).",
+    "src": "botfly",
+    "size": "117% auto"
+   },
+   "body": [
+    "Eggs carried by [[c0|mosquitoes]].",
+    "The larvae [[c1|burrow into the skin]] and grow for weeks."
+   ],
+   "cues": {
+    "c0": "eggs on mosquitoes",
+    "c1": "burrow in"
+   }
+  },
+  {
+   "type": "file",
+   "vo": "But the deadliest creature in the Amazon is the smallest. Mosquitoes carry malaria, dengue and yellow fever.",
+   "title": "Threat file: the mosquito",
+   "stamp": "DEADLIEST",
+   "rows": [
+    [
+     "SIZE",
+     "[[r0|A few millimetres]]"
+    ],
+    [
+     "CARRIES",
+     "[[r1|Malaria]], dengue, yellow fever"
+    ]
+   ],
+   "cues": {
+    "r0": "the smallest",
+    "r1": "malaria"
+   }
+  },
+  {
+   "type": "chapter",
+   "num": "IV",
+   "title": "The Hunter",
+   "vo": "Chapter four. The hunter."
+  },
+  {
+   "type": "clip",
+   "vo": "The jaguar is the largest cat in the Americas. Most big cats go for the throat. The jaguar bites straight through the skull.",
+   "kicker": "The canopy",
+   "hed": "THE JAGUAR",
+   "photo": {
+    "slot": "jaguar2",
+    "pos": "100% 50%",
+    "cap": "A jaguar.",
+    "src": "jaguar2",
+    "size": "109% auto"
+   },
+   "body": [
+    "The [[c0|largest cat in the Americas]].",
+    "Its bite goes [[c1|straight through the skull]]."
+   ],
+   "cues": {
+    "c0": "largest cat",
+    "c1": "through the skull"
+   }
+  },
+  {
+   "type": "chapter",
+   "num": "V",
+   "title": "The Boiling River",
+   "vo": "Chapter five. The boiling river."
+  },
+  {
+   "type": "map",
+   "vo": "Deep in the Peruvian Amazon, hundreds of kilometres from any active volcano, there's a river that runs hot enough to kill.",
+   "legs": [
+    [
+     "pucallpa",
+     "boiling",
+     "Peruvian Amazon"
+    ]
+   ],
+   "note": "Shanay-Timpishka: [[m0|hot enough to kill]]",
+   "cues": {
+    "m0": "hot enough to kill"
+   },
+   "span": 16
+  },
+  {
+   "type": "stat",
+   "vo": "Its water averages about eighty six degrees, and in places gets close to boiling. Animals that fall in are cooked alive.",
+   "kicker": "Shanay-Timpishka, Peru",
+   "rows": [
+    {
+     "id": "n3",
+     "num": 86,
+     "suffix": "°C",
+     "label": "AVERAGE WATER TEMPERATURE",
+     "cue": "eighty six degrees"
+    }
+   ],
+   "foot": "Animals that fall in are [[h0|cooked alive]].",
+   "cues": {
+    "h0": "cooked alive"
+   }
+  },
+  {
+   "type": "chapter",
+   "num": "VI",
+   "title": "Survivors",
+   "vo": "Chapter six. Survivors."
+  },
+  {
+   "type": "map",
+   "vo": "On Christmas Eve 1971, a plane flying from Lima to Pucallpa broke apart in a storm over the jungle.",
+   "legs": [
+    [
+     "lima",
+     "pucallpa",
+     "from Lima to Pucallpa"
+    ]
+   ],
+   "note": "December 24, 1971: [[m0|broke apart in a storm]]",
+   "cues": {
+    "m0": "broke apart"
+   },
+   "span": 16
+  },
+  {
+   "type": "front",
+   "vo": "Seventeen year old Juliane Koepcke fell around three kilometres, still strapped to her seat. She survived, and walked through the jungle alone for eleven days, until she found help.",
+   "date": "January 1972",
+   "place": "Pucallpa",
+   "kicker": "Peruvian Amazon",
+   "hed": "SOLE SURVIVOR",
+   "dek": "Girl, 17, falls [[f0|three kilometres]] and walks out of the jungle",
+   "body": [
+    "Juliane Koepcke survives the fall still strapped into her seat.",
+    "She walks alone for [[f1|eleven days]] before finding help."
+   ],
+   "cues": {
+    "f0": "three kilometres",
+    "f1": "eleven days"
+   }
+  },
+  {
+   "type": "map",
+   "vo": "And in 2023, in the Colombian Amazon, four children survived a plane crash that killed their mother.",
+   "legs": [
+    [
+     "araracuara",
+     "guaviare",
+     "Colombian Amazon"
+    ]
+   ],
+   "note": "May 2023: [[m0|four children survive]]",
+   "cues": {
+    "m0": "four children"
+   },
+   "span": 18
+  },
+  {
+   "type": "stat",
+   "vo": "They were found alive forty days later. Their knowledge of the forest, which seeds and fruit were safe to eat, kept them alive.",
+   "kicker": "Colombia, June 2023",
+   "rows": [
+    {
+     "id": "n4",
+     "num": 40,
+     "label": "DAYS ALONE IN THE JUNGLE",
+     "cue": "forty days"
+    }
+   ],
+   "foot": "Their [[h0|knowledge of the forest]] saved them.",
+   "cues": {
+    "h0": "knowledge of the forest"
+   }
+  },
+  {
+   "type": "chapter",
+   "num": "VII",
+   "title": "The Real Horror",
+   "vo": "Chapter seven. The real horror."
+  },
+  {
+   "type": "stat",
+   "vo": "But the biggest threat in the Amazon isn't a jaguar, or a spider. It's us. Roughly one sixth of the rainforest has already been destroyed.",
+   "kicker": "Deforestation",
+   "rows": [
+    {
+     "id": "n5",
+     "num": 17,
+     "suffix": "%",
+     "label": "OF THE RAINFOREST ALREADY LOST",
+     "cue": "one sixth"
+    }
+   ],
+   "foot": "[[h0|It's us.]]",
+   "cues": {
+    "h0": "It's us"
+   }
+  },
+  {
+   "type": "quote",
+   "vo": "Scientists warn that if losses reach around twenty to twenty five percent, parts of the Amazon could pass a tipping point, and start turning into dry savanna.",
+   "pre": "At 20 to 25 percent loss: [[q0|a tipping point]].",
+   "text": "Rainforest could turn to savanna.",
+   "by": "",
+   "cues": {
+    "q0": "tipping point",
+    "qt": "dry savanna"
+   }
+  },
+  {
+   "type": "file",
+   "vo": "There is hope. In the year to July 2026, Brazil's deforestation alerts fell to their lowest level in more than a decade.",
+   "title": "Status file: 2026",
+   "stamp": "HOPE",
+   "rows": [
+    [
+     "ALERTS",
+     "[[r0|Lowest in over a decade]]"
+    ],
+    [
+     "TIPPING POINT",
+     "Not yet reached"
+    ]
+   ],
+   "cues": {
+    "r0": "lowest level"
+   }
+  },
+  {
+   "type": "verdict",
+   "vo": "So, could you survive one night alone in the Amazon? Tell me in the comments. And subscribe, for the next story.",
+   "q": "COULD YOU SURVIVE?",
+   "opts": [
+    "YES",
+    "NO"
+   ],
+   "cta": "Tell me in the comments",
+   "photo": {
+    "slot": "jaguar",
+    "pos": "47% 4%",
+    "pc": "Watching...",
+    "src": "jaguar",
+    "size": "224% auto"
+   },
+   "cues": {
+    "q0": "survive one night",
+    "cta": "comments"
+   }
+  }
+ ]
+}

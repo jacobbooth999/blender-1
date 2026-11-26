@@ -1,0 +1,78 @@
+{
+ "all": {
+  "size": "120% auto",
+  "pos": "6% 0%"
+ },
+ "anaconda": {
+  "size": "130% auto",
+  "pos": "0% 50%"
+ },
+ "botfly": {
+  "size": "117% auto",
+  "pos": "52% 0%"
+ },
+ "bulletant": {
+  "size": "152% auto",
+  "pos": "42% 0%"
+ },
+ "bulletant2": {
+  "size": "172% auto",
+  "pos": "67% 8%"
+ },
+ "caiman": {
+  "size": "116% auto",
+  "pos": "76% 50%"
+ },
+ "eel": {
+  "size": "218% auto",
+  "pos": "90% 43%"
+ },
+ "jaguar": {
+  "size": "224% auto",
+  "pos": "47% 4%"
+ },
+ "jaguar2": {
+  "size": "109% auto",
+  "pos": "100% 50%"
+ },
+ "piranha": {
+  "size": "122% auto",
+  "pos": "6% 50%"
+ },
+ "sheet_anaconda": {
+  "size": "818% auto",
+  "pos": "42% 50%"
+ },
+ "sheet_boiling": {
+  "size": "818% auto",
+  "pos": "53% 50%"
+ },
+ "sheet_botfly": {
+  "size": "818% auto",
+  "pos": "30% 50%"
+ },
+ "sheet_caiman": {
+  "size": "818% auto",
+  "pos": "35% 50%"
+ },
+ "sheet_eel": {
+  "size": "953% auto",
+  "pos": "29% 0%"
+ },
+ "sheet_jaguar": {
+  "size": "1981% auto",
+  "pos": "39% 32%"
+ },
+ "sheet_piranha": {
+  "size": "818% auto",
+  "pos": "59% 50%"
+ },
+ "sheet_spider": {
+  "size": "818% auto",
+  "pos": "0% 50%"
+ },
+ "spider": {
+  "size": "134% auto",
+  "pos": "30% 50%"
+ }
+}

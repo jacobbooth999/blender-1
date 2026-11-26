@@ -1,0 +1,1 @@
+window.CREDITS={"jaguar": "Gregory 'Slobirdr' Smith / CC BY-SA 2.0", "eel": "skpy / CC BY-SA 2.0", "spider": "berniedup / CC BY-SA 2.0", "piranha": "nic_r / CC BY-SA 2.0", "caiman": "D-Stanley / CC BY 2.0", "anaconda": "Opt1mus76 / CC BY 2.0", "bulletant2": "EOL Learning and Education Group / CC BY 2.0", "botfly": "treegrow / CC BY 2.0", "jaguar2": "e³°°° / CC BY-SA 2.0"};

@@ -69,11 +69,10 @@ const world=document.getElementById('world');
 function photoHTML(p,h,extra=''){if(!p)return'';const cr=(window.CREDITS||{})[p.src]||'';
  return `<div class="photo ph" style="height:${h}px;background-image:url(${imgurl(p.src)});background-position:${p.pos||'50% 30%'};${p.size?'background-size:'+p.size:''};${extra}"></div>${p.cap!==undefined||cr?`<div class="cap">${p.cap||''} ${cr?'Photo: '+cr:''}</div>`:''}`;}
 const B={
- front:(s,i)=>`<div class="sheet torn txt" style="width:1180px"><div class="mast">The Matchday Chronicle</div><div class="rule"></div>
+ front:(s,i)=>`<div class="sheet torn txt" style="width:1180px"><div class="mast">${ST.masthead||"The Matchday Chronicle"}</div><div class="rule"></div>
   <div class="dateline"><span>${s.date}</span><span>${s.place}</span><span>Archive</span></div><div class="rule"></div>
   <div class="kicker" style="margin-top:14px">${s.kicker}</div><div class="hed" style="font-size:120px;margin-top:6px">${s.hed}</div>
-  <div class="dek">${MD(s.dek)}</div><div style="display:flex;gap:34px"><div style="flex:1.1">${photoHTML(s.photo,430)}</div>
-  <div class="body" style="flex:1">${s.body.map(b=>`<p>${MD(b)}</p>`).join('')}</div></div></div>`,
+  <div class="dek">${MD(s.dek)}</div>${s.photo?`<div style="display:flex;gap:34px"><div style="flex:1.1">${photoHTML(s.photo,430)}</div><div class="body" style="flex:1">${s.body.map(b=>`<p>${MD(b)}</p>`).join('')}</div></div>`:`<div class="body" style="column-count:2;column-gap:40px;font-size:34px">${s.body.map(b=>`<p>${MD(b)}</p>`).join('')}</div>`}</div>`,
  clip:(s,i)=>`<div class="sheet torn txt" style="width:1180px"><div class="kicker">${s.kicker}</div><div class="hed" style="font-size:${s.hed.length>18?96:118}px;margin:8px 0 6px">${s.hed}</div><div class="rule"></div>
   <div style="display:flex;gap:36px;margin-top:16px;align-items:flex-start">${s.photo?`<div style="flex:1.05">${photoHTML(s.photo,470)}</div>`:''}
   <div class="body" style="flex:1;font-size:36px">${s.body.map(b=>`<p>${MD(b)}</p>`).join('')}</div></div></div>`,
@@ -87,7 +86,7 @@ const B={
   <div class="quote-big" data-qt>${s.text.split(' ').map(w=>`<span class="w">${w}</span>`).join(' ')}</div>
   <svg class="draw qline" viewBox="0 0 600 30" preserveAspectRatio="none" style="width:70%;height:30px;display:block;margin:0 auto"><path d="M5 20 C 150 8, 420 26, 595 12" stroke-width="7"/></svg>
   ${s.by?`<div class="kicker" style="margin-top:18px;color:#4a443c">— ${s.by}</div>`:''}</div>`,
- title:(s,i)=>`<div class="sheet torn txt" style="width:1400px;padding:70px 80px 90px;text-align:center"><div class="mast" style="font-size:52px">The Matchday Chronicle</div><div class="rule"></div>
+ title:(s,i)=>`<div class="sheet torn txt" style="width:1400px;padding:70px 80px 90px;text-align:center"><div class="mast" style="font-size:52px">${ST.masthead||"The Matchday Chronicle"}</div><div class="rule"></div>
   <div class="hed" style="font-size:150px;margin-top:30px">${s.line1}</div><div class="hed" style="font-size:96px;margin-top:6px;font-style:italic;font-weight:700">${s.line2}</div>
   <div style="position:relative;display:inline-block;margin-top:${s.icon=='none'?20:120}px">${s.icon=='none'?'':'<svg viewBox="0 0 200 120" style="position:absolute;left:50%;top:-128px;width:200px;margin-left:-100px"><path d="M20 105 L10 30 L60 70 L100 10 L140 70 L190 30 L180 105 Z" fill="#d9a520" stroke="#161412" stroke-width="7" stroke-linejoin="round"/><circle cx="100" cy="10" r="9" fill="#161412"/></svg>'}
   <span class="hed kingword" style="font-size:230px;letter-spacing:6px">${s.line3}</span>
@@ -99,10 +98,10 @@ const B={
    return `<path class="leg" data-cue="${l.cue}" d="M${a.x} ${a.y} Q${mx} ${my} ${b.x} ${b.y}" fill="none" stroke="#c8231b" stroke-width="9" stroke-linecap="round" stroke-dasharray="1 1"/>`}).join('');
   return `${s.photo?`<div class="polaroid" style="width:300px;height:390px;right:-90px;top:-150px;transform:rotate(7deg)"><div class="img" style="background-image:url(${imgurl(s.photo.src)});background-position:${s.photo.pos}"></div><div class="pc">${s.photo.pc||''}</div></div>`:''}<div class="sheet txt" style="width:1340px;padding:40px 50px 46px"><div style="display:flex;justify-content:space-between;align-items:baseline"><div class="hed" style="font-size:60px">The Journey</div><div class="body" style="font-size:36px">${MD(s.note)}</div></div><div class="rule"></div>
   <svg viewBox="0 0 ${m.w} ${m.h}" style="width:${m.w}px;height:${m.h}px;display:block;background:#efe5cc"><defs><pattern id="ht${i}" width="9" height="9" patternUnits="userSpaceOnUse"><circle cx="4.5" cy="4.5" r="2.3" fill="#6d6455"/></pattern></defs>
-  <rect width="${m.w}" height="${m.h}" fill="url(#ht${i})" opacity=".25"/><path d="${m.land}" fill="#8fa5a6" fill-rule="evenodd" stroke="#3b352e" stroke-width="2.5"/><path d="${m.grat}" stroke="#6f8584" stroke-width="1.5" fill="none" opacity=".5"/>${legs}${st}</svg></div>`;},
+  ${m.mode=='land'?`<rect width="${m.w}" height="${m.h}" fill="#8fa5a6"/><path d="${m.land}" fill="#efe5cc" stroke="#3b352e" stroke-width="2.5"/><path d="${m.land}" fill="url(#ht${i})" opacity=".25"/>`:`<rect width="${m.w}" height="${m.h}" fill="url(#ht${i})" opacity=".25"/><path d="${m.land}" fill="#8fa5a6" fill-rule="evenodd" stroke="#3b352e" stroke-width="2.5"/>`}<path d="${m.grat}" stroke="#6f8584" stroke-width="1.5" fill="none" opacity=".5"/>${legs}${st}</svg></div>`;},
  verdict:(s,i)=>`<div class="sheet torn txt" style="width:1300px;padding:60px 70px 70px;text-align:center;position:relative">
   ${s.photo?`<div class="polaroid" style="width:300px;height:390px;left:-120px;top:-120px;transform:rotate(-8deg)"><div class="img" style="background-image:url(${imgurl(s.photo.src)});background-position:${s.photo.pos}"></div><div class="pc">${s.photo.pc||""}</div></div>`:''}
-  <div class="mast" style="font-size:46px">The Matchday Chronicle</div><div class="rule"></div><div class="hed" style="font-size:130px;margin-top:24px"><span class="hl" data-hl="q0">${s.q}</span></div>
+  <div class="mast" style="font-size:46px">${ST.masthead||"The Matchday Chronicle"}</div><div class="rule"></div><div class="hed" style="font-size:130px;margin-top:24px"><span class="hl" data-hl="q0">${s.q}</span></div>
   <div style="display:flex;justify-content:center;gap:120px;margin-top:44px;font-family:'Oswald';font-weight:700;font-size:72px">${s.opts.map(o=>`<span>${o} <span style="display:inline-block;width:66px;height:66px;border:6px solid #161412;vertical-align:-8px"></span></span>`).join('')}</div>
   <div class="marker" style="font-size:64px;margin-top:44px;transform:rotate(-2deg)"><span class="hl" data-hl="cta" style="color:#c8231b!important">${s.cta}</span></div></div>`
 };
@@ -135,7 +134,7 @@ function build(){
   c.cueEls=cueEls.sort((a,b)=>a.t-b.t);
   // full-bleed photo moment
   const ph=c.el.querySelector('.ph');const first=cueEls.length?cueEls[0].t:sc.vo+sc.dur;
-  if(ph&&first-st>2.0){const p=local(ph,c);keys.push({t:st+.75,x:p.x,y:p.y,z:Math.min(1920/p.w,1080/p.h)*1.04,r:-c.r,d:.45,kb:1});}
+  const phUrl=c.s.photo?imgurl(c.s.photo.src):'';if(ph&&first-st>2.0&&(NAT[phUrl]||0)>=900){const p=local(ph,c);keys.push({t:st+.75,x:p.x,y:p.y,z:Math.min(1920/p.w,1080/p.h)*1.04,r:-c.r,d:.45,kb:1});}
   for(const ce of cueEls){if(c.s.type=='map'||c.s.type=='chapter'||c.s.type=='title')continue;
    const p=local(ce.el,c);let z=clamp(1250/Math.max(p.w,200),f.z*1.12,ce.stat?1.5:2.0);if(ce.wide)z=clamp(1650/p.w,f.z,1.6);
    keys.push({t:Math.max(ce.t-.32,st+.35),x:p.x,y:p.y,z,r:-c.r*.4+(rnd(i,ce.t)-.5)*2,d:.32});}
@@ -163,7 +162,7 @@ function drawCaps(t){let gi=-1;for(let j=0;j<groups.length;j++){const g=groups[j
 // ---------- render ----------
 const grainEl=document.getElementById('grain'),chl=document.getElementById('chlabel'),flash=document.getElementById('flash');
 const chapters=ST.scenes.map((s,i)=>s.type=='chapter'?i:-1).filter(i=>i>=0);
-function fmt(n){return Math.round(n).toLocaleString('en-US')}
+function fmt(n,dec){return dec?n.toFixed(dec):Math.round(n).toLocaleString('en-US')}
 window.render=function(t,frame){
  const cur=S.reduce((a,s,i)=>t>=s.start?i:a,0);const pose=camPose(t);
  for(const c of cards){const i=c.i;if(i>cur+0||(Math.abs(c.x-pose.x)>3600/pose.z&&i<cur-1)){c.el.style.visibility='hidden';continue;}c.el.style.visibility='visible';
@@ -177,7 +176,7 @@ window.render=function(t,frame){
    const p=easeOut((t-s0+.05)/d);e.style.setProperty('--p',p.toFixed(4));if(p>0)anyHL=1;});
   const sheet=c.el.querySelector('.sheet');if(sheet&&c.s.type!='chapter')sheet.style.setProperty('--ink',(anyHL&&c.s.type!='verdict'&&c.s.type!='quote'?.42:1));
   c.el.querySelectorAll('.statrow').forEach(e=>{const s0=i==0?-1:Math.max(sc.cues[e.id]??1e9,c.t0+.35);const u=clamp((t-s0)/1.0);const n=+e.dataset.num;
-   e.querySelector('.num').textContent=e.dataset.pre+fmt(n*easeOut(u))+e.dataset.suf;e.style.opacity=t>=s0-.2||u>0?1:.25;
+   const dec=(String(e.dataset.num).split('.')[1]||'').length;e.querySelector('.num').textContent=e.dataset.pre+fmt(n*easeOut(u),dec)+e.dataset.suf;e.style.opacity=t>=s0-.2||u>0?1:.25;
    e.querySelector('.num').style.color=u>0&&u<1?'#c8231b':'#161412';e.querySelector('.num').style.transform=`scale(${u>=1?lerp(1.08,1,clamp((t-s0-1)/.25)):1})`;e.querySelector('.num').style.display='inline-block';});
   if(c.s.type=='quote'){const s0=sc.cues.qt??1e9;c.el.querySelectorAll('.quote-big .w').forEach((w,k)=>{const a=easeOut((t-s0-k*.12)/.3);w.style.opacity=a;w.style.transform=`translateY(${lerp(24,0,a)}px)`;});
    const ql=c.el.querySelector('.qline path'),L=ql.getTotalLength(),a=easeOut((t-(sc.cues.qt_end??1e9)-.1)/.45);ql.style.strokeDasharray=L;ql.style.strokeDashoffset=L*(1-a);ql.style.opacity=a>0?1:0;}
@@ -201,6 +200,6 @@ window.render=function(t,frame){
 };
 window.ready=(async()=>{await document.fonts.ready;
  const urls=[...new Set([...document.documentElement.innerHTML.matchAll(/url\((img\/[^)]+)\)/g)].map(m=>m[1].replace(/&quot;|"/g,'')).concat([0,1,2,3,4,5].map(i=>`grain${i}.png`),['paper.jpg','desk.jpg']))];
- await Promise.all(urls.map(u=>new Promise(r=>{const im=new Image();im.onload=r;im.onerror=r;im.src=u;})));
+ window.NAT={};await Promise.all(urls.map(u=>new Promise(r=>{const im=new Image();im.onload=()=>{NAT[u]=im.naturalWidth;r()};im.onerror=r;im.src=u;})));
  measure();build();buildCaps();return true;})();
 </script></body></html>

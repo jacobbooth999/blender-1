@@ -1,0 +1,82 @@
+{
+ "eel": {
+  "title": "Electric Eel",
+  "creator": "skpy",
+  "license": "by-sa",
+  "ver": "2.0",
+  "url": "https://www.flickr.com/photos/42774892@N00/29144192",
+  "source": "flickr"
+ },
+ "piranha": {
+  "title": "Red-Bellied Piranha",
+  "creator": "nic_r",
+  "license": "by-sa",
+  "ver": "2.0",
+  "url": "https://www.flickr.com/photos/37256969@N08/11602973765",
+  "source": "flickr"
+ },
+ "caiman": {
+  "title": "Black Caiman",
+  "creator": "D-Stanley",
+  "license": "by",
+  "ver": "2.0",
+  "url": "https://www.flickr.com/photos/79721788@N00/14020500656",
+  "source": "flickr"
+ },
+ "anaconda": {
+  "title": "Green Anaconda",
+  "creator": "Opt1mus76",
+  "license": "by",
+  "ver": "2.0",
+  "url": "https://www.flickr.com/photos/62974691@N08/6123022401",
+  "source": "flickr"
+ },
+ "bulletant": {
+  "title": "Bullet Ant (Paraponera clavata) female, Ecuador. Photo Credit: Chris A. Schmidt,Tree of Life Web Project",
+  "creator": "EOL Learning and Education Group",
+  "license": "by",
+  "ver": "2.0",
+  "url": "https://www.flickr.com/photos/44919417@N04/5373075324",
+  "source": "flickr"
+ },
+ "bulletant2": {
+  "title": "Bullet Ant (Paraponera clavata), Tambopata, Peru. Photo Credit: G Drange, BioPix",
+  "creator": "EOL Learning and Education Group",
+  "license": "by",
+  "ver": "2.0",
+  "url": "https://www.flickr.com/photos/44919417@N04/5373075282",
+  "source": "flickr"
+ },
+ "spider": {
+  "title": "Wandering Spider (Phoneutria fera)",
+  "creator": "berniedup",
+  "license": "by-sa",
+  "ver": "2.0",
+  "url": "https://www.flickr.com/photos/65695019@N07/10623228224",
+  "source": "flickr"
+ },
+ "botfly": {
+  "title": "Rabbit Botfly Larva",
+  "creator": "treegrow",
+  "license": "by",
+  "ver": "2.0",
+  "url": "https://www.flickr.com/photos/86548370@N00/3869925128",
+  "source": "flickr"
+ },
+ "jaguar": {
+  "title": "Jaguar (Panthera onca)",
+  "creator": "Gregory 'Slobirdr' Smith",
+  "license": "by-sa",
+  "ver": "2.0",
+  "url": "https://www.flickr.com/photos/22170893@N06/44213548032",
+  "source": "flickr"
+ },
+ "jaguar2": {
+  "title": "yaguara / jaguar / Panthera onca",
+  "creator": "e\u00b3\u00b0\u00b0\u00b0",
+  "license": "by-sa",
+  "ver": "2.0",
+  "url": "https://www.flickr.com/photos/23566085@N00/5486315005",
+  "source": "flickr"
+ }
+}

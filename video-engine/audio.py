@@ -28,6 +28,9 @@ MOODS=[ # prog (triads), bpm, kick, bright
  ([[53,57,60],[48,52,55],[50,53,57],[46,50,53]],80,False,650),   # VI road home
  ([[60,64,67],[57,60,64],[53,57,60],[55,59,62]],90,True,900),    # VII verdict
 ]
+if ST.get('music')=='dark':
+    MOODS=[([[57,60,64],[53,57,60],[52,55,59],[57,60,63]],76,True,600),([[50,53,57],[46,50,53],[45,48,52],[50,53,56]],70,False,520),
+           ([[52,55,59],[48,52,55],[47,50,54],[52,55,58]],80,True,650),([[55,58,62],[51,55,58],[50,53,57],[55,58,61]],74,False,560)]*3
 for si in range(len(bounds)-1):
     t0,t1=bounds[si],bounds[si+1]; prog,bpm,kick,bright=MOODS[min(si,len(MOODS)-1)]
     beat=60/bpm; CH=beat*8; k=0; t=t0
