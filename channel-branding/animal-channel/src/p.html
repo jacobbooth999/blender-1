@@ -1,0 +1,60 @@
+<!doctype html><html><head><meta charset="utf-8">
+<link href="https://fonts.googleapis.com/css2?family=Oswald:wght@700&family=UnifrakturMaguntia&family=Playfair+Display:wght@900&display=block" rel="stylesheet">
+<style>*{margin:0;padding:0}body{width:800px;height:800px;overflow:hidden}.v{position:absolute;inset:0;display:none}</style></head><body>
+<!-- A: the eye -->
+<div class="v" id="A"><svg width="800" height="800" viewBox="0 0 800 800">
+ <defs>
+  <radialGradient id="bg" cx="50%" cy="50%" r="60%"><stop offset="0" stop-color="#1f4a2a"/><stop offset="1" stop-color="#06140a"/></radialGradient>
+  <radialGradient id="iris" cx="50%" cy="50%" r="50%"><stop offset="0" stop-color="#fff2a0"/><stop offset=".45" stop-color="#f2b81e"/><stop offset=".85" stop-color="#b8640a"/><stop offset="1" stop-color="#5a2a04"/></radialGradient>
+  <clipPath id="eyeclip"><path d="M110 400 C 230 230, 570 230, 690 400 C 570 570, 230 570, 110 400 Z"/></clipPath>
+ </defs>
+ <rect width="800" height="800" fill="url(#bg)"/>
+ <g fill="#2f7a3c" stroke="#123a1c" stroke-width="6">
+  <path d="M40 700 C 140 560, 300 560, 330 640 C 250 700, 140 740, 40 700 Z"/>
+  <path d="M770 120 C 660 230, 520 230, 480 160 C 560 100, 680 70, 770 120 Z"/>
+  <path d="M60 140 C 160 220, 220 330, 180 360 C 110 320, 60 230, 60 140 Z" fill="#245f30"/>
+  <path d="M740 660 C 640 590, 580 480, 620 450 C 690 490, 740 580, 740 660 Z" fill="#245f30"/>
+ </g>
+ <g fill="#0b2412" opacity=".9">
+  <path d="M0 120 C 120 140, 200 60, 260 0 L0 0Z"/><path d="M800 690 C 660 660, 600 760, 560 800 L800 800Z"/>
+  <path d="M0 640 C 90 600, 160 680, 150 800 L0 800Z"/><path d="M800 90 C 700 120, 640 40, 640 0 L800 0Z"/>
+ </g>
+ <path d="M110 400 C 230 230, 570 230, 690 400 C 570 570, 230 570, 110 400 Z" fill="#e9e2c8" stroke="#0b0b0b" stroke-width="18"/>
+ <g clip-path="url(#eyeclip)">
+  <circle cx="400" cy="400" r="170" fill="url(#iris)"/>
+  <g stroke="#7a3e06" stroke-width="3" opacity=".45">
+   <path d="M400 230 V570 M230 400 H570 M280 280 L520 520 M520 280 L280 520"/></g>
+  <path d="M400 255 C 440 330, 440 470, 400 545 C 360 470, 360 330, 400 255 Z" fill="#0a0a0a"/>
+  <ellipse cx="455" cy="335" rx="34" ry="22" fill="#fff" opacity=".9" transform="rotate(-25 455 335)"/>
+ </g>
+ <path d="M110 400 C 230 230, 570 230, 690 400 C 570 570, 230 570, 110 400 Z" fill="none" stroke="#0b0b0b" stroke-width="18"/>
+</svg></div>
+<!-- B: paw seal -->
+<div class="v" id="B" style="background:#262a33">
+ <div style="position:absolute;left:40px;top:40px;width:720px;height:720px;border-radius:50%;background:#eee6d4 url(paper.jpg);background-size:700px"></div>
+ <svg width="800" height="800" viewBox="0 0 800 800" style="position:absolute;inset:0">
+  <defs><path id="ring" d="M400,400 m-285,0 a285,285 0 1,1 570,0 a285,285 0 1,1 -570,0"/></defs>
+  <circle cx="400" cy="400" r="330" fill="none" stroke="#161412" stroke-width="10"/>
+  <circle cx="400" cy="400" r="240" fill="none" stroke="#161412" stroke-width="3"/>
+  <text font-family="Oswald" font-weight="700" font-size="50" fill="#161412"><textPath href="#ring" textLength="1760" lengthAdjust="spacing">THE EXPEDITION CHRONICLE  •  WILD STORIES  •</textPath></text>
+  <g fill="#b0201a" opacity=".92" transform="rotate(-12 400 400)">
+   <ellipse cx="400" cy="455" rx="98" ry="84"/>
+   <ellipse cx="300" cy="345" rx="40" ry="52" transform="rotate(-25 300 345)"/>
+   <ellipse cx="365" cy="300" rx="40" ry="54" transform="rotate(-8 365 300)"/>
+   <ellipse cx="438" cy="300" rx="40" ry="54" transform="rotate(8 438 300)"/>
+   <ellipse cx="503" cy="345" rx="40" ry="52" transform="rotate(25 503 345)"/>
+  </g>
+ </svg>
+</div>
+<!-- C: monogram with leaf -->
+<div class="v" id="C" style="background:#0d2414">
+ <svg width="800" height="800" viewBox="0 0 800 800" style="position:absolute;inset:0">
+  <g transform="translate(400 420) rotate(-30)"><path d="M0 -330 C 210 -250, 230 150, 0 330 C -230 150, -210 -250, 0 -330 Z" fill="#2f7a3c"/>
+   <path d="M0 -320 V320" stroke="#1c4f26" stroke-width="12"/>
+   <g stroke="#1c4f26" stroke-width="8" fill="none"><path d="M0 -200 L120 -280 M0 -100 L150 -170 M0 0 L160 -60 M0 100 L140 50 M0 -200 L-120 -280 M0 -100 L-150 -170 M0 0 L-160 -60 M0 100 L-140 50"/></g></g>
+ </svg>
+ <div style="position:absolute;inset:0;display:flex;align-items:center;justify-content:center">
+  <div style="font-family:'UnifrakturMaguntia';font-size:470px;color:#f3ecd8;line-height:1;margin-top:-40px;text-shadow:0 14px 30px rgba(0,0,0,.6)">E</div></div>
+ <div style="position:absolute;left:0;right:0;bottom:120px;text-align:center"><span style="font-family:'Oswald';font-weight:700;font-size:56px;letter-spacing:6px;color:#111;background:#ffd61e;padding:2px 20px">EXPEDITION</span></div>
+</div>
+</body></html>
