@@ -178,28 +178,28 @@ def mat_flesh(name="flesh", r_outer=1.0):
     ramp = N.new("ShaderNodeValToRGB")
     cr = ramp.color_ramp
     cr.elements[0].position = 0.0
-    cr.elements[0].color = (0.98, 0.78, 0.72, 1)
+    cr.elements[0].color = (0.92, 0.6, 0.55, 1)
     cr.elements[1].position = 1.0
     cr.elements[1].color = (0.62, 0.01, 0.03, 1)
-    e = cr.elements.new(0.45)
-    e.color = (0.95, 0.35, 0.36, 1)
+    e = cr.elements.new(0.32)
+    e.color = (0.82, 0.1, 0.12, 1)
     mr = N.new("ShaderNodeMapRange")
     mr.inputs["From Max"].default_value = r_outer
     L.new(add.outputs[0], mr.inputs["Value"])
     L.new(mr.outputs["Result"], ramp.inputs["Fac"])
     L.new(ramp.outputs["Color"], b.inputs["Base Color"])
-    setv(b, "Roughness", 0.2)
-    setv(b, "Subsurface Weight", 0.5)
-    setv(b, "Subsurface Radius", (1.0, 0.35, 0.3))
+    setv(b, "Roughness", 0.3)
+    setv(b, "Subsurface Weight", 0.2)
+    setv(b, "Subsurface Radius", (1.0, 0.25, 0.2))
     setv(b, "Subsurface Scale", 0.03)
-    setv(b, "Coat Weight", 1.0)
-    setv(b, "Coat Roughness", 0.04)
+    setv(b, "Coat Weight", 0.6)
+    setv(b, "Coat Roughness", 0.12)
     bn = N.new("ShaderNodeTexVoronoi")
-    bn.inputs["Scale"].default_value = 40.0 / r_outer
+    bn.inputs["Scale"].default_value = 28.0 / r_outer
     L.new(tc.outputs["Object"], bn.inputs["Vector"])
     bump = N.new("ShaderNodeBump")
-    bump.inputs["Strength"].default_value = 0.25
-    bump.inputs["Distance"].default_value = 0.01
+    bump.inputs["Strength"].default_value = 0.6
+    bump.inputs["Distance"].default_value = 0.02
     L.new(bn.outputs["Distance"], bump.inputs["Height"])
     L.new(bump.outputs["Normal"], b.inputs["Normal"])
     return m
@@ -229,17 +229,17 @@ def mat_leaf(name="leaf"):
     return m
 
 
-def mat_juice(name="juice"):
+def mat_juice(name="juice", color=(1.0, 0.12, 0.15), tint=(1.0, 0.25, 0.28), density=18.0):
     m, nt, b = node_mat(name)
-    setv(b, "Base Color", (1.0, 0.25, 0.28, 1))
+    setv(b, "Base Color", (*tint, 1))
     setv(b, "Roughness", 0.0)
     setv(b, "Transmission Weight", 1.0)
     setv(b, "IOR", 1.36)
     # tint via volume absorption for that red-juice glow
     N, L = nt.nodes, nt.links
     va = N.new("ShaderNodeVolumeAbsorption")
-    va.inputs["Color"].default_value = (1.0, 0.12, 0.15, 1)
-    va.inputs["Density"].default_value = 18.0
+    va.inputs["Color"].default_value = (*color, 1)
+    va.inputs["Density"].default_value = density
     L.new(va.outputs[0], nt.nodes["Material Output"].inputs["Volume"])
     return m
 
@@ -276,7 +276,7 @@ def make_strawberry(name, scale=1.0, n_seeds=300, exclude=(), lump_seed=0.0, res
     bmesh.ops.create_uvsphere(bm, u_segments=res[0], v_segments=res[1], radius=1.0)
     bm.verts.ensure_lookup_table()
     P = np.array([v.co[:] for v in bm.verts])
-    D = berry_deform(P, lump_seed)
+    D = SPEC["deform"](P, lump_seed)
     for v, d in zip(bm.verts, D):
         v.co = d
     bm.normal_update()
@@ -286,7 +286,7 @@ def make_strawberry(name, scale=1.0, n_seeds=300, exclude=(), lump_seed=0.0, res
     # seed positions by ray casting from axis outward along deformed fib directions
     dirs = berry_deform(fib_sphere(n_seeds), lump_seed)
     seeds = []
-    for d in dirs:
+    for d in (dirs if SPEC["seeds"] else []):
         zz = d[2]
         if zz > 0.42:  # under calyx
             continue
@@ -347,7 +347,7 @@ def make_strawberry(name, scale=1.0, n_seeds=300, exclude=(), lump_seed=0.0, res
             so.data.materials.append(seed_mat)
     # calyx
     top_hit = bvh.ray_cast(Vector((0, 0, 2)), Vector((0, 0, -1)))[0]
-    cal = make_calyx(name + "_calyx", top_hit, n_sepals, leaf_mat, stem, seed=lump_seed, bvh=bvh)
+    cal = SPEC["top"](name + "_calyx", top_hit, n_sepals, leaf_mat, stem, seed=lump_seed, bvh=bvh)
     cal.parent = root
     root.scale = (scale,) * 3
     return dict(root=root, body=body, calyx=cal, bvh=bvh, top=top_hit)
@@ -441,7 +441,11 @@ def arc_curve(name, pts, bevel, mat):
 
 # ----------------------------------------------------------------------------- scene
 class Scene:
-    def __init__(self):
+    def __init__(self, fruit="strawberry"):
+        global SPEC
+        import fruits
+        SPEC = fruits.spec(fruit)
+        self.fruit = fruit
         clear()
         sc = bpy.context.scene
         self.sc = sc
@@ -453,7 +457,7 @@ class Scene:
             mouth=mat_simple("mouth", (0.12, 0.0, 0.01), rough=0.5, sss=0.2, sss_r=(1, 0.1, 0.1)),
             lips=mat_simple("lips", (0.08, 0.0, 0.008), rough=0.3, coat=0.5),
             tongue=mat_simple("tongue", (0.9, 0.18, 0.25), rough=0.35, coat=0.6, sss=0.6),
-            juice=mat_juice(),
+            juice=mat_juice(color=SPEC["juice"], tint=SPEC["juice_tint"], density=SPEC["juice_density"]),
             flesh=mat_flesh("flesh", 1.0),
         )
         self.build_big()
@@ -471,13 +475,13 @@ class Scene:
         # quick pre-pass to find face points on the undimpled surface
         tmp = uv_sphere("tmp", 96, 64)
         P = np.array([v.co[:] for v in tmp.data.vertices])
-        D = berry_deform(P, 0.4)
+        D = SPEC["deform"](P, 0.4)
         bvh0 = BVHTree.FromPolygons([tuple(d) for d in D], [tuple(p.vertices) for p in tmp.data.polygons])
         bpy.data.objects.remove(tmp)
         F = {k: surface(bvh0, v) for k, v in face.items()}
         self.F = F
         bl = [tuple(F["blushL"][0]), tuple(F["blushR"][0])]
-        self.M["berry"] = mat_berry("berry", blush_pts=bl, blush_r=0.24)
+        self.M["berry"] = SPEC["skin"]("berry", blush_pts=bl, blush_r=0.24)
         exclude = [(F["eyeL"][0], 0.26), (F["eyeR"][0], 0.26), (F["mouth"][0], 0.22),
                    (F["blushL"][0], 0.17), (F["blushR"][0], 0.17)]
         B = make_strawberry("Big", 1.0, n_seeds=340, exclude=exclude, lump_seed=0.4, body_mat=self.M["berry"],
@@ -533,7 +537,7 @@ class Scene:
         self.cut = cut
         bo = B["body"].modifiers.new("mouth", "BOOLEAN")
         bo.object = cut
-        bo.solver = "EXACT"
+        bo.solver = SPEC.get("solver", "EXACT")
         bo.material_mode = "TRANSFER"
         self.mouth_bool = bo
         tg = uv_sphere("tongue", 32, 16, 1.0)
@@ -587,8 +591,8 @@ class Scene:
 
     # --- the mini strawberry (whole + bitten variants)
     def build_mini(self):
-        self.M["mini_flesh"] = mat_flesh("mini_flesh", 1.0)
-        self.M["mini_berry"] = mat_berry("mini_berry")
+        self.M["mini_flesh"] = SPEC["flesh"]("mini_flesh", 1.0)
+        self.M["mini_berry"] = SPEC["skin"]("mini_berry")
         m = make_strawberry("Mini", 0.24, n_seeds=170, lump_seed=1.3, res=(96, 64), body_mat=self.M["mini_berry"],
                             seed_mat=self.M["seed"], leaf_mat=self.M["leaf"], n_sepals=7)
         self.mini = m
@@ -603,22 +607,28 @@ class Scene:
             s.parent = bite
             s.hide_render = True
             s.display_type = "WIRE"
+            tex = bpy.data.textures.new("bitetex%d" % i, "CLOUDS")
+            tex.noise_scale = 0.12
+            dm = s.modifiers.new("rough", "DISPLACE")
+            dm.texture = tex
+            dm.strength = 0.07
+            dm.mid_level = 0.5
             self.bite_parts.append(s)
         bo = None
         for i, s in enumerate(self.bite_parts):
             bo = m["body"].modifiers.new("bite%d" % i, "BOOLEAN")
             bo.object = s
-            bo.solver = "EXACT"
+            bo.solver = SPEC.get("solver", "EXACT")
             bo.material_mode = "TRANSFER"
             bo.show_render = False
             bo.show_viewport = False
         # seeds aren't cut: hide seeds inside bite region later via a second boolean
         seeds = [o for o in m["root"].children if o.name.startswith("Mini_seeds")]
-        self.mini_seeds = seeds[0] if seeds else None
+        self.mini_seeds = seeds[0] if seeds else mesh_obj("Mini_seeds_none", [], [])
         for i, s in enumerate(self.bite_parts):
             b2 = self.mini_seeds.modifiers.new("bite%d" % i, "BOOLEAN")
             b2.object = s
-            b2.solver = "EXACT"
+            b2.solver = SPEC.get("solver", "EXACT")
             b2.show_render = False
             b2.show_viewport = False
 
@@ -632,8 +642,8 @@ class Scene:
     # --- set dressing
     def build_set(self):
         # table: soft glossy cream-pink surface
-        tm = mat_simple("table", (0.62, 0.4, 0.34), rough=0.3, coat=0.25)
-        bm_ = mat_simple("backdrop", (0.32, 0.6, 0.5), rough=0.6)
+        tm = mat_simple("table", SPEC["table"], rough=0.3, coat=0.25)
+        bm_ = mat_simple("backdrop", SPEC["backdrop"], rough=0.6)
         bpy.ops.mesh.primitive_plane_add(size=40, location=(0, 0, -1.03))
         self.table = bpy.context.active_object
         self.table.data.materials.append(tm)
@@ -661,7 +671,7 @@ class Scene:
         self.bg = []
         for i, (x, y, s, rz) in enumerate([(-1.9, 3.2, 0.75, 0.6), (2.1, 4.2, 0.85, -0.9), (-0.4, 6.0, 0.7, 2.0)]):
             g = make_strawberry("BG%d" % i, s, n_seeds=180, lump_seed=2 + i, res=(80, 50),
-                                body_mat=mat_berry("bgberry%d" % i), seed_mat=self.M["seed"],
+                                body_mat=SPEC["skin"]("bgberry%d" % i), seed_mat=self.M["seed"],
                                 leaf_mat=self.M["leaf"], n_sepals=8)
             g["root"].location = (x, y, -1.03 + 1.02 * s)
             g["root"].rotation_euler = (0.0, 0.0, rz)
@@ -672,7 +682,7 @@ class Scene:
         w = bpy.data.worlds.new("w")
         sc.world = w
         w.use_nodes = True
-        w.node_tree.nodes["Background"].inputs["Color"].default_value = (0.75, 0.9, 0.85, 1)
+        w.node_tree.nodes["Background"].inputs["Color"].default_value = (*SPEC["world"], 1)
         w.node_tree.nodes["Background"].inputs["Strength"].default_value = 0.1
 
         def area(name, loc, rot, size, power, color):
@@ -866,14 +876,15 @@ def main():
     ap.add_argument("--scale", type=float, default=1.0)
     ap.add_argument("--out", default=os.path.join(HERE, "out", "stills"))
     ap.add_argument("--blend", action="store_true")
+    ap.add_argument("--fruit", default="strawberry")
     a = ap.parse_args(sys.argv[sys.argv.index("--") + 1:] if "--" in sys.argv else sys.argv[1:])
-    S = Scene()
+    S = Scene(a.fruit)
     shot(S, a.shot)
     sc = S.sc
     sc.cycles.samples = a.samples
     sc.render.resolution_percentage = int(a.scale * 100)
     os.makedirs(a.out, exist_ok=True)
-    sc.render.filepath = os.path.join(a.out, "shot%d.png" % a.shot)
+    sc.render.filepath = os.path.join(a.out, "%sshot%d.png" % ("" if a.fruit == "strawberry" else a.fruit + "_", a.shot))
     if a.blend:
         bpy.ops.wm.save_as_mainfile(filepath=os.path.join(a.out, "shot%d.blend" % a.shot))
     bpy.ops.render.render(write_still=True)
