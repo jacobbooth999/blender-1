@@ -4,6 +4,7 @@
 <script src="timeline.js"></script>
 <script src="maps.js"></script>
 <script src="credits.js"></script>
+<script src="footage.js"></script>
 <style>
 *{box-sizing:border-box;margin:0;padding:0}
 html,body{width:1920px;height:1080px;overflow:hidden;background:#111}
@@ -49,13 +50,20 @@ svg.draw path{fill:none;stroke:#c8231b;stroke-linecap:round;stroke-linejoin:roun
 #caps span.k{color:#ffd61e}
 #chlabel{position:absolute;left:46px;top:40px;font-family:'Oswald';font-weight:700;font-size:26px;letter-spacing:3px;color:#f1ead9;background:#1b1a19;padding:8px 18px 8px 16px;text-transform:uppercase;box-shadow:0 6px 14px rgba(0,0,0,.5);opacity:0}
 #chlabel b{color:#ffd61e;margin-right:12px}
+#foot{position:absolute;inset:0;overflow:hidden;opacity:0;background:#000}
+#footimg{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;transform-origin:50% 50%;filter:contrast(1.08) saturate(1.05)}
+#footcap{position:absolute;left:46px;top:96px;max-width:980px;background:#eee6d4 url(paper.jpg);background-size:700px;padding:14px 22px 16px;box-shadow:0 12px 26px rgba(0,0,0,.6);transform:rotate(-1.5deg);clip-path:polygon(0 4%,8% 0,20% 3%,35% 0,50% 3%,65% 0,80% 3%,92% 0,100% 4%,99% 50%,100% 96%,90% 100%,75% 97%,60% 100%,45% 97%,30% 100%,15% 97%,0 100%,1% 50%)}
+#footcap .k{font-family:'Oswald';font-weight:700;letter-spacing:3px;font-size:28px;color:#a3221b;text-transform:uppercase}
+#footcap .c{font-family:'Playfair Display';font-weight:700;font-size:56px;color:#161412;line-height:1.1;margin-top:2px}
+#footcap .cr{font-family:'Old Standard TT';font-style:italic;font-size:18px;color:#4a443c;margin-top:4px}
+.phv{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
 #grain{position:absolute;inset:0;background-size:1920px 1080px;mix-blend-mode:overlay;opacity:.2;pointer-events:none}
 #vig{position:absolute;inset:0;background:radial-gradient(ellipse at 50% 48%,rgba(0,0,0,0) 50%,rgba(0,0,0,.55) 100%);pointer-events:none}
 #flicker{position:absolute;inset:0;background:#fff3d8;mix-blend-mode:soft-light;pointer-events:none;opacity:0}
 #flash{position:absolute;inset:0;background:#fff;pointer-events:none;opacity:0}
 </style></head><body>
 <div id="stage"><div id="world"><div id="desk"></div></div>
-<div id="flicker"></div><div id="vig"></div><div id="grain"></div><div id="flash"></div><div id="chlabel"></div><div id="caps"></div></div>
+<div id="foot"><img id="footimg"><div id="footcap"><div class="k"></div><div class="c"></div></div></div><div id="flicker"></div><div id="vig"></div><div id="grain"></div><div id="flash"></div><div id="chlabel"></div><div id="caps"></div></div>
 <script>
 const TL=window.TL,ST=window.STORY,S=TL.scenes,W=1920,H=1080;
 const clamp=(v,a=0,b=1)=>Math.max(a,Math.min(b,v)),lerp=(a,b,t)=>a+(b-a)*t;
@@ -67,7 +75,7 @@ const imgurl=src=>`img/${src}.jpg`;
 const world=document.getElementById('world');
 // ---------- builders ----------
 function photoHTML(p,h,extra=''){if(!p)return'';const cr=(window.CREDITS||{})[p.src]||'';
- return `<div class="photo ph" style="height:${h}px;background-image:url(${imgurl(p.src)});background-position:${p.pos||'50% 30%'};${p.size?'background-size:'+p.size:''};${extra}"></div>${p.cap!==undefined||cr?`<div class="cap">${p.cap||''} ${cr?'Photo: '+cr:''}</div>`:''}`;}
+ return `<div class="photo ph" ${p.video?`data-video="${p.video}"`:''} style="height:${h}px;background-image:url(${imgurl(p.src)});background-position:${p.pos||'50% 30%'};${p.size?'background-size:'+p.size:''};${extra}">${p.video?`<img class="phv" style="object-position:${p.vpos||'50% 50%'}">`:''}</div>${p.cap!==undefined||cr?`<div class="cap">${p.cap||''} ${cr?'Photo: '+cr:''}</div>`:''}`;}
 const B={
  front:(s,i)=>`<div class="sheet torn txt" style="width:1180px"><div class="mast">${ST.masthead||"The Matchday Chronicle"}</div><div class="rule"></div>
   <div class="dateline"><span>${s.date}</span><span>${s.place}</span><span>Archive</span></div><div class="rule"></div>
@@ -124,8 +132,8 @@ function fitPose(c){const vh=Math.min(c.h,1080);const z=Math.min(1700/c.w,960/vh
  return {x:c.x-ly*Math.sin(a),y:c.y+ly*Math.cos(a),z,r:-c.r*.6};}
 function build(){
  keys=[];
- cards.forEach((c,i)=>{const sc=S[i],st=sc.start;c.t0=st;
-  const f=fitPose(c);keys.push({t:i?st:-1,...f,d:i?.55:.01});
+ cards.forEach((c,i)=>{const sc=S[i],st0=sc.start;c.t0=st0;const fd=(c.s.footage?c.s.footage.dur:0);const st=st0+fd;c.tv=st;
+  const f=fitPose(c);keys.push({t:i?(fd?st-.05:st):-1,...f,d:i?(fd?.01:.55):.01});
   // cue targets
   const cueEls=[];
   c.el.querySelectorAll('[data-hl]').forEach(e=>{const k=e.dataset.hl;if(sc.cues[k]!==undefined)cueEls.push({t:sc.cues[k],el:e,k});});
@@ -163,7 +171,20 @@ function drawCaps(t){let gi=-1;for(let j=0;j<groups.length;j++){const g=groups[j
 const grainEl=document.getElementById('grain'),chl=document.getElementById('chlabel'),flash=document.getElementById('flash');
 const chapters=ST.scenes.map((s,i)=>s.type=='chapter'?i:-1).filter(i=>i>=0);
 function fmt(n,dec){return dec?n.toFixed(dec):Math.round(n).toLocaleString('en-US')}
-window.render=function(t,frame){
+const FPS=30;const footEl=document.getElementById('foot'),footImg=document.getElementById('footimg'),footCap=document.getElementById('footcap');
+function loadImg(img,src){if(img.dataset.src===src)return null;img.dataset.src=src;return new Promise(r=>{img.onload=r;img.onerror=r;img.src=src;});}
+function fframe(clip,sec){const n=(window.FOOTN||{})[clip]||1;let k=Math.floor(sec*FPS);k=((k%n)+n)%n;return `footage/${clip}/f${String(k+1).padStart(4,'0')}.jpg`;}
+window.render=function(t,frame){const waits=[];
+ let fs=null;cards.forEach((c,i)=>{const F=c.s.footage;if(F&&t>=c.t0&&t<c.t0+F.dur)fs={c,F};});
+ if(fs){const {c,F}=fs,lt=t-c.t0;footEl.style.opacity=1;const w=loadImg(footImg,fframe(F.clip,(F.from||0)+lt*(F.speed||1)));if(w)waits.push(w);
+  footImg.style.transform=`scale(${1.12-0.08*easeOut(lt/F.dur)+0.02*lt})`;
+  footCap.querySelector('.k').textContent=F.kicker||'Real footage';footCap.querySelector('.c').innerHTML=F.cap||'';
+  footCap.style.opacity=clamp((lt-.25)/.3);footCap.style.transform=`rotate(-1.5deg) translateX(${lerp(-40,0,easeOut((lt-.25)/.4))}px)`;
+  const cr=(window.FCRED||{})[F.clip];footCap.querySelector('.c').innerHTML=(F.cap||'')+(cr?`<div class="cr">Footage: ${cr}</div>`:'');}
+ else{footEl.style.opacity=0;}
+ document.querySelectorAll('.ph[data-video]').forEach(ph=>{const card=ph.closest('.card');if(card.style.visibility==='hidden')return;const c=cards.find(x=>x.el===card);
+  const w=loadImg(ph.querySelector('.phv'),fframe(ph.dataset.video,Math.max(0,t-c.t0)));if(w)waits.push(w);});
+
  const cur=S.reduce((a,s,i)=>t>=s.start?i:a,0);const pose=camPose(t);
  for(const c of cards){const i=c.i;if(i>cur+0||(Math.abs(c.x-pose.x)>3600/pose.z&&i<cur-1)){c.el.style.visibility='hidden';continue;}c.el.style.visibility='visible';
   const u=i==0?1:clamp((t-c.t0)/.5),e=easeOut(u),odd=i%2;
@@ -172,16 +193,16 @@ window.render=function(t,frame){
   c.el.style.filter=`drop-shadow(0 ${sh}px ${sh*1.2}px rgba(0,0,0,${lerp(.25,.55,e)}))`+(dim?` brightness(${(1-dim).toFixed(3)})`:'');
   if(i<cur-1)continue;
   const sc=S[i];let anyHL=0;
-  c.el.querySelectorAll('[data-hl]').forEach(e=>{const k=e.dataset.hl;if(sc.cues[k]===undefined)return;const s0=Math.max(sc.cues[k],c.t0+.4);const d=clamp((sc.cues[k+'_end']-sc.cues[k])*1.05,.3,.75);
+  c.el.querySelectorAll('[data-hl]').forEach(e=>{const k=e.dataset.hl;if(sc.cues[k]===undefined)return;const s0=Math.max(sc.cues[k],(c.tv||c.t0)+.4);const d=clamp((sc.cues[k+'_end']-sc.cues[k])*1.05,.3,.75);
    const p=easeOut((t-s0+.05)/d);e.style.setProperty('--p',p.toFixed(4));if(p>0)anyHL=1;});
   const sheet=c.el.querySelector('.sheet');if(sheet&&c.s.type!='chapter')sheet.style.setProperty('--ink',(anyHL&&c.s.type!='verdict'&&c.s.type!='quote'?.42:1));
-  c.el.querySelectorAll('.statrow').forEach(e=>{const s0=i==0?-1:Math.max(sc.cues[e.id]??1e9,c.t0+.35);const u=clamp((t-s0)/1.0);const n=+e.dataset.num;
+  c.el.querySelectorAll('.statrow').forEach(e=>{const s0=(i==0&&!c.s.footage)?-1:Math.max(sc.cues[e.id]??1e9,(c.tv||c.t0)+.35);const u=clamp((t-s0)/1.0);const n=+e.dataset.num;
    const dec=(String(e.dataset.num).split('.')[1]||'').length;e.querySelector('.num').textContent=e.dataset.pre+fmt(n*easeOut(u),dec)+e.dataset.suf;e.style.opacity=t>=s0-.2||u>0?1:.25;
    e.querySelector('.num').style.color=u>0&&u<1?'#c8231b':'#161412';e.querySelector('.num').style.transform=`scale(${u>=1?lerp(1.08,1,clamp((t-s0-1)/.25)):1})`;e.querySelector('.num').style.display='inline-block';});
   if(c.s.type=='quote'){const s0=sc.cues.qt??1e9;c.el.querySelectorAll('.quote-big .w').forEach((w,k)=>{const a=easeOut((t-s0-k*.12)/.3);w.style.opacity=a;w.style.transform=`translateY(${lerp(24,0,a)}px)`;});
    const ql=c.el.querySelector('.qline path'),L=ql.getTotalLength(),a=easeOut((t-(sc.cues.qt_end??1e9)-.1)/.45);ql.style.strokeDasharray=L;ql.style.strokeDashoffset=L*(1-a);ql.style.opacity=a>0?1:0;}
   if(c.s.type=='title'){const s0=sc.cues.cross;c.el.querySelectorAll('.xmark path').forEach((p,k)=>{const L=p.getTotalLength(),a=easeOut((t-s0-.25-k*.22)/.22);p.style.strokeDasharray=L;p.style.strokeDashoffset=L*(1-a);p.style.opacity=a>0?1:0;});}
-  if(c.s.type=='map'){c.el.querySelectorAll('.leg').forEach(p=>{const s0=Math.max(sc.cues[p.dataset.cue],c.t0+.4),a=ease((t-s0)/1.1);p.style.strokeDasharray=`${a*1600} 4000`;});
+  if(c.s.type=='map'){c.el.querySelectorAll('.leg').forEach(p=>{const s0=Math.max(sc.cues[p.dataset.cue],(c.tv||c.t0)+.4),a=ease((t-s0)/1.1);p.style.strokeDasharray=`${a*1600} 4000`;});
    c.el.querySelectorAll('.stop').forEach(g=>{const leg=c.s.legs.find(l=>l[1]==g.dataset.k);let a=1;if(leg){const s0=Math.max(sc.cues['leg_'+leg[1]],c.t0+.4)+1.0;a=back((t-s0)/.35);}g.style.opacity=a>0?1:0;g.style.transform=`scale(${Math.max(a,0)})`;g.style.transformOrigin='center';g.style.transformBox='fill-box';});}
   if(c.s.type=='chapter'){const a=back((t-c.t0-.05)/.45);c.el.querySelector('.sheet').style.transform=`scale(${lerp(1.5,1,a)})`;}
  }
@@ -192,11 +213,12 @@ window.render=function(t,frame){
  const chIdx=chapters.filter(ci=>t>=S[ci].start+1.6).pop();
  if(chIdx!==undefined){const s=ST.scenes[chIdx];chl.innerHTML=`<b>CH. ${s.num}</b>${s.title}`;chl.style.opacity=clamp((t-S[chIdx].start-1.6)/.4);}else chl.style.opacity=0;
  // flash on chapter/title
- let fl=0;S.forEach((s,i)=>{if(ST.scenes[i].type=='chapter'||ST.scenes[i].type=='title'){fl=Math.max(fl,1-clamp(Math.abs(t-s.start-.08)/.12));}});flash.style.opacity=(fl*.55).toFixed(3);
+ let fl=0;cards.forEach(c=>{if(c.s.footage){fl=Math.max(fl,c.t0>0.2?1-clamp(Math.abs(t-c.t0)/.1):0,1-clamp(Math.abs(t-c.t0-c.s.footage.dur)/.1));}});S.forEach((s,i)=>{if(ST.scenes[i].type=='chapter'||ST.scenes[i].type=='title'){fl=Math.max(fl,1-clamp(Math.abs(t-s.start-.08)/.12));}});flash.style.opacity=(fl*.55).toFixed(3);
  drawCaps(t);
  grainEl.style.backgroundImage=`url(grain${frame%6}.png)`;
  document.getElementById('flicker').style.opacity=(.05+.04*Math.sin(frame*1.9)*Math.sin(frame*.71)).toFixed(3);
  document.getElementById('stage').style.opacity=clamp((TL.total-t)/.6).toFixed(3);
+ return waits.length?Promise.all(waits).then(()=>true):true;
 };
 window.ready=(async()=>{await document.fonts.ready;
  const urls=[...new Set([...document.documentElement.innerHTML.matchAll(/url\((img\/[^)]+)\)/g)].map(m=>m[1].replace(/&quot;|"/g,'')).concat([0,1,2,3,4,5].map(i=>`grain${i}.png`),['paper.jpg','desk.jpg']))];

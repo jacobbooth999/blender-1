@@ -39,3 +39,10 @@ To change the voice, set the `VOICE` environment variable to another Piper `.onn
 - Map scenes accept a per-scene `span` (the width in degrees). Wide maps use unclipped land outlines, so land and sea always fill correctly.
 - Stat numbers can have decimals (for example `5.5`), and front pages without a photo use a two-column layout.
 - Photos under 900px wide are never shown full screen, to avoid blur.
+
+## Real footage (added for the Amazon v2 video)
+- Put clips in `vid/` (`.mp4`, `.webm` or `.ogv`) and run `python3 prep_footage.py`. It splits them into `footage/<name>/f0001.jpg…` at 30 fps and writes `footage.js` (frame counts and credits).
+- **Full-screen cutaway:** add `"footage": {"clip": "mx_snake", "dur": 2.4, "from": 1, "kicker": "Real footage", "cap": "…"}` to a scene. The clip fills the screen at the start of the scene (with a push-in, a flash cut and a torn-paper caption box), then cuts to the card. Highlights and the camera wait until it ends.
+- **Video in a photo box:** add `"video": "<clip>"` to a scene's `photo`.
+- `render()` returns a promise that resolves once each footage frame has loaded, so frames are always in sync.
+- Sources: Mixkit (free licence, works for YouTube, no attribution needed) downloads reliably. Wikimedia Commons video is often rate-limited.

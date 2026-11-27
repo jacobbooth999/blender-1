@@ -64,6 +64,13 @@
    "foot": "[[h0|Almost everything in it can hurt you.]]",
    "cues": {
     "h0": "almost everything in it"
+   },
+   "footage": {
+    "clip": "mx_river",
+    "dur": 2.4,
+    "from": 1,
+    "kicker": "Real footage",
+    "cap": "Rivers cut through endless forest"
    }
   },
   {
@@ -117,6 +124,13 @@
    "cues": {
     "q0": "green hell",
     "qt": "never seen again"
+   },
+   "footage": {
+    "clip": "mx_jungle_walk",
+    "dur": 2.6,
+    "from": 0,
+    "kicker": "Real footage",
+    "cap": "Into the green hell"
    }
   },
   {
@@ -168,6 +182,13 @@
    "cues": {
     "f0": "never seen again",
     "f1": "no one should come looking"
+   },
+   "footage": {
+    "clip": "mx_gloomy",
+    "dur": 2.4,
+    "from": 0,
+    "kicker": "Real footage",
+    "cap": "The forest swallows everything"
    }
   },
   {
@@ -286,6 +307,13 @@
    "cues": {
     "c0": "five metres",
     "c1": "largest predator"
+   },
+   "footage": {
+    "clip": "mx_croc2",
+    "dur": 2.4,
+    "from": 3,
+    "kicker": "Real footage",
+    "cap": "Waiting just below the surface"
    }
   },
   {
@@ -307,6 +335,13 @@
    "cues": {
     "c0": "heaviest snake",
     "c1": "It squeezes"
+   },
+   "footage": {
+    "clip": "mx_snake",
+    "dur": 2.4,
+    "from": 1,
+    "kicker": "Real footage",
+    "cap": "A snake moves through swamp water"
    }
   },
   {
@@ -369,6 +404,13 @@
    "cues": {
     "c0": "most potent venoms",
     "c1": "antivenom"
+   },
+   "footage": {
+    "clip": "mx_spider",
+    "dur": 2.4,
+    "from": 2,
+    "kicker": "Real footage",
+    "cap": "Giant spiders hunt the forest floor"
    }
   },
   {
@@ -410,6 +452,13 @@
    "cues": {
     "r0": "the smallest",
     "r1": "malaria"
+   },
+   "footage": {
+    "clip": "mx_mosquito",
+    "dur": 2.4,
+    "from": 2,
+    "kicker": "Real footage",
+    "cap": "A mosquito, up close"
    }
   },
   {
@@ -459,7 +508,14 @@
    "cues": {
     "m0": "hot enough to kill"
    },
-   "span": 16
+   "span": 16,
+   "footage": {
+    "clip": "mx_waterfall",
+    "dur": 2.4,
+    "from": 1,
+    "kicker": "Real footage",
+    "cap": "Deep in the jungle, the water runs hot"
+   }
   },
   {
    "type": "stat",
@@ -499,7 +555,14 @@
    "cues": {
     "m0": "broke apart"
    },
-   "span": 16
+   "span": 16,
+   "footage": {
+    "clip": "mx_rainstorm",
+    "dur": 2.4,
+    "from": 2,
+    "kicker": "Real footage",
+    "cap": "Tropical storms strike without warning"
+   }
   },
   {
    "type": "front",
@@ -549,6 +612,13 @@
    "foot": "Their [[h0|knowledge of the forest]] saved them.",
    "cues": {
     "h0": "knowledge of the forest"
+   },
+   "footage": {
+    "clip": "mx_heavyrain",
+    "dur": 2.4,
+    "from": 2,
+    "kicker": "Real footage",
+    "cap": "Forty days under the canopy"
    }
   },
   {
