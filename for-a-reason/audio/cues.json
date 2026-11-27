@@ -1,0 +1,190 @@
+{
+ "end": 32.137,
+ "cues": [
+  {
+   "type": "hit",
+   "t": 0,
+   "vol": 0.6
+  },
+  {
+   "type": "whoosh",
+   "t": 0.2,
+   "vol": 0.6
+  },
+  {
+   "type": "whoosh",
+   "t": 2.232,
+   "vol": 0.4
+  },
+  {
+   "type": "hit",
+   "t": 2.282,
+   "vol": 0.7
+  },
+  {
+   "type": "whoosh",
+   "t": 3.883,
+   "vol": 0.4
+  },
+  {
+   "type": "impact",
+   "t": 4.133,
+   "vol": 0.6
+  },
+  {
+   "type": "impact",
+   "t": 5.933,
+   "vol": 0.6
+  },
+  {
+   "type": "whoosh",
+   "t": 7.5,
+   "vol": 0.4
+  },
+  {
+   "type": "nope",
+   "t": 7.95,
+   "vol": 0.6
+  },
+  {
+   "type": "whoosh",
+   "t": 9.275,
+   "vol": 0.4
+  },
+  {
+   "type": "impact",
+   "t": 10.625,
+   "vol": 0.6
+  },
+  {
+   "type": "whoosh",
+   "t": 11.861,
+   "vol": 0.4
+  },
+  {
+   "type": "nope",
+   "t": 12.411,
+   "vol": 0.5
+  },
+  {
+   "type": "whoosh",
+   "t": 13.301,
+   "vol": 0.4
+  },
+  {
+   "type": "impact",
+   "t": 14.451,
+   "vol": 0.6
+  },
+  {
+   "type": "whoosh",
+   "t": 15.388,
+   "vol": 0.4
+  },
+  {
+   "type": "nope",
+   "t": 15.688,
+   "vol": 0.5
+  },
+  {
+   "type": "whoosh",
+   "t": 16.365,
+   "vol": 0.4
+  },
+  {
+   "type": "impact",
+   "t": 17.815,
+   "vol": 0.6
+  },
+  {
+   "type": "whoosh",
+   "t": 18.838,
+   "vol": 0.4
+  },
+  {
+   "type": "thud",
+   "t": 19.288,
+   "vol": 0.7
+  },
+  {
+   "type": "whoosh",
+   "t": 20.161,
+   "vol": 0.4
+  },
+  {
+   "type": "step",
+   "t": 20.361,
+   "vol": 0.4
+  },
+  {
+   "type": "step",
+   "t": 20.561,
+   "vol": 0.4
+  },
+  {
+   "type": "step",
+   "t": 20.761,
+   "vol": 0.4
+  },
+  {
+   "type": "step",
+   "t": 20.961,
+   "vol": 0.4
+  },
+  {
+   "type": "step",
+   "t": 21.161,
+   "vol": 0.4
+  },
+  {
+   "type": "impact",
+   "t": 21.511,
+   "vol": 0.6
+  },
+  {
+   "type": "whoosh",
+   "t": 22.35,
+   "vol": 0.4
+  },
+  {
+   "type": "thud",
+   "t": 22.65,
+   "vol": 0.5
+  },
+  {
+   "type": "thud",
+   "t": 23,
+   "vol": 0.5
+  },
+  {
+   "type": "thud",
+   "t": 23.35,
+   "vol": 0.5
+  },
+  {
+   "type": "rise",
+   "t": 23.95,
+   "vol": 0.5
+  },
+  {
+   "type": "whoosh",
+   "t": 26.496,
+   "vol": 0.4
+  },
+  {
+   "type": "impact",
+   "t": 28.246,
+   "vol": 0.8
+  },
+  {
+   "type": "whoosh",
+   "t": 29.671,
+   "vol": 0.4
+  },
+  {
+   "type": "whoosh",
+   "t": 30.171,
+   "vol": 0.4
+  }
+ ]
+}
