@@ -11,6 +11,7 @@ import wave
 import numpy as np
 
 import audio as AU
+import fruit_sounds as FS
 from audio import SR, add, bubble, click, crackle, squelch, thump, voice, lp, hp, bp, env_exp, compress, place
 
 HERE = os.path.dirname(os.path.abspath(__file__))
@@ -104,15 +105,18 @@ def main():
         AU.P = P
         k, g, pan = e["kind"], 1.0, 0.0
         if k == "chomp":
-            x = juicy_chomp(e.get("big", False), P)
+            x = FS.bite(e["fruit"], e.get("big", False))
+            g = dict(strawberry=1.0, watermelon=1.0, peach=1.3, kiwi=1.1)[e["fruit"]]
         elif k == "chew":
-            x, g, pan = juicy_chew(e["i"], e.get("full", False), P), 1.5, 0.18 * (1 if e["i"] % 2 else -1)
+            x, g, pan = FS.chew(e["fruit"], e["i"], e.get("full", False)), \
+                dict(strawberry=1.5, watermelon=1.4, peach=2.3, kiwi=1.6)[e["fruit"]], 0.18 * (1 if e["i"] % 2 else -1)
         elif k == "slurp":
-            x, g = slurp(0.42, 0.7 * min(1.3, P["juice"])), 0.6
+            x = FS.slurp(e["fruit"])
+            g = dict(strawberry=0.45, watermelon=0.55, peach=0.6, kiwi=0.35)[e["fruit"]]
         elif k == "smack":
             x, g = smack(), 0.8
         elif k == "drip":
-            x, g, pan = AU.drip(e["r"]), 0.9, rng.uniform(-0.6, 0.6)
+            x, g, pan = FS.drip(e["fruit"], e["r"]), 0.9, rng.uniform(-0.6, 0.6)
         elif k == "giggle":
             x, g = giggle(), 0.7
         elif k == "mmm":

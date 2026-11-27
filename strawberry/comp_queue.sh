@@ -6,5 +6,5 @@ python3 comp_audio.py
 ffmpeg -y -loglevel error -framerate 24 -i out/comp/frames/f%04d.png -i out/comp/audio.wav \
   -vf "scale=720:1280:flags=lanczos" -c:v libx264 -crf 17 -preset slow -pix_fmt yuv420p \
   -af "loudnorm=I=-15:TP=-1.0:LRA=9" -c:a aac -b:a 256k -ar 48000 -shortest -movflags +faststart \
-  out/fruit_asmr_compilation.mp4
+  out/fruit_asmr_compilation_v2.mp4
 echo ALLDONE

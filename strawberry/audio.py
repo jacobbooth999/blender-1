@@ -51,7 +51,7 @@ def env_exp(n, tau):
 
 def adsr(n, a=0.005, r=0.05):
     e = np.ones(n)
-    na, nr = int(a * SR), int(r * SR)
+    na, nr = min(int(a * SR), n // 2), min(int(r * SR), n // 2)
     if na:
         e[:na] = np.linspace(0, 1, na)
     if nr:
