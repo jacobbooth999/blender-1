@@ -1,0 +1,35 @@
+<!doctype html><html><head><meta charset="utf-8">
+<link href="https://fonts.googleapis.com/css2?family=Anton&family=Oswald:wght@700&display=block" rel="stylesheet">
+<style>*{margin:0;padding:0;box-sizing:border-box}body{width:1280px;height:720px;overflow:hidden}
+.v{position:absolute;inset:0;display:none;overflow:hidden;background:#000}
+.big{font-family:'Anton';line-height:.9;text-transform:uppercase;-webkit-text-stroke:11px #050505;paint-order:stroke fill}
+</style></head><body>
+<!-- V1: what lies beneath -->
+<div class="v" id="A">
+ <div style="position:absolute;left:0;top:0;width:1280px;height:330px;background:url(river.jpg) 50% 60%/cover;filter:saturate(1.3) brightness(1.08)"></div>
+ <div style="position:absolute;left:0;top:300px;width:1280px;height:420px;background:url(croc.jpg) 74% 47%/150%;filter:contrast(1.35) brightness(1.08) saturate(1.05)"></div>
+ <div style="position:absolute;left:0;top:300px;width:1280px;height:420px;background:linear-gradient(rgba(10,60,55,.45),rgba(0,0,0,.05) 35%,rgba(0,0,0,.45))"></div>
+ <svg width="1280" height="720" style="position:absolute;inset:0"><path d="M0 312 C 120 292, 240 332, 360 312 S 600 292, 720 312 S 960 332, 1080 312 S 1240 296, 1280 306" stroke="#fff" stroke-width="7" fill="none" opacity=".9"/>
+  <ellipse cx="800" cy="520" rx="135" ry="78" fill="none" stroke="#ff2a2a" stroke-width="12" transform="rotate(-8 760 500)"/></svg>
+ <div class="big" style="position:absolute;left:40px;top:34px;font-size:118px;color:#fff">LOOKS CALM...</div>
+ <div class="big" style="position:absolute;left:40px;top:520px;font-size:150px;color:#ff2a2a">IT ISN'T.</div>
+</div>
+<!-- V2: don't go in -->
+<div class="v" id="B">
+ <div style="position:absolute;inset:0;background:url(jaguar.jpg) 62% 42%/170%;filter:contrast(1.3) brightness(1.35) saturate(1.25)"></div>
+ <div style="position:absolute;inset:0;background:radial-gradient(ellipse at 63% 45%,transparent 22%,rgba(0,0,0,.8) 66%)"></div>
+ <div class="big" style="position:absolute;left:44px;top:200px;font-size:170px;color:#fff;line-height:.86">DON'T<br><span style="color:#ffd61e">GO IN</span></div>
+ <div style="position:absolute;left:52px;top:560px;font-family:'Oswald';font-weight:700;font-size:44px;color:#fff;background:#c8231b;padding:0 16px;transform:rotate(-2deg)">INSIDE THE AMAZON</div>
+</div>
+<!-- V3: 860 volts -->
+<div class="v" id="C">
+ <div style="position:absolute;inset:0;background:url(eel.jpg) 50% 50%/cover;filter:contrast(1.2) saturate(1.2) brightness(.9)"></div>
+ <div style="position:absolute;inset:0;background:radial-gradient(ellipse at 55% 55%,rgba(120,200,255,.25),rgba(0,0,10,.75) 70%)"></div>
+ <svg width="1280" height="720" style="position:absolute;inset:0;filter:drop-shadow(0 0 14px #9fe0ff) drop-shadow(0 0 30px #4fb8ff)">
+  <path d="M640 120 L600 250 L660 250 L590 420 L700 230 L640 230 L700 120 Z" fill="#eaf8ff"/>
+  <path d="M980 180 L950 270 L995 270 L940 390 L1030 250 L985 250 L1030 180 Z" fill="#eaf8ff" opacity=".85"/></svg>
+ <div class="big" style="position:absolute;left:40px;top:60px;font-size:190px;color:#ffd61e">860</div>
+ <div class="big" style="position:absolute;left:40px;top:250px;font-size:120px;color:#fff">VOLTS</div>
+ <div class="big" style="position:absolute;left:40px;top:540px;font-size:110px;color:#ff2a2a">IN THE RIVER</div>
+</div>
+</body></html>
